@@ -1,27 +1,26 @@
 import inventory_functions
+import experience_functions
 class Character():
     def __init__(self, name: str = ""):
         self.name = name
-        self.lvl = 1
         self.attack = 10
         self.defense = 10
         self.speed = 10
         self.health = 100
         self.mana = 100
         self.stamina = 100
-        self.experience = 0
-        self.equippable = { "weapon": None, "armor": None, "accessory": None}
+        self.lvl = experience_functions.Levels()
         self.inventory = inventory_functions.Inventory(self.name)
+        self.equippable = { "weapon": None, "armor": None, "accessory": None}
     def __str__(self):
         return (f"{self.name}:\n"
-                f"Lvl: {self.lvl}\n"
+                f"{self.lvl}\n"
                 f"Attack: {self.attack}\n"
                 f"Defense: {self.defense}\n"
                 f"Speed: {self.speed}\n"
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
                 f"Stamina: {self.stamina}\n"
-                f"Experience: {self.experience}\n"
                 f"Inventory: {self.inventory.get_items()}")
     def __repr__(self):
         return (f"{self.__class__.__name__}(") + \
@@ -45,12 +44,11 @@ class Character():
         return self._lvl
     @lvl.setter
     def lvl(self, lvl):
-        if not isinstance(lvl, int):
-            raise TypeError("Level must be an integer.")
-        elif lvl < 0:
-            self.lvl = 0
-        else:
-            self._lvl = lvl
+        if not isinstance(lvl, experience_functions.Levels):
+            raise TypeError("Level must be an Experience object.")
+        elif lvl.lvl < 0:
+            self.lvl.lvl = 0
+        self._lvl = lvl
     @property
     def attack(self):
         return self._attack
@@ -118,17 +116,6 @@ class Character():
         else:
             self._stamina = stamina
     @property
-    def experience(self):
-        return self._experience
-    @experience.setter
-    def experience(self, experience):
-        if not isinstance(experience, int):
-            raise TypeError("Experience must be an integer.")
-        elif experience < 0:
-            self.experience = 0
-        else:
-            self._experience = experience
-    @property
     def inventory(self):
         return self._inventory
     @inventory.setter
@@ -148,8 +135,10 @@ class NPC(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Enemy(Character):
-    def __init__(self, name: str = str ):
+    def __init__(self, name: str = str, level: int = 1):
         super().__init__(name)
+        self.lvl = experience_functions.Levels(level)
+        self.lvl.experience = self.lvl.lvl * 100
     def __str__(self):
         return super().__str__()
     def __repr__(self):

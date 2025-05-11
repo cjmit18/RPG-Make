@@ -3,25 +3,25 @@ class Combat:
     def __init__(self, character, enemy):
         self.character = character
         self.enemy = enemy
-    def user_input(self, prompt: str = str) -> str:
+    def user_input(self, prompt: str = "") -> str:
         return input(prompt)
-    def turns(self):
+    def turns(self, attacker, defender):
         print("Testing combat settings...")
-        print(f"{self.character.get_name()} vs {self.enemy.get_name()}")
+        print(f"{attacker.name} vs {defender.name}")
         print("Combat test initiated.")
         while True:
             user = self.user_input("Attack, Exit: ").lower()
-            if user == "attack" and self.character.get_speed() >= self.enemy.get_speed():
-                print(f"{self.character.get_name()} attacks {self.enemy.get_name()}!")
-                self.damage_calc(self.character, self.enemy)
-                if self.enemy.get_health() <= 0:
-                    print(f"{self.character.get_name()} wins!")
+            if user == "attack" and attacker.speed >=defender.speed:
+                print(f"{attacker.name} attacks {defender.name}!")
+                self.damage_calc(attacker, defender)
+                if defender.health <= 0:
+                    print(f"{attacker.name} wins!")
                     break
-            elif user == "attack" and self.character.get_speed() < self.enemy.get_speed():
-                print(f"{self.enemy.get_name()} attacks {self.character.get_name()}!")
-                self.damage_calc(self.enemy, self.character)
-                if self.character.get_health() <= 0:
-                    print(f"{self.enemy.get_name()} wins!")
+            elif user == "attack" and attacker.speed < defender.speed:
+                print(f"{defender.name} attacks {attacker.name}!")
+                self.damage_calc(defender, attacker)
+                if attacker.health <= 0:
+                    print(f"{defender.name} wins!")
                     break
             elif user == "exit":
                 print("Exiting combat test.")
@@ -30,19 +30,14 @@ class Combat:
                 print("Invalid command. Please enter 'attack' or 'exit'.")
     
     def damage_calc(self, attacker, defender):
-        damage = attacker.get_attack() - defender.get_defense()
+        damage = attacker.attack - defender.defense
         if damage > 0:
-            defender.set_health(defender.get_health() - damage)
-            print(f"{defender.get_name()} takes {damage} damage!")
-            print(f"{defender.get_name()} has {defender.get_health() if defender.get_health() >= 1 else "0"}  health left.")
+            defender.health = (defender.health - damage)
+            print(f"{defender.name} takes {damage} damage!")
+            print(f"{defender.name} has {defender.health if defender.health >= 1 else "0"}  health left.")
         else:
-            print(f"{defender.get_name()} blocks the attack!")
-        if defender.get_health() <= 0:
-            print(f"{defender.get_name()} is defeated!")
+            print(f"{defender.name} blocks the attack!")
+        if defender.health <= 0:
+            print(f"{defender.name} is defeated!")
 if __name__ == "__main__":
-    character = main.character_creation.player("Hero")
-    enemy = main.character_creation.enemy("Monster")
-    combat = Combat(character, enemy)
-    enemy.set_defense(6)
-    enemy.set_health(10)
-    combat.turns()
+    pass

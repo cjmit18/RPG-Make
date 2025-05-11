@@ -1,9 +1,9 @@
-class inventory:
-    def __init__(self, character_name: str = str):
+class Inventory:
+    def __init__(self, character_name: str = ""):
         self.character_name = character_name
         self.items = {}
     def __str__(self):
-        return f"Inventory of {self.character_name}:\n" + "\n".join([f"{item}: {quantity}" for item, quantity in self.items.items()])
+        return f"Inventory of {self.character_name}:\n" + "\n".join([f"{item}: {quantity}" for item, quantity in self.items.items()] ) if self.items else "Inventory is empty."
     def add_item(self, item_name, quantity):
         if item_name in self.items:
             self.items[item_name] += quantity
@@ -37,4 +37,12 @@ class inventory:
     def drop_all(self):
         self.items.clear()
         print("Dropped all items.")
+@property
+def items(self):
+    return self._items
+@items.setter
+def items(self, items):
+    if not isinstance(items, dict):
+        raise TypeError("Items must be a dictionary.")
+    self._items = items
     

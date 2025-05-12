@@ -1,7 +1,8 @@
 import inventory_functions
 import experience_functions
+import Item_functions
 class Character():
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0):
         self.name = name
         self.attack = 10
         self.defense = 10
@@ -9,9 +10,9 @@ class Character():
         self.health = 100
         self.mana = 100
         self.stamina = 100
-        self.lvl = experience_functions.Levels()
+        self.lvl = experience_functions.Levels(name, level, experience)
         self.inventory = inventory_functions.Inventory(self.name)
-        self.equippable = { "weapon": None, "armor": None, "accessory": None}
+        self.equippable = { "weapon": None, "armor": None, "consumable": None}
     def __str__(self):
         return (f"{self.name}:\n"
                 f"{self.lvl}\n"
@@ -21,10 +22,10 @@ class Character():
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
                 f"Stamina: {self.stamina}\n"
-                f"Inventory: {self.inventory.get_items()}")
+                f"Inventory: {self.inventory.items}")
     def __repr__(self):
         return (f"{self.__class__.__name__}(") + \
-               (f"name={self.name!r}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
+               (f"name={self.name}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
                (f"speed={self.speed}, health={self.health}, mana={self.mana}, ") + \
                (f"stamina={self.stamina}, experience={self.experience})")    
     def __eq__(self, other):
@@ -124,8 +125,8 @@ class Character():
             raise TypeError("Inventory must be an Inventory object.")
         self._inventory = inventory
 class NPC(Character):
-    def __init__(self, name: str = str):
-        super().__init__(name)
+    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+        super().__init__(name, level, experience)
     def __str__(self):
         return super().__str__()
     def __repr__(self):
@@ -135,10 +136,15 @@ class NPC(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Enemy(Character):
-    def __init__(self, name: str = str, level: int = 1):
-        super().__init__(name)
-        self.lvl = experience_functions.Levels(level)
+    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+        super().__init__(name, level, experience)
         self.lvl.experience = self.lvl.lvl * 100
+        self.attack = self.lvl.lvl * 10
+        self.defense = self.lvl.lvl * 5
+        self.speed = self.lvl.lvl * 3
+        self.health = self.lvl.lvl * 50
+        self.mana = self.lvl.lvl * 20
+        self.stamina = self.lvl.lvl * 30
     def __str__(self):
         return super().__str__()
     def __repr__(self):
@@ -148,9 +154,15 @@ class Enemy(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Player(Character):
-    def __init__(self, name: str = str):
-        super().__init__(name)
-    def __str__(self):
+    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+        super().__init__(name, level, experience)
+        self.attack = 15 * self.lvl.lvl
+        self.defense = 10 * self.lvl.lvl
+        self.speed = 5 * self.lvl.lvl
+        self.health = 100 + (self.lvl.lvl * 20)
+        self.mana = 100 + (self.lvl.lvl * 10)
+        self.stamina = 100 + (self.lvl.lvl * 15)
+    def __str__(self,name: str = "", level: int = 1, experience: int = 0):
         return super().__str__()
     def __repr__(self):
         return super().__repr__()

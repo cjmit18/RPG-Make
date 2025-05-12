@@ -13,7 +13,7 @@ class Combat:
         print("Combat test initiated.")
         while True:
             user = self.user_input("Attack, Exit: ").lower()
-            if user == "attack" and attacker.speed >=defender.speed:
+            if user == "attack" and attacker.speed >= defender.speed:
                 print(f"{attacker.name} attacks {defender.name}!")
                 self.damage_calc(attacker, defender)
                 if defender.health <= 0:

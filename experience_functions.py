@@ -1,13 +1,14 @@
 import combat_settings
 import character_creation
 class Levels:
-    def __init__(self, lvl = 1, experience = 0):
+    def __init__(self, character=None, lvl=1, experience=0):
+        self.character = character
         self.lvl = lvl
         self.experience = experience
     def __str__(self):
-        return f"Level: {self.lvl}, Experience: {self.experience}"
+        return f"Name: {self.character}\nLevel: {self.lvl} Experience: {self.experience}"
     def __repr__(self):
-        return f"Levels(lvl={self.lvl}, experience={self.experience})"
+        return f"Levels(lvl={self.lvl} experience={self.experience})"
     def add_experience(self, exp):
         if not isinstance(exp, int):
             raise TypeError("Experience must be an integer.")

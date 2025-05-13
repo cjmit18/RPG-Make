@@ -60,26 +60,24 @@ class Inventory:
         print("Dropped all items.")
     def equip_item(self, item, slot):
         if isinstance(item, Item_functions.Items):
-            if slot in self.slots:
+            if item.__class__.__name__ != slot.capitalize():
+                raise ValueError(f"Item type mismatch: {item.__class__.__name__} cannot be equipped in {slot} slot.")
+            elif slot in self.slots:
                 if self.check_item(item) > 0:
                     self.equipped_items[slot] = item
                     self.remove_item(item, 1)
                     print(f"Equipped {item.name} as {item.__class__.__name__}.")
                 else:
                     raise ValueError("Item not found in inventory.")
-            else:
-                raise ValueError("Invalid item slot.")
     def unequip_item(self, slot):
-        if slot in self.slots:
-            if self.equipped_items[slot] is not None:
-                item = self.equipped_items[slot]
-                self.add_item(item, 1)
-                self.equipped_items[slot] = None
-                print(f"Unequipped {item.name} from {slot}.")
-            else:
-                raise ValueError("No item equipped in this slot.")
-        else:
-            raise ValueError("Invalid item slot.")
+       if slot in self.slots:
+           if self.equipped_items[slot] is not None:
+               item = self.equipped_items[slot]
+               self.add_item(item, 1)
+               self.equipped_items[slot] = None
+               print(f"Unequipped {item.name} from {slot} slot.")
+           else:
+               raise ValueError("No item equipped in this slot.")
     @property
     def items(self):
         return self._items
@@ -106,4 +104,3 @@ class Inventory:
             if not isinstance(value, Item_functions.Items) and value is not None:
                 raise TypeError("Equipped items must be of type Items.")
         self._equipped_items = equipped_items
-    

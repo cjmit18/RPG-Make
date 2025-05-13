@@ -20,7 +20,7 @@ class Weapon(Items):
     def __str__(self):
         return f"Weapon: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}\nAttack Power: {self.attack_power}"
     def __repr__(self):
-        return f"({self.name}, {self.description}, {self.price}, {self.quantity}, {self.attack_power})"
+        return self.name
 class Armor(Items):
     def __init__(self, name:str = "", description:str = "", price:int = 5, quantity:int = 1, defense_power:int = 5):    
         super().__init__(name, description, price, quantity)

@@ -5,13 +5,13 @@ class Character():
     def __init__(self, name: str = "Template", level: int = 1, experience: int = 0):
         self.name = name
         self.attack = 10
-        self.defense = 10
+        self.defense = 5
         self.speed = 10
         self.health = 100
         self.mana = 100
         self.stamina = 100
         self.lvl = experience_functions.Levels(name, level, experience)
-        self.inventory = inventory_functions.Inventory(self.name)
+        self.inventory = inventory_functions.Inventory(name)
     def __str__(self):
         return (f"{self.__class__.__name__}:\n"
                 f"{self.lvl}\n"
@@ -47,41 +47,47 @@ class Character():
     @lvl.setter
     def lvl(self, lvl):
         if not isinstance(lvl, experience_functions.Levels):
-            raise TypeError("Level must be an Experience object.")
-        elif lvl.lvl < 0:
-            self.lvl.lvl = 0
+            raise TypeError("Level must be a Levels object.")
         self._lvl = lvl
     @property
     def attack(self):
+        if self.inventory.equipped_items["weapon"] is not None:
+            return self._attack + self.inventory.equipped_items["weapon"].attack_power
+        
         return self._attack
+    
     @attack.setter
     def attack(self, attack):
         if not isinstance(attack, int):
             raise TypeError("Attack must be an integer.")
         elif attack < 0:
-            self.attack = 0
+            self._attack = 0
         else:
             self._attack = attack
     @property
     def defense(self):
+        if self.inventory.equipped_items["armor"] is not None:
+            return self._defense + self.inventory.equipped_items["armor"].defense_power
         return self._defense
     @defense.setter
     def defense(self, defense):
         if not isinstance(defense, int):
             raise TypeError("Defense must be an integer.")
-        elif defense < 0:
-            self.defense = 0
+        elif defense < 1:
+            self.defense = 1
         else:
             self._defense = defense
     @property
     def speed(self):
+        if self.inventory.equipped_items["consumable"] is not None:
+            return self._speed + self.inventory.equipped_items["consumable"].effect
         return self._speed
     @speed.setter
     def speed(self, speed):
         if not isinstance(speed, int):
             raise TypeError("Speed must be an integer.")
         elif speed < 0:
-            self.speed = 0
+            self._speed = 0
         else:
             self._speed = speed
     @property
@@ -92,7 +98,7 @@ class Character():
         if not isinstance(health, int):
             raise TypeError("Health must be an integer.")
         elif health < 0:
-            self.health = 0
+            self._health = 0
         else:
             self._health = health
     @property
@@ -103,7 +109,7 @@ class Character():
         if not isinstance(mana, int):
             raise TypeError("Mana must be an integer.")
         elif mana < 0:
-            self.mana = 0
+            self._mana = 0
         else:
             self._mana = mana
     @property
@@ -114,7 +120,7 @@ class Character():
         if not isinstance(stamina, int):
             raise TypeError("Stamina must be an integer.")
         elif stamina < 0:
-            self.stamina = 0
+            self._stamina = 0
         else:
             self._stamina = stamina
     @property
@@ -125,19 +131,6 @@ class Character():
         if not isinstance(inventory, inventory_functions.Inventory):
             raise TypeError("Inventory must be an Inventory object.")
         self._inventory = inventory
-    @property
-    def slots(self):
-        return self._slots
-    @slots.setter
-    def slots(self, slots):
-        if not isinstance(slots, dict):
-            raise TypeError("slots must be a dictionary.")
-        for key, value in slots.items():
-            if key not in ["weapon", "armor", "consumable"]:
-                raise ValueError("slots must contain 'weapon', 'armor', and 'consumable' keys.")
-            if not isinstance(value, Item_functions.Items) and value is not None:
-                raise TypeError("slots items must be of type Items.")
-        self._slots = slots
 class NPC(Character):
     def __init__(self, name: str = "NPC", level: int = 1, experience: int = 0):
         super().__init__(name, level, experience)

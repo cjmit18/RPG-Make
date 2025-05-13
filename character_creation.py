@@ -2,7 +2,7 @@ import inventory_functions
 import experience_functions
 import Item_functions
 class Character():
-    def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0):
+    def __init__(self, name: str = "Template", level: int = 1, experience: int = 0):
         self.name = name
         self.attack = 10
         self.defense = 10
@@ -12,17 +12,18 @@ class Character():
         self.stamina = 100
         self.lvl = experience_functions.Levels(name, level, experience)
         self.inventory = inventory_functions.Inventory(self.name)
-        self.equippable = { "weapon": None, "armor": None, "consumable": None}
     def __str__(self):
-        return (f"{self.name}:\n"
+        return (f"{self.__class__.__name__}:\n"
                 f"{self.lvl}\n"
+                f"{"-"*10}\n"
                 f"Attack: {self.attack}\n"
                 f"Defense: {self.defense}\n"
                 f"Speed: {self.speed}\n"
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
                 f"Stamina: {self.stamina}\n"
-                f"Inventory: {self.inventory.items}")
+                f"{"-"*10}\n"
+                f"{self.inventory}")
     def __repr__(self):
         return (f"{self.__class__.__name__}(") + \
                (f"name={self.name}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
@@ -124,8 +125,21 @@ class Character():
         if not isinstance(inventory, inventory_functions.Inventory):
             raise TypeError("Inventory must be an Inventory object.")
         self._inventory = inventory
+    @property
+    def slots(self):
+        return self._slots
+    @slots.setter
+    def slots(self, slots):
+        if not isinstance(slots, dict):
+            raise TypeError("slots must be a dictionary.")
+        for key, value in slots.items():
+            if key not in ["weapon", "armor", "consumable"]:
+                raise ValueError("slots must contain 'weapon', 'armor', and 'consumable' keys.")
+            if not isinstance(value, Item_functions.Items) and value is not None:
+                raise TypeError("slots items must be of type Items.")
+        self._slots = slots
 class NPC(Character):
-    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+    def __init__(self, name: str = "NPC", level: int = 1, experience: int = 0):
         super().__init__(name, level, experience)
     def __str__(self):
         return super().__str__()
@@ -136,7 +150,7 @@ class NPC(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Enemy(Character):
-    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+    def __init__(self, name: str = "Enemy", level: int = 1, experience: int = 0):
         super().__init__(name, level, experience)
         self.lvl.experience = self.lvl.lvl * 100
         self.attack = self.lvl.lvl * 10
@@ -154,7 +168,7 @@ class Enemy(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Player(Character):
-    def __init__(self, name: str = "", level: int = 1, experience: int = 0):
+    def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0):
         super().__init__(name, level, experience)
         self.attack = 15 * self.lvl.lvl
         self.defense = 10 * self.lvl.lvl

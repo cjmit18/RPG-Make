@@ -4,14 +4,10 @@ import combat_settings
 import Item_functions
 import os
 import experience_functions
-def main():
-    weapon_generation = []
-    for i in range(5):
-        weapon = Item_functions.Weapon()
-        weapon_generation.append(weapon)
-    weapon_generation[0].attack_power = 100
-    weapon_generation[0].name = "Sword of Destiny"
-    return weapon_generation
-if __name__ == "__main__":
-    weapons = main()
-print(weapons[0])
+player = character_creation.Player()
+weapon = Item_functions.Weapon("Sword", "A sharp blade.", 10, 1, 15)
+armor = Item_functions.Armor("Shield", "A sturdy shield.", 20, 1, 10)
+consumable = Item_functions.Consumable("Health Potion", "Restores health.", 5, 3, "Restores 20 health.")
+player.inventory.add_item(weapon, weapon.quantity)
+player.inventory.equip_item(weapon, "weapon")
+

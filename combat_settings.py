@@ -12,7 +12,7 @@ class Combat:
         print(f"{attacker.name} vs {defender.name}")
         print("Combat test initiated.")
         while True:
-            user = self.user_input("Attack, Exit: ").lower()
+            user = "attack" #self.user_input("Attack, Exit: ").lower()
             if user == "attack" and attacker.speed >= defender.speed:
                 print(f"{attacker.name} attacks {defender.name}!")
                 self.damage_calc(attacker, defender)
@@ -30,6 +30,7 @@ class Combat:
                 self.damage_calc(defender, attacker)
                 if attacker.health <= 0:
                     print(f"{defender.name} wins!")
+                    break
                 else:
                     print(f"{attacker.name} attacks {defender.name}!")
                     self.damage_calc(attacker, defender)
@@ -50,15 +51,28 @@ class Combat:
         else:
             print(f"{defender.name} blocks the attack!")
         if defender.health <= 0:
-            print(f"{defender.name} is defeated!")
-            print(f"{attacker.name} gains {defender.lvl.experience} experience points!")
-            attacker.lvl.experience_calc(defender)
+            if defender.__class__ == character_creation.Enemy:
+                print(f"{defender.name} is defeated!")
+                print(f"{attacker.name} gains {defender.lvl.experience} experience points!")
+                attacker.lvl.experience_calc(defender)
+            elif defender.__class__ == character_creation.Player:
+                print(f"{defender.name} is defeated!")
+                attacker.lvl.experience_calc(defender)
         elif attacker.health <= 0:
-            print(f"{attacker.name} is defeated!")
-            print(f"{defender.name} gains {attacker.lvl.experience} experience points!")
-            defender.lvl.experience_calc(attacker)
+            if attacker.__class__ == character_creation.Enemy:
+                print(f"{attacker.name} is defeated!")
+                print(f"{defender.name} gains {attacker.lvl.experience} experience points!")
+                defender.lvl.experience_calc(attacker)
+            elif attacker.__class__ == character_creation.Player:
+                print(f"{attacker.name} is defeated!")
+                attacker.lvl.experience_calc(defender)
+            else:
+                print(f"{attacker.name} is defeated!")
+                print(f"{defender.name} gains {attacker.lvl.experience} experience points!")
+                defender.lvl.experience_calc(attacker)
         else:
             print(f"{attacker.name} has {attacker.health if attacker.health >= 1 else "0"} health left.")
             print(f"{defender.name} has {defender.health if defender.health >= 1 else "0"} health left.")
+            
 if __name__ == "__main__":
     pass

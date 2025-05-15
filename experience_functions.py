@@ -20,10 +20,7 @@ class Levels:
         while self.experience >= self.required_experience():
             self.experience -= self.required_experience()
             self.lvl += 1
-            return f"Level up! You are now level {self.lvl}!"
-        else:
-            print(f"You have {self.experience} experience points left.")
-            print(f"Next level requires {self.required_experience()} experience points.")
+            print(f"{self.character.name} leveled up to level {self.lvl}!")
     def required_experience(self):
         return (self.lvl * 100) * 2
     def change_level(self, new_level):
@@ -48,7 +45,7 @@ class Levels:
     @property
     def experience(self):
         if self.character.__class__ == character_creation.Enemy and self._experience <= 0:
-            self._experience += self._lvl * 1
+            self._experience += self._lvl * 100
             return self._experience
         else:
             return self._experience

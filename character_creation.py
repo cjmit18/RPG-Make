@@ -141,8 +141,8 @@ class Character():
             raise TypeError("Inventory must be an Inventory object.")
         self._inventory = inventory
 class NPC(Character):
-    def __init__(self, name: str = "NPC", level: int = 1, experience: int = 0):
-        super().__init__(name, level,)
+    def __init__(self, name: str = "NPC", level: int = 1):
+        super().__init__(name, level)
     def __str__(self):
         return super().__str__()
     def __repr__(self):
@@ -169,8 +169,8 @@ class Enemy(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Player(Character):
-    def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0):
-        super().__init__(name, level, experience)
+    def __init__(self, name: str = "Hero", level: int = 1):
+        super().__init__(name, level)
         self.attack = 15 * self.lvl.lvl
         self.defense = 10 * self.lvl.lvl
         self.speed = 5 * self.lvl.lvl

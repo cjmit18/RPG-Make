@@ -22,14 +22,18 @@ class Inventory:
             return f"Inventory: ({self.character_name}, empty)"
         else:
             return f"Inventory: ({self.character_name}, {self.items})"
-    def add_item(self, item, quantity):
+    def add_item(self, item, quantity=0):
+        if quantity <= 0:
+            quantity = item.quantity
+        else:
+            item.quantity = quantity
         if not isinstance(item, Item_functions.Items):
             raise TypeError("Item must be of type Items.")
         elif not isinstance(quantity, int):
             raise TypeError("Quantity must be an integer.")
         elif quantity <= 0:
             raise ValueError("Quantity must be greater than 0.")
-        for _ in range(quantity):
+        for _ in range(item.quantity):
             if item.id in self.items:
                 self.items[item.id].append(item)
             else:

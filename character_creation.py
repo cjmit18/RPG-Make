@@ -10,14 +10,14 @@ class Character():
         self.health = 100
         self.mana = 100
         self.stamina = 100
-        self.lvl = experience_functions.Levels(name, level, experience)
-        self.inventory = inventory_functions.Inventory(name)
+        self.lvl = experience_functions.Levels(self, level, experience)
+        self.inventory = inventory_functions.Inventory(self)
     def __str__(self):
         return (f"{self.__class__.__name__}:\n"
                 f"{self.lvl}\n"
                 f"{"-"*10}\n"
-                f"Attack: {self.attack}\n"
-                f"Defense: {self.defense}\n"
+                f"Attack: {self.attack} ({self.inventory.equipped_items['weapon'].attack_power if self.inventory.equipped_items['weapon'] else 0})\n"
+                f"Defense: {self.defense} ({self.inventory.equipped_items['armor'].defense_power if self.inventory.equipped_items['armor'] else 0})\n"
                 f"Speed: {self.speed}\n"
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
@@ -28,7 +28,7 @@ class Character():
         return (f"{self.__class__.__name__}(") + \
                (f"name={self.name}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
                (f"speed={self.speed}, health={self.health}, mana={self.mana}, ") + \
-               (f"stamina={self.stamina}, experience={self.experience})")    
+               (f"stamina={self.stamina}, inventory={self.inventory})")    
     def __eq__(self, other):
         if isinstance(other, Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
@@ -53,7 +53,6 @@ class Character():
     def attack(self):
         if self.inventory.equipped_items["weapon"] is not None:
             return self._attack + self.inventory.equipped_items["weapon"].attack_power
-        
         return self._attack
     
     @attack.setter
@@ -79,9 +78,10 @@ class Character():
             self._defense = defense
     @property
     def speed(self):
-        if self.inventory.equipped_items["consumable"] is not None:
-            return self._speed + self.inventory.equipped_items["consumable"].effect
-        return self._speed
+        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "speed:":
+                return self._speed + self.inventory.equipped_items["consumable"].amount
+        else:
+            return self._speed
     @speed.setter
     def speed(self, speed):
         if not isinstance(speed, int):
@@ -92,7 +92,10 @@ class Character():
             self._speed = speed
     @property
     def health(self):
-        return self._health
+        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "health:":
+            return self._health + self.inventory.equipped_items["consumable"].amount
+        else:
+            return self._health
     @health.setter
     def health(self, health):
         if not isinstance(health, int):
@@ -103,7 +106,10 @@ class Character():
             self._health = health
     @property
     def mana(self):
-        return self._mana
+        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "mana:":
+            return self._mana + self.inventory.equipped_items["consumable"].amount
+        else:
+            return self._mana
     @mana.setter
     def mana(self, mana):
         if not isinstance(mana, int):
@@ -114,7 +120,10 @@ class Character():
             self._mana = mana
     @property
     def stamina(self):
-        return self._stamina
+        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "stamina:":
+            return self._stamina + self.inventory.equipped_items["consumable"].amount
+        else:
+            return self._stamina
     @stamina.setter
     def stamina(self, stamina):
         if not isinstance(stamina, int):
@@ -133,7 +142,7 @@ class Character():
         self._inventory = inventory
 class NPC(Character):
     def __init__(self, name: str = "NPC", level: int = 1, experience: int = 0):
-        super().__init__(name, level, experience)
+        super().__init__(name, level,)
     def __str__(self):
         return super().__str__()
     def __repr__(self):
@@ -143,9 +152,8 @@ class NPC(Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
         return False
 class Enemy(Character):
-    def __init__(self, name: str = "Enemy", level: int = 1, experience: int = 0):
-        super().__init__(name, level, experience)
-        self.lvl.experience = self.lvl.lvl * 100
+    def __init__(self, name: str = "Enemy", level: int = 1):
+        super().__init__(name, level)
         self.attack = self.lvl.lvl * 10
         self.defense = self.lvl.lvl * 5
         self.speed = self.lvl.lvl * 3
@@ -169,7 +177,7 @@ class Player(Character):
         self.health = 100 + (self.lvl.lvl * 20)
         self.mana = 100 + (self.lvl.lvl * 10)
         self.stamina = 100 + (self.lvl.lvl * 15)
-    def __str__(self,name: str = "", level: int = 1, experience: int = 0):
+    def __str__(self):
         return super().__str__()
     def __repr__(self):
         return super().__repr__()

@@ -1,12 +1,12 @@
 import combat_settings
 import character_creation
 class Levels:
-    def __init__(self, character=None, lvl=1, experience=0):
+    def __init__(self, character, level=1, experience=0):
         self.character = character
-        self.lvl = lvl
+        self.lvl = level
         self.experience = experience
     def __str__(self):
-        return f"Name: {self.character}\nLevel: {self.lvl} Experience: {self.experience}"
+        return f"Name: {self.character.name}\nLevel: {self.lvl} Experience: {self.experience}"
     def __repr__(self):
         return f"Levels(lvl={self.lvl} experience={self.experience})"
     def add_experience(self, exp):
@@ -14,13 +14,13 @@ class Levels:
             raise TypeError("Experience must be an integer.")
         else:
             self.experience += exp
-        if self.experience >= self.required_experience():
+        if self.experience >= self.required_experience() and not isinstance(self.character, character_creation.Enemy):
             self.level_up()
     def level_up(self):
         while self.experience >= self.required_experience():
             self.experience -= self.required_experience()
             self.lvl += 1
-            print(f"Level up! You are now level {self.lvl}!")
+            return f"Level up! You are now level {self.lvl}!"
         else:
             print(f"You have {self.experience} experience points left.")
             print(f"Next level requires {self.required_experience()} experience points.")
@@ -45,3 +45,30 @@ class Levels:
        if isinstance(enemy, character_creation.Enemy) or isinstance(enemy, character_creation.NPC):
             if enemy.lvl.experience > 0:
                 self.add_experience(enemy.lvl.experience)
+    @property
+    def experience(self):
+        if self.character.__class__ == character_creation.Enemy and self._experience <= 0:
+            self._experience += self._lvl * 1
+            return self._experience
+        else:
+            return self._experience
+    @experience.setter
+    def experience(self, experience):
+        if not isinstance(experience, int):
+            raise TypeError("Experience must be an integer.")
+        elif experience < 0:
+            self._experience = 0
+        else:
+            self._experience = experience
+    @property
+    def lvl(self):
+        return self._lvl
+    @lvl.setter
+    def lvl(self, lvl):
+        if not isinstance(lvl, int):
+            raise TypeError("Level must be an integer.")
+        elif lvl < 0:
+            self._lvl = 0
+        else:
+            self._lvl = lvl
+    

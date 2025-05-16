@@ -15,14 +15,14 @@ class Character():
     def __str__(self):
         return (f"{self.__class__.__name__}:\n"
                 f"{self.lvl}\n"
-                f"{"-"*10}\n"
+                f"{'-'*10}\n"
                 f"Attack: {self.attack} ({self.inventory.equipped_items['weapon'].attack_power if self.inventory.equipped_items['weapon'] else 0})\n"
                 f"Defense: {self.defense} ({self.inventory.equipped_items['armor'].defense_power if self.inventory.equipped_items['armor'] else 0})\n"
                 f"Speed: {self.speed}\n"
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
                 f"Stamina: {self.stamina}\n"
-                f"{"-"*10}\n"
+                f"{'-'*10}\n"
                 f"{self.inventory}")
     def __repr__(self):
         return (f"{self.__class__.__name__}(") + \
@@ -78,10 +78,7 @@ class Character():
             self._defense = defense
     @property
     def speed(self):
-        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "speed:":
-                return self._speed + self.inventory.equipped_items["consumable"].amount
-        else:
-            return self._speed
+        return self._speed
     @speed.setter
     def speed(self, speed):
         if not isinstance(speed, int):
@@ -92,10 +89,7 @@ class Character():
             self._speed = speed
     @property
     def health(self):
-        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "health:":
-            return self._health + self.inventory.equipped_items["consumable"].amount
-        else:
-            return self._health
+        return self._health
     @health.setter
     def health(self, health):
         if not isinstance(health, int):
@@ -106,10 +100,7 @@ class Character():
             self._health = health
     @property
     def mana(self):
-        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "mana:":
-            return self._mana + self.inventory.equipped_items["consumable"].amount
-        else:
-            return self._mana
+        return self._mana
     @mana.setter
     def mana(self, mana):
         if not isinstance(mana, int):
@@ -120,10 +111,7 @@ class Character():
             self._mana = mana
     @property
     def stamina(self):
-        if self.inventory.equipped_items["consumable"] is not None and self.inventory.equipped_items["consumable"].effect == "stamina:":
-            return self._stamina + self.inventory.equipped_items["consumable"].amount
-        else:
-            return self._stamina
+        return self._stamina
     @stamina.setter
     def stamina(self, stamina):
         if not isinstance(stamina, int):

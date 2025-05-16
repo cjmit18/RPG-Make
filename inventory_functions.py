@@ -22,22 +22,17 @@ class Inventory:
             return f"Inventory: ({self.character_name}, empty)"
         else:
             return f"Inventory: ({self.character_name}, {self.items})"
-    def add_item(self, item, quantity=0):
-        if quantity <= 0:
-            quantity = item.quantity
-        else:
-            item.quantity = quantity
+    def add_item(self, item, quantity=1):
         if not isinstance(item, Item_functions.Items):
             raise TypeError("Item must be of type Items.")
         elif not isinstance(quantity, int):
             raise TypeError("Quantity must be an integer.")
         elif quantity <= 0:
             raise ValueError("Quantity must be greater than 0.")
-        for _ in range(item.quantity):
-            if item.id in self.items:
-                self.items[item.id].append(item)
-            else:
-                self.items[item.id] = [item]
+        elif item.id in self.items:
+            self.items[item.id].extend([item] * quantity)
+        else:
+            self.items[item.id] = [item] * quantity
     def remove_item(self, item, quantity):
         if not isinstance(item, Item_functions.Items):
             raise TypeError("Item must be of type Items.")
@@ -74,8 +69,11 @@ class Inventory:
                         self.character.stamina += item.amount
                     elif item.effect == "speed":
                         self.character.speed += item.amount
-                    print(f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
                     self.remove_item(item, 1)
+                    if item.quantity == 0:
+                        del self.items[item.id]
+                    
+                    return(f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
                 else:
                     raise ValueError("Item is not consumable.")
     def drop(self, item):

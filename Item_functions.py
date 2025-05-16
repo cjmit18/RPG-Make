@@ -1,20 +1,23 @@
 import inventory_functions
 import experience_functions
 import character_creation
-import uuid, random
+import uuid, random, logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
 class Items():
-    def __init__(self, name: str = "", description: str = "", price: int = 1, quantity:int = 1, lvl: int = 1, id: uuid.UUID = None):
+    def __init__(self, name: str = "", description: str = "", price: int = 0, quantity:int = 0, lvl: int = 0, id: uuid.UUID = None):
         self.id = uuid.uuid4()
         self.name = name
         self.description = description
         self.price = price
         self.quantity = quantity
-        self.lvl = lvl
+        self.lvl = experience_functions.Levels(self, lvl).lvl
+        self.experience = experience_functions.Levels(self, lvl).experience
     def __str__(self):
         return f"Item: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}, Lvl: {self.lvl}"
     def __repr__(self):
         return f"({self.name}, {self.description}, {self.price}, {self.quantity})"
-    def generate(item_type = random.choice(["weapon","armor","consumable"]), attack_power=0, defense_power=0, effect="", amount=0, duration=1, lvl=1, price=1):
+    def generate(item_type = random.choice(["weapon","armor","consumable"]), attack_power=0, defense_power=0, effect="", amount=0, duration=0, lvl=1, price=0, quantity=1):
         if item_type == "weapon":
             if lvl == 1:
                 return Weapon(name = "Sword", 
@@ -62,7 +65,7 @@ class Items():
                                       description="A basic Health Potion",
                                       effect="health", 
                                       amount=25 if amount == 0 else amount,
-                                    duration=duration, 
+                                    duration=60 if duration == 0 else duration, 
                                     price=5 if price == 0 else price,
                                     )
                 elif effect == "mana":
@@ -110,7 +113,7 @@ class Items():
                                            )
                 elif effect == "stamina":
                     return Consumable(name="Stamina Potion",
-                                       description="A a grade 2 Stamina Potion",
+                                       description="A grade 2 Stamina Potion",
                                          effect="stamina",
                                            amount=50 if amount == 0 else amount,
                                              duration=120 if duration == 0 else duration,
@@ -173,18 +176,20 @@ class Weapon(Items):
         return self.name
 class Armor(Items):
     def __init__(self, name:str = "", description:str = "", price:int = 5, quantity:int = 1, defense_power:int = 5, lvl:int = 1):    
-        super().__init__(name, description, price, quantity,lvl)
+        super().__init__(name, description, price, quantity, lvl)
         self.defense_power = defense_power
     def __str__(self):
         return f"Armor: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}\nDefense Power: {self.defense_power}"
     def __repr__(self):
         return f"{self.name}"
 class Consumable(Items):
-    def __init__(self, name:str="", description:str="", effect:str = "" ,duration:int=1, amount:int=0,quantity:int=1,price:int=0, lvl:int=1):
-        super().__init__(name, description, price, quantity)
+    def __init__(self, price=0,name:str="", description:str="", effect:str = "" ,duration:int=1, amount:int=0,quantity:int=1, lvl:int=1):
+        super().__init__(name, description, price, quantity, lvl)
+        self.price = price
         self.effect = effect
         self.duration = duration
         self.amount = amount
+        self.quantity = quantity
     def __str__(self):
         if self.duration > 1:
             return f"Consumable: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}\nEffect: Increases {self.effect} by {self.amount} for {self.duration} turns."

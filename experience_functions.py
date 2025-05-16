@@ -1,5 +1,8 @@
 import combat_settings
 import character_creation
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
 class Levels:
     def __init__(self, character, level=1, experience=0):
         self.character = character
@@ -20,24 +23,24 @@ class Levels:
         while self.experience >= self.required_experience():
             self.experience -= self.required_experience()
             self.lvl += 1
-            print(f"{self.character.name} leveled up to level {self.lvl}!")
+            log.info(f"{self.character.name} leveled up to level {self.lvl}!")
     def required_experience(self):
         return (self.lvl * 100) * 2
     def change_level(self, new_level):
         if new_level < 1:
             raise ValueError("Level must be at least 1.")
         self.lvl = new_level
-        print(f"Level changed to {self.lvl}.")
+        log.info(f"Level changed to {self.lvl}.")
     def reset_experience(self):
         self.experience = 0
-        print("Experience points have been reset.")
+        log.info("Experience points have been reset.")
     def reset_level(self):
         self.lvl = 1
-        print("Level has been reset to 1.")
+        log.info("Level has been reset to 1.")
     def reset(self):
         self.reset_experience()
         self.reset_level()
-        print("Experience and level have been reset.")
+        log.info("Experience and level have been reset.")
     def experience_calc(self, enemy):
        if isinstance(enemy, character_creation.Enemy) or isinstance(enemy, character_creation.NPC):
             if enemy.lvl.experience > 0:

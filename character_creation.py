@@ -10,7 +10,9 @@ class Character():
         self.health = 100
         self.mana = 100
         self.stamina = 100
-        self.lvl = experience_functions.Levels(self, level, experience)
+        self.lvls = experience_functions.Levels(self, level, experience)
+        self.lvl = self.lvls.lvl
+        self.experience = self.lvls.experience
         self.inventory = inventory_functions.Inventory(self)
     def __str__(self):
         return (f"{self.__class__.__name__}:\n"
@@ -46,9 +48,13 @@ class Character():
         return self._lvl
     @lvl.setter
     def lvl(self, lvl):
-        if not isinstance(lvl, experience_functions.Levels):
-            raise TypeError("Level must be a Levels object.")
-        self._lvl = lvl
+        if not isinstance(lvl, int):
+            raise TypeError("Level must be an integer.")
+        elif lvl < 1:
+            self._lvl = 1
+        else:
+            self._lvl = lvl
+        self.lvls.change_level(self._lvl)
     @property
     def attack(self):
         if self.inventory.equipped_items["weapon"] is not None:
@@ -142,12 +148,12 @@ class NPC(Character):
 class Enemy(Character):
     def __init__(self, name: str = "Enemy", level: int = 1):
         super().__init__(name, level)
-        self.attack = self.lvl.lvl * 10
-        self.defense = self.lvl.lvl * 5
-        self.speed = self.lvl.lvl * 3
-        self.health = self.lvl.lvl * 50
-        self.mana = self.lvl.lvl * 20
-        self.stamina = self.lvl.lvl * 30
+        self.attack = self.lvls.lvl * 10
+        self.defense = self.lvls.lvl * 5
+        self.speed = self.lvls.lvl * 3
+        self.health = self.lvls.lvl * 50
+        self.mana = self.lvls.lvl * 20
+        self.stamina = self.lvls.lvl * 30
     def __str__(self):
         return super().__str__()
     def __repr__(self):
@@ -159,12 +165,12 @@ class Enemy(Character):
 class Player(Character):
     def __init__(self, name: str = "Hero", level: int = 1):
         super().__init__(name, level)
-        self.attack = 15 * self.lvl.lvl
-        self.defense = 10 * self.lvl.lvl
-        self.speed = 5 * self.lvl.lvl
-        self.health = 100 + (self.lvl.lvl * 20)
-        self.mana = 100 + (self.lvl.lvl * 10)
-        self.stamina = 100 + (self.lvl.lvl * 15)
+        self.attack = 15 * self.lvls.lvl
+        self.defense = 10 * self.lvls.lvl
+        self.speed = 5 * self.lvls.lvl
+        self.health = 100 + (self.lvls.lvl * 20)
+        self.mana = 100 + (self.lvls.lvl * 10)
+        self.stamina = 100 + (self.lvls.lvl * 15)
     def __str__(self):
         return super().__str__()
     def __repr__(self):

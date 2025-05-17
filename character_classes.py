@@ -61,6 +61,21 @@ class Rogue(c_class):
         return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
     def __repr__(self) -> str:
         return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
+class Healer(c_class):
+    def __init__(self, character: character_creation) -> None:
+        super().__init__(character)
+        self.class_ = "Healer"
+        self.character.attack += 2
+        self.character.defense += 2
+        self.character.speed += 2
+        self.character.health += 5
+        self.character.mana += 10
+        self.character.stamina += 5
+        log.info(f"{self.character.name} is now a {self.c_class}!")
+    def __str__(self) -> str:
+        return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
+    def __repr__(self) -> str:
+        return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
     @classmethod
     def change_class(cls, character: character_creation) -> c_class:
         if character.class_ == "Knight":

@@ -57,27 +57,27 @@ class Combat:
                 if random.randint(1, 10) > 5:
                     log.info(f"{attacker.name} found a health potion!")
                     attacker.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
-                return attacker.lvl.experience_calc(defender), f"{attacker.name} gains {defender.lvl.experience} experience points!"
+                return attacker.lvls.experience_calc(defender), f"{attacker.name} gains {defender.lvls.experience} experience points!"
             elif defender.__class__ == character_creation.Player:
                 log.info(f"{defender.name} is defeated!")
-                return attacker.lvl.experience_calc(defender)
+                return attacker.lvls.experience_calc(defender)
         elif attacker.health <= 0:
             if attacker.__class__ == character_creation.Enemy:
                 log.info(f"{attacker.name} is defeated!")
                 if random.randint(1, 10) > 5:
                     log.info(f"{defender.name} found a health potion!")
                     defender.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
-                return defender.lvl.experience_calc(attacker), f"{defender.name} gains {attacker.lvl.experience} experience points!"
+                return defender.lvls.experience_calc(attacker), f"{defender.name} gains {attacker.lvls.experience} experience points!"
             elif attacker.__class__ == character_creation.Player:
                 log.info(f"{attacker.name} is defeated!")
-                return attacker.lvl.experience_calc(defender)
+                return attacker.lvls.experience_calc(defender)
             else:
                 if random.randint(1, 10) > 5:
                     log.info(f"{defender.name} found a health potion!")
                     defender.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
                 return f"{attacker.name} is defeated!\n\
-                {defender.name} gains {attacker.lvl.experience} experience points!\n\
-                {defender.lvl.experience_calc(attacker)}"
+                {defender.name} gains {attacker.lvls.experience} experience points!\n\
+                {defender.lvls.experience_calc(attacker)}"
         else:
             log.info(f"{attacker.name} has {attacker.health if attacker.health >= 1 else '0'} health left.")
             log.info(f"{defender.name} has {defender.health if defender.health >= 1 else '0'} health left.")

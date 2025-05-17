@@ -1,9 +1,11 @@
 import character_creation
 import inventory_functions
-import combat_settings
+import combat_functions
 import Item_functions
-import os, random, time
-import experience_functions
+import os, random, time,logging
+import character_classes
+import logging
+logging.basicConfig(level=logging.INFO)
 def generate_random_number(min_value=1, max_value=10):
     return random.randint(min_value, max_value)
 def generate_random_float(min_value=1.0, max_value=10.0):
@@ -32,7 +34,7 @@ def main():
     random_item = Item_functions.Items.generate(lvl = generate_random_number(1,3))# duration = generate_random_number(1, 5))
 
 
-    character.inventory.add_item(random_item, 1)
+    character.inventory.add_item(sword, 1)
     random_item = Item_functions.Items.generate(lvl = generate_random_number(1,3))# duration = generate_random_number(1, 5))
 
     character.inventory.add_item(random_item, 1)
@@ -50,14 +52,12 @@ def main():
             print(f"{slot.capitalize()}: None")
     #time.sleep(1)
     # Create an enemy
-    enemy = character_creation.Enemy(name="Dragon",level = 1)
-    #start combat
-    #print(f"A wild {enemy.name} appears!")
-    #time.sleep(1)
-    # Simulate combat
-    #character.inventory.use_item(potion)
-    character.inventory.unequip_all()
-    print(character)
-    # Display the result
+    enemy = character_creation.Enemy(name="Dragon",level = 1,)
+    combat = combat_functions.Combat(character, enemy)
+    # Start combat
+    print("Starting combat...")
+    time.sleep(1)
+    result = combat.turns(character, enemy)
+    character.inventory.equip_item(sword)
 if __name__ == "__main__":
     main()

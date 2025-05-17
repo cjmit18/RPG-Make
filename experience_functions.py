@@ -1,4 +1,4 @@
-import combat_settings
+import combat_functions
 import character_creation
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +24,7 @@ class Levels:
         while self.experience >= self.required_experience():
             self.experience -= self.required_experience()
             self.lvl += 1
+            self.character.update_stats()
             log.info(f"{self.character.name} leveled up to level {self.lvl}!")
     def required_experience(self):
         return (self.lvl * 100) * 2
@@ -44,8 +45,8 @@ class Levels:
         log.info("Experience and level have been reset.")
     def experience_calc(self, enemy):
        if isinstance(enemy, character_creation.Enemy) or isinstance(enemy, character_creation.NPC):
-            if enemy.lvl.experience > 0:
-                self.add_experience(enemy.lvl.experience)
+            if enemy.lvls.experience > 0:
+                self.add_experience(enemy.lvls.experience)
     @property
     def experience(self):
         if self.character.__class__ == character_creation.Enemy and self._experience <= 0:

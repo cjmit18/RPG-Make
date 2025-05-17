@@ -20,8 +20,7 @@ def main():
     
     # Create a character
     player = character_creation.Player("Hero", 1)
-    character = character_creation.Character("Wizard", 10)
-    character.speed = 1000
+    character = character_creation.Player("Wizard", 1)
    
     # Create an inventory for the character
     
@@ -30,18 +29,18 @@ def main():
     shield = Item_functions.Armor(name="Shield", description="A sturdy shield.", price=8, defense_power=650)
     potion = Item_functions.Consumable(name="Health Potion", description="Restores health.", effect="health", amount=10, duration=1)
     # Add items to the inventory 
-    random_item = Item_functions.Items.generate(lvl = generate_random_number(1,3),item_type = "weapon",effect = "", attack_power=1500, quantity=2)# duration = generate_random_number(1, 5))
-    character.inventory.add_item(sword, 1)
-    character.inventory.add_item(shield, 1)
-    character.inventory.add_item(potion, 2)
+    random_item = Item_functions.Items.generate(lvl = generate_random_number(1,3))# duration = generate_random_number(1, 5))
+
+
+    character.inventory.add_item(random_item, 1)
+    random_item = Item_functions.Items.generate(lvl = generate_random_number(1,3))# duration = generate_random_number(1, 5))
+
     character.inventory.add_item(random_item, 1)
     # Display the inventory
     print("Your inventory:")
     
     #time.sleep(1)
     # Equip an item
-    character.inventory.equip_item(sword, "weapon")
-    character.inventory.equip_item(shield, "armor")
     #Display equipped items
     print("Equipped items:")
     for slot, item in character.inventory.equipped_items.items():
@@ -51,13 +50,14 @@ def main():
             print(f"{slot.capitalize()}: None")
     #time.sleep(1)
     # Create an enemy
-    enemy = character_creation.Enemy(name="Dragon",level = 50)
+    enemy = character_creation.Enemy(name="Dragon",level = 1)
     #start combat
     #print(f"A wild {enemy.name} appears!")
     #time.sleep(1)
     # Simulate combat
-    character.inventory.use_item(potion)
-    print(character.inventory.items[random_item.id]["item"])
+    #character.inventory.use_item(potion)
+    character.inventory.unequip_all()
+    print(character)
     # Display the result
 if __name__ == "__main__":
     main()

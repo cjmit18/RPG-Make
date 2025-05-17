@@ -11,7 +11,8 @@ class Levels:
     def __str__(self):
         return f"Name: {self.character.name}\nLevel: {self.lvl} Experience: {self.experience}"
     def __repr__(self):
-        return f"Levels(lvl={self.lvl} experience={self.experience})"
+        return f"Name: {self.character.name}\nLevel: {self.lvl} Experience: {self.experience}"
+
     def add_experience(self, exp):
         if not isinstance(exp, int):
             raise TypeError("Experience must be an integer.")

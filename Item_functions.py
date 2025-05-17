@@ -17,25 +17,31 @@ class Items():
         return f"Item: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}, Lvl: {self.lvl}"
     def __repr__(self):
         return f"({self.name}, {self.description}, {self.price}, {self.quantity})"
-    def generate(item_type = random.choice(["weapon","armor","consumable"]), attack_power=0, defense_power=0, effect="", amount=0, duration=0, lvl=1, price=0, quantity=1):
+    def generate(item_type = random.choice(["weapon","armor","consumable"]), attack_power=0, defense_power=0, effect="", amount=0, duration=0, lvl=1, price=0, quantity=0):
         if item_type == "weapon":
             if lvl == 1:
                 return Weapon(name = "Sword", 
                               description = "A basic sword",
                               attack_power= 10 if attack_power == 0 else attack_power,
                               price = 10 if price == 0 else price,
+                              quantity = 1 if quantity == 0 else quantity,
+                              lvl = 1 if lvl == 0 else lvl,
                               )
             elif lvl == 2:
                 return Weapon(name = "Sword", 
                               description = "A grade 2 sword",
                               attack_power= 20 if attack_power == 0 else attack_power,
                               price = 20 if price == 0 else price,
+                              quantity = 1 if quantity == 0 else quantity,
+                              lvl = 2 if lvl == 0 else lvl,
                               )
             elif lvl == 3:
                 return Weapon(name = "Sword", 
                               description = "A grade 3 sword",
                               attack_power= 30 if attack_power == 0 else attack_power,
                               price = 30 if price == 0 else price,
+                              quantity = 1 if quantity == 0 else quantity,
+                              lvl = 3 if lvl == 0 else lvl,
                               )
         elif item_type == "armor":
             if lvl == 1:
@@ -170,6 +176,7 @@ class Weapon(Items):
             raise TypeError("Name must be a string.")
         super().__init__(name, description, price, quantity, lvl)
         self.attack_power = attack_power
+        self.quantity = quantity
     def __str__(self):
         return f"Weapon: {self.name}\nDescription: {self.description}\nPrice: {self.price}, Quantity: {self.quantity}\nAttack Power: {self.attack_power}"
     def __repr__(self):
@@ -198,4 +205,4 @@ class Consumable(Items):
     def __repr__(self):
         return f"{self.name}"
 if __name__ == "__main__":
-    pass
+    pass#Figure out how to fix quantity

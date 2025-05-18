@@ -1,5 +1,4 @@
 import inventory_functions
-import Item_functions
 import character_creation
 import experience_functions
 import combat_functions
@@ -76,7 +75,6 @@ class Healer(c_class):
         return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
     def __repr__(self) -> str:
         return f"Name: {self.character.name}\nLevel: {self.character.lvl} Experience: {self.character.lvl.experience}\nHealth: {self.character.health}\nMana: {self.character.mana}\nStamina: {self.character.stamina}\nAttack: {self.character.attack}\nDefense: {self.character.defense}\nSpeed: {self.character.speed}"
-    @classmethod
     def change_class(cls, character: character_creation) -> c_class:
         if character.class_ == "Knight":
             return Knight(character)
@@ -86,7 +84,6 @@ class Healer(c_class):
             return Rogue(character)
         else:
             raise ValueError("Invalid class type.")
-    @classmethod
     def generate_random_class(cls, character: character_creation) -> c_class:
         class_ = random.choice([Knight, Mage, Rogue])
         return class_(character)

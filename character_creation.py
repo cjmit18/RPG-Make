@@ -1,7 +1,8 @@
 import inventory_functions
 import experience_functions
-import Item_functions
-import character_classes
+import class_creation
+import items_list
+import unit_test
 class Character():
     def __init__(self, name: str = "Template", level: int = 1, experience: int = 0) -> None:
         self.name: str = name
@@ -15,7 +16,7 @@ class Character():
         self.lvl: int = self.lvls.lvl
         self.experience: int = self.lvls.experience
         self.inventory: inventory_functions.Inventory = inventory_functions.Inventory(self)
-        self.class_ = character_classes.c_class(self)
+        self.class_ = class_creation.c_class(self)
         self.cls = None
         self.update_stats()
 
@@ -73,7 +74,7 @@ class Character():
         self.update_stats()
     @property
     def attack(self) -> int:
-        if self.inventory.equipped_items["weapon"] is not None:
+        if self.inventory.equipped_items["weapon"]:
             return self._attack + self.inventory.equipped_items["weapon"].attack_power
         return self._attack
     @attack.setter
@@ -150,13 +151,13 @@ class Character():
             raise TypeError("Inventory must be an Inventory object.")
         self._inventory: inventory_functions.Inventory = inventory
     @property
-    def class_(self) -> character_classes.c_class:
+    def class_(self) -> class_creation.c_class:
         return self._class_
     @class_.setter
     def class_(self, class_) -> None:
-        if not isinstance(class_, character_classes.c_class):
+        if not isinstance(class_, class_creation.c_class):
             raise TypeError("Class must be a c_class object.")
-        self._class_: character_classes.c_class = class_
+        self._class_: class_creation.c_class = class_
         
 class NPC(Character) :
     def __init__(self, name: str = "NPC", level: int = 1) -> None:
@@ -172,7 +173,17 @@ class NPC(Character) :
 class Enemy(Character):
     def __init__(self, name: str = "Enemy", level: int = 1) -> None:
         super().__init__(name, level)
-        cls = character_classes.c_class(self)
+        cls = class_creation.c_class(self)
+        level = 1 if level == 0 else level
+        if level == 1:
+            potion = items_list.Health_Potion(lvl=1)
+            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
+        elif level == 2:
+            potion = items_list.Health_Potion(lvl=2)
+            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
+        elif level == 3:
+            potion = items_list.Health_Potion(lvl=3)
+            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
     def __str__(self) -> str:   
         return super().__str__()
     def __repr__(self) -> str:
@@ -191,7 +202,7 @@ class Enemy(Character):
 class Player(Character):
     def __init__(self, name: str = "Hero", level: int = 1)  -> None:
         super().__init__(name, level)
-        cls = character_classes.c_class(self)
+        cls = class_creation.c_class(self)
     def __str__(self) -> str:
         return super().__str__()
     def __repr__(self) -> str:

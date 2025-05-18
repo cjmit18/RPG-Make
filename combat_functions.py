@@ -1,22 +1,25 @@
+"""Combat functions for the game.
+This module contains the Combat class, which handles the combat mechanics between characters."""
 import inventory_functions
 import experience_functions
 import character_creation
-import Item_functions
-import main, random,logging
+import items_list
+import unit_test, random,logging
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+log: logging = logging.getLogger()
 class Combat:
-    def __init__(self, character, enemy):
-        self.character = character
-        self.enemy = enemy
-    def user_input(self, prompt: str = "") -> str:
-        return input(prompt)
-    def turns(self, attacker, defender):
+    def __init__(self, character: character_creation, enemy: character_creation) -> None:
+        """Initialize the Combat class."""
+        self.character: character_creation = character
+        self.enemy: character_creation = enemy
+        self.turn: int = 1
+    def turns(self, attacker: character_creation, defender: character_creation) -> str:
+        """Handle the turns in combat between attacker and defender."""
         log.info("Testing combat settings...")
         log.info(f"{attacker.name} vs {defender.name}")
         log.info("Combat test initiated.")
         while True:
-            user = "attack" #self.user_input("Attack, Exit: ").lower()
+            user: str = "attack"
             if user == "attack" and attacker.speed >= defender.speed:
                 log.info(f"{attacker.name} attacks {defender.name}!")
                 self.damage_calc(attacker, defender)
@@ -41,11 +44,12 @@ class Combat:
                 return ("Exiting combat test.")
             else:
                 log.info("Invalid command. Please enter 'attack' or 'exit'.")
+            self.turn += 1
     
-    def damage_calc(self, attacker, defender):
-        self.turn = 1
-        random_float = random.uniform(1.0, 2.0)
-        damage = attacker.attack - round(defender.defense / random_float)
+    def damage_calc(self, attacker: character_creation, defender: character_creation) -> None:
+        """Calculate the damage dealt by the attacker to the defender."""
+        random_float: float = random.uniform(1.0, 2.0)
+        damage: int = attacker.attack - round(defender.defense / random_float)
         if damage > 0:
             defender.health = (defender.health - damage)
             log.info(f"{defender.name} takes {damage} damage!")
@@ -55,9 +59,9 @@ class Combat:
             if defender.__class__ == character_creation.Enemy:
                 log.info(f"{defender.name} is defeated!")
                 if random.randint(1, 10) > 5:
-                    log.info(f"{attacker.name} found a health potion!")
-                    attacker.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
-                return attacker.lvls.experience_calc(defender), f"{attacker.name} gains {defender.lvls.experience} experience points!"
+                    self.loot(attacker, defender)
+                attacker.lvls.experience_calc(defender)
+                return f"{attacker.name} gains {defender.lvls.experience} experience points!\n"
             elif defender.__class__ == character_creation.Player:
                 log.info(f"{defender.name} is defeated!")
                 return attacker.lvls.experience_calc(defender)
@@ -65,23 +69,31 @@ class Combat:
             if attacker.__class__ == character_creation.Enemy:
                 log.info(f"{attacker.name} is defeated!")
                 if random.randint(1, 10) > 5:
-                    log.info(f"{defender.name} found a health potion!")
-                    defender.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
-                return defender.lvls.experience_calc(attacker), f"{defender.name} gains {attacker.lvls.experience} experience points!"
+                    self.loot(defender, attacker)
+                defender.lvls.experience_calc(attacker)
+                return f"{defender.name} gains {attacker.lvls.experience} experience points!"
             elif attacker.__class__ == character_creation.Player:
                 log.info(f"{attacker.name} is defeated!")
                 return attacker.lvls.experience_calc(defender)
             else:
                 if random.randint(1, 10) > 5:
-                    log.info(f"{defender.name} found a health potion!")
-                    defender.inventory.add_item(Item_functions.Items.generate(lvl = 2,item_type = "consumable",effect = "health"), main.generate_random_number(1, 4))
-                return f"{attacker.name} is defeated!\n\
-                {defender.name} gains {attacker.lvls.experience} experience points!\n\
-                {defender.lvls.experience_calc(attacker)}"
+                    self.loot(defender, attacker)
+                defender.lvls.experience_calc(attacker)
+                return f"{defender.name} gains {attacker.lvls.experience} experience points!\n"
         else:
             log.info(f"{attacker.name} has {attacker.health if attacker.health >= 1 else '0'} health left.")
             log.info(f"{defender.name} has {defender.health if defender.health >= 1 else '0'} health left.")
             self.turn += 1
-            
+    def loot(self, winner, loser) -> None:
+        """Transfer all items from loser (enemy) to winner (player) after combat."""
+        for item_data in loser.inventory.items.values():
+            item: items_list.Item = item_data["item"]
+            quantity: int = item_data["quantity"]
+            loot_amount = unit_test.generate_random_number(1, quantity)
+            winner.inventory.add_item(item, loot_amount)
+            log.info(f"{winner.name} loots {loot_amount} {item.name}(s) from {loser.name}.")
+        loser.inventory.drop_all()
+
+
 if __name__ == "__main__":
     pass

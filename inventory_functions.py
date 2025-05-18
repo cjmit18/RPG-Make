@@ -1,13 +1,14 @@
-import Item_functions
+
 import character_creation
+import items_list
 import uuid, logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 class Inventory:
     def __init__(self,character):
-        self.character_name: str = character.name
+        self.name = character.name  
         self.character: character_creation.Character = character
-        self.items: dict[uuid.UUID, dict["item": Item_functions.Items, "quantity": int]] = {}
+        self.items: dict[uuid.UUID, dict["item": items_list.Item, "quantity": int]] = {}
         self.slots: list = ["weapon", "armor", "consumable"]
         self.equipped_items: dict = {
             "weapon": None,
@@ -16,20 +17,20 @@ class Inventory:
         }
     def __str__(self) -> str:
         if not self.items:
-            return f"Inventory of {self.character_name} is empty."
+            return f"Inventory of {self.name} is empty."
         else:
             items_str = "\n".join(
                 f"{item['item'].name} x{item['quantity']}" for item in self.items.values()
             )
-            return f"{self.character_name}'s Inventory:\n{items_str}\n"
+            return f"{self.name}'s Inventory:\n{items_str}\n"
     def __repr__(self) -> str:
         if not self.items:
-            return f"Inventory: ({self.character_name}, empty)"
+            return f"Inventory: ({self.name}, empty)"
         else:
-            return f"Inventory: ({self.character_name}, {self.items})"
+            return f"Inventory: ({self.name}, {self.items})"
     def add_item(self, item, quantity=1) -> None:
-        if not isinstance(item, Item_functions.Items):
-            raise TypeError("Item must be of type Items.")
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item not of type item.")
         elif not isinstance(quantity, int):
             raise TypeError("Quantity must be an integer.")
         elif quantity <= 0:
@@ -41,8 +42,8 @@ class Inventory:
                 "item": item,
                 "quantity": quantity}
     def remove_item(self, item, quantity=1) -> None:
-        if not isinstance(item, Item_functions.Items):
-            raise TypeError("Item must be of type Items.")
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item not of item type.")
         elif not isinstance(quantity, int):
             raise TypeError("Quantity must be an integer.")
         elif quantity <= 0:
@@ -56,8 +57,8 @@ class Inventory:
             if self.items[item.id]["quantity"] == 0:
                 del self.items[item.id]
     def check_item(self, item) -> str:
-        if not isinstance(item, Item_functions.Items):
-            raise TypeError("Item must be of type Items.")
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item not type.Item.")
         elif not isinstance(item.id, uuid.UUID):
             raise TypeError("Item ID must be of type UUID.")
         elif item.id not in self.items:
@@ -75,14 +76,18 @@ class Inventory:
         else:
             log.info(f"No items found with name '{name}'.")    
     def use_item(self, item) -> str:
-            if not isinstance(item, Item_functions.Items):
-                raise TypeError("Item must be of type Items.")
-            if isinstance(item, Item_functions.Consumable):
-                if item.id in self.items and self.items[item.id]["quantity"] > 0:
+            if not isinstance(item, items_list.Item):
+                raise TypeError("Item not of type item.")
+            if isinstance(item, items_list.Item):
+                if item.id not in self.items:
+                    raise ValueError("Item not found in inventory.")
+                elif item.id in self.items and self.items[item.id]["quantity"] == 0:
+                    raise ValueError("Item is out of stock.")
+                elif item.id in self.items and self.items[item.id]["quantity"] > 0:
                     self.items[item.id]["quantity"] -= 1
                     if self.items[item.id]["quantity"] == 0:
                         del self.items[item.id]
-                    if isinstance(item, Item_functions.Consumable) and item.effect in ["health", "mana", "stamina", "speed"]:
+                    if isinstance(item, items_list.Potion):
                         if item.effect == "health":
                             self.character.health += item.amount
                         elif item.effect == "mana":
@@ -94,8 +99,7 @@ class Inventory:
                         log.info( f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
                 else:
                     raise ValueError("Item not found in inventory")
-            else:
-                raise TypeError("Item must be of type Consumable.")
+                
     def use_by_name(self, name) -> None:
         if not isinstance(name, str):
             raise TypeError("Name must be a string.")
@@ -105,46 +109,78 @@ class Inventory:
                 self.use_item(item["item"])
         else:
             raise ValueError("Item not found in inventory.")
+    def use_consumable(self, item) -> None:
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item mitems.Item.")
+        if isinstance(item, items_list.Item):
+            if item.__class__.__name__ == "Consumable" and isinstance(item, items_list.Consumable):
+                if item.id not in self.items:
+                    raise ValueError("Item not found in inventory.")
+                elif item.id in self.items and self.items[item.id]["quantity"] == 0:
+                    raise ValueError("Item is out of stock.")
+                elif item.id in self.items and self.items[item.id]["quantity"] > 0:
+                    self.items[item.id]["quantity"] -= 1
+                    if self.items[item.id]["quantity"] == 0:
+                        del self.items[item.id]
+                    log.info(f"Used {item.name}. Effect: {item.effect}.")
+                else:
+                    raise ValueError("Item not found in inventory")
     def drop(self, item) -> None:
-        if not isinstance(item, Item_functions.Items):
-            raise TypeError("Item must be of type Items.")
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item mitems.Item.")
         elif item.id not in self.items:
             raise ValueError("Item not found in inventory.")
         else:
             self.remove_item(item, 1)
             log.info(f"Dropped {item.name}.")
+    def drop_by_name(self, name) -> None:
+        if not isinstance(name, str):
+            raise TypeError("Name must be a string.")
+        found_items = [item for item in self.items.values() if item["item"].name == name]
+        if found_items:
+            for item in found_items:
+                self.drop(item["item"])
+        else:
+            raise ValueError("Item not found in inventory.")
     def drop_all(self) -> None:
         if not self.items:
             raise ValueError("Inventory is empty.")
         for item in list(self.items.values()):
             self.remove_item(item["item"], item["quantity"])
-            log.info(f"Dropped {item['item'].name}.")
+            if self.character.__class__.__name__ == "Player" or self.character.__class__.__name__ == "Character":
+                log.info(f"{self.name} Dropped {item['item'].name}.")
     def equip_item(self, item) -> None:
-        if not isinstance(item, Item_functions.Items):
-            raise TypeError("Item must be of type Items.")
-        if isinstance(item, Item_functions.Items):
-            if item.__class__.__name__ == "Weapon" and isinstance(item, Item_functions.Weapon):
+        if not isinstance(item, items_list.Item):
+            raise TypeError("Item not of type item.")
+        elif not isinstance(item.id, uuid.UUID):
+            raise TypeError("Item ID must be of type UUID.")
+        elif item.id not in self.items:
+            raise ValueError("Item not found in inventory.")
+        elif item.id in self.items and self.items[item.id]["quantity"] == 0:
+            raise ValueError("Item is out of stock.")
+        if isinstance(item, items_list.Weapon) or isinstance(item, items_list.Armor) or isinstance(item, items_list.Consumable):
+            if isinstance(item, items_list.Weapon):
                 if self.items[item.id]["quantity"]> 0:
-                    self.equipped_items["weapon"] = item
-                    self.remove_item(item, 1)
-                    log.info(f"Equipped {item.name} as {item.__class__.__name__}.")
-            elif item.__class__.__name__ == "Armor" and isinstance(item, Item_functions.Armor):
+                        self.equipped_items["weapon"] = item
+                        self.remove_item(item, 1)
+                        log.info(f"Equipped {item.name} as {"Weapon"}.")
+            if isinstance(item, items_list.Armor):
                 if self.items[item.id]["quantity"]> 0:
                     self.equipped_items["armor"] = item
                     self.remove_item(item, 1)
-                    log.info(f"Equipped {item.name} as {item.__class__.__name__}.")
-            elif item.__class__.__name__ == "consumable" and isinstance(item, Item_functions.Consumable):
+                    log.info(f"Equipped {item.name} as {"Armor"}.")
+            if isinstance(item, items_list.Consumable):
                 if self.items[item.id]["quantity"]> 0:
                     self.equipped_items["consumable"] = item
                     self.remove_item(item, 1)
-                    log.info(f"Equipped {item.name} as {item.__class__.__name__}.")
+                    log.info(f"Equipped {item.name} as {"Consumable"}.")
     def equip_by_name(self, name) -> None:
         if not isinstance(name, str):
             raise TypeError("Name must be a string.")
         found_items = [item for item in self.items.values() if item["item"].name == name]
         if found_items:
             for item in found_items:
-                self.equip_item(item["item"], item["item"].__class__.__name__.lower())
+                self.equip_item(item["item"])
         else:
             raise ValueError("Item not found in inventory.")    
     def unequip_item(self, slot) -> None:
@@ -186,7 +222,7 @@ class Inventory:
     def find_by_effect(self, effect) -> None:
         if not isinstance(effect, str):
             raise TypeError("Effect must be a string.")
-        found_items = [item for item in self.items.values() if isinstance(item["item"], Item_functions.Consumable) and item["item"].effect == effect]
+        found_items = [item for item in self.items.values() if isinstance(item["item"], items_list.Consumable) and item["item"].effect == effect]
         if found_items:
             log.info(f"Found {len(found_items)} items with effect '{effect}': {found_items}")
         else:
@@ -247,8 +283,7 @@ class Inventory:
             raise TypeError("Equipped items must be a dictionary.")
         for key, value in equipped_items.items():
             if key not in self.slots:
-                raise ValueError("Equipped items must contain 'weapon', 'armor', and 'consumable' keys.")
-            if not isinstance(value, Item_functions.Items) and value is not None:
-                raise TypeError("Equipped items must be of type Items.")
+                raise ValueError("Invalid slot. Choose from 'weapon', 'armor', or 'consumable'.")
+            if not isinstance(value, items_list.Item) and value is not None:
+                raise TypeError("Equipped item must be of type Item or None.")
         self._equipped_items = equipped_items
-

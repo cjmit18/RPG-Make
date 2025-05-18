@@ -3,6 +3,7 @@ import experience_functions
 import class_creation
 import items_list
 import unit_test
+import gen
 class Character():
     def __init__(self, name: str = "Template", level: int = 1, experience: int = 0) -> None:
         self.name: str = name
@@ -25,8 +26,13 @@ class Character():
                 f"{self.lvls}\n"
                 f"Class: {self.class_.class_}\n"
                 f"{'-'*10}\n"
-                f"Attack: {self.attack} ({self.inventory.equipped_items['weapon'].attack_power if self.inventory.equipped_items['weapon'] else 0})\n"
-                f"Defense: {self.defense} ({self.inventory.equipped_items['armor'].defense_power if self.inventory.equipped_items['armor'] else 0})\n"
+                f"Attack: {self.attack} ({(self.inventory.equipped_items['weapon'].attack_power if self.inventory.equipped_items['weapon'] else 0) + 
+                                          (self.inventory.equipped_items['amulet'].attack_power if self.inventory.equipped_items['amulet'] else 0) +
+                                            (self.inventory.equipped_items['shield'].attack_power if self.inventory.equipped_items['shield'] else 0)})\n"
+
+                f"Defense: {self.defense} ({( self.inventory.equipped_items['amulet'].defense_power if self.inventory.equipped_items['amulet'] else 0) +
+                                            (self.inventory.equipped_items['shield'].defense_power if self.inventory.equipped_items['shield'] else 0) +
+                                            (self.inventory.equipped_items['armor'].defense_power if self.inventory.equipped_items['armor'] else 0)})\n"
                 f"Speed: {self.speed}\n"
                 f"Health: {self.health}\n"
                 f"Mana: {self.mana}\n"
@@ -37,7 +43,7 @@ class Character():
         return (f"{self.__class__.__name__}") + \
                (f"name={self.name}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
                (f"speed={self.speed}, health={self.health}, mana={self.mana}, ") + \
-               (f"stamina={self.stamina}, inventory={self.inventory})")    
+               (f"stamina={self.stamina}, inventory={self.inventory}")    
     def __eq__(self, other) -> bool:
         if isinstance(other, Character):
             return self.name == other.name and self.lvl == other.lvl and self.attack == other.attack and self.defense == other.defense and self.speed == other.speed and self.health == other.health and self.mana == other.mana and self.stamina == other.stamina and self.experience == other.experience
@@ -74,9 +80,14 @@ class Character():
         self.update_stats()
     @property
     def attack(self) -> int:
-        if self.inventory.equipped_items["weapon"]:
-            return self._attack + self.inventory.equipped_items["weapon"].attack_power
-        return self._attack
+        total = self._attack
+        if self.inventory.equipped_items["weapon"] is not None:
+            total += self.inventory.equipped_items["weapon"].attack_power
+        if self.inventory.equipped_items["amulet"] is not None: 
+            total += self.inventory.equipped_items["amulet"].attack_power
+        if self.inventory.equipped_items["shield"] is not None:
+            total += self.inventory.equipped_items["shield"].attack_power
+        return total
     @attack.setter
     def attack(self, attack):
         if not isinstance(attack, int):
@@ -87,9 +98,14 @@ class Character():
             self._attack: int = attack
     @property
     def defense(self) -> int:
+        total = self._defense
         if self.inventory.equipped_items["armor"] is not None:
-            return self._defense + self.inventory.equipped_items["armor"].defense_power
-        return self._defense
+            total += self.inventory.equipped_items["armor"].defense_power
+        if self.inventory.equipped_items["amulet"] is not None:
+            total += self.inventory.equipped_items["amulet"].defense_power
+        if self.inventory.equipped_items["shield"] is not None:
+            total += self.inventory.equipped_items["shield"].defense_power
+        return total
     @defense.setter
     def defense(self, defense) -> None:
         if not isinstance(defense, int):
@@ -111,6 +127,8 @@ class Character():
             self._speed: int = speed
     @property
     def health(self) -> int:
+        if self.inventory.equipped_items["ring"] is not None:
+            self._health += self.inventory.equipped_items["ring"].health_power
         return self._health
     @health.setter
     def health(self, health) -> None:
@@ -122,6 +140,8 @@ class Character():
             self._health: int = health
     @property
     def mana(self) -> int:
+        if self.inventory.equipped_items["ring"] is not None:
+            self._mana += self.inventory.equipped_items["ring"].mana_power
         return self._mana
     @mana.setter
     def mana(self, mana) -> None:
@@ -177,13 +197,13 @@ class Enemy(Character):
         level = 1 if level == 0 else level
         if level == 1:
             potion = items_list.Health_Potion(lvl=1)
-            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
+            self.inventory.add_item(potion, gen.generate_random_number(1, 3))
         elif level == 2:
             potion = items_list.Health_Potion(lvl=2)
-            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
+            self.inventory.add_item(potion, gen.generate_random_number(1, 3))
         elif level == 3:
             potion = items_list.Health_Potion(lvl=3)
-            self.inventory.add_item(potion, unit_test.generate_random_number(1, 3))
+            self.inventory.add_item(potion, gen.generate_random_number(1, 3))
     def __str__(self) -> str:   
         return super().__str__()
     def __repr__(self) -> str:

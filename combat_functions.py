@@ -4,7 +4,10 @@ import inventory_functions
 import experience_functions
 import character_creation
 import items_list
-import unit_test, random,logging
+import gen
+import unit_test
+import random
+import logging
 logging.basicConfig(level=logging.INFO)
 log: logging = logging.getLogger()
 class Combat:
@@ -89,7 +92,7 @@ class Combat:
         for item_data in loser.inventory.items.values():
             item: items_list.Item = item_data["item"]
             quantity: int = item_data["quantity"]
-            loot_amount = unit_test.generate_random_number(1, quantity)
+            loot_amount = gen.generate_random_number(1, quantity)
             winner.inventory.add_item(item, loot_amount)
             log.info(f"{winner.name} loots {loot_amount} {item.name}(s) from {loser.name}.")
         loser.inventory.drop_all()

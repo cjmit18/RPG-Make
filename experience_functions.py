@@ -9,8 +9,6 @@ class Levels:
     """Class to manage character levels and experience points."""
     def __init__(self, character, level=1, experience=0):
         self.character: character_creation.class_creation = character
-        self.lvl: int = level
-        self.experience: int = experience
         self._lvl: int = level
         self._experience: int = experience
     def __str__(self):

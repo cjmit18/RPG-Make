@@ -1,0 +1,103 @@
+import items_list as items
+import gen
+import logging
+import random
+import uuid
+logging.basicConfig(level=logging.INFO) 
+log = logging.getLogger()
+class Armor():
+	"""Base class for armor."""
+	"""Armor that can be used to protect against enemy attacks."""
+	def __init__(self, name: str = "", description: str = "", price: int = 0, defense_power:int = gen.generate_random_number(1,4), lvl: int = 0) -> None:
+		self.lvl = 1 if lvl == 0 else lvl
+		self.name = "Armor" if name == "" else name
+		self.id = uuid.uuid4()
+		# Randomly assign attack and defense power based on roll
+		if lvl == 1:
+			self.description: str = "Basic armor" if description == "" else description
+			self.defense_power: int = 10 if defense_power == 0 else defense_power
+			self.price: int = 10 if price == 0 else price
+		elif lvl > 1 and lvl <= 10:
+			self.description: str = f"A Grade {self.lvl} armor" if description == "" else description
+			self.defense_power: int = defense_power * self.lvl if defense_power != 0 else 10
+			self.price: int = 10 if price == 0 else price
+		elif lvl > 10:
+			self.description: str = f"A Grade {self.lvl} armor" if description == "" else description
+			self.price: int = 10 if price == 0 else price
+			roll: int = gen.generate_random_number(1, 3)
+			if roll == 1:
+				self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 2:
+				self.defense_power: int = gen.generate_random_number(5, 10) * self.lvl
+			elif roll == 3:
+				self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+	def __str__(self) -> str:
+		return f"Armor: {self.name}, Description: {self.description}, Price: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"
+	def __repr__(self) -> str:
+		return f"Armor: {self.name}, Description: {self.description}, Price: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"
+class Shield(Armor):
+	"""Base class for shields."""
+	"""Shields that can be used to protect against enemy attacks."""
+	def __init__(self, name: str = "", description: str = "", price: int = 0, defense_power: int = 0, lvl: int = 0) -> None:
+		super().__init__(name, description, price, defense_power, lvl)
+		self.lvl = 1 if lvl == 0 else lvl
+		self.name = "Shield" if name == "" else name
+		"""Randomly assign attack and defense power based on roll"""
+		roll: int = gen.generate_random_number(1, 3)
+		if self.lvl == 1:
+			self.description: str = "A basic shield" if description == "" else description
+			self.defense_power: int = 10 if defense_power == 0 else defense_power
+			self.price: int = 10 if price == 0 else price
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(0, 2)
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(0, 5)
+			elif roll == 3:
+				self.attack_power = 0
+		elif self.lvl > 1 and self.lvl <= 10:
+			# Randomly assign attack and defense power based on roll
+			self.description: str = f"A Grade {self.lvl} shield" if description == "" else description
+			self.price: int = 10 if price == 0 else price
+			if self.lvl > 1 and self.lvl <= 10:
+				if roll == 1:
+					self.attack_power: int = gen.generate_random_number(0, 2) * self.lvl
+					self.defense_power: int = gen.generate_random_number(1, 5) * self.lvl
+				elif roll == 2:
+					self.attack_power: int = gen.generate_random_number(0, 5) * self.lvl
+					self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
+				elif roll == 3:
+					self.attack_power: int = gen.generate_random_number(0, 10) * self.lvl
+					self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+			elif self.lvl >= 10:
+				self.effect: str = random.choice(["attack", "defense"])
+				if roll == 1:
+					if self.effect == "attack":
+						self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+						self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
+					elif self.effect == "defense":
+						self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+					elif self.effect == "both":
+						self.attack_power: int = gen.generate_random_number(2, 10) * self.lvl
+						self.defense_power: int = gen.generate_random_number(5, 20) * self.lvl
+				elif roll == 2:
+					if self.effect == "attack":
+						self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+						self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+					elif self.effect == "defense":
+						self.defense_power: int = gen.generate_random_number(5, 10) * self.lvl
+					elif self.effect == "both":
+						self.attack_power: int = gen.generate_random_number(2, 15) * self.lvl
+						self.defense_power: int = gen.generate_random_number(5, 20) * self.lvl
+				elif roll == 3:
+					if self.effect == "attack":
+						self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
+						self.defense_power: int = gen.generate_random_number(1, 30) * self.lvl
+					elif self.effect == "defense":
+						self.defense_power: int = gen.generate_random_number(5, 20) * self.lvl
+					elif self.effect == "both":
+						self.attack_power: int = gen.generate_random_number(2, 20) * self.lvl
+						self.defense_power: int = gen.generate_random_number(5, 30) * self.lvl
+	def __str__(self) -> str:
+		return f"Shield: {self.name}, Description: {self.description}, Price: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"
+	def __repr__(self) -> str:
+		return f"Shield: {self.name}, Description: {self.description}, Price: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"

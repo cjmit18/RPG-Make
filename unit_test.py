@@ -2,22 +2,17 @@ import character_creation
 import inventory_functions
 import combat_functions
 import items_list as items
+import weapon_list as weapons
+import potion_list as potions
+import armor_list as armors
 import experience_functions
-import os, random, time,logging
+import logging
 import class_creation
 import gen
-import logging
+import unittest
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
-import unittest
-import character_creation
-import inventory_functions
-import combat_functions
-import items_list as items
-import experience_functions
-import class_creation
-import gen
 
 class TestCharacterCreation(unittest.TestCase):
     def test_character_init(self):
@@ -39,17 +34,18 @@ class TestCharacterCreation(unittest.TestCase):
 
 class TestItemsList(unittest.TestCase):
     def test_item_init(self):
-        item = items.Item(name="Sword", description="Sharp blade", price=100, lvl=2)
+        item = weapons.Sword(name="Sword", description="Sharp blade", price=100, lvl=2)
         self.assertEqual(item.name, "Sword")
         self.assertEqual(item.description, "Sharp blade")
         self.assertEqual(item.price, 100)
         self.assertEqual(item.lvl, 2)
 
-    def test_consumable_inheritance(self):
-        consumable = items.Consumable(name="Food", effect="heal", amount=5)
-        self.assertIsInstance(consumable, items.Item)
-        self.assertEqual(consumable.effect, "heal")
-        self.assertEqual(consumable.amount, 5)
+    def test_potion_init(self):
+        potion = potions.Health_Potion(name="Health Potion", description="Restores health", price=50, amount=20)
+        self.assertEqual(potion.name, "Health Potion")
+        self.assertEqual(potion.description, "Restores health")
+        self.assertEqual(potion.price, 50)
+        self.assertEqual(potion.amount, 20)
 
 class TestClassCreation(unittest.TestCase):
     def test_knight_class(self):
@@ -87,6 +83,23 @@ class TestCombatFunctions(unittest.TestCase):
         if hasattr(combat_functions, "attack"):
             result = combat_functions.attack(attacker, defender)
             self.assertIsInstance(result, int)
+class TestGenFunctions(unittest.TestCase):
+    def test_random_number(self):
+        num = gen.generate_random_number(1, 10)
+        self.assertGreaterEqual(num, 1)
+        self.assertLessEqual(num, 10)
+
+    def test_random_choice(self):
+        choices = ["a", "b", "c"]
+        choice = gen.random_choice(choices)
+        self.assertIn(choice, choices)
+    def test_clear_screen(self):
+        # This test is not practical to run in a unit test environment
+        # but we can check if the function exists and runs without error
+        try:
+            gen.clear_screen()
+        except Exception as e:
+            self.fail(f"clear_screen raised {type(e).__name__} unexpectedly: {e}")
 
 if __name__ == "__main__":
     unittest.main()

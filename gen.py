@@ -23,3 +23,6 @@ def wait(seconds):
     for i in range(seconds, 0, -1):
         log.info(f"Waiting {i} seconds...")
         time.sleep(1)
+def random_choice(choices: list = []):
+    """Return a random choice from a list of choices."""
+    return random.choice(choices)

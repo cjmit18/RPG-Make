@@ -9,12 +9,13 @@ import gen
 import weapon_list as weapons
 import potion_list as potions
 import armor_list as armors
+import amulet_list as amulets
+from ring_list import Ring
+from boots_list import Boot
 import logging
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
-axe = weapons.Axe(name="Knight's Axe", description="A sword for a knight", price=100, lvl=1, attack_power=20)
-ring = items.Ring(name="Knight's Ring", description="A ring for a knight", price=100, lvl=1,)
-amulet = items.Amulet(name="Knight's Amulet", description="An amulet for a knight", price=100, lvl=1)
+ring = Ring(name="Ring of Power", description="A powerful ring", price=100, effect="health", lvl=1, health_power=10, mana_power=5, stamina_power=3)
 character = character_creation.Player("TestChar")
-character.change_class(class_creation.Knight)
+amulet = amulets.Amulet(name="Amulet of Power", description="A powerful amulet", price=100, effect="health", lvl=1, health_power=10, mana_power=5, stamina_power=3)
+character.change_class(class_creation.Healer)
 print(character)

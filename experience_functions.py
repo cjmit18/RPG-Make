@@ -3,8 +3,7 @@ This module handles the experience and leveling system for characters in the gam
 import combat_functions
 import character_creation
 import logging
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 class Levels:
     """Class to manage character levels and experience points."""
     def __init__(self, character, level=1, experience=0):

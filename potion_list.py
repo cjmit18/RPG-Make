@@ -12,6 +12,7 @@ class Potion():
 				amount: int = 1,
 				duration: int = 1,
 				lvl: int = 0) -> None:
+				
 		self.id = uuid.uuid4()
 		self.name: str = name
 		self.effect: int = effect
@@ -59,9 +60,9 @@ class Health_Potion(Potion):
 		return f"Health Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 class Mana_Potion(Potion):
 	"""Mana potions that can be used to restore mana."""
-	def __init__(self, name: str = "Mana Potion", description: str = "A basic mana potion", price: int = 0, effect: str = "mana" , amount: int = 1, duration: int = 1) -> None:
+	def __init__(self, name: str = "Mana Potion", description: str = "A basic mana potion", price: int = 0, effect: str = "mana" , amount: int = 1, duration: int = 1, lvl: int = 0) -> None:
 		super().__init__(name, description, price, effect, amount, duration)
-		self.lvl = 1 if self.lvl == 0 else self.lvl
+		self.lvl = 1 if lvl == 0 else lvl
 		self.name: str = "Mana Potion" if name == "" else name
 		self.effect: str = "mana"
 		if self.lvl == 1:
@@ -80,7 +81,3 @@ class Mana_Potion(Potion):
 			self.effect: str = 'mana'
 			self.amount: int = 250 if amount == 0 else amount
 			self.duration: int = 1 if duration == 0 else duration
-	def __str__(self) -> str:
-		return f"Mana Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
-	def __repr__(self) -> str:
-		return f"Mana Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"

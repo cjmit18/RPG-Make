@@ -5,8 +5,7 @@ from typing import List, Dict, Tuple
 import gen
 import random
 import logging
-logging.basicConfig(level=logging.INFO)
-log: logging = logging.getLogger()
+log: logging = logging.getLogger(__name__)
 class Combat:
     """Combat class to handle combat between characters."""
     def __init__(self, character: character_creation, enemy: character_creation) -> None:

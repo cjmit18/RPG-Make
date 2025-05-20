@@ -4,8 +4,7 @@ import random
 import os
 import time
 import logging
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 def generate_random_number(min_value=1, max_value=10):
     """Generate a random integer between min_value and max_value."""
     return random.randint(min_value, max_value)

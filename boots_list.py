@@ -1,7 +1,8 @@
 import random
 import gen
 import uuid
-class Boot():  # Inherit from Item
+import items_list
+class Boot(items_list.Item):  # Inherit from Item
     """Base class for boots"""
     def __init__(self, name: str = "", description: str = "", price: int = 0, effect: str = "boots", lvl: int = 0, speed_power: int = 0, stamina_power: int = 0) -> None:
         self.lvl: int = 1 if lvl == 0 else lvl

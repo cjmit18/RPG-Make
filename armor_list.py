@@ -5,7 +5,7 @@ import random
 import uuid
 logging.basicConfig(level=logging.INFO) 
 log = logging.getLogger()
-class Armor():
+class Armor(items.Item):
 	"""Base class for armor."""
 	"""Armor that can be used to protect against enemy attacks."""
 	def __init__(self, name: str = "", description: str = "", price: int = 0, defense_power:int = gen.generate_random_number(1,4), lvl: int = 0) -> None:

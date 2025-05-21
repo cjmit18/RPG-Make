@@ -11,65 +11,56 @@ import ring_list as rings
 import uuid
 import logging
 log = logging.getLogger(__name__)
+def get_equip_slot(item) -> str | None:
+    """Returns the slot name for the given item, or None if not equippable."""
+    type_to_slot = {
+        weapons.Off_Hand: "offhand",       # check Off_Hand before Weapon
+        weapons.Weapon: "weapon",
+        armors.Shield: "shield",           # check Shield before Armor
+        armors.Armor: "armor",
+        boots.Boot: "boots",
+        amulets.Amulet: "amulet",
+        rings.Ring: "ring",
+        items_list.Consumable: "consumable",
+    }
+    for cls, slot in type_to_slot.items():
+        if isinstance(item, cls):
+            return slot
+    return None
+def is_equippable(item) -> bool:
+    """Return True if item can be equipped to a slot."""
+    return get_equip_slot(item) is not None
 class Inventory:
     """Inventory class for managing character inventory in a game.
     This class allows adding, removing, equipping, unequipping, and using items."""
-    def __init__(self,character) -> None:
-        self.name: str = character.name  
+    def __init__(self, character) -> None:
+        self.name: str = character.name
         self.character: character_creation.Character = character
-        self.items: dict[uuid.UUID, dict["item": items_list.Item, "quantity": int]] = {}
-        self.slots: list = ["weapon", "armor", "consumable","shield","amulet", "ring" ,"boots", "offhand"]
-        self.equipped_items: dict = {
-            "weapon": None,
-            "offhand": None,
-            "armor": None,
-            "boots": None,
-            "shield": None,
-            "amulet": None,
-            "ring": None,
-            "consumable": None
-        }
+        self._items: dict[uuid.UUID, dict[str, object]] = {}  # <- use _items, not items
+        self._equipped_items: dict[str, object] = {slot: None for slot in self.slots}
+    @property
+    def slots(self) -> list:
+         return ["weapon", "armor", "consumable","shield","amulet", "ring" ,"boots", "offhand"]
     def __str__(self) -> str:
         if not self.items:
             return f"Inventory of {self.name} is empty."
-        else:
-            items_str: str = "\n".join(
-                f"{item['item'].name} x{item['quantity']}" for item in self.items.values()
-            )
-            return f"{self.name}'s Inventory:\n{items_str}\n"
-    def __repr__(self) -> str:
-        if not self.items:
-            return f"Inventory: ({self.name}, empty)"
-        else:
-            return f"Inventory: ({self.name}, {self.items})"
+        items_str: str = "\n".join(f"{item['item'].name} x{item['quantity']}" for item in self.items.values())
+        return f"{self.name}'s Inventory:\n{items_str}\n"
     def add_item(self, item, quantity=1) -> None:
         """Add an item to the inventory."""
-        if not isinstance(item.id, uuid.UUID):
-            raise TypeError("Item ID must be of type UUID.")
-        elif not isinstance(quantity, int):
-            raise TypeError("Quantity must be an integer.")
-        elif quantity <= 0:
-            raise ValueError("Quantity must be greater than 0.")
-        elif item.id in self.items:
+        if item.id in self.items:
             self.items[item.id]["quantity"] += quantity
         else:
             self.items[item.id] = {"item": item, "quantity": quantity}
     def remove_item(self, item, quantity=1) -> None:
         """Remove an item from the inventory."""
-        if not isinstance(item.id, uuid.UUID):
-            raise TypeError("Item ID must be of type UUID.")
-        elif not isinstance(quantity, int):
-            raise TypeError("Quantity must be an integer.")
-        elif quantity <= 0:
-            raise ValueError("Quantity must be greater than 0.")
-        elif item.id not in self.items:
+        if item.id not in self.items:
             raise ValueError("Item not found in inventory.")
-        elif self.items[item.id]["quantity"] < quantity:
+        if self.items[item.id]["quantity"] < quantity:
             raise ValueError("Not enough quantity to remove.")
-        else:
-            self.items[item.id]["quantity"] -= quantity
-            if self.items[item.id]["quantity"] == 0:
-                del self.items[item.id]
+        self.items[item.id]["quantity"] -= quantity
+        if self.items[item.id]["quantity"] == 0:
+            del self.items[item.id]
     def check_item(self, item) -> str:
         """Check if an item is in the inventory."""
         if not isinstance(item.id, uuid.UUID):
@@ -114,7 +105,6 @@ class Inventory:
                 
             else:
                 raise ValueError("Item not found in inventory")
-                
     def use_by_name(self, name) -> None:
         """Use an item from the inventory by name."""
         if not isinstance(name, str):
@@ -164,61 +154,24 @@ class Inventory:
                 log.info(f"{self.name} Dropped {item['item'].name}.")
     def equip_item(self, item) -> None:
         """Equip an item from the inventory."""
-        if not isinstance(item.id, uuid.UUID):
-            raise TypeError("Item ID must be of type UUID.")
-        elif item.id not in self.items:
-            raise ValueError("Item not found in inventory.")
-        elif item.id in self.items and self.items[item.id]["quantity"] == 0:
-            raise ValueError("Item is out of stock.")
-        if isinstance(item, weapons.Weapon) and not isinstance(item, weapons.Off_Hand):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["weapon"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Weapon"}.")
-        elif isinstance(item, weapons.Off_Hand):
-            if self.equipped_items["shield"] is not None:
-                raise ValueError("Cannot equip offhand item while shield is equipped.")
-            elif self.items[item.id]["quantity"] > 0:
-                if self.equipped_items["weapon"] is not None:
-                    self.equipped_items["offhand"] = item
-                    self.remove_item(item, 1)
-                    log.info(f"Equipped {item.name} as {"Offhand"}.")
-                else:
-                    raise ValueError("No weapon equipped to use offhand item.")
-        elif isinstance(item, armors.Armor) and not isinstance(item, armors.Shield):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["armor"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Armor"}.")
-        elif isinstance(item, armors.Shield):
-            if self.equipped_items["offhand"] is not None:
-                raise ValueError("Cannot equip shield while offhand item is equipped.")
-            elif self.items[item.id]["quantity"]> 0:
-                self.equipped_items["shield"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Shield"}.")
-        elif isinstance(item, amulets.Amulet):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["amulet"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Amulet"}.")
-        elif isinstance(item, rings.Ring):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["ring"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Ring"}.")
-        elif isinstance(item, boots.Boot):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["boots"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Boots"}.")
-        elif isinstance(item, items_list.Consumable):
-            if self.items[item.id]["quantity"]> 0:
-                self.equipped_items["consumable"] = item
-                self.remove_item(item, 1)
-                log.info(f"Equipped {item.name} as {"Consumable"}.")
-        else:
-            raise ValueError("Item not of type Weapon, Armor, Consumable, Shield, Amulet or Ring.")
+        matched_slot = get_equip_slot(item)
+
+        if not matched_slot:
+            log.warning(f"{item.name} is not equippable.")
+            return
+
+        # Shield/offhand conflict check
+        if matched_slot == "offhand" and self.equipped_items["shield"]:
+            raise ValueError("Cannot equip offhand item while shield is equipped.")
+        if matched_slot == "shield" and self.equipped_items["offhand"]:
+            raise ValueError("Cannot equip shield while offhand item is equipped.")
+
+        if self.equipped_items[matched_slot]:
+            self.unequip_item(matched_slot)
+
+        self.equipped_items[matched_slot] = item
+        self.remove_item(item, 1)
+        log.info(f"Equipped {item.name} to {matched_slot.capitalize()} slot.")
     def equip_by_name(self, name) -> None:
         """Equip an item from the inventory by name."""
         if not isinstance(name, str):
@@ -230,144 +183,35 @@ class Inventory:
         else:
             raise ValueError("Item not found in inventory.")    
     def unequip_item(self, slot) -> None:
-        """Unequip an item from the inventory."""
-        if not isinstance(slot, str):
-            raise TypeError("Slot must be a string.")
         if slot not in self.slots:
-            raise ValueError("Invalid slot. Choose from 'weapon', 'armor', or 'consumable'.")
-        if slot in self.slots:
-           if self.equipped_items[slot] is not None:
-               item = self.equipped_items[slot]
-               self.add_item(item, 1)
-               self.equipped_items[slot] = None
-               log.info(f"Unequipped {item.name} from {slot.capitalize()} slot.")
-           else:
-               raise ValueError("No item equipped in this slot.")
+            raise ValueError(f"Invalid slot: {slot}")
+        item = self.equipped_items[slot]
+        if item:
+            self.add_item(item, 1)
+            self.equipped_items[slot] = None
+            log.info(f"Unequipped {item.name} from {slot.capitalize()} slot.")
     def unequip_all(self) -> None:
         """Unequip all items from the inventory."""
-        if not self.equipped_items:
-            raise ValueError("No items equipped.")
         for slot in self.slots:
-            if self.equipped_items[slot] is not None:
-                item = self.equipped_items[slot]
-                self.add_item(item, 1)
-                self.equipped_items[slot] = None
-                log.info(f"Unequipped {item.name} from {slot.capitalize()} slot.")
+            if self.equipped_items[slot]:
+                self.unequip_item(slot)
     def view_equipped(self) -> None:
         """View equipped items."""
-        if not self.equipped_items:
-            log.info("No items equipped.")
-        else:
-            equipped_str: str = "\n".join(
-                f"{slot.capitalize()}: {item.name if item else 'None'}" for slot, item in self.equipped_items.items()
-            )
-            log.info(f"Equipped Items:\n{equipped_str}\n")
-    def find_by_name(self, name) -> None:
-        """Find an item in the inventory by name."""
-        if not isinstance(name, str):
-            raise TypeError("Name must be a string.")
-        found_items = [item for item in self.items.values() if item["item"].name == name]
-        if found_items:
-            log.info(f"Found {len(found_items)} items with name '{name}': {found_items}")
-        else:
-            log.info(f"No items found with name '{name}'.")
-    def find_by_type(self, item_type) -> None:
-        """Find an item in the inventory by type."""
-        if not isinstance(item_type, str):
-            raise TypeError("Item type must be a string.")
-        found_items = [item for item in self.items.values() if item["item"].__class__.__name__.lower() == item_type.lower()]
-        if found_items:
-            log.info(f"Found {len(found_items)} items of type '{item_type}': {found_items}")
-        else:
-            log.info(f"No items found of type '{item_type}'.")
-    def find_by_effect(self, effect) -> None:
-        """Find an item in the inventory by effect."""
-        if not isinstance(effect, str):
-            raise TypeError("Effect must be a string.")
-        found_items = [item for item in self.items.values() if isinstance(item["item"], items_list.Consumable) and item["item"].effect == effect]
-        if found_items:
-            log.info(f"Found {len(found_items)} items with effect '{effect}': {found_items}")
-        else:
-            log.info(f"No items found with effect '{effect}'.")
-    def find_by_price(self, price) -> None:
-        """Find an item in the inventory by price."""
-        if not isinstance(price, (int, float)):
-            raise TypeError("Price must be a number.")
-        found_items = [item for item in self.items.values() if item["item"].price == price]
-        if found_items:
-            log.info(f"Found {len(found_items)} items with price '{price}': {found_items}")
-        else:
-            log.info(f"No items found with price '{price}'.")
-    def find_by_level(self, level) -> None:
-        """Find an item in the inventory by level."""
-        if not isinstance(level, int):
-            raise TypeError("Level must be an integer.")
-        found_items = [item for item in self.items.values() if item["item"].lvl == level]
-        if found_items:
-            log.info(f"Found {len(found_items)} items with level '{level}': {found_items}")
-        else:
-            log.info(f"No items found with level '{level}'.")
-    def sort_by_name(self) -> None:
-        """Sort items in the inventory by name."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["item"].name)
-        log.info(f"Sorted items by name: {sorted_items}")
-    def sort_by_price(self) -> None:
-        """Sort items in the inventory by price."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["item"].price)
-        log.info(f"Sorted items by price: {sorted_items}")
-    def sort_by_level(self) -> None:
-        """Sort items in the inventory by level."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["item"].lvl)
-        log.info(f"Sorted items by level: {sorted_items}")
-    def sort_by_effect(self) -> None:
-        """Sort items in the inventory by effect."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["item"].effect)
-        log.info(f"Sorted items by effect: {sorted_items}")
-    def sort_by_type(self) -> None:
-        """Sort items in the inventory by type."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["item"].__class__.__name__)
-        log.info(f"Sorted items by type: {sorted_items}")
-    def sort_by_quantity(self) -> None:
-        """Sort items in the inventory by quantity."""
-        sorted_items = sorted(self.items.values(), key=lambda x: x["quantity"], reverse=True)
-        log.info(f"Sorted items by quantity: {sorted_items}")
+        equipped_str = "\n".join(
+            f"{slot.capitalize()}: {item.name if item else 'None'}" for slot, item in self.equipped_items.items()
+        )
+        log.info(f"Equipped Items:\n{equipped_str}\n")
+    def is_equippable(item) -> bool:
+        return get_equip_slot(item) is not None
+
     @property
-    def items(self):
+    def items(self) -> dict:
         return self._items
-    @items.setter
-    def items(self, items):
-        if not isinstance(items, dict):
-            raise TypeError("Items must be a dictionary.")
-        for key, value in items.values():
-            if not isinstance(key, uuid.UUID):
-                raise TypeError("Item ID must be of type UUID.")
-            if not isinstance(value, dict):
-                raise TypeError("Item value must be a dictionary.")
-            if "item" not in value or "quantity" not in value:
-                raise ValueError("Item dictionary must contain 'item' and 'quantity' keys.")
-            if not isinstance(value["item"], items_list.Item):
-                raise TypeError("Item must be of type Item.")
-            if not isinstance(value["quantity"], int):
-                raise TypeError("Quantity must be an integer.")
-            if value["quantity"] < 0:
-                raise ValueError("Quantity must be greater than or equal to 0.")
-        self._items = items
-               
+
     @property
-    def equipped_items(self):
+    def equipped_items(self) -> dict:
         return self._equipped_items
-    @equipped_items.setter
-    def equipped_items(self, value):
-        if not isinstance(value, dict):
-            raise TypeError("Equipped items must be a dictionary.")
-        for key, item in value.items():
-            if key not in self.slots:
-                raise ValueError(f"Invalid slot: {key}. Must be one of {self.slots}.")
-            if item is not None and not isinstance(item, items_list.Item):
-                raise TypeError(f"Equipped item must be of type Item or None.")
-        self._equipped_items = value
-        
+
     @property
     def item_count(self) -> int:
-        """Get the total number of items in the inventory."""
         return sum(item["quantity"] for item in self.items.values())

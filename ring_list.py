@@ -1,7 +1,8 @@
 import random
 import uuid
 import gen
-class Ring():
+import items_list
+class Ring(items_list.Item):
 	"""Base class for rings"""
 	def __init__(self, name: str = "Ring", description: str = "A basic ring", price: int = 0, effect: str = "", lvl: int = 0, health_power: int = 0, mana_power: int = 0, stamina_power: int = 0) -> None:
 		"""Initialize the ring with name, description, price, effect, level, health power, mana power and stamina power"""

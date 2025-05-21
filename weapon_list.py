@@ -2,9 +2,10 @@ import items_list as items
 import gen
 import uuid
 import logging
+import items_list
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
-class Weapon():
+class Weapon(items_list.Item):
 	"""Base class for weapons."""
 	"""Weapons that can be used to attack enemies."""
 	def __init__(self, name: str = "",

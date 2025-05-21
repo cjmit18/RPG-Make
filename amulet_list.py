@@ -1,7 +1,8 @@
 import random
 import uuid
 import gen
-class Amulet():
+import items_list
+class Amulet(items_list.Item):
 	"""Base class for amulets"""
 	def __init__(self, name: str = "Amulet", description: str = "A basic amulet", price: int = 0, effect: str = "amulet", lvl: int = 0, health_power: int = 0, mana_power: int = 0, stamina_power: int = 0) -> None:
 		"""Initialize the amulet with name, description, price, effect, level, health power, mana power and stamina power"""

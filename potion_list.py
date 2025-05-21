@@ -3,7 +3,7 @@ import logging
 import random
 import uuid
 import items_list as items
-class Potion():
+class Potion(items.Item):
 	"""Potions that can be used to restore health or mana."""
 	def __init__(self, 
 			  	name: str = "Potion",

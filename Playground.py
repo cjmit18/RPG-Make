@@ -1,4 +1,4 @@
-import items_list as items
+
 import character_creation
 import inventory_functions
 import class_creation
@@ -17,5 +17,5 @@ logging.basicConfig(level=logging.INFO)
 ring = Ring(name="Ring of Power", description="A powerful ring", price=100, effect="health", lvl=1, health_power=10, mana_power=5, stamina_power=3)
 character = character_creation.Player("TestChar")
 amulet = amulets.Amulet(name="Amulet of Power", description="A powerful amulet", price=100, effect="health", lvl=1, health_power=10, mana_power=5, stamina_power=3)
-character.change_class(class_creation.Healer)
+character.change_class(class_creation.Rogue)
 print(character)

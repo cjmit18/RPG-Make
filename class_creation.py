@@ -1,4 +1,4 @@
-import inventory_functions
+from inventory_functions import is_equippable
 import character_creation
 import items_list
 from weapon_list import Sword, Axe, Dagger, Staff, Weapon, Off_Hand
@@ -37,24 +37,14 @@ class Base():
         for stat_name, stat_value in stats.items():
             """Set the stats of the class"""
             setattr(self.character, stat_name, stat_value)
-            
-        if starting_items: 
-            """Add the starting items to the character's inventory"""
+        
+        if starting_items:
             for item in starting_items:
-                if isinstance(item, (items_list.Item, Ring, Amulet)):
-                    self.character.inventory.add_item(item)
+                self.character.inventory.add_item(item)
+                if is_equippable(item):
                     self.character.inventory.equip_item(item)
-                elif isinstance(item, (Weapon)):
-                    self.character.inventory.add_item(item)
-                    self.character.inventory.equip_item(item)
-                elif isinstance(item, (Armor,Boot)):
-                    self.character.inventory.add_item(item)
-                    self.character.inventory.equip_item(item)
-                elif isinstance(item,(Potion)):
-                    self.character.inventory.add_item(item,gen.generate_random_number(1, 5))
         if self.__class__.__name__ is not "Base":
             log.info(f"{self.character.name} is now a {self.class_}!")
-        
     def __str__(self) -> str:
         """String representation of the class"""
         parts = [f"Class Name: {self.class_}"]

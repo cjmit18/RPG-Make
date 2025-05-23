@@ -9,6 +9,8 @@ class Amulet(items_list.Item):
 		self.id = uuid.uuid4()
 		self.lvl = 1 if lvl == 0 else lvl
 		self.name: str = "Amulet" if name == "" else name
+		self.max_health: int = 10 if health_power == 0 else health_power
+		self.mana_power: int = 10 if mana_power == 0 else mana_power
 		roll = gen.generate_random_number(1, 3)
 		def compare_to(self, other) -> str:
 			if self.health_power:

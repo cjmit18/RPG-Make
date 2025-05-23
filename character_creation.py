@@ -41,15 +41,13 @@ class Character():
         #Equipment bonus component handles the bonus stats from equipped items
         self._effective_stats: Stats = self._base_stats + self._equipment_bonus
         #Effective stats component handles the effective stats of the character
-        self.max_health = self._effective_stats.health
-        self.max_stamina = self._effective_stats.stamina
-        self.max_mana = self._effective_stats.mana
         self.inventory: Inventory = Inventory(self)
         self.job: Base = Base(self)
         #Class component handles character class and its effects
 
         #Update stats based on the current level and class
         #Initialize the character with default stats and an empty inventory
+        self.update_stats()
     def __str__(self) -> str:
         """String representation of the character."""
         # Display character stats and inventory
@@ -82,30 +80,32 @@ class Character():
         """Get the effective stats of the character."""
         return self._effective_stats
     def update_stats(self) -> None:
-        """Update the character's stats based on the current level and class."""
-        self._equipment_bonus = Stats(
-            attack=sum(getattr(item, "attack_power", 0) for item in self.inventory.equipped_items.values() if item),
-            defense=sum(getattr(item, "defense_power", 0) for item in self.inventory.equipped_items.values() if item),
-            speed=sum(getattr(item, "speed_power", 0) for item in self.inventory.equipped_items.values() if item),
-            health=sum(getattr(item, "health_power", 0) for item in self.inventory.equipped_items.values() if item),
-            mana=sum(getattr(item, "mana_power", 0) for item in self.inventory.equipped_items.values() if item),
-            stamina=sum(getattr(item, "stamina_power", 0) for item in self.inventory.equipped_items.values() if item),
-        )
-        #Calculate the equipment bonus based on the equipped items
-        #Update the effective stats based on the base stats and equipment bonus
-        self._effective_stats = self._base_stats + self._equipment_bonus
-        self.update_max_caps() #Update the max caps based on the effective stats
-        #Update the effective stats based on the base stats and equipment bonus
+            """Update the character's stats based on the current level and class."""
+            self._equipment_bonus = Stats(
+                attack=sum(getattr(item, "attack_power", 0) for item in self.inventory.equipped_items.values() if item),
+                defense=sum(getattr(item, "defense_power", 0) for item in self.inventory.equipped_items.values() if item),
+                speed=sum(getattr(item, "speed_power", 0) for item in self.inventory.equipped_items.values() if item),
+                health=sum(getattr(item, "health_power", 0) for item in self.inventory.equipped_items.values() if item),
+                mana=sum(getattr(item, "mana_power", 0) for item in self.inventory.equipped_items.values() if item),
+                stamina=sum(getattr(item, "stamina_power", 0) for item in self.inventory.equipped_items.values() if item),
+                max_health=sum(getattr(item, "health_power", 0) for item in self.inventory.equipped_items.values() if item),
+                max_mana=sum(getattr(item, "mana_power", 0) for item in self.inventory.equipped_items.values() if item),
+                max_stamina=sum(getattr(item, "stamina_power", 0) for item in self.inventory.equipped_items.values() if item),
+            )
+            self._effective_stats = self._base_stats + self._equipment_bonus
+            self.update_max_caps()
+    def update_max_caps(self):
+        """Update the maximum caps for health, mana, and stamina."""
+        # Directly read from effective stats' max_* fields
+        self._base_stats.max_health = self._effective_stats.max_health
+        self._base_stats.max_mana = self._effective_stats.max_mana
+        self._base_stats.max_stamina = self._effective_stats.max_stamina
     def change_class(self, job):
         """Change the character's class and update stats accordingly."""
         self.job: Base = job(self) 
         self.update_stats()
-    def update_max_caps(self):
-        """Update the maximum health, stamina, and mana based on the effective stats."""
-        self.max_health = self._effective_stats.health
-        self.max_stamina = self._effective_stats.stamina
-        self.max_mana = self._effective_stats.mana
     def get_stat_breakdown(self, stat_name: str) -> str:
+        """Get a detailed breakdown of a specific stat."""
         base = getattr(self._base_stats, stat_name)
         bonus = getattr(self._equipment_bonus, stat_name)
         return f"{stat_name.capitalize()}: {base + bonus} (Base: {base} + Gear: {bonus})"
@@ -146,7 +146,21 @@ class Character():
             item = item_loader(item_data)
             char.inventory.equip_item(item)
         return char
-        
+    def take_damage(self, amount: int):
+        """Reduce the character's health by the specified amount."""
+        self._base_stats.health = max(0, self._base_stats.health - amount)
+        self.update_stats()
+
+    def drain_mana(self, amount: int):
+        """Reduce the character's mana by the specified amount."""
+        self._base_stats.mana = max(0, self._base_stats.mana - amount)
+        self.update_stats()
+
+    def drain_stamina(self, amount: int):
+        """Reduce the character's stamina by the specified amount."""
+        self._base_stats.stamina = max(0, self._base_stats.stamina - amount)
+        self.update_stats()
+
 
     #----Name And Level Properties----
     @property
@@ -202,16 +216,21 @@ class Character():
         self._base_stats.speed = max(0, speed)
     #----Health----
     @property
+    def max_health(self):
+        return self._effective_stats.max_health
+    @property
     def health(self) -> int:
         return self._effective_stats.health
     @health.setter
     def health(self, health) -> None:
         if not isinstance(health, int):
             raise TypeError("Health must be an integer.")
-        if self._effective_stats.health < 0:
-            raise ValueError("Health cannot be set to a negative value.")
-        self._base_stats.health = min(max(0, health), self.max_health)
+        cap = self.max_health if self.max_health > 0 else 9999
+        self._base_stats.health = min(max(0, health), cap)
     #----Mana----
+    @property
+    def max_mana(self):
+        return self._effective_stats.max_mana
     @property
     def mana(self) -> int:
         return self._effective_stats.mana
@@ -219,8 +238,12 @@ class Character():
     def mana(self, mana) -> None:
         if not isinstance(mana, int):
             raise TypeError("Mana must be an integer.")
-        self._base_stats.mana = min(max(0, mana), self.max_mana)
+        cap = self.max_mana if self.max_mana > 0 else 9999
+        self._base_stats.mana = min(max(0, mana), cap)
     #----Stamina----
+    @property
+    def max_stamina(self):
+        return self._effective_stats.max_stamina
     @property
     def stamina(self) -> int:
         return self._effective_stats.stamina
@@ -228,7 +251,8 @@ class Character():
     def stamina(self, stamina) -> None:
         if not isinstance(stamina, int):
             raise TypeError("Stamina must be an integer.")
-        self._base_stats.stamina = max(0, stamina)
+        cap = self.max_stamina if self.max_stamina > 0 else 9999
+        self._base_stats.stamina = min(max(0, stamina), cap)
         #----Inventory and Class----
     #----Inventory----
     @property

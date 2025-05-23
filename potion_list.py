@@ -69,7 +69,7 @@ class Health_Potion(Potion):
 		return f"Health Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 class Mana_Potion(Potion):
 	"""Mana potions that can be used to restore mana."""
-	def __init__(self, name: str = "Mana Potion", description: str = "A basic mana potion", price: int = 0, effect: str = "mana" , amount: int = 1, duration: int = 1, lvl: int = 0) -> None:
+	def __init__(self, name: str = "", description: str = "", price: int = 0, effect: str = "mana" , amount: int = 0, duration: int = 0, lvl: int = 0) -> None:
 		super().__init__(name, description, price, effect, amount, duration)
 		self.lvl = 1 if lvl == 0 else lvl
 		self.name: str = "Mana Potion" if name == "" else name
@@ -88,5 +88,26 @@ class Mana_Potion(Potion):
 			self.description: str = "A Grade 3 mana potion" if description == "" else description
 			self.price: int = 30 if price == 0 else price
 			self.effect: str = 'mana'
+			self.amount: int = 250 if amount == 0 else amount
+			self.duration: int = 1 if duration == 0 else duration
+class Stamina_Potion(Potion):
+	def __init__(self, name: str = "", description: str = "", price: int = 0, effect: str = "" , amount: int = 0, duration: int = 0, lvl: int = 0) -> None:
+		super().__init__(name, description, price, effect, amount, duration)
+		self.lvl = 1 if lvl == 0 else lvl
+		self.name: str = "Stamina Potion" if name == "" else name
+		self.effect: str = "stamina"
+		if self.lvl == 1:
+			self.description: str = "A basic stamina potion" if description == "" else description
+			self.price: int = 10 if price == 0 else price
+			self.amount: int = 25 if amount == 0 else amount
+			self.duration = 1 if duration == 0 else duration
+		elif self.lvl == 2:
+			self.description: str = "A Grade 2 stamina potion" if description == "" else description
+			self.price: int = 20 if price == 0 else price
+			self.amount: int = 100 if amount == 0 else amount
+			self.duration = 1 if duration == 0 else duration
+		elif self.lvl == 3:
+			self.description: str = "A Grade 3 stamina potion" if description == "" else description
+			self.price: int = 30 if price == 0 else price
 			self.amount: int = 250 if amount == 0 else amount
 			self.duration: int = 1 if duration == 0 else duration

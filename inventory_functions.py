@@ -94,13 +94,15 @@ class Inventory:
                 raise TypeError("Item ID must be of type UUID.")
             if isinstance(item, potions.Potion):
                 if item.effect == "health":
-                            self.character._health += item.amount
+                   new_health = self.character.health + item.amount
+                   self.character.health = min(new_health, self.character.max_health)
                 elif item.effect == "mana":
-                            self.character._mana += item.amount
+                    new_mana = self.character.mana + item.amount
+                    self.character.mana = min(new_mana, self.character.max_mana)
                 elif item.effect == "stamina":
-                            self.character._stamina += item.amount
-                elif item.effect == "speed":
-                            self.character._speed += item.amount
+                    new_stamina = self.character.stamina + item.amount
+                    self.character.stamina = min(new_stamina, self.character.max_stamina)
+                self.character.update_stats()
                 log.info( f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
                 self.remove_item(item, 1)
             else:

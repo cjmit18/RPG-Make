@@ -1,19 +1,18 @@
 
-import character_creation
-import inventory_functions
-import class_creation
-import combat_functions
-import experience_functions
-import os, random, time, logging
-import gen
-import weapon_list as weapons
-import potion_list as potions
-import armor_list as armors
-import amulet_list as amulets
-from ring_list import Ring
-from boots_list import Boot
-import logging
-logging.basicConfig(level=logging.INFO)
-character = character_creation.Player("TestChar")
-character.change_class(class_creation.Mage)
-print(character)
+from character_creation import Player
+from class_creation import Mage
+from potion_list import Mana_Potion
+def test_mana_caps():
+    
+    character = Player("TestChar")
+    print(character)
+    #character.change_class(Mage)
+    print("Before potion:", character.mana, "/", character.max_mana)
+    character.mana -= 24
+    character.update_stats()
+    print("After damage:", character.mana, "/", character.max_mana)
+    potion = Mana_Potion()
+    character.inventory.add_item(potion)
+    character.inventory.use_item(potion)
+    print("After potion:", character.mana, "/", character.max_mana)
+test_mana_caps()

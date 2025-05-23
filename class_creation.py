@@ -34,10 +34,21 @@ class Base():
         self.name: str = name
         self.character: character_creation = character
         self.job: str = self.__class__.__name__
+        stats = {
+            "attack": 100,
+            "defense": 100,
+            "speed": 100,
+            "health": 100,
+            "mana": 100,
+            "stamina": 100
+        }
+        self.health: int = stats["health"]
         for stat_name, stat_value in stats.items():
             """Set the stats of the class"""
             setattr(self.character._base_stats, stat_name, stat_value)
-        
+        for stat_name in ["health", "mana", "stamina"]:
+            value = getattr(self.character._base_stats, stat_name)
+            setattr(self.character._base_stats, f"max_{stat_name}", value)
         if starting_items:
             for item in starting_items:
                 self.character.inventory.add_item(item)
@@ -76,21 +87,14 @@ class Knight(Base):
     def __init__(self, character: character_creation) -> None:
         """Knight class for the character """
         lvl: int = character.lvls.lvl 
-        self.character = character
         stats = {
-            "attack": 5,
-            "defense": 5,
-            "speed": 2,
-            "health": 10,
-            "mana": 5,
-            "stamina": 5
+            "attack": 5 * lvl,
+            "defense": 5 * lvl,
+            "speed": 2 * lvl,
+            "health": 5 * lvl,
+            "mana": 2 * lvl,
+            "stamina": 5 * lvl
         }
-        self.attack = stats["attack"] * lvl
-        self.defense = stats["defense"] * lvl
-        self.speed = stats["speed"] * lvl
-        self.health = stats["health"] * lvl
-        self.mana = stats["mana"] * lvl
-        self.stamina = stats["stamina"] * lvl
         #Knight starts with a sword, shield, armor and boots
         starting_items: list = [
             Sword(name="Knight's Sword", description="A sword for a knight", price=100, lvl=1, attack_power=20),
@@ -103,31 +107,24 @@ class Knight(Base):
         super().__init__(character, stats, starting_items, "Knight")
         
 class Mage(Base):
-    """Mage class for the character """
+    """Mage class for the character"""
     def __init__(self, character: character_creation) -> None:
-        starting_items: list = [
-            Staff(name="Mage's Staff", description="A staff for a mage", price=100, lvl=1, attack_power=20),
-            Robe(name="Mage's Robe", description="A robe for a mage", price=100, lvl=1, defense_power=20),
-            Boot(name="Mage's Boots", description="Boots for a mage", price=100, lvl=1, speed_power=20),
-            Health_Potion(name="Mage's Potion", description=f"A potion for a mage.\n Restores some health", price=100, lvl=1),
-            Mana_Potion(name="Mage's Mana Potion", description=f"A potion for a mage.\n Restores some mana", price=100, lvl=1)
-            ]
-        if gen.generate_random_number(1, 100) < 10:
-            starting_items.append(Amulet(name="Mage's Amulet", description="An amulet for a mage", price=100, lvl=1, mana_power=20))
+        lvl = character.lvls.lvl
         stats = {
-            "attack": 2,
-            "defense": 2,
-            "speed": 5,
-            "health": 5,
-            "mana": 10,
-            "stamina": 5
+            "attack": 2 * lvl,
+            "defense": 2 * lvl,
+            "speed": 5 * lvl,
+            "health": 5 * lvl,
+            "mana": 10 * lvl,
+            "stamina": 5 * lvl
         }
-        self.attack: int = stats["attack"]
-        self.defense: int = stats["defense"]
-        self.speed: int = stats["speed"]
-        self.health: int = stats["health"]
-        self.mana: int = stats["mana"]
-        self.stamina: int = stats["stamina"]
+
+        starting_items = [
+        ]
+
+        if gen.generate_random_number(1, 100) < 100:
+            starting_items.append(Amulet(name="Mage's Amulet", description="A magical amulet", price=100, lvl=1, mana_power=20))
+
         super().__init__(character, stats, starting_items, "Mage")
 class Rogue(Base):
     """Rogue class for the character """

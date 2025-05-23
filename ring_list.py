@@ -4,7 +4,7 @@ import gen
 import items_list
 class Ring(items_list.Item):
 	"""Base class for rings"""
-	def __init__(self, name: str = "Ring", description: str = "A basic ring", price: int = 0, effect: str = "", lvl: int = 0, health_power: int = 0, mana_power: int = 0, stamina_power: int = 0) -> None:
+	def __init__(self, name: str = "Ring", description: str = "A basic ring", price: int = 0, effect: str = "", lvl: int = 0, health_power: int = 0, mana_power: int = 0, stamina_power: int = 0, max_health: int = 0) -> None:
 		"""Initialize the ring with name, description, price, effect, level, health power, mana power and stamina power"""
 		self.id = uuid.uuid4()
 		self.lvl = 1 if lvl == 0 else lvl
@@ -12,6 +12,7 @@ class Ring(items_list.Item):
 		self.effect: str = "health" if effect == "" else effect
 		self.health_power: int = 10 if health_power == 0 else health_power
 		self.mana_power: int = 10 if mana_power == 0 else mana_power
+		self.max_health: int = 10 if max_health == 0 else max_health
 		roll: int = gen.generate_random_number(1, 3)
 		if lvl == 1:
 			self.description: str = "A basic ring" if description == "" else description

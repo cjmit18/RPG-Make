@@ -15,5 +15,5 @@ from boots_list import Boot
 import logging
 logging.basicConfig(level=logging.INFO)
 character = character_creation.Player("TestChar")
-character.change_class(class_creation.Knight)
+character.change_class(class_creation.Mage)
 print(character)

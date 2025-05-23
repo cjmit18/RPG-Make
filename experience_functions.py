@@ -9,11 +9,12 @@ class Levels:
         self.character: character_creation.class_creation = character
         self._lvl: int = level
         self._experience: int = experience
+        self.max_level: int = 100
     def __str__(self):
         return f"Name: {self.character.name}\nLevel: {self.lvl} Experience: {self.experience}"
     def __repr__(self):
         return f"Name: {self.character.name}\nLevel: {self.lvl} Experience: {self.experience}"
-
+    required_experience = lambda self: 100 * (self.lvl ** 2) + 100 * self.lvl
     def add_experience(self, exp: int) -> None:
         """Add experience points to the character."""
         if not isinstance(exp, int):
@@ -25,15 +26,12 @@ class Levels:
     def level_up(self) -> None:
         """Level up the character if enough experience is gained."""
         while self.experience >= self.required_experience():
-            self.experience -= self.required_experience()
-            self.lvl += 1
+            self.old_level = self.lvl
+            self._lvl += 1
+            log.info(f"{self.character.name} leveled up! {self.old_level} → {self._lvl}")
             self.character.update_stats()
-        old_level = self.lvl
-        self._lvl += 1
-        log.info(f"{self.character.name} leveled up! {old_level} → {self._lvl}")
-    def required_experience(self) -> int:
-        """Calculate the required experience points for the next level."""
-        return (self.lvl * 100) * 2
+            self.experience -= self.required_experience()
+        log.info(f"Experience Needed for next level: {self.required_experience()}")
     def change_level(self, new_level) -> None:
         """Change the character's level."""
         if new_level < 1:
@@ -73,5 +71,8 @@ class Levels:
     def lvl(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError("Level must be an integer.")
+        if value > self.max_level:
+            value = self.max_level
         self._lvl = max(0, value)
+    
     

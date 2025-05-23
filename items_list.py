@@ -22,6 +22,32 @@ class Item:
 		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
 	def __repr__(self) -> str:
 		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
+	def to_dict(self) -> dict:
+		"""Convert the item to a dictionary representation."""
+		return {
+			"id": str(self.id),
+			"name": self.name,
+			"description": self.description,
+			"price": self.price,
+			"level": self.lvls.lvl,
+			"type": self.__class__.__name__,
+		}
+
+	@classmethod
+	def from_dict(cls, data: dict):
+		"""Create an item from a dictionary representation."""
+		return cls(
+			name=data.get("name", "Item"),
+			description=data.get("description", ""),
+			price=data.get("price", 0),
+			lvl=data.get("level", 0)
+		)
+	def compare_to(self, other) -> str:
+		diff = self.price - other.price
+		return f"{self.name} is {'more' if diff > 0 else 'less'} expensive than {other.name} by {abs(diff)} coins."
+	@property
+	def category(self) -> str:
+		return self.__class__.__name__
 class Consumable(Item):
 	"""Consumable items that can be used during combat or exploration."""
 	def __init__(self, name: str = "Consumable",

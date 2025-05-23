@@ -76,6 +76,7 @@ class Inventory:
         found_items = [item for item in self.items.values() if item["item"].name == name]
         if found_items:
             log.info(f"Found {len(found_items)} items with name '{name}': {found_items}")
+            return found_items
         else:
             log.info(f"No items found with name '{name}'.")
     def check_inventory(self) -> None:
@@ -102,7 +103,6 @@ class Inventory:
                             self.character._speed += item.amount
                 log.info( f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
                 self.remove_item(item, 1)
-                
             else:
                 raise ValueError("Item not found in inventory")
     def use_by_name(self, name) -> None:
@@ -146,6 +146,7 @@ class Inventory:
             raise ValueError("Item not found in inventory.")
     def drop_all(self) -> None:
         """Drop all items from the inventory."""
+        # Check if the inventory is empty
         if not self.items:
             raise ValueError("Inventory is empty.")
         for item in list(self.items.values()):
@@ -155,7 +156,7 @@ class Inventory:
     def equip_item(self, item) -> None:
         """Equip an item from the inventory."""
         matched_slot = get_equip_slot(item)
-
+        # Check if the item is equippable
         if not matched_slot:
             log.warning(f"{item.name} is not equippable.")
             return
@@ -165,12 +166,12 @@ class Inventory:
             raise ValueError("Cannot equip offhand item while shield is equipped.")
         if matched_slot == "shield" and self.equipped_items["offhand"]:
             raise ValueError("Cannot equip shield while offhand item is equipped.")
-
+        # Check if the item is already equipped
         if self.equipped_items[matched_slot]:
             self.unequip_item(matched_slot)
-
         self.equipped_items[matched_slot] = item
         self.remove_item(item, 1)
+        self.character.update_stats()
         log.info(f"Equipped {item.name} to {matched_slot.capitalize()} slot.")
     def equip_by_name(self, name) -> None:
         """Equip an item from the inventory by name."""
@@ -189,6 +190,7 @@ class Inventory:
         if item:
             self.add_item(item, 1)
             self.equipped_items[slot] = None
+            self.character.update_stats()
             log.info(f"Unequipped {item.name} from {slot.capitalize()} slot.")
     def unequip_all(self) -> None:
         """Unequip all items from the inventory."""
@@ -203,11 +205,16 @@ class Inventory:
         log.info(f"Equipped Items:\n{equipped_str}\n")
     def is_equippable(item) -> bool:
         return get_equip_slot(item) is not None
-
+    def is_equipped(self, item) -> bool:
+        return item in self.equipped_items.values()
     @property
     def items(self) -> dict:
         return self._items
-
+    @items.setter
+    def items(self, items: dict) -> None:
+        if not isinstance(items, dict):
+            raise TypeError("Items must be a dictionary.")
+        self._items = items
     @property
     def equipped_items(self) -> dict:
         return self._equipped_items

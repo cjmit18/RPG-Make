@@ -27,6 +27,15 @@ class Weapon(items_list.Item):
 		return f"{self.name} \nDescription: {self.description} \nPrice: {self.price}, Attack Power: {self.attack_power}, Level: {self.lvl}"
 	def __repr__(self) -> str:
 		return f"{self.name} \nDescription: {self.description} \nPrice: {self.price}, Attack Power: {self.attack_power}, Level: {self.lvl}"
+	def compare_to(self, other) -> str:
+		diff = self.attack_power - other.attack_power
+		if diff == 0:
+			return f"{self.name} and {other.name} have the same attack power."
+		elif diff < 0:
+			diff = -diff
+			return f"{self.name} is less powerful than {other.name} by {diff} attack power."
+		else:
+			return f"{self.name} is more powerful than {other.name} by {diff} attack power."
 class Sword(Weapon):
 	"""Swords that can be used to attack enemies."""
 	def __init__(self, name: str = "",

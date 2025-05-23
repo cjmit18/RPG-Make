@@ -18,10 +18,19 @@ class Potion(items.Consumable):
 		self.effect: int = effect
 		self.amount: int = amount
 		self.duration: int = duration
+	
 	def __str__(self) -> str:
 		return f"Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 	def __repr__(self) -> str:
 		return f"Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
+	def compare_to(self, other) -> str:
+		if self.category == other.category:
+			if self.amount:
+				diff = self.amount - other.amount
+				return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} {self.effect}."
+			if self.duration:
+				diff = self.duration - other.duration
+				return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} {self.effect}."
 class Health_Potion(Potion):
 	"""Health potions that can be used to restore health."""
 	def __init__(

@@ -18,7 +18,7 @@ class Base():
     It contains the character object and the class name.
     Attributes:
         character (character_creation): The character object.
-        class_ (str): The name of the class.
+        job (str): The name of the class.
         attack (int): The attack power of the class.
         defense (int): The defense power of the class.
         speed (int): The speed of the class.
@@ -33,21 +33,23 @@ class Base():
                 name: str = None) -> None:
         self.name: str = name
         self.character: character_creation = character
-        self.class_: str = self.__class__.__name__
+        self.job: str = self.__class__.__name__
         for stat_name, stat_value in stats.items():
             """Set the stats of the class"""
-            setattr(self.character, stat_name, stat_value)
+            setattr(self.character._base_stats, stat_name, stat_value)
         
         if starting_items:
             for item in starting_items:
                 self.character.inventory.add_item(item)
-                if is_equippable(item):
+                if is_equippable(item) and not isinstance(item, Potion):
                     self.character.inventory.equip_item(item)
         if self.__class__.__name__ is not "Base":
-            log.info(f"{self.character.name} is now a {self.class_}!")
+            log.info(f"{self.character.name} is now a {self.job}!")
+        
+        self.character.update_stats()
     def __str__(self) -> str:
         """String representation of the class"""
-        parts = [f"Class Name: {self.class_}"]
+        parts = [f"Class Name: {self.job}"]
         for stat in ["attack", "defense", "speed", "health", "mana", "stamina"]:
             parts.append(f"{stat.capitalize()}: {getattr(self, stat)}")
             bonus = getattr(self,stat,0)

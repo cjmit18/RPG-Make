@@ -19,10 +19,10 @@ class Stats:
             attack=self.attack + other.attack,
             defense=self.defense + other.defense,
             speed=self.speed + other.speed,
-            health=self.health + other.health,
-            mana=self.mana + other.mana,
-            stamina=self.stamina + other.stamina,
+            health=self.health,
+            mana=self.mana,
+            stamina=self.stamina,
             max_health=self.max_health + other.max_health,
             max_mana=self.max_mana + other.max_mana,
-            max_stamina=self.max_stamina + other.max_stamina,
+            max_stamina=self.max_stamina + other.max_stamina
         )

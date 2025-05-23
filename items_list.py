@@ -17,7 +17,7 @@ class Item:
 		self.description: str = description
 		self.price: int  = price
 		self.quantity: int = 1
-		self.lvls: experience_functions = experience_functions.Levels(self, lvl)
+		self.lvls = experience_functions.Levels(self, lvl)
 	def __str__(self) -> str:
 		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
 	def __repr__(self) -> str:
@@ -56,7 +56,8 @@ class Consumable(Item):
 				effect: str = "consumable",
 				amount: int = 1,
 				duration: int = 1,
-				lvl: int = 0) -> None:
+				lvl: int = 0
+				) -> None:
 		super().__init__(name, description, price, lvl)
 		self.name: str = name
 		self.effect: str = effect

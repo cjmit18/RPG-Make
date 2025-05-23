@@ -28,21 +28,21 @@ class Base():
     """
     def __init__(self, 
                 character: character_creation, 
-                stats: dict = {},
+                stats: dict = None,
                 starting_items: list = None,
                 name: str = None) -> None:
         self.name: str = name
         self.character: character_creation = character
         self.job: str = self.__class__.__name__
-        stats = {
-            "attack": 100,
-            "defense": 100,
-            "speed": 100,
-            "health": 100,
-            "mana": 100,
-            "stamina": 100
-        }
-        self.health: int = stats["health"]
+        if not stats:
+            stats = stats or {
+                "attack": 100,
+                "defense": 100,
+                "speed": 100,
+                "health": 100,
+                "mana": 100,
+                "stamina": 100
+            }
         for stat_name, stat_value in stats.items():
             """Set the stats of the class"""
             setattr(self.character._base_stats, stat_name, stat_value)
@@ -51,9 +51,15 @@ class Base():
             setattr(self.character._base_stats, f"max_{stat_name}", value)
         if starting_items:
             for item in starting_items:
-                self.character.inventory.add_item(item)
+                if isinstance(item, Health_Potion):
+                    self.character.inventory.add_item(item, 5)
+                elif isinstance(item, Mana_Potion):
+                    self.character.inventory.add_item(item, 5)
+                else:
+                    self.character.inventory.add_item(item, 1)
                 if is_equippable(item) and not isinstance(item, Potion):
                     self.character.inventory.equip_item(item)
+                
         if self.__class__.__name__ is not "Base":
             log.info(f"{self.character.name} is now a {self.job}!")
         
@@ -76,7 +82,7 @@ class Base():
                 else:
                     cls = cls
                 return cls(character)
-    @staticmethod
+    @classmethod
     def set_stats(self, stats: dict) -> None:
         """Set the stats of the class"""
         for stat_name, stat_value in stats.items():
@@ -120,10 +126,15 @@ class Mage(Base):
         }
 
         starting_items = [
+            Staff(name="Mage's Staff", description="A staff for a mage", price=100, lvl=1, attack_power=20),
+            Robe(name="Mage's Robe", description="A robe for a mage", price=100, lvl=1, defense_power=20),
+            Boot(name="Mage's Boots", description="Boots for a mage", price=100, lvl=1, speed_power=20),
+            Health_Potion(name="Mage's Potion", description=f"A potion for a mage.\n Restores some health", price=100, lvl=1),
+            Mana_Potion(name="Mage's Mana Potion", description=f"A potion for a mage.\n Restores some mana", price=100, lvl=1)
         ]
 
         if gen.generate_random_number(1, 100) < 100:
-            starting_items.append(Amulet(name="Mage's Amulet", description="A magical amulet", price=100, lvl=1, mana_power=20))
+            starting_items.append(Amulet(name="Mage's Amulet", description="A magical amulet", price=100, lvl=1, mana_power=20, health_power=20))
 
         super().__init__(character, stats, starting_items, "Mage")
 class Rogue(Base):
@@ -147,12 +158,6 @@ class Rogue(Base):
             "mana": 5,
             "stamina": 5
         }
-        self.attack: int = stats["attack"]
-        self.defense: int = stats["defense"]
-        self.speed: int = stats["speed"]
-        self.health: int = stats["health"]
-        self.mana: int = stats["mana"]
-        self.stamina: int = stats["stamina"]
         super().__init__(character, stats, starting_items, "Rogue")
 class Healer(Base):
     """Healer class for the character """
@@ -179,10 +184,4 @@ class Healer(Base):
             "mana": 10,
             "stamina": 5
         }
-        self.attack: int = stats["attack"]
-        self.defense: int = stats["defense"]
-        self.speed: int = stats["speed"]
-        self.health: int = stats["health"]
-        self.mana: int = stats["mana"]
-        self.stamina: int = stats["stamina"]
         super().__init__(character, stats, starting_items, "Healer")

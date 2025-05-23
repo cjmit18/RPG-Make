@@ -44,7 +44,7 @@ class Levels:
         log.info("Experience points have been reset.")
     def reset_level(self) -> None:
         """Reset the character's level to 1."""
-        self.lvl; int = 1
+        self.lvl: int = 1
         log.info("Level has been reset to 1.")
     def reset(self) -> None:
         """Reset both experience and level."""

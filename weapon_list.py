@@ -2,22 +2,27 @@ import items_list as items
 import gen
 import uuid
 import logging
-import items_list
+from items_list import Item
+import experience_functions
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
-class Weapon(items_list.Item):
+class Weapon(Item):
 	"""Base class for weapons."""
 	"""Weapons that can be used to attack enemies."""
-	def __init__(self, name: str = "",
-			   description: str = "",
-				price: int = 0, attack_power: int = gen.generate_random_number(1,4),
-				lvl: int = 1) -> None:
+	def __init__(self, 
+			  	name: str = "",
+			   	description: str = "",
+				price: int = 0, attack_power: int = 0,
+				lvl: int = 0
+				) -> None:
+		super().__init__(name, description, price, lvl)
+		"""Initialize the weapon with the given attributes."""
 		self.lvl: int = 1 if lvl == 0 else lvl
-		self.name:str = "Weapon" if name == "" else name
-		self.id = uuid.uuid4()
+		self.name: str = "Weapon" if name == "" else name
+		self.id: uuid = uuid.uuid4()
 		if self.lvl == 1:
 			self.description: str = "A basic weapon" if description == "" else description
-			self.attack_power: int = 10
+			self.attack_power: int = 10 if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
 		elif self.lvl > 1:
 			self.attack_power: int = attack_power * self.lvl if attack_power != 0 else 10
@@ -41,86 +46,74 @@ class Sword(Weapon):
 	def __init__(self, name: str = "",
 			   description: str = "",
 				price: int = 0,
-				attack_power: int = gen.generate_random_number(2,10),
+				attack_power: int = 0,
 				lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Sword" if name == "" else name
-		self.attack_power: int = 0
+		roll: int = gen.generate_random_number(1, 3)
+		"""Randomly assign attack and defense power based on roll"""
 		if self.lvl == 1:
 			self.description:str = "A basic sword" if description == "" else description
-			self.attack_power:int = 10 if attack_power == 0 else attack_power
+			self.attack_power:int = gen.generate_random_number(1,10) if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
-		elif self.lvl > 10:
-			self.description: str = f"A Grade {self.lvl} sword" if description == "" else description
-			self.price: int = 10 if price == 0 else price
-			roll: int = gen.generate_random_number(1, 3)
-			if self.lvl > 1 and self.lvl <= 10:
-				if roll == 1:
+		elif self.lvl > 1 and self.lvl <= 10:
+			if roll == 1:
 					self.attack_power: int = gen.generate_random_number(1, 2) * self.lvl
-				elif roll == 2:
+			elif roll == 2:
 					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 3:
+			elif roll == 3:
 					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-			elif self.lvl > 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 3:
-					self.attack_power:int = gen.generate_random_number(1, 20) * self.lvl
+		elif self.lvl > 10:
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 3:
+				self.attack_power:int = gen.generate_random_number(1, 20) * self.lvl
 class Axe(Weapon):
 	"""Axe that can be used to attack enemies."""
-	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = gen.generate_random_number(1,4), lvl: int = 0) -> None:
+	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = 0, lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Axe" if name == "" else name
-		self.attack_power: int = 0
 		roll: int = gen.generate_random_number(1, 3)
 		"""Randomly assign attack and defense power based on roll"""
 		if self.lvl == 1:
 			self.description: str = "A basic axe" if description == "" else description
-			self.attack_power: int = 10 if attack_power == 0 else attack_power
+			self.attack_power: int = gen.generate_random_number(1,10) if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
 		elif self.lvl > 1 and self.lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} axe" if description == "" else description
 			self.price: int = 10 if price == 0 else price
-			if self.lvl > 1 and self.lvl <= 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(1, 2) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 3:
-					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-			elif self.lvl > 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 3:
-					self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 2) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+		elif self.lvl > 10:
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
 class Bow(Weapon):
 	"""Bow that can be used to attack enemies."""
 	def __init__(self, name: str = "",
 			   	description: str = "",
-				price: int = 0, attack_power: int = gen.generate_random_number(1,4),
+				price: int = 0, attack_power: int = 0,
 				lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Bow" if name == "" else name
-		self.attack_power: int = 0
 		"""Randomly assign attack and defense power based on roll"""
 		roll: int = gen.generate_random_number(1, 3)
 		if self.lvl == 1:
 			self.description: str = "A basic bow" if description == "" else description
-			self.attack_power: int = 10 if attack_power == 0 else attack_power
+			self.attack_power: int = gen.generate_random_number(1,10) if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.attack_power: int = gen.generate_random_number(1, 2)
-			elif roll == 2:
-				self.attack_power: int = gen.generate_random_number(1, 5)
-			elif roll == 3:
-				self.attack_power: int = gen.generate_random_number(1, 10)
 		elif self.lvl > 1 and self.lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} bow" if description == "" else description
 			self.price: int = 10 if price == 0 else price
@@ -140,23 +133,16 @@ class Bow(Weapon):
 					self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
 class Dagger(Weapon):
 	"""Dagger that can be used to attack enemies."""
-	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = gen.generate_random_number(1,4), lvl: int = 0) -> None:
+	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = 0, lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Dagger" if name == "" else name
-		self.attack_power: int = 0
 		"""Randomly assign attack and defense power based on roll"""
 		roll: int = gen.generate_random_number(1, 3)
 		if self.lvl == 1:
 			self.description: str = "A basic dagger" if description == "" else description
-			self.attack_power: int = 10 if attack_power == 0 else attack_power
+			self.attack_power: int = gen.generate_random_number(1,10) if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.attack_power: int = gen.generate_random_number(1, 2)
-			elif roll == 2:
-				self.attack_power: int = gen.generate_random_number(1, 5)
-			elif roll == 3:
-				self.attack_power: int = gen.generate_random_number(1, 10)
 		elif self.lvl > 1 and self.lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} dagger" if description == "" else description
 			self.price: int = 10 if price == 0 else price
@@ -176,23 +162,16 @@ class Dagger(Weapon):
 					self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
 class Staff(Weapon):
 	"""Staff that can be used to attack enemies."""
-	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = gen.generate_random_number(1,4), lvl: int = 0) -> None:
+	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = 0, lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Staff" if name == "" else name
-		self.attack_power: int = 0
 		"""Randomly assign attack and defense power based on roll"""
 		roll: int = gen.generate_random_number(1, 3)
 		if self.lvl == 1:
 			self.description: str = "A basic staff" if description == "" else description
-			self.attack_power: int = 10 if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.attack_power: int = gen.generate_random_number(1, 2)
-			elif roll == 2:
-				self.attack_power: int = gen.generate_random_number(1, 5)
-			elif roll == 3:
-				self.attack_power: int = gen.generate_random_number(1, 10)
+			self.attack_power: int = gen.generate_random_number(1,10) if attack_power == 0 else attack_power
 		elif self.lvl > 1 and self.lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} staff" if description == "" else description
 			self.price: int = 10 if price == 0 else price

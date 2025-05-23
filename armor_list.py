@@ -8,7 +8,7 @@ log = logging.getLogger()
 class Armor(items.Item):
 	"""Base class for armor."""
 	"""Armor that can be used to protect against enemy attacks."""
-	def __init__(self, name: str = "", description: str = "", price: int = 0, defense_power:int = gen.generate_random_number(1,4), lvl: int = 0) -> None:
+	def __init__(self, name: str = "", description: str = "", price: int = 0, defense_power:int = 0, lvl: int = 0) -> None:
 		self.lvl = 1 if lvl == 0 else lvl
 		self.name = "Armor" if name == "" else name
 		self.id = uuid.uuid4()
@@ -16,11 +16,10 @@ class Armor(items.Item):
 		# Randomly assign attack and defense power based on roll
 		if lvl == 1:
 			self.description: str = "Basic armor" if description == "" else description
-			self.defense_power: int = 10 if defense_power == 0 else defense_power
+			self.defense_power: int = gen.generate_random_float(1,10) if defense_power == 0 else defense_power
 			self.price: int = 10 if price == 0 else price
 		elif lvl > 1 and lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} armor" if description == "" else description
-			self.defense_power: int = defense_power * self.lvl if defense_power != 0 else 10
 			self.price: int = 10 if price == 0 else price
 			if roll == 1:
 				self.defense_power: int = gen.generate_random_number(1, 5) * self.lvl
@@ -55,26 +54,19 @@ class Shield(Armor):
 			self.description: str = "A basic shield" if description == "" else description
 			self.defense_power: int = 10 if defense_power == 0 else defense_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.attack_power: int = gen.generate_random_number(0, 2)
-			elif roll == 2:
-				self.attack_power: int = gen.generate_random_number(0, 5)
-			elif roll == 3:
-				self.attack_power = 0
 		elif self.lvl > 1 and self.lvl <= 10:
 			# Randomly assign attack and defense power based on roll
 			self.description: str = f"A Grade {self.lvl} shield" if description == "" else description
 			self.price: int = 10 if price == 0 else price
-			if self.lvl > 1 and self.lvl <= 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(0, 2) * self.lvl
-					self.defense_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(0, 5) * self.lvl
-					self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 3:
-					self.attack_power: int = gen.generate_random_number(0, 10) * self.lvl
-					self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(0, 2) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(0, 5) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(0, 10) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
 			elif self.lvl >= 10:
 				self.effect: str = random.choice(["attack", "defense"])
 				if roll == 1:
@@ -116,14 +108,8 @@ class Robe(Armor):
 		# Randomly assign attack and defense power based on roll
 		if self.lvl == 1:
 			self.description: str = "A basic robe" if description == "" else description
-			self.defense_power: int = 10 if defense_power == 0 else defense_power
+			self.defense_power: int = gen.generate_random_number(1,10) if defense_power == 0 else defense_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.defense_power: int = gen.generate_random_number(1, 3)
-			elif roll == 2:
-				self.defense_power: int = gen.generate_random_number(1, 6)
-			elif roll == 3:
-				self.defense_power = gen.generate_random_number(1, 10)
 		elif self.lvl > 1 and self.lvl <= 10:
 			# Randomly assign attack and defense power based on roll
 			self.description: str = f"A Grade {self.lvl} robe" if description == "" else description
@@ -140,15 +126,15 @@ class Robe(Armor):
 				self.attack_power: int = gen.generate_random_number(0, 10) * self.lvl
 				self.mana_power: int = gen.generate_random_number(0, 20) * self.lvl
 				self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
-			elif self.lvl >= 10:
-				if roll == 1:
-						self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-						self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 2:
-						self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-						self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
-						self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
-				elif roll == 3:
-						self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
-						self.mana_power: int = gen.generate_random_number(1, 10) * self.lvl
-						self.defense_power: int = gen.generate_random_number(1, 30) * self.lvl
+		elif self.lvl >= 10:
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 20) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 10) * self.lvl
+				self.defense_power: int = gen.generate_random_number(1, 30) * self.lvl

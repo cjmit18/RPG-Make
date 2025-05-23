@@ -51,14 +51,24 @@ class TestClassCreation(unittest.TestCase):
     def test_knight_class(self):
         char = character_creation.Character("KnightGuy")
         knight = class_creation.Knight(char)
-        self.assertEqual(knight.class_, "Knight")
-        self.assertEqual(knight.attack, 5)
+        self.assertEqual(knight.job, "Knight")
+        self.assertEqual(knight.character._base_stats.attack, 5)
 
     def test_mage_class(self):
         char = character_creation.Character("MageGuy")
         mage = class_creation.Mage(char)
-        self.assertEqual(mage.class_, "Mage")
-        self.assertEqual(mage.mana, 10)
+        self.assertEqual(mage.job, "Mage")
+        self.assertEqual(mage.character._base_stats.mana, 10)
+    def test_rogue_class(self):
+        char = character_creation.Character("RogueGuy")
+        rogue = class_creation.Rogue(char)
+        self.assertEqual(rogue.job, "Rogue")
+        self.assertEqual(rogue.character._base_stats.attack, 5)
+    def test_healer_class(self):
+        char = character_creation.Character("HealerGuy")
+        healer = class_creation.Healer(char)
+        self.assertEqual(healer.job, "Healer")
+        self.assertEqual(healer.character._base_stats.mana, 10)
 
 class TestExperienceFunctions(unittest.TestCase):
     def test_levels(self):
@@ -83,6 +93,30 @@ class TestCombatFunctions(unittest.TestCase):
         if hasattr(combat_functions, "attack"):
             result = combat_functions.attack(attacker, defender)
             self.assertIsInstance(result, int)
+class TestItemsList(unittest.TestCase):
+    def test_item_init(self):
+        item = items.Item(name="Test Item", description="A test item", price=100, lvl=1)
+        self.assertEqual(item.name, "Test Item")
+        self.assertEqual(item.description, "A test item")
+        self.assertEqual(item.price, 100)
+        self.assertEqual(item.lvl.lvl, 1)
+    def test_consumable_init(self):
+        consumable = items.Consumable(name="Test Consumable", description="A test consumable", price=50, effect="heal", amount=20, duration=5, lvl=1)
+        self.assertEqual(consumable.name, "Test Consumable")
+        self.assertEqual(consumable.description, "A test consumable")
+        self.assertEqual(consumable.price, 50)
+        self.assertEqual(consumable.effect, "heal")
+        self.assertEqual(consumable.amount, 20)
+        self.assertEqual(consumable.duration, 5)
+        self.assertEqual(consumable.lvl.lvl, 1)
+class TestWeaponList(unittest.TestCase):
+    def test_weapon_init(self):
+        weapon = weapons.Sword(name="Test Sword", description="A test sword", price=150, lvl=1, attack_power=30)
+        self.assertEqual(weapon.name, "Test Sword")
+        self.assertEqual(weapon.description, "A test sword")
+        self.assertEqual(weapon.price, 150)
+        self.assertEqual(weapon.attack_power, 30)
+        self.assertEqual(weapon.lvl, 1)
 class TestGenFunctions(unittest.TestCase):
     def test_random_number(self):
         num = gen.generate_random_number(1, 10)

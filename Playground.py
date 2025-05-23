@@ -1,18 +1,12 @@
 
 from character_creation import Player
-from class_creation import Mage
-from potion_list import Mana_Potion
+from class_creation import Mage,Knight,Rogue,Healer
+from potion_list import Mana_Potion, Health_Potion, Stamina_Potion
+from amulet_list import Amulet
 def test_mana_caps():
     
     character = Player("TestChar")
+    character.change_class(Mage)
+    character.inventory.use_by_name("Mage's Potion")
     print(character)
-    #character.change_class(Mage)
-    print("Before potion:", character.mana, "/", character.max_mana)
-    character.mana -= 24
-    character.update_stats()
-    print("After damage:", character.mana, "/", character.max_mana)
-    potion = Mana_Potion()
-    character.inventory.add_item(potion)
-    character.inventory.use_item(potion)
-    print("After potion:", character.mana, "/", character.max_mana)
 test_mana_caps()

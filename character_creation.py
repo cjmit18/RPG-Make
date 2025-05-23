@@ -50,20 +50,38 @@ class Character():
         self.update_stats()
     def __str__(self) -> str:
         """String representation of the character."""
-        # Display character stats and inventory
-        return (f"{self.__class__.__name__}:\n" #Shows the Class of the character
-                f"{self.lvls}\n" #Shows the level and experience of the character
-                f"Class: {self.job.job}\n" #Shows the character class 
-                f"{'-'*10}\n"
-                f"Attack: {self.attack} (+{self._equipment_bonus.attack})\n" #Base stats + bonus stats
-                f"Defense: {self.defense} (+{self._equipment_bonus.defense})\n"
-                f"Speed: {self.speed} (+{self._equipment_bonus.speed})\n"
-                f"Health: {self.health} (+{self._equipment_bonus.health})\n"
-                f"Mana: {self.mana} (+{self._equipment_bonus.mana})\n"
-                f"Stamina: {self.stamina} (+{self._equipment_bonus.stamina})\n"
-                f"{'-'*10}\n"
-                f"{self.inventory}") #Shows the inventory of the character
-        #Inventory shows the items in the inventory and their stats
+        # Display character stats and inventory in a more compact format
+        lines = [
+            f"{self.__class__.__name__}:",
+            f"{self.lvls}",
+            f"Class: {self.job.job}",
+            "-" * 10
+        ]
+
+        # Current stats with gear bonus
+        for stat in ["attack", "defense", "speed", "health", "mana", "stamina"]:
+            base = getattr(self._base_stats, stat)
+            bonus = getattr(self._equipment_bonus, stat)
+            total = base + bonus
+            if bonus:
+                lines.append(f"{stat.capitalize()}: {total} (+{bonus})")
+            else:
+                lines.append(f"{stat.capitalize()}: {total}")
+
+        # Max caps only if bonus or base is > 0
+        for max_stat in ["max_health", "max_mana", "max_stamina"]:
+            base = getattr(self._base_stats, max_stat, 0)
+            bonus = getattr(self._equipment_bonus, max_stat, 0)
+            total = base + bonus
+            if base or bonus:
+                if bonus:
+                    lines.append(f"{max_stat.replace('_', ' ').capitalize()}: {total} (+{bonus})")
+                else:
+                    lines.append(f"{max_stat.replace('_', ' ').capitalize()}: {total}")
+
+        lines.append("-" * 10)
+        lines.append(str(self.inventory))
+        return "\n".join(lines)
     def __repr__(self) -> str:
         """String representation of the character for debugging."""
         # Display character stats and inventory in a more compact format
@@ -80,26 +98,34 @@ class Character():
         """Get the effective stats of the character."""
         return self._effective_stats
     def update_stats(self) -> None:
-            """Update the character's stats based on the current level and class."""
-            self._equipment_bonus = Stats(
-                attack=sum(getattr(item, "attack_power", 0) for item in self.inventory.equipped_items.values() if item),
-                defense=sum(getattr(item, "defense_power", 0) for item in self.inventory.equipped_items.values() if item),
-                speed=sum(getattr(item, "speed_power", 0) for item in self.inventory.equipped_items.values() if item),
-                health=sum(getattr(item, "health_power", 0) for item in self.inventory.equipped_items.values() if item),
-                mana=sum(getattr(item, "mana_power", 0) for item in self.inventory.equipped_items.values() if item),
-                stamina=sum(getattr(item, "stamina_power", 0) for item in self.inventory.equipped_items.values() if item),
-                max_health=sum(getattr(item, "health_power", 0) for item in self.inventory.equipped_items.values() if item),
-                max_mana=sum(getattr(item, "mana_power", 0) for item in self.inventory.equipped_items.values() if item),
-                max_stamina=sum(getattr(item, "stamina_power", 0) for item in self.inventory.equipped_items.values() if item),
-            )
-            self._effective_stats = self._base_stats + self._equipment_bonus
-            self.update_max_caps()
-    def update_max_caps(self):
-        """Update the maximum caps for health, mana, and stamina."""
-        # Directly read from effective stats' max_* fields
-        self._base_stats.max_health = self._effective_stats.max_health
-        self._base_stats.max_mana = self._effective_stats.max_mana
-        self._base_stats.max_stamina = self._effective_stats.max_stamina
+        """Update the character's effective stats based on base and equipment bonuses."""
+        equipped = self.inventory.equipped_items.values()
+
+        self._equipment_bonus = Stats(
+            attack=sum(getattr(item, "attack_power", 0) for item in equipped if item),
+            defense=sum(getattr(item, "defense_power", 0) for item in equipped if item),
+            speed=sum(getattr(item, "speed_power", 0) for item in equipped if item),
+            health=0,  # Do not add item health to current health
+            mana=0,    # Prevent bonus mana from doubling
+            stamina=0, # Prevent bonus stamina from doubling
+            max_health=sum(getattr(item, "health_power", 0) for item in equipped if item),
+            max_mana=sum(getattr(item, "mana_power", 0) for item in equipped if item),
+            max_stamina=sum(getattr(item, "stamina_power", 0) for item in equipped if item),
+        )
+        self._effective_stats = self._base_stats + self._equipment_bonus
+        self.clamp_current_stats()
+        # Clamp the current stats to their maximum values
+    def clamp_current_stats(self):
+            """Clamp the current stats to their maximum values."""
+            health_cap = self._effective_stats.max_health
+            mana_cap = self._effective_stats.max_mana
+            stamina_cap = self._effective_stats.max_stamina
+            self._base_stats.health = min(self._base_stats.health, health_cap)
+            self._base_stats.mana = min(self._base_stats.mana, mana_cap)
+            self._base_stats.stamina = min(self._base_stats.stamina, stamina_cap)
+    def use_item(self, item):
+        """Use an item from the inventory."""
+        return self.inventory.use_item(item)
     def change_class(self, job):
         """Change the character's class and update stats accordingly."""
         self.job: Base = job(self) 
@@ -148,18 +174,22 @@ class Character():
         return char
     def take_damage(self, amount: int):
         """Reduce the character's health by the specified amount."""
-        self._base_stats.health = max(0, self._base_stats.health - amount)
-        self.update_stats()
+        self._base_stats.health = max(self._base_stats.health - amount)
+        self.clamp_current_stats()
 
     def drain_mana(self, amount: int):
         """Reduce the character's mana by the specified amount."""
-        self._base_stats.mana = max(0, self._base_stats.mana - amount)
-        self.update_stats()
+        self._base_stats.mana = max(self._base_stats.mana - amount)
+        self.clamp_current_stats()
 
     def drain_stamina(self, amount: int):
         """Reduce the character's stamina by the specified amount."""
-        self._base_stats.stamina = max(0, self._base_stats.stamina - amount)
-        self.update_stats()
+        self._base_stats.stamina = max(self._base_stats.stamina - amount)
+        self.clamp_current_stats()
+    def heal(self, amount: int):
+        """Heal the character by the specified amount."""
+        self._base_stats.health  += amount
+        self.clamp_current_stats()
 
 
     #----Name And Level Properties----

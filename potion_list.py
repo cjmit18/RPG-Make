@@ -13,7 +13,6 @@ class Potion(items.Consumable):
         lvl: int = 0) -> None:
         # pass lvl through so self.lvls is correct
 		super().__init__(name, description, price, effect, amount, duration, lvl or 1)
-		self.id = uuid.uuid4()
 	def __str__(self) -> str:
 		return f"Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 	def __repr__(self) -> str:

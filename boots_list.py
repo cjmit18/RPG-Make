@@ -10,13 +10,6 @@ class Boot(items_list.Item):  # Inherit from Item
         self.id: uuid = uuid.uuid4()
         # Randomly assign attack and defense power based on roll
         roll: int = gen.generate_random_number(1, 3)
-        def compare_to(self, other) -> str:
-            if self.speed_power:
-                diff = self.speed_power - other.speed_power
-                return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} speed power."
-            if self.stamina_power:
-                diff = self.stamina_power - other.stamina_power
-                return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} stamina power."
         if lvl == 1:
             self.description: str = "A basic boots" if description == "" else description
             self.price: int = 10 if price == 0 else price
@@ -28,21 +21,32 @@ class Boot(items_list.Item):  # Inherit from Item
             self.price: int = 20 if price == 0 else price
             # Randomly assign speed and	stamina power based on roll
             if roll == 1:
-                    self.speed_power: int = gen.generate_random_number(1, 5) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 5) * self.lvl
+                self.speed_power: int = gen.generate_random_number(1, 5) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 5) * self.lvl
             elif roll == 2:
-                    self.speed_power = gen.generate_random_number(1, 10) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 5) * self.lvl
+                self.speed_power = gen.generate_random_number(1, 10) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 5) * self.lvl
             elif roll == 3:
-                    self.speed_power: int = gen.generate_random_number(1, 15) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 15) * self.lvl
+                self.speed_power: int = gen.generate_random_number(1, 15) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 15) * self.lvl
         elif lvl >= 10:
-                if roll == 1:
-                    self.speed_power: int = gen.generate_random_number(1, 10) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 20) * self.lvl
-                elif roll == 2:
-                    self.speed_power: int = gen.generate_random_number(1, 20) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 10) * self.lvl
-                elif roll == 3:
-                    self.speed_power: int = gen.generate_random_number(1, 20) * self.lvl
-                    self.stamina_power: int = gen.generate_random_number(1, 20) * self.lvl
+            if roll == 1:
+                self.speed_power: int = gen.generate_random_number(1, 10) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 20) * self.lvl
+            elif roll == 2:
+                self.speed_power: int = gen.generate_random_number(1, 20) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 10) * self.lvl
+            elif roll == 3:
+                self.speed_power: int = gen.generate_random_number(1, 20) * self.lvl
+                self.stamina_power: int = gen.generate_random_number(1, 20) * self.lvl
+    def compare_to(self, other) -> str:
+        """Compare this boots to another boots."""
+        if self.speed_power and self.stamina_power:
+            diff = self.speed_power - other.speed_power
+            return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} speed power."
+        elif self.stamina_power:
+            diff = self.stamina_power - other.stamina_power
+            return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} stamina power."
+        elif self.speed_power:
+            diff = self.speed_power - other.speed_power
+            return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} speed power."

@@ -81,14 +81,10 @@ class Character():
 
         lines.append("-" * 10)
         lines.append(str(self.inventory))
-        return "\n".join(lines)
+        return f"{'\n'.join(lines)}"
     def __repr__(self) -> str:
-        """String representation of the character for debugging."""
-        # Display character stats and inventory in a more compact format
-        return (f"{self.__class__.__name__}") + \
-               (f"name={self.name}, lvl={self.lvl}, attack={self.attack}, defense={self.defense}, ") + \
-               (f"speed={self.speed}, health={self.health}, mana={self.mana}, ") + \
-               (f"stamina={self.stamina}, inventory={self.inventory}")    
+        """String representation of the character for debugging and interactive display."""
+        return self.__str__()
     def __eq__(self, other) -> bool:
         """Check if two characters are equal based on their name and level."""
         if not isinstance(other, Character):
@@ -143,7 +139,7 @@ class Character():
             "level": self.lvls.lvl,
             "experience": self.lvls.experience,
             "class": self.job.__class__.__name__,
-            "inventory": [item.to_dict() for item in self.inventory.get_items()],
+            "inventory": [item.to_dict() for item in self.inventory.items],
             "equipped": {slot: item.to_dict() for slot, item in self.inventory.equipped_items.items() if item}
         }
     @classmethod
@@ -172,21 +168,21 @@ class Character():
             item = item_loader(item_data)
             char.inventory.equip_item(item)
         return char
-    def take_damage(self, amount: int):
+    def take_damage(self, amount: int) -> None:
         """Reduce the character's health by the specified amount."""
         self._base_stats.health = max(self._base_stats.health - amount)
         self.clamp_current_stats()
 
-    def drain_mana(self, amount: int):
+    def drain_mana(self, amount: int) -> None:
         """Reduce the character's mana by the specified amount."""
         self._base_stats.mana = max(self._base_stats.mana - amount)
         self.clamp_current_stats()
 
-    def drain_stamina(self, amount: int):
+    def drain_stamina(self, amount: int) -> None:
         """Reduce the character's stamina by the specified amount."""
         self._base_stats.stamina = max(self._base_stats.stamina - amount)
         self.clamp_current_stats()
-    def heal(self, amount: int):
+    def heal(self, amount: int) -> None:
         """Heal the character by the specified amount."""
         self._base_stats.health  += amount
         self.clamp_current_stats()
@@ -318,8 +314,8 @@ class Enemy(Character):
         level (int): Level of the enemy.
         inventory (Inventory): Inventory object for managing items.
     """
-    def __init__(self, name: str = "Enemy", level: int = 1) -> None:
-        super().__init__(name, level)
+    def __init__(self, name: str = "Enemy", level: int = 1, experience: int = 0) -> None:
+        super().__init__(name, level, experience)
         # Add a health potion to the enemy's inventory
 class Player(Character):
     """
@@ -330,6 +326,6 @@ class Player(Character):
         level (int): Level of the player.
         inventory (Inventory): Inventory object for managing items.
     """
-    def __init__(self, name: str = "Hero", level: int = 1)  -> None:
-        super().__init__(name, level)
+    def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0)  -> None:
+        super().__init__(name, level, experience)
         """Initialize the player with default stats and an empty inventory."""

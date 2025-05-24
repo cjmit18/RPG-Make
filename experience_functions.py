@@ -23,6 +23,14 @@ class Levels:
         if not isinstance(self.character, character_creation.Enemy):
             while self.experience >= self.required_experience():
                 self.level_up()
+    def remove_experience(self, exp: int) -> None:
+        """Remove experience points from the character."""
+        if not isinstance(exp, int):
+            raise TypeError("Experience must be an integer.")
+        self.experience -= exp
+        if self.experience < 0:
+            self.experience = 0
+        log.info(f"{self.character.name} lost {exp} experience points.")
     def level_up(self) -> None:
         """Level up the character if enough experience is gained."""
         while self.experience >= self.required_experience():

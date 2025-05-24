@@ -4,7 +4,6 @@ import uuid
 import logging
 from items_list import Item
 import experience_functions
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 class Weapon(Item):
 	"""Base class for weapons."""
@@ -163,7 +162,7 @@ class Dagger(Weapon):
 class Staff(Weapon):
 	"""Staff that can be used to attack enemies."""
 	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = 0, lvl: int = 0) -> None:
-		super().__init__(name, description, price, attack_power, lvl)
+		super().__init__(name, description, price, attack_power, lvl) 
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Staff" if name == "" else name
 		"""Randomly assign attack and defense power based on roll"""
@@ -191,7 +190,7 @@ class Staff(Weapon):
 					self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
 class Off_Hand(Weapon):
 	"""Off hand weapon that can be used to attack enemies."""
-	def __init__(self, name = "", description = "", price = 0, attack_power = gen.generate_random_number(1, 4), lvl = 1):
+	def __init__(self, name: str = "", description: str = "", price: int = 0, attack_power: int = 0, lvl: int = 0) -> None:
 		super().__init__(name, description, price, attack_power, lvl)
 		self.lvl: int = 1 if lvl == 0 else lvl
 		self.name: str = "Off Hand" if name == "" else name
@@ -202,26 +201,19 @@ class Off_Hand(Weapon):
 			self.description: str = "A basic off hand" if description == "" else description
 			self.attack_power: int = 10 if attack_power == 0 else attack_power
 			self.price: int = 10 if price == 0 else price
-			if roll == 1:
-				self.attack_power: int = gen.generate_random_number(1, 2)
-			elif roll == 2:
-				self.attack_power: int = gen.generate_random_number(1, 5)
-			elif roll == 3:
-				self.attack_power: int = gen.generate_random_number(1, 10)
 		elif self.lvl > 1 and self.lvl <= 10:
 			self.description: str = f"A Grade {self.lvl} off hand" if description == "" else description
 			self.price: int = 10 if price == 0 else price
-			if self.lvl > 1 and self.lvl <= 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(1, 2) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 3:
-					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-			elif self.lvl > 10:
-				if roll == 1:
-					self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
-				elif roll == 2:
-					self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 3:
-					self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 2) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+		elif self.lvl > 10:
+			if roll == 1:
+				self.attack_power: int = gen.generate_random_number(1, 5) * self.lvl
+			elif roll == 2:
+				self.attack_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 3:
+				self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl

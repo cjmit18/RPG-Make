@@ -43,8 +43,12 @@ class Item:
 			lvl=data.get("level", 0)
 		)
 	def compare_to(self, other) -> str:
-		diff = self.price - other.price
-		return f"{self.name} is {'more' if diff > 0 else 'less'} expensive than {other.name} by {abs(diff)} coins."
+		"""Compare this item to another item."""
+		if self.price:
+			diff = self.price - other.price
+			return f"{self.name} is {'more' if diff > 0 else 'less'} expensive than {other.name} by {abs(diff)}."
+		else:
+			return f"{self.name} has no price to compare."
 	@property
 	def category(self) -> str:
 		return self.__class__.__name__

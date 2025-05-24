@@ -3,7 +3,6 @@ import gen
 import logging
 import random
 import uuid
-logging.basicConfig(level=logging.INFO) 
 log = logging.getLogger()
 class Armor(items.Item):
 	"""Base class for armor."""
@@ -12,6 +11,7 @@ class Armor(items.Item):
 		self.lvl = 1 if lvl == 0 else lvl
 		self.name = "Armor" if name == "" else name
 		self.id = uuid.uuid4()
+		self.attack_power: int
 		roll: int = gen.generate_random_number(1, 3)
 		# Randomly assign attack and defense power based on roll
 		if lvl == 1:
@@ -40,6 +40,17 @@ class Armor(items.Item):
 		return f"{self.name} \nDescription: {self.description} \nPrice: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"
 	def __repr__(self) -> str:
 		return f"{self.name} \nDescription: {self.description} \nPrice: {self.price}, Defense Power: {self.defense_power}, Level: {self.lvl}"
+	def compare_to(self, other) -> str:
+		"""Compare this armor to another armor."""
+		if self.attack_power and self.defense_power:
+			diff = self.attack_power - other.attack_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} attack power."
+		if self.defense_power:
+			diff = self.defense_power - other.defense_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
+		else:
+			return f"{self.name} has no defense power to compare."
+	    
 class Shield(Armor):
 	"""Base class for shields."""
 	"""Shields that can be used to protect against enemy attacks."""
@@ -96,6 +107,16 @@ class Shield(Armor):
 					elif self.effect == "both":
 						self.attack_power: int = gen.generate_random_number(2, 20) * self.lvl
 						self.defense_power: int = gen.generate_random_number(5, 30) * self.lvl
+	def compare_to(self, other):
+		"""Compare this shield to another shield."""
+		if self.attack_power and self.defense_power:
+			diff = self.attack_power - other.attack_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} attack power."
+		if self.defense_power:
+			diff = self.defense_power - other.defense_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
+		else:
+			return f"{self.name} has no attack or defense power to compare."
 class Robe(Armor):
 	"""Base class for robes."""
 	"""Robes that can be used to protect against enemy attacks."""
@@ -138,3 +159,13 @@ class Robe(Armor):
 				self.attack_power: int = gen.generate_random_number(1, 20) * self.lvl
 				self.mana_power: int = gen.generate_random_number(1, 10) * self.lvl
 				self.defense_power: int = gen.generate_random_number(1, 30) * self.lvl
+	def compare_to(self, other) -> str:
+		"""Compare this robe to another robe."""
+		if self.attack_power and self.defense_power:
+			diff = self.attack_power - other.attack_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} attack power."
+		elif self.defense_power:
+			diff = self.defense_power - other.defense_power
+			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
+		else:
+			return f"{self.name} has no attack or defense power to compare."

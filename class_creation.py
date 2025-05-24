@@ -34,14 +34,15 @@ class Base():
         self.name: str = name
         self.character: character_creation = character
         self.job: str = self.__class__.__name__
+        self.lvl: int = character.lvls.lvl
         if not stats:
             stats = stats or {
-                "attack": 100,
-                "defense": 100,
-                "speed": 100,
-                "health": 100,
-                "mana": 100,
-                "stamina": 100
+                "attack": 3 * self.lvl,
+                "defense": 3 * self.lvl,
+                "speed": 3 * self.lvl,
+                "health": 3 * self.lvl,
+                "mana": 3 * self.lvl,
+                "stamina": 3 * self.lvl
             }
         for stat_name, stat_value in stats.items():
             """Set the stats of the class"""

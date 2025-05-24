@@ -21,24 +21,24 @@ class Ring(items_list.Item):
 			self.price: int = 20 if price == 0 else price
 			# Randomly assign attack and defense power based on roll
 			if roll == 1:
-					self.health_power: int = gen.generate_random_number(1, 5) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
+				self.health_power: int = gen.generate_random_number(1, 5) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
 			elif roll == 2:
-					self.health_power: int = gen.generate_random_number(1, 10) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
+				self.health_power: int = gen.generate_random_number(1, 10) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 5) * self.lvl
 			elif roll == 3:
-					self.health_power: int = gen.generate_random_number(1, 15) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 15) * self.lvl
+				self.health_power: int = gen.generate_random_number(1, 15) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 15) * self.lvl
 		elif lvl >= 10:
-				if roll == 1:
-					self.health_power: int = gen.generate_random_number(1, 10) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 20) * self.lvl
-				elif roll == 2:
-					self.health_power: int = gen.generate_random_number(1, 20) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 10) * self.lvl
-				elif roll == 3:
-					self.health_power: int = gen.generate_random_number(1, 20) * self.lvl
-					self.mana_power: int = gen.generate_random_number(1, 20) * self.lvl
+			if roll == 1:
+				self.health_power: int = gen.generate_random_number(1, 10) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 20) * self.lvl
+			elif roll == 2:
+				self.health_power: int = gen.generate_random_number(1, 20) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 10) * self.lvl
+			elif roll == 3:
+				self.health_power: int = gen.generate_random_number(1, 20) * self.lvl
+				self.mana_power: int = gen.generate_random_number(1, 20) * self.lvl
 		if gen.generate_random_number(1, 100) < 10:
 			self.stamina_power: int = gen.generate_random_number(1, 20) * self.lvl if stamina_power == 0 else stamina_power
 	def __str__(self) -> str:
@@ -46,6 +46,7 @@ class Ring(items_list.Item):
 	def __repr__(self) -> str:
 		return f"Ring: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}"
 	def compare_to(self, other):
+		"""Compare this ring to another ring."""
 		if self.health_power:
 			diff = self.health_power - other.health_power
 			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} health power."

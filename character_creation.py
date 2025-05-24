@@ -81,7 +81,7 @@ class Character():
 
         lines.append("-" * 10)
         lines.append(str(self.inventory))
-        return f"{'\n'.join(lines)}"
+        return {'\n'.join(lines)}
     def __repr__(self) -> str:
         """String representation of the character for debugging and interactive display."""
         return self.__str__()

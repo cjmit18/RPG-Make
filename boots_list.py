@@ -4,9 +4,18 @@ import uuid
 import items_list
 class Boot(items_list.Item):  # Inherit from Item
     """Base class for boots"""
-    def __init__(self, name: str = "", description: str = "", price: int = 0, effect: str = "", lvl: int = 0, speed_power: int = 0, stamina_power: int = 0) -> None:
+    def __init__(self,  
+                name: str = "",
+                description: str = "",
+                price: int = 0,
+                effect: str = "",
+                lvl: int = 0,
+                speed_power: int = 0,
+                stamina_power: int = 0) -> None:
+        super().__init__(name, description, price, lvl)
         self.lvl: int = 1 if lvl == 0 else lvl
         self.name: str = "Boots" if name == "" else name
+        self.effect: str = "Boots" if effect == "" else effect
         self.id: uuid = uuid.uuid4()
         # Randomly assign attack and defense power based on roll
         roll: int = gen.generate_random_number(1, 3)

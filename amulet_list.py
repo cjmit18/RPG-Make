@@ -9,6 +9,7 @@ class Amulet(items_list.Item):
 		self.id: uuid = uuid.uuid4()
 		self.lvl = 1 if lvl == 0 else lvl
 		self.name: str = "Amulet" if name == "" else name
+		self.effect: str = "Amulet" if effect == "" else effect
 		roll = gen.generate_random_number(1, 3)
 		# Randomly assign attack and defense power based on roll
 		if self.lvl == 1:

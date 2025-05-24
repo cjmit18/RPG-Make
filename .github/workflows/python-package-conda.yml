@@ -9,28 +9,28 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 5
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.10']  # add more versions here if you like
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-          activate-environment: base
-          environment-file: environment.yml
+          activate-environment: base   # installs into conda’s base env
 
-      - name: Install dev dependencies
+      - name: Install dependencies
         run: |
-          conda install flake8 pytest mypy
+          pip install --upgrade pip
+          pip install -r requirements.txt -r dev-requirements.txt
 
       - name: Lint with flake8
         run: |
-          # fail on errors, warn on style
+          # fail on syntax errors, warn on style issues
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
@@ -38,6 +38,6 @@ jobs:
         run: |
           mypy .
 
-      - name: Run tests
+      - name: Run tests with pytest
         run: |
           pytest --maxfail=1 --disable-warnings --junitxml=junit/test-results.xml

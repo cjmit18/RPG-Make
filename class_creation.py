@@ -61,7 +61,7 @@ class Base():
                 if is_equippable(item) and not isinstance(item, Potion):
                     self.character.inventory.equip_item(item)
                 
-        if self.__class__.__name__ is not "Base":
+        if not isinstance(self, Base):
             log.info(f"{self.character.name} is now a {self.job}!")
         
         self.character.update_stats()

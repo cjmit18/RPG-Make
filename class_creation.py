@@ -1,7 +1,10 @@
+"""Class Creation Module
+This module contains the Base job class and related functionality for character classes."""
+
 from inventory_functions import is_equippable
 import character_creation
 import items_list
-from weapon_list import Sword, Axe, Dagger, Staff, Weapon, Off_Hand
+from weapon_list import Axe, Dagger, Staff, Weapon, Off_Hand, Sword, Bow
 from boots_list import Boot
 from armor_list import Shield, Armor, Robe
 from potion_list import Health_Potion, Mana_Potion, Potion
@@ -11,178 +14,114 @@ import gen
 import uuid
 import random
 import logging
+
 log = logging.getLogger(__name__)
-class Base():
-    """Base class for all classes
-    This class is the base class for all classes in the game.
-    It contains the character object and the class name.
-    Attributes:
-        character (character_creation): The character object.
-        job (str): The name of the class.
-        attack (int): The attack power of the class.
-        defense (int): The defense power of the class.
-        speed (int): The speed of the class.
-        health (int): The health of the class.
-        mana (int): The mana of the class.
-        stamina (int): The stamina of the class.
-    """
-    def __init__(self, 
-                character: character_creation, 
-                stats: dict = None,
-                starting_items: list = None,
-                name: str = None) -> None:
-        self.name: str = name
-        self.character: character_creation = character
-        self.job: str = self.__class__.__name__
-        self.lvl: int = character.lvls.lvl
-        if not stats:
-            stats = stats or {
-                "attack": 3 * self.lvl,
-                "defense": 3 * self.lvl,
-                "speed": 3 * self.lvl,
-                "health": 3 * self.lvl,
-                "mana": 3 * self.lvl,
-                "stamina": 3 * self.lvl
-            }
+class Base:
+    def __init__(self,
+                 character: character_creation,
+                 stats: dict | None = None,
+                 starting_items: list | None = None,
+                 name: str | None = None) -> None:
+
+        self.name      = name or self.__class__.__name__
+        self.character = character
+        self.job       = self.__class__.__name__
+        self.lvl       = character.lvls.lvl
+
+        # 1) default to a small buff if no stats passed in
+        stats = stats or {
+            "attack":  3 * self.lvl,
+            "defense": 3 * self.lvl,
+            "speed":   3 * self.lvl,
+            "health":  3 * self.lvl,
+            "mana":    3 * self.lvl,
+            "stamina": 3 * self.lvl,
+        }
+
+        # 2) apply each value as a new BASE stat
         for stat_name, stat_value in stats.items():
-            """Set the stats of the class"""
-            setattr(self.character._base_stats, stat_name, stat_value)
-        for stat_name in ["health", "mana", "stamina"]:
-            value = getattr(self.character._base_stats, stat_name)
-            setattr(self.character._base_stats, f"max_{stat_name}", value)
+            # replaces setattr(self.character._base_stats, …)
+            self.character.stats.set_base(stat_name, stat_value)
+            log.info(f"{self.character.name}'s base {stat_name} set to {stat_value}")
+
+        # 3) give the character any free starting items
         if starting_items:
+            starting_items.append(Health_Potion())
             for item in starting_items:
-                if isinstance(item, Health_Potion):
-                    self.character.inventory.add_item(item, 5)
-                elif isinstance(item, Mana_Potion):
-                    self.character.inventory.add_item(item, 5)
-                else:
-                    self.character.inventory.add_item(item, 1)
+                qty = 5 if isinstance(item, (Health_Potion, Mana_Potion)) else 1
+                self.character.inventory.add_item(item, qty)
+                # auto-equip if it’s wearable
                 if is_equippable(item) and not isinstance(item, Potion):
                     self.character.inventory.equip_item(item)
-                
-        if self.__class__.__name__ is not "Base":
-            log.info(f"{self.character.name} is now a {self.job}!")
-        
+
+        # 4) refresh all stats so modifiers (gear + class) take effect
         self.character.update_stats()
     def __str__(self) -> str:
-        """String representation of the class"""
-        parts = [f"Class Name: {self.job}"]
+        eff = self.character.stats.effective()
+        parts = [f"Class: {self.job}"]
         for stat in ["attack", "defense", "speed", "health", "mana", "stamina"]:
-            parts.append(f"{stat.capitalize()}: {getattr(self, stat)}")
-            bonus = getattr(self,stat,0)
-            parts.append(f"{stat.capitalize()} Bonus: {bonus}")
+            base = self.character.stats.base.get(stat, 0)
+            total = eff[stat]
+            bonus = total - base
+            line = f"{stat.capitalize()}: {total}"
+            if bonus:
+                line += f" (Base: {base} + Bonus: {bonus})"
+            parts.append(line)
         return "\n".join(parts)
+
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.character.name} ({self.character.lvl})>"
+        return f"<{self.job} {self.character.name} (Lvl {self.character.lvl})>"
+
     @staticmethod
-    def generate_random_class(cls, character: character_creation) -> None:
-                """Generate a random class for the character"""
-                if cls is None:
-                    cls = random.choice([Knight, Mage, Rogue, Healer])
-                else:
-                    cls = cls
-                return cls(character)
+    def generate_random_class(
+        cls,
+        character: character_creation,
+    ) -> "Base":
+        """Assigns a random subclass (Knight, Mage, Rogue, Healer) if cls is None."""
+        if cls is None:
+            cls = random.choice([Knight, Mage, Rogue, Healer])
+        return cls(character)
     @classmethod
-    def set_stats(self, stats: dict) -> None:
-        """Set the stats of the class"""
+    def set_stats(cls, character: "character_creation.Character", stats: dict) -> None:
+        """Completely overwrite a character’s base stats via the Stats API."""
         for stat_name, stat_value in stats.items():
-            """Set the stats of the class"""
-            setattr(self.character, stat_name, stat_value)
-            log.info(f"{self.character.name}'s {stat_name} is now {stat_value}")
+            character.stats.set_base(stat_name, stat_value)
+            log.info(f"{character.name}'s base {stat_name} reset to {stat_value}")
+        character.update_stats()
+
+# Example subclasses (customize per game design)
 class Knight(Base):
-    def __init__(self, character: character_creation) -> None:
-        """Knight class for the character """
-        lvl: int = character.lvls.lvl 
-        stats = {
-            "attack": 5 * lvl,
-            "defense": 5 * lvl,
-            "speed": 2 * lvl,
-            "health": 5 * lvl,
-            "mana": 2 * lvl,
-            "stamina": 5 * lvl
-        }
-        #Knight starts with a sword, shield, armor and boots
-        starting_items: list = [
-            Sword(name="Knight's Sword", description="A sword for a knight", price=100, lvl=1, attack_power=20),
-            Shield(name="Knight's Shield", description="A shield for a knight", price=100, lvl=1, defense_power = 20),
-            Armor(name="Knight's Armor", description="An armor for a knight", price=100, lvl=1, defense_power=20),
-            Boot(name="Knight's Boots", description="Boots for a knight", price=100, lvl=1, speed_power=20),
-            Health_Potion(name="Knight's Potion", description=f"A potion for a knight.\n Restores some health", price=100, lvl=1),
-            Mana_Potion(name="Knight's Mana Potion", description=f"A potion for a knight.\n Restores some mana", price=100, lvl=1)
-            ]
-        super().__init__(character, stats, starting_items, "Knight")
-        
+    def __init__(self, character, **kwargs):
+        super().__init__(
+            character,
+            stats={"attack": 5, "defense": 7, "speed": 3, "health": 10, "mana": 2, "stamina": 5},
+            starting_items=[Sword(), Shield()],
+            name="Knight"
+        )
+
 class Mage(Base):
-    """Mage class for the character"""
-    def __init__(self, character: character_creation) -> None:
-        lvl = character.lvls.lvl
-        stats = {
-            "attack": 2 * lvl,
-            "defense": 2 * lvl,
-            "speed": 5 * lvl,
-            "health": 5 * lvl,
-            "mana": 10 * lvl,
-            "stamina": 5 * lvl
-        }
+    def __init__(self, character, **kwargs):
+        super().__init__(
+            character,
+            stats={"attack": 2, "defense": 2, "speed": 4, "health": 6, "mana": 12, "stamina": 3},
+            starting_items=[Staff(), Mana_Potion()],
+            name="Mage"
+        )
 
-        starting_items = [
-            Staff(name="Mage's Staff", description="A staff for a mage", price=100, lvl=1, attack_power=20),
-            Robe(name="Mage's Robe", description="A robe for a mage", price=100, lvl=1, defense_power=20),
-            Boot(name="Mage's Boots", description="Boots for a mage", price=100, lvl=1, speed_power=20),
-            Health_Potion(name="Mage's Potion", description=f"A potion for a mage.\n Restores some health", price=100, lvl=1),
-            Mana_Potion(name="Mage's Mana Potion", description=f"A potion for a mage.\n Restores some mana", price=100, lvl=1)
-        ]
-
-        if gen.generate_random_number(1, 100) < 100:
-            starting_items.append(Amulet(name="Mage's Amulet", description="A magical amulet", price=100, lvl=1, mana_power=20, health_power=20))
-
-        super().__init__(character, stats, starting_items, "Mage")
 class Rogue(Base):
-    """Rogue class for the character """
-    def __init__(self, character: character_creation) -> None:
-        #Rogue starts with a dagger, leather armor and boots
-        starting_items: list = [
-            Dagger(name="Rogue's Dagger", description="A dagger for a rogue", price=100, lvl=1, attack_power=20),
-            Off_Hand(name="Rogue's Dagger", description="A dagger for a rogue", price=100, lvl=1, attack_power=20),
-            Armor(name="Rogue's Armor", description="An armor for a rogue", price=100, lvl=1, defense_power=20),
-            Boot(name="Rogue's Boots", description="Boots for a rogue", price=100, lvl=1, speed_power=20),
-            Health_Potion(name="Rogue's Potion", description=f"A potion for a rogue.\n Restores some health", price=100, lvl=1)
-        ]
-        if gen.generate_random_number(1, 100) < 10:
-            starting_items.append(Amulet(name="Rogue's Amulet", description="An amulet for a rogue", price=100, lvl=1, stamina_power=20))
-        stats = {
-            "attack": 5,
-            "defense": 2,
-            "speed": 5,
-            "health": 5,
-            "mana": 5,
-            "stamina": 5
-        }
-        super().__init__(character, stats, starting_items, "Rogue")
+    def __init__(self, character, **kwargs):
+        super().__init__(
+            character,
+            stats={"attack": 7, "defense": 3, "speed": 8, "health": 8, "mana": 3, "stamina": 6},
+            starting_items=[Dagger(), Boot()],
+            name="Rogue"
+        )
+
 class Healer(Base):
-    """Healer class for the character """
-    def __init__(self, character: character_creation) -> None:
-        #Healer starts with a staff, robe and boots
-        starting_items: list = [
-            Staff(name="Healer's Staff", description="A staff for a healer", price=100, lvl=1, attack_power=20),
-            Robe(name="Healer's Robe", description="A robe for a healer", price=100, lvl=1, defense_power=20),
-            Boot(name="Healer's Boots", description="Boots for a healer", price=100, lvl=1, speed_power=20),
-            Health_Potion(name="Healer's Potion", description=f"A potion for a healer.\n Restores some health", price=100, lvl=1),
-            Mana_Potion(name="Healer's Mana Potion", description=f"A potion for a healer.\n Restores some mana", price=100, lvl=1)
-        ]
-        if gen.generate_random_number(1, 100) < 10:
-            starting_items.append(Amulet(name="Healer's Amulet", description="An amulet for a healer", price=100, lvl=1, health_power=20, mana_power=20))
-        #Healer has a chance to start with an amulet
-            if gen.generate_random_number(1, 100) < 10:
-                starting_items.append(Ring(name="Healer's Ring", description="A ring for a healer", price=100, lvl=1, health_power=200, mana_power=20))
-        #Healer has a chance to start with a ring percent is 1%
-        stats = {
-            "attack": 2,
-            "defense": 2,
-            "speed": 2,
-            "health": 5,
-            "mana": 10,
-            "stamina": 5
-        }
-        super().__init__(character, stats, starting_items, "Healer")
+    def __init__(self, character, **kwargs):
+        super().__init__(
+            character,
+            stats={"attack": 1, "defense": 4, "speed": 3, "health": 8, "mana": 14, "stamina": 4},
+            starting_items=[Amulet(), Health_Potion()],
+            name="Healer"
+        )

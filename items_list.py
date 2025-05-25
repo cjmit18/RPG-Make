@@ -18,6 +18,10 @@ class Item:
 		self.price: int  = price
 		self.quantity: int = 1
 		self.lvls = experience_functions.Levels(self, lvl)
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the item."""
+		"""Default is empty, but subclasses can override this to provide specific stat modifiers."""
+		return {}
 	def __str__(self) -> str:
 		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
 	def __repr__(self) -> str:

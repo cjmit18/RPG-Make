@@ -59,3 +59,7 @@ class Boot(items_list.Item):  # Inherit from Item
         elif self.speed_power:
             diff = self.speed_power - other.speed_power
             return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} speed power."
+    def stat_mod(self) -> dict[str, int]:
+        """Return a dictionary of stat modifiers for the weapon."""
+        return {"speed": getattr(self, "speed_power", 0),
+                "stamina": getattr(self, "stamina_power", 0)}

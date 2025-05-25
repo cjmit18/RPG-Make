@@ -40,6 +40,9 @@ class Weapon(Item):
 			return f"{self.name} is less powerful than {other.name} by {diff} attack power."
 		else:
 			return f"{self.name} is more powerful than {other.name} by {diff} attack power."
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the weapon."""
+		return {"attack": getattr(self, "attack_power", 0),}
 class Sword(Weapon):
 	"""Swords that can be used to attack enemies."""
 	def __init__(self, name: str = "",

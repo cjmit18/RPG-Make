@@ -59,3 +59,8 @@ class Ring(items_list.Item):
 		if self.stamina_power:
 			diff = self.stamina_power - other.stamina_power
 			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} stamina power."
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the weapon."""
+		return {"health": getattr(self, "health_power", 0),
+				"mana":   getattr(self, "mana_power", 0),
+				"stamina": getattr(self, "stamina_power", 0)}

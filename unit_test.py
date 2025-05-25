@@ -25,7 +25,7 @@ def test_player_init():
 
 def test_enemy_inheritance():
     enemy = character_creation.Enemy("Goblin", 1)
-    assert isinstance(enemy, character_creation.Character)
+    assert isinstance(enemy, character_creation.Enemy)    
     assert enemy.name == "Goblin"
     assert enemy.lvls.lvl == 1
     assert enemy.lvls.experience == 100
@@ -158,26 +158,44 @@ def test_knight_class():
     char = character_creation.Character("KnightGuy")
     knight = class_creation.Knight(char)
     assert knight.job == "Knight"
-    assert knight.character._base_stats.attack == 5
+    assert knight.character.stats.base["health"] == 10
+    assert knight.character.stats.base["mana"] == 2
+    assert knight.character.stats.base["attack"] == 5
+    assert knight.character.stats.base["defense"] == 7
+    assert knight.character.stats.base["stamina"] == 5
+    assert knight.character.stats.base["speed"] == 3
 
 def test_mage_class():
     char = character_creation.Character("MageGuy")
     mage = class_creation.Mage(char)
     assert mage.job == "Mage"
-    assert mage.character._base_stats.mana == 10
+    assert mage.character.stats.base["health"] == 6
+    assert mage.character.stats.base["mana"] == 12
+    assert mage.character.stats.base["attack"] == 2
+    assert mage.character.stats.base["defense"] == 2
+    assert mage.character.stats.base["stamina"] == 3
+    assert mage.character.stats.base["speed"] == 4
 
 def test_rogue_class():
     char = character_creation.Character("RogueGuy")
     rogue = class_creation.Rogue(char)
     assert rogue.job == "Rogue"
-    assert rogue.character._base_stats.attack == 5
-
+    assert rogue.character.stats.base["health"] == 8
+    assert rogue.character.stats.base["mana"] == 3
+    assert rogue.character.stats.base["attack"] == 7
+    assert rogue.character.stats.base["defense"] == 3
+    assert rogue.character.stats.base["stamina"] == 6
+    assert rogue.character.stats.base["speed"] == 8
 def test_healer_class():
     char = character_creation.Character("HealerGuy")
     healer = class_creation.Healer(char)
     assert healer.job == "Healer"
-    assert healer.character._base_stats.mana == 10
-
+    assert healer.character.stats.base["health"] == 8
+    assert healer.character.stats.base["mana"] == 14
+    assert healer.character.stats.base["attack"] == 1
+    assert healer.character.stats.base["defense"] == 4
+    assert healer.character.stats.base["stamina"] == 4
+    assert healer.character.stats.base["speed"] == 3
 # Inventory Functions Tests
 def test_inventory_add_remove():
     char = character_creation.Character("InvGuy")

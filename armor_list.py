@@ -50,6 +50,9 @@ class Armor(items.Item):
 			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
 		else:
 			return f"{self.name} has no defense power to compare."
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the weapon."""
+		return {"defense": getattr(self, "defense_power", 0), }
 	    
 class Shield(Armor):
 	"""Base class for shields."""
@@ -117,6 +120,10 @@ class Shield(Armor):
 			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
 		else:
 			return f"{self.name} has no attack or defense power to compare."
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the weapon."""
+		return {"attack": getattr(self, "attack_power", 0),
+				"defense": getattr(self, "defense_power", 0)}		
 class Robe(Armor):
 	"""Base class for robes."""
 	"""Robes that can be used to protect against enemy attacks."""
@@ -169,3 +176,8 @@ class Robe(Armor):
 			return f"{self.name} is {'more' if diff > 0 else 'less'} powerful than {other.name} by {abs(diff)} defense power."
 		else:
 			return f"{self.name} has no attack or defense power to compare."
+	def stat_mod(self) -> dict[str, int]:
+		"""Return a dictionary of stat modifiers for the weapon."""
+		return {"attack": getattr(self, "attack_power", 0),
+				"defense": getattr(self, "defense_power", 0),
+				"mana": getattr(self, "mana_power", 0)}

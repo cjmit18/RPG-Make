@@ -2,10 +2,10 @@
 This module contains the Character class and its subclasses (NPC, Enemy, Player) for a game."""
 
 import logging
-from inventory_functions import Inventory
-from class_creation import Base
-from stats import Stats
-import experience_functions
+from core.inventory_functions import Inventory
+from jobs.base import Base
+from core.stats import Stats
+import core.experience_functions as experience_functions
 import gen
 
 log = logging.getLogger(__name__)
@@ -47,23 +47,21 @@ class Character:
         self.current_stamina = maxs["stamina"]
 
         # Assign class/job (Base may apply class-based stat overrides)
-        self.job = Base(self, self.stats.base)
-
-        # Apply equipment and class modifiers, clamp current pools
-        self.update_stats()
-
+        self.change_class(Base)
     def update_stats(self) -> None:
         # 1) clear previous modifiers
         self.stats.clear_modifiers()
 
-        # 2) apply equipped items' modifiers
+        # 2) apply class/job modifiers
+        for stat_name, value in self.job.stats.items():
+            self.stats.add_modifier(stat_name, value)
+    # 3) apply equipped items' modifiers
         for item in self.inventory.equipped_items.values():
             if not item:
                 continue
             for stat_name, mod in item.stat_mod().items():
                 self.stats.add_modifier(stat_name, mod)
-
-        # 3) clamp current pools within [0, new_max]
+        # 4) clamp current pools within [0, new_max]
         maxs = self.stats.effective()
         self.current_health  = max(0, min(self.current_health,  maxs["health"]))
         self.current_mana    = max(0, min(self.current_mana,    maxs["mana"]))
@@ -74,7 +72,7 @@ class Character:
         lines = [
             f"{self.__class__.__name__}: {self._name}",
             str(self.lvls),
-            f"Class: {self.job.job}",
+            f"Class: {self.job.__class__.__name__}",
             "-" * 20,
             f"Attack:  {eff['attack']}",
             f"Defense: {eff['defense']}",
@@ -84,9 +82,8 @@ class Character:
             f"Stamina: {self.current_stamina}/{eff['stamina']}",
             "-" * 20,
             str(self.inventory)
-        ]
+            ]
         return "\n".join(lines)
-
     def __repr__(self) -> str:
         return self.__str__()
 
@@ -96,14 +93,19 @@ class Character:
         return self.name == other.name and self.lvl == other.lvl
 
     def use_item(self, item):
+        """Use an item from the inventory."""
         return self.inventory.use_item(item)
 
-    def change_class(self, job):
+    def change_class(self, job_cls: type[Base]) -> None:
+        """ Change the character's class/job."""
         # assign new class/job and reapply modifiers
-        self.job = job(self)
+        self.job = job_cls(self)
         self.update_stats()
+        self.restore_all()  # reset resource pools
 
     def get_stat_breakdown(self, stat_name: str) -> str:
+        """
+        Returns a formatted string showing the breakdown of a specific stat."""
         base  = self.stats.base.get(stat_name, 0)
         total = self.stats.effective().get(stat_name, 0)
         bonus = total - base
@@ -121,7 +123,10 @@ class Character:
 
     @classmethod
     def from_dict(cls, data: dict, item_loader) -> "Character":
-        from class_creation import Knight, Mage, Rogue, Healer, Base
+        """
+        Create a Character instance from a dictionary representation.
+        """
+        from jobs import Knight, Mage, Rogue, Healer, Base
         CLASS_MAP = {"Knight": Knight, "Mage": Mage, "Rogue": Rogue, "Healer": Healer, "Base": Base}
         char = cls(name=data["name"], level=data["level"], experience=data.get("experience", 0))
         job_class = CLASS_MAP.get(data.get("class", "Base"), Base)
@@ -135,17 +140,31 @@ class Character:
         return char
 
     def take_damage(self, amount: int) -> None:
+        """Reduce health by the specified amount, ensuring it doesn't go below zero."""
         self.health = self.current_health - amount
 
     def drain_mana(self, amount: int) -> None:
+        """Reduce mana by the specified amount, ensuring it doesn't go below zero."""
         self.mana = self.current_mana - amount
 
     def drain_stamina(self, amount: int) -> None:
+        """Reduce stamina by the specified amount, ensuring it doesn't go below zero."""
         self.stamina = self.current_stamina - amount
 
     def heal(self, amount: int) -> None:
+        """Increase health by the specified amount, ensuring it doesn't exceed max health."""
         self.health = self.current_health + amount
-
+    def restore_mana(self, amount: int) -> None:
+        """Increase mana by the specified amount, ensuring it doesn't exceed max mana."""
+        self.mana = self.current_mana + amount
+    def restore_stamina(self, amount: int) -> None:
+        """Increase stamina by the specified amount, ensuring it doesn't exceed max stamina."""
+        self.stamina = self.current_stamina + amount
+    def restore_all(self) -> None:
+        """Restore all resource pools to their maximum values."""
+        maxs = self.stats.effective()
+        for attr in ("health", "mana", "stamina"):
+            setattr(self, f"current_{attr}", maxs[attr])
     # ---- Properties ----
 
     @property
@@ -234,6 +253,7 @@ class NPC(Character):
 class Enemy(Character):
     def __init__(self, name: str = "Enemy", level: int = 1, experience: int = 0) -> None:
         super().__init__(name, level, experience)
+        self.lvls.experience = self.lvls.lvl * 100 if experience == 0 else experience
 
 class Player(Character):
     def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0) -> None:

@@ -1,43 +1,29 @@
 """Inventory class for managing character inventory in a game.
 This class allows adding, removing, equipping, unequipping, and using items."""
-import character_creation
-import items_list
-import weapon_list as weapons
-import armor_list as armors
-import potion_list as potions
-import boots_list as boots
-import amulet_list as amulets
-import ring_list as rings
 import uuid
 import logging
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    # only for type‐hints, no runtime import
+    from core.character_creation import Character
+    from items.items_list import Item
 log = logging.getLogger(__name__)
 def get_equip_slot(item) -> str | None:
     """Returns the slot name for the given item, or None if not equippable."""
-    type_to_slot = {
-        weapons.Off_Hand: "offhand",       # check Off_Hand before Weapon
-        weapons.Weapon: "weapon",
-        armors.Shield: "shield",           # check Shield before Armor
-        armors.Armor: "armor",
-        boots.Boot: "boots",
-        amulets.Amulet: "amulet",
-        rings.Ring: "ring",
-        items_list.Consumable: "consumable",
-    }
-    for cls, slot in type_to_slot.items():
-        if isinstance(item, cls):
-            return slot
-    return None
+    return getattr(item, 'slot', None) 
 def is_equippable(item) -> bool:
     """Return True if item can be equipped to a slot."""
-    return get_equip_slot(item) is not None
+    return bool(item.slot)
 class Inventory:
     """Inventory class for managing character inventory in a game.
     This class allows adding, removing, equipping, unequipping, and using items."""
     def __init__(self, character) -> None:
         self.name: str = character.name
-        self.character: character_creation.Character = character
+        self.character: Character = character
         self._items: dict[uuid.UUID, dict[str, object]] = {}  # <- use _items, not items
-        self._equipped_items: dict[str, object] = {slot: None for slot in self.slots}
+        self._equipped_items: dict[str, object] = {slot: None for slot in (
+            "weapon","shield","offhand","armor","amulet","ring","boots","consumable"
+        )}
     @property
     def slots(self) -> list:
          return ["weapon", "armor", "consumable","shield","amulet", "ring" ,"boots", "offhand"]
@@ -52,6 +38,14 @@ class Inventory:
             self.items[item.id]["quantity"] += quantity
         else:
             self.items[item.id] = {"item": item, "quantity": quantity}
+    def add(self, item, quantity: int = 1, auto_equip: bool = False) -> None:
+        """Add an item to the inventory with optional auto-equip."""
+        self.add_item(item, quantity)
+        if auto_equip and is_equippable(item):
+            try:
+                self.equip_item(item)
+            except ValueError as e:
+                log.warning(f"Failed to auto-equip {item.name}: {e}")
     def remove_item(self, item, quantity=1) -> None:
         """Remove an item from the inventory."""
         if item.id not in self.items:
@@ -89,24 +83,16 @@ class Inventory:
             )
             log.info(f"{self.name}'s Inventory:\n{items_str}\n") 
     def use_item(self, item) -> str:
+            from items.items_list import Consumable
             """Use an item from the inventory."""
-            if not isinstance(item.id, uuid.UUID):
-                raise TypeError("Item ID must be of type UUID.")
-            if isinstance(item, potions.Potion):
-                if item.effect == "health":
-                   new_health = self.character.health + item.amount
-                   self.character.health = min(new_health, self.character.max_health)
-                elif item.effect == "mana":
-                    new_mana = self.character.mana + item.amount
-                    self.character.mana = min(new_mana, self.character.max_mana)
-                elif item.effect == "stamina":
-                    new_stamina = self.character.stamina + item.amount
-                    self.character.stamina = min(new_stamina, self.character.max_stamina)
-                self.character.update_stats()
-                log.info( f"Used {item.name}. Effect: Increase {item.effect} by {item.amount}.")
-                self.remove_item(item, 1)
-            else:
-                raise ValueError("Item not found in inventory")
+            if item.id not in self.items:
+                raise ValueError("Item not found in inventory.")
+            if not isinstance(item, Consumable):
+                raise TypeError("Item not of type Consumable.")
+            self.remove_item(item, 1)
+            item.use(self.character)
+            self.character.update_stats()
+            log.info(f"Used {item.name}.")
     def use_by_name(self, name) -> None:
         """Use an item from the inventory by name."""
         if not isinstance(name, str):
@@ -119,7 +105,8 @@ class Inventory:
             raise ValueError("Item not found in inventory.")
     def use_consumable(self, item) -> None:
         """Use a consumable item from the inventory."""
-        if not isinstance(item, items_list.Consumable):
+        from items.items_list import Consumable
+        if not isinstance(item, Consumable):
             raise TypeError("Item not of type Consumable.")
         elif item.id not in self.items:
             raise ValueError("Item not found in inventory.")
@@ -129,7 +116,7 @@ class Inventory:
             self.use_item(self.equipped_items["consumable"])
     def drop(self, item) -> None:
         """Drop an item from the inventory."""
-        if not isinstance(item, items_list.Item):
+        if not isinstance(item, Item):
             raise TypeError("Item mitems.Item.")
         elif item.id not in self.items:
             raise ValueError("Item not found in inventory.")
@@ -212,11 +199,7 @@ class Inventory:
     @property
     def items(self) -> dict:
         return self._items
-    @items.setter
-    def items(self, items: dict) -> None:
-        if not isinstance(items, dict):
-            raise TypeError("Items must be a dictionary.")
-        self._items = items
+
     @property
     def equipped_items(self) -> dict:
         return self._equipped_items

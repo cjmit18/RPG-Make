@@ -1,13 +1,13 @@
 import random
 import uuid
 import gen
-import items_list
-class Ring(items_list.Item):
+from items.items_list import Item
+class Ring(Item):
+	slot: str = "ring"
 	"""Base class for rings"""
 	def __init__(self, name: str = "", description: str = "", price: int = 0, effect: str = "", lvl: int = 0, health_power: int = 0, mana_power: int = 0, stamina_power: int = 0, max_health: int = 0) -> None:
 		"""Initialize the ring with name, description, price, effect, level, health power, mana power and stamina power"""
 		super().__init__(name, description, price, lvl)
-		self.id = uuid.uuid4()
 		self.name: str = "Ring" if name == "" else name
 		self.effect: str = "Ring" if effect == "" else effect
 		self.stamina_power: int = 10 if stamina_power == 0 else stamina_power
@@ -17,10 +17,10 @@ class Ring(items_list.Item):
 			self.description: str = "A basic ring" if description == "" else description
 			self.price: int = 10 if price == 0 else price
 			# Randomly assign health and mana power based on roll
-			self.health_power: int = gen.generate_random_number(0, 5) * self.lvl if health_power == 0 else health_power
-			self.mana_power: int = gen.generate_random_number(0, 5) * self.lvl if mana_power == 0 else mana_power
-		elif self.lvls.lvl > 1 and lvl <= 10:
-			self.description: str = f"A Grade {self.lvl} ring" if description == "" else description
+			self.health_power: int = gen.generate_random_number(0, 5) * self.lvls.lvl if health_power == 0 else health_power
+			self.mana_power: int = gen.generate_random_number(0, 5) * self.lvls.lvl if mana_power == 0 else mana_power
+		elif self.lvls.lvl > 1 and self.lvls.lvl <= 10:
+			self.description: str = f"A Grade {self.lvls.lvl} ring" if description == "" else description
 			self.price: int = 20 if price == 0 else price
 			# Randomly assign attack and defense power based on roll
 			if roll == 1:

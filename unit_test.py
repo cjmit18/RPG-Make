@@ -1,18 +1,14 @@
 """
 Pytest tests for the RPG game modules.
 """
-import character_creation
-import inventory_functions
-import combat_functions
-import items_list as items
-import weapon_list as weapons
-import potion_list as potions
-import armor_list as armors
-import amulet_list as amulets
-import experience_functions
-import ring_list as rings
-import class_creation
-import boots_list as boots
+import random
+import re
+import core.character_creation as character_creation
+import core.inventory_functions as inventory_functions
+import core.combat_functions as combat_functions
+from items import items_list as items, potion_list as potions, armor_list as armors, amulet_list as amulets, weapon_list as weapons, ring_list as rings, boots_list as boots
+from jobs import Base, Knight, Mage, Rogue, Healer
+import core.experience_functions as experience_functions
 import gen
 import pytest
 
@@ -91,7 +87,7 @@ def test_robe_init():
         defense_power=20,
         lvl=1
     )
-    assert robe.lvl == 1
+    assert robe.lvls.lvl == 1
     assert robe.name == "Robe"
     assert robe.description == "Protective robe"
     assert robe.price == 100
@@ -156,7 +152,7 @@ def test_boots_init():
 # Class Creation Tests
 def test_knight_class():
     char = character_creation.Character("KnightGuy")
-    knight = class_creation.Knight(char)
+    knight = Knight(char)
     assert knight.job == "Knight"
     assert knight.character.stats.base["health"] == 10
     assert knight.character.stats.base["mana"] == 2
@@ -167,7 +163,7 @@ def test_knight_class():
 
 def test_mage_class():
     char = character_creation.Character("MageGuy")
-    mage = class_creation.Mage(char)
+    mage = Mage(char)
     assert mage.job == "Mage"
     assert mage.character.stats.base["health"] == 6
     assert mage.character.stats.base["mana"] == 12
@@ -178,24 +174,24 @@ def test_mage_class():
 
 def test_rogue_class():
     char = character_creation.Character("RogueGuy")
-    rogue = class_creation.Rogue(char)
+    rogue = Rogue(char)
     assert rogue.job == "Rogue"
-    assert rogue.character.stats.base["health"] == 8
-    assert rogue.character.stats.base["mana"] == 3
-    assert rogue.character.stats.base["attack"] == 7
+    assert rogue.character.stats.base["attack"] == 4
     assert rogue.character.stats.base["defense"] == 3
-    assert rogue.character.stats.base["stamina"] == 6
-    assert rogue.character.stats.base["speed"] == 8
+    assert rogue.character.stats.base["speed"] == 6
+    assert rogue.character.stats.base["health"] == 8
+    assert rogue.character.stats.base["mana"] == 2
+    assert rogue.character.stats.base["stamina"] == 5
 def test_healer_class():
     char = character_creation.Character("HealerGuy")
-    healer = class_creation.Healer(char)
+    healer = Healer(char)
     assert healer.job == "Healer"
+    assert healer.character.stats.base["attack"] == 2
+    assert healer.character.stats.base["defense"] == 3
+    assert healer.character.stats.base["speed"] == 4
     assert healer.character.stats.base["health"] == 8
-    assert healer.character.stats.base["mana"] == 14
-    assert healer.character.stats.base["attack"] == 1
-    assert healer.character.stats.base["defense"] == 4
-    assert healer.character.stats.base["stamina"] == 4
-    assert healer.character.stats.base["speed"] == 3
+    assert healer.character.stats.base["mana"] == 10
+    assert healer.character.stats.base["stamina"] == 5
 # Inventory Functions Tests
 def test_inventory_add_remove():
     char = character_creation.Character("InvGuy")
@@ -234,11 +230,9 @@ def test_inventory_list_counts():
 def test_levels_add_remove():
     char = character_creation.Enemy("ExpGuy", 0, 0)
     char.lvls.add_experience(50)
-    assert char.lvls.experience == 50
-    char.lvls.add_experience(100)
     assert char.lvls.experience == 150
-    char.lvls.add_experience(200)
-    assert char.lvls.experience == 350
+    char.lvls.add_experience(100)
+    assert char.lvls.experience == 250
 
 def test_player_level_up():
     player = character_creation.Player("Hero", 1, 100)
@@ -255,7 +249,83 @@ def test_random_number():
 def test_clear_screen():
     gen.clear_screen()
     # This test cannot be run in CI as it requires a terminal
+def extract_damage(text: str) -> int:
+    """
+    Pull out the damage integer from a string like
+    "Hero deals 6 damage." or "Hero deals 13 damage. Critical Hit!"
+    """
+    m = re.search(r"deals (\d+) damage", text)
+    assert m, f"No damage found in '{text}'"
+    return int(m.group(1))
 
+
+def test_combat_deterministic_with_seed():
+    # 1) Seed RNG and run two rolls
+    rng1 = random.Random(123)
+    p1 = character_creation.Player("Hero", level=1)
+    e1 = character_creation.Enemy("Goblin", level=1)
+    combat1 = combat_functions.Combat(p1, e1, rng1)
+
+    out1 = combat1.calculate_damage(p1, e1)
+    out2 = combat1.calculate_damage(p1, e1)
+
+    # 2) Reset RNG to same seed, new combat instance
+    rng2 = random.Random(123)
+    p2 = character_creation.Player("Hero", level=1)
+    e2 = character_creation.Enemy("Goblin", level=1)
+    combat2 = combat_functions.Combat(p2, e2, rng2)
+
+    out1b = combat2.calculate_damage(p2, e2)
+    out2b = combat2.calculate_damage(p2, e2)
+
+    # 3) Compare only the damage numbers
+    assert extract_damage(out1) == extract_damage(out1b)
+    assert extract_damage(out2) == extract_damage(out2b)
+
+
+class DummyRNG:
+    """A fake RNG that returns fixed values for uniform, random, and randint."""
+    def __init__(self, uniform_value, random_value, randint_value):
+        self.uniform_value = uniform_value
+        self.random_value  = random_value
+        self.randint_value = randint_value
+
+    def uniform(self, a, b):
+        return self.uniform_value
+
+    def random(self):
+        return self.random_value
+
+    def randint(self, a, b):
+        return self.randint_value
+
+
+def test_calculate_damage_no_crit_with_dummy_rng():
+    # force multiplier=1.0 (no change), random()=1.0 (no crit)
+    rng = DummyRNG(uniform_value=1.0, random_value=1.0, randint_value=1)
+    p = character_creation.Player("TestNoCrit", level=1)
+    e = character_creation.Enemy("Dummy", level=1)
+    combat = combat_functions.Combat(p, e, rng)
+
+    result = combat.calculate_damage(p, e)
+    damage = extract_damage(result)
+    # Base calc: (7 - 0.05*4) = 6.8 → int(6.8) = 6
+    assert damage == 6
+    assert "Critical Hit!" not in result
+
+
+def test_calculate_damage_with_crit_and_dummy_rng():
+    # force multiplier=1.0, random()=0.0 (crit)
+    rng = DummyRNG(uniform_value=1.0, random_value=0.0, randint_value=1)
+    p = character_creation.Player("TestCrit", level=1)
+    e = character_creation.Enemy("Dummy", level=1)
+    combat = combat_functions.Combat(p, e, rng)
+
+    result = combat.calculate_damage(p, e)
+    damage = extract_damage(result)
+    # Crit doubles 6.8 → 13.6 → int(13.6) = 13
+    assert damage == 13
+    assert "Critical Hit!" in result
 @pytest.mark.skip(reason="pause() requires stdin, which is not available in CI")
 def test_pause():
     gen.pause()

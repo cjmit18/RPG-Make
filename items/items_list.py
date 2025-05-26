@@ -1,10 +1,11 @@
 """MODULE CONTAINING LIST OF ITEM OBJECTS USED IN THE GAME"""
 import logging
 import uuid
-import experience_functions
+import core.experience_functions as experience_functions
 import gen
 import random
 class Item:
+	slot: str = None
 	"""Base class for all items in the game.
 	This class is used to create items in the game. It contains the following attributes:"""
 	def __init__(self, 
@@ -23,9 +24,9 @@ class Item:
 		"""Default is empty, but subclasses can override this to provide specific stat modifiers."""
 		return {}
 	def __str__(self) -> str:
-		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
+		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvls.lvl}, ID: {self.id}"
 	def __repr__(self) -> str:
-		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvl}, ID: {self.id}"
+		return f"Item: {self.name}, Description: {self.description}, Price: {self.price}, Level: {self.lvls.lvl}, ID: {self.id}"
 	def to_dict(self) -> dict:
 		"""Convert the item to a dictionary representation."""
 		return {
@@ -57,6 +58,7 @@ class Item:
 	def category(self) -> str:
 		return self.__class__.__name__
 class Consumable(Item):
+	slot: str = "Consumable"
 	"""Consumable items that can be used during combat or exploration."""
 	def __init__(self, name: str = "Consumable",
 			   	description: str = "A basic consumable",
@@ -75,3 +77,16 @@ class Consumable(Item):
 		return f"Consumable: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 	def __repr__(self) -> str:
 		return f"Consumable: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
+	def use(self, character) -> None:
+			"""
+			Applies this consumable’s effect to the character.
+			E.g. health/mana/stamina restore.
+			"""
+			match self.effect:
+				case "health":
+					character.health   = min(character.health   + self.amount, character.max_health)
+				case "mana":
+					character.mana     = min(character.mana     + self.amount, character.max_mana)
+				case "stamina":
+					character.stamina  = min(character.stamina  + self.amount, character.max_stamina)
+				# future: add poison, buff, etc.

@@ -1,7 +1,7 @@
 """Potion list module for the game."""
 # This module contains the Potion class and its subclasses for different types of potions.
 import uuid
-import items_list as items
+import items.items_list as items
 class Potion(items.Consumable):
 	def __init__(self,
         name: str = "Potion",
@@ -13,6 +13,7 @@ class Potion(items.Consumable):
         lvl: int = 0) -> None:
         # pass lvl through so self.lvls is correct
 		super().__init__(name, description, price, effect, amount, duration, lvl or 1)
+		slot: str = "Consumable"
 	def __str__(self) -> str:
 		return f"Potion: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 	def __repr__(self) -> str:

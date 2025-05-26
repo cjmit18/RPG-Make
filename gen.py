@@ -5,23 +5,23 @@ import os
 import time
 import logging
 log = logging.getLogger(__name__)
-def generate_random_number(min_value=1, max_value=10):
+def generate_random_number(min_value: int = 1, max_value: int = 10) -> int:
     """Generate a random integer between min_value and max_value."""
-    return random.randint(min_value, max_value)
-def generate_random_float(min_value=1.0, max_value=10.0):
+    return random.randint(min_value, max_value) 
+def generate_random_float(min_value: float = 1.0, max_value: float = 10.0) -> float:
     """Generate a random float between min_value and max_value."""
     return random.uniform(min_value, max_value)
-def clear_screen():
+def clear_screen() -> None:
     """Clear the console screen."""
     os.system('cls' if os.name == 'nt' else 'clear')
-def pause():
+def pause() -> None:
     """Pause the program and wait for user input."""
     input("Press Enter to continue...")
-def wait(seconds):
+def wait(seconds: int) -> None:
     """Wait for a specified number of seconds, logging each second."""
     for i in range(seconds, 0, -1):
         log.info(f"Waiting {i} seconds...")
         time.sleep(1)
-def random_choice(choices: list = []):
+def random_choice(choices: list[str] = []) -> str:
     """Return a random choice from a list of choices."""
     return random.choice(choices)

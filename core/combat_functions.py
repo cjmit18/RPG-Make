@@ -127,7 +127,7 @@ class CombatCapabilities:
         defender: 'Actor'
     ) -> str:
         """
-        One‐off damage call (no turn logic).
+        One-off damage call (no turn logic).
         """
         return self._attack(attacker, defender)
 

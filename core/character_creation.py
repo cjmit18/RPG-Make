@@ -27,11 +27,9 @@ class Character(Actor):
         lines.append("-" * 20)
         lines.append(str(self.inventory))
         return "\n".join(lines)
-
 class NPC(Character):
     def __init__(self, name: str = "NPC", level: int = 1) -> None:
         super().__init__(name, level)
-
 class Enemy(Character):
     def __init__(
         self,

@@ -5,9 +5,8 @@ import core.experience_functions as experience_functions
 import gen
 import random
 class Item:
+	"""Base class for all items in the game."""
 	slot: str = None
-	"""Base class for all items in the game.
-	This class is used to create items in the game. It contains the following attributes:"""
 	def __init__(self, 
 			  	name: str = "Item",
 			   	description: str = "A basic item",
@@ -58,8 +57,8 @@ class Item:
 	def category(self) -> str:
 		return self.__class__.__name__
 class Consumable(Item):
+	"""Consumable items that can be used to restore health, mana, or stamina."""
 	slot: str = "Consumable"
-	"""Consumable items that can be used during combat or exploration."""
 	def __init__(self, name: str = "Consumable",
 			   	description: str = "A basic consumable",
 				price: int = 0,
@@ -77,16 +76,25 @@ class Consumable(Item):
 		return f"Consumable: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
 	def __repr__(self) -> str:
 		return f"Consumable: {self.name}, Description: {self.description}, Price: {self.price}, Effect: {self.effect}, Amount: {self.amount}, Duration: {self.duration}"
-	def use(self, character) -> None:
-			"""
-			Applies this consumable’s effect to the character.
-			E.g. health/mana/stamina restore.
-			"""
-			match self.effect:
-				case "health":
-					character.health   = min(character.health   + self.amount, character.max_health)
-				case "mana":
-					character.mana     = min(character.mana     + self.amount, character.max_mana)
-				case "stamina":
-					character.stamina  = min(character.stamina  + self.amount, character.max_stamina)
-				# future: add poison, buff, etc.
+	def use(self, target):
+			"""Apply this consumable's effect to `target` (a Character)."""
+			if self.effect in ["health", "heal", "hp"]:
+				new_health = min(target.max_health, target.current_health + self.amount)
+				heal_amount = new_health - target.current_health
+				target.health = new_health
+				return f"{target.name} uses {self.name} and restores {heal_amount} HP."
+
+			if self.effect == ["mana", "mp"]:
+				new_mana = min(target.max_mana, target.current_mana + self.amount)
+				mana_amount = new_mana - target.current_mana
+				target.mana = new_mana
+				return f"{target.name} uses {self.name} and restores {mana_amount} MP."
+
+			if self.effect == ["stamina", "sp"]:
+				new_stamina = min(target.max_stamina, target.current_stamina + self.amount)
+				stamina_amount = new_stamina - target.current_stamina
+				target.stamina = new_stamina
+				return f"{target.name} uses {self.name} and restores {stamina_amount} stamina."
+
+			# Fallback for any other effects
+			return f"{target.name} uses {self.name}."

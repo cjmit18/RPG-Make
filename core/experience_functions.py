@@ -19,7 +19,7 @@ class Levels:
     ) -> None:
         self.character: "Character" = character
         self.max_level: int = max_level
-        self._lvl: int = 1
+        self._lvl: int = level
         self._experience: int = 0
         # Use setters for validation and callbacks
         self.lvl = level
@@ -39,7 +39,7 @@ class Levels:
         self.experience += exp
         # Roll over XP into levels
         if not isinstance(self.character, Enemy):
-            while self.lvl < self.max_level and self.experience >= self.required_experience:
+            while self.lvl < self.max_level and self.experience >= self.required_experience():
                 self.level_up()
     def remove_experience(self, exp: int) -> None:
         """Remove experience points from the character."""
@@ -50,7 +50,7 @@ class Levels:
 
     def level_up(self) -> None:
         """Level up the character when enough experience is gained."""
-        self.experience -= self.required_experience
+        self.experience -= self.required_experience()
         self.lvl += 1
         # Reset and reapply stats
         try:
@@ -92,6 +92,11 @@ class Levels:
         except AttributeError:
             reward = int(enemy.lvls.required_experience)
         self.add_experience(reward)
+    def required_experience(self) -> int:
+        """Total experience needed to reach the next level."""
+        if self.lvl >= self.max_level:
+            return float('inf')
+        return 100 * self.lvl**2 + 100 * self.lvl
 
     @property
     def experience(self) -> int:
@@ -105,6 +110,7 @@ class Levels:
 
     @property
     def lvl(self) -> int:
+        """Current level of the character."""
         return self._lvl
 
     @lvl.setter
@@ -112,9 +118,3 @@ class Levels:
         if not isinstance(value, int):
             raise TypeError("Level must be an integer.")
         self._lvl = max(1, min(value, self.max_level))
-    @property
-    def required_experience(self) -> int:
-        """Total experience needed to reach the next level."""
-        if self.lvl >= self.max_level:
-            return float('inf')
-        return 100 * self.lvl**2 + 100 * self.lvl

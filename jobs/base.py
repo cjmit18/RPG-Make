@@ -47,27 +47,12 @@ class Base:
             for si in starting_items:
                 item = si.factory(*si.args, **si.kwargs)
                 inv.add(item, quantity=si.quantity, auto_equip=si.auto_equip)
-
     def base_stats(self, lvl: int) -> StatBlock:
-        """
-        Return the intrinsic stats for this job at the given level.
-        Default scaling changed to match tests:
-          attack   = 3 + 2*lvl
-          defense  = 1 + 1*lvl
-          speed    = 2 + 1*lvl
-          health   = 2 + 5*lvl
-          mana     = 0 + 2*lvl
-          stamina  = 3 + 2*lvl
-        """
-        return {
-            "attack":   3  + lvl * 2,
-            "defense":  1  + lvl * 1,
-            "speed":    2  + lvl * 1,
-            "health":   2  + lvl * 5,
-            "mana":     0  + lvl * 2,
-            "stamina":  3  + lvl * 2,
-        }
-
+            """
+            Default curve for all stats: 3 × level.
+            """
+            return { stat: 3 * lvl
+                    for stat in ("attack", "defense", "speed", "health", "mana", "stamina") }
     def __str__(self) -> str:
         eff = self.character.stats.effective()
         parts = [f"Class: {self.job}"]

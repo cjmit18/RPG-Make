@@ -89,9 +89,10 @@ class Inventory:
         if not isinstance(item, Consumable):
             raise TypeError("Item not of type Consumable.")
         self.remove_item(item, 1)
-        item.use(self.character)
+        result = item.use(self.character)
         self.character.update_stats()
-        log.info(f"Used {item.name}.")
+        log.info(f"Used {item.name}. {result}")
+        return result
     def use_by_name(self, name) -> None:
         """Use an item from the inventory by name."""
         if not isinstance(name, str):

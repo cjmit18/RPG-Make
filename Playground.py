@@ -9,6 +9,6 @@ from core.character_creation import Player, Enemy
 def test_mana_caps():
     character = Player("TestChar", level=1)
     enemy = Enemy("TestEnemy", level=1)
-    character.lvls.add_experience(10000)  # Level up to ensure mana is set correctly
     print(character)
-test_mana_caps()
+if __name__ == "__main__":
+    test_mana_caps()

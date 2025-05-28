@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 def get_equip_slot(item) -> str | None:
     """Returns the slot name for the given item, or None if not equippable."""
-    return getattr(item, 'slot', None) 
+    return item.slot
 def is_equippable(item) -> bool:
     """Return True if item can be equipped to a slot."""
     return bool(item.slot)
@@ -83,16 +83,15 @@ class Inventory:
             )
             log.info(f"{self.name}'s Inventory:\n{items_str}\n") 
     def use_item(self, item) -> str:
-            from items.items_list import Consumable
-            """Use an item from the inventory."""
-            if item.id not in self.items:
-                raise ValueError("Item not found in inventory.")
-            if not isinstance(item, Consumable):
-                raise TypeError("Item not of type Consumable.")
-            self.remove_item(item, 1)
-            item.use(self.character)
-            self.character.update_stats()
-            log.info(f"Used {item.name}.")
+        from items.items_list import Consumable
+        if item.id not in self.items:
+            raise ValueError("Item not found in inventory.")
+        if not isinstance(item, Consumable):
+            raise TypeError("Item not of type Consumable.")
+        self.remove_item(item, 1)
+        item.use(self.character)
+        self.character.update_stats()
+        log.info(f"Used {item.name}.")
     def use_by_name(self, name) -> None:
         """Use an item from the inventory by name."""
         if not isinstance(name, str):
@@ -116,6 +115,7 @@ class Inventory:
             self.use_item(self.equipped_items["consumable"])
     def drop(self, item) -> None:
         """Drop an item from the inventory."""
+        from items.items_list import Item
         if not isinstance(item, Item):
             raise TypeError("Item mitems.Item.")
         elif item.id not in self.items:

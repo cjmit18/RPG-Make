@@ -59,3 +59,16 @@ class Stats:
                 val = min(val, maxs[s])
             # store clamped value back into base (so effective() reflects it next time)
             self.base[s] = val - self.modifiers.get(s, 0)
+    def leveled_up(self, level: int) -> None:
+        """
+        Level up the stats based on the character's level.
+        This is a placeholder for actual level-up logic.
+        """
+        self.base ={
+            "attack": 10 + level * 2,
+            "defense": 10 + level * 2,
+            "speed": 10 + level * 1,
+            "health": 100 + level * 20,
+            "mana": 50 + level * 10,
+            "stamina": 30 + level * 5
+        }

@@ -6,14 +6,7 @@ from items.armor_list import Armor
 class Rogue(Base):
     """This module defines the Rogue class, which is a subclass of Base."""
     def __init__(self, character, **kwargs):
-        stats = {
-            "attack": 4,
-            "defense": 3,
-            "speed": 6,
-            "health": 8,
-            "mana": 2,
-            "stamina": 5
-        }
+        stats = {}
         items = [
             StartingItem(
                         factory=Dagger, 
@@ -44,3 +37,11 @@ class Rogue(Base):
                         ),
         ]
         super().__init__(character, stats, items, name="Rogue")
+        
+    def base_stats(self, lvl: int) -> dict[str,int]:
+        # Start with the default curve…
+        stats = super().base_stats(lvl)
+        # …then add class‐specific bonuses per level:
+        stats["speed"] += lvl * 5    # Knights get +2 extra Speed HP per level
+        stats["stamina"] += lvl * 3   # +3 extra STM per level
+        return stats

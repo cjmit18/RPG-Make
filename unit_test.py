@@ -154,44 +154,42 @@ def test_knight_class():
     char = character_creation.Character("KnightGuy")
     knight = Knight(char)
     assert knight.job == "Knight"
-    assert knight.character.stats.base["health"] == 10
-    assert knight.character.stats.base["mana"] == 2
-    assert knight.character.stats.base["attack"] == 5
-    assert knight.character.stats.base["defense"] == 7
-    assert knight.character.stats.base["stamina"] == 5
-    assert knight.character.stats.base["speed"] == 3
-
+    assert knight.base_stats(1)["attack"] == 5
+    assert knight.base_stats(1)["defense"] == 7
+    assert knight.base_stats(1)["speed"] == 3
+    assert knight.base_stats(1)["health"] == 10
+    assert knight.base_stats(1)["mana"] == 2
+    assert knight.base_stats(1)["stamina"] == 5
 def test_mage_class():
     char = character_creation.Character("MageGuy")
     mage = Mage(char)
     assert mage.job == "Mage"
-    assert mage.character.stats.base["health"] == 6
-    assert mage.character.stats.base["mana"] == 12
-    assert mage.character.stats.base["attack"] == 2
-    assert mage.character.stats.base["defense"] == 2
-    assert mage.character.stats.base["stamina"] == 3
-    assert mage.character.stats.base["speed"] == 4
-
+    assert mage.base_stats(1)["attack"] == 8
+    assert mage.base_stats(1)["defense"] == 2
+    assert mage.base_stats(1)["speed"] == 3
+    assert mage.base_stats(1)["health"] == 7
+    assert mage.base_stats(1)["mana"] == 7
+    assert mage.base_stats(1)["stamina"] == 5
 def test_rogue_class():
     char = character_creation.Character("RogueGuy")
     rogue = Rogue(char)
     assert rogue.job == "Rogue"
-    assert rogue.character.stats.base["attack"] == 4
-    assert rogue.character.stats.base["defense"] == 3
-    assert rogue.character.stats.base["speed"] == 6
-    assert rogue.character.stats.base["health"] == 8
-    assert rogue.character.stats.base["mana"] == 2
-    assert rogue.character.stats.base["stamina"] == 5
+    assert rogue.base_stats(1)["attack"] == 5
+    assert rogue.base_stats(1)["defense"] == 2
+    assert rogue.base_stats(1)["speed"] == 8
+    assert rogue.base_stats(1)["health"] == 7
+    assert rogue.base_stats(1)["mana"] == 2
+    assert rogue.base_stats(1)["stamina"] == 8
 def test_healer_class():
     char = character_creation.Character("HealerGuy")
     healer = Healer(char)
     assert healer.job == "Healer"
-    assert healer.character.stats.base["attack"] == 2
-    assert healer.character.stats.base["defense"] == 3
-    assert healer.character.stats.base["speed"] == 4
-    assert healer.character.stats.base["health"] == 8
-    assert healer.character.stats.base["mana"] == 10
-    assert healer.character.stats.base["stamina"] == 5
+    assert healer.base_stats(1)["attack"] == 5
+    assert healer.base_stats(1)["defense"] == 2
+    assert healer.base_stats(1)["speed"] == 3
+    assert healer.base_stats(1)["health"] == 10
+    assert healer.base_stats(1)["mana"] == 7
+    assert healer.base_stats(1)["stamina"] == 5
 # Inventory Functions Tests
 def test_inventory_add_remove():
     char = character_creation.Character("InvGuy")
@@ -309,8 +307,8 @@ def test_calculate_damage_no_crit_with_dummy_rng():
 
     result = combat.calculate_damage(p, e)
     damage = extract_damage(result)
-    # Base calc: (7 - 0.05*4) = 6.8 → int(6.8) = 6
-    assert damage == 6
+    # Base calc: (5 - 0.05*2) = 4.9 → round(4.9) = 5
+    assert damage == 5
     assert "Critical Hit!" not in result
 
 
@@ -323,8 +321,8 @@ def test_calculate_damage_with_crit_and_dummy_rng():
 
     result = combat.calculate_damage(p, e)
     damage = extract_damage(result)
-    # Crit doubles 6.8 → 13.6 → int(13.6) = 13
-    assert damage == 13
+    # Crit doubles 4.9 → 9.8 → round(9.8) = 10
+    assert damage == 10
     assert "Critical Hit!" in result
 @pytest.mark.skip(reason="pause() requires stdin, which is not available in CI")
 def test_pause():

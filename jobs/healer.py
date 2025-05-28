@@ -6,14 +6,7 @@ from items.armor_list import Robe
 class Healer(Base):
     """This module defines the Healer class, which is a subclass of Base."""
     def __init__(self, character, **kwargs):
-        stats = {
-            "attack": 2,
-            "defense": 3,
-            "speed": 4,
-            "health": 8,
-            "mana": 10,
-            "stamina": 5
-        }
+        stats = {}
         items = [
             StartingItem(
                         factory=Staff,
@@ -23,7 +16,23 @@ class Healer(Base):
                                 "attack_power": 2},
                         quantity=1,
                         auto_equip=True),
+            StartingItem(
+                        factory=Robe,
+                        args=(),
+                        kwargs={"name": "Starting Robe",
+                                "description": "A simple robe that provides basic protection.",
+                                "defense_power": 1},
+                        quantity=1,
+                        auto_equip=True),
             StartingItem(Mana_Potion, quantity=3, auto_equip=False),
             StartingItem(Health_Potion, quantity=2, auto_equip=False),
             ]
         super().__init__(character, stats=stats, starting_items=items, name="Healer")
+        
+    def base_stats(self, lvl: int) -> dict[str,int]:
+        # Start with the default curve…
+        stats = super().base_stats(lvl)
+        # …then add class‐specific bonuses per level:
+        stats["mana"] += lvl * 5    # Mages get +2 extra mana per level
+        stats["health"] += lvl * 3   # +3 extra health per level
+        return stats

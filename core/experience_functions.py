@@ -54,8 +54,8 @@ class Levels:
         self.lvl += 1
         # Reset and reapply stats
         try:
-            self.character.restore_all()
             self.character.update_stats()
+            self.character.restore_all()
         except AttributeError:
             pass
         log.info(f"{self.character.name} reached level {self.lvl}!")
@@ -111,17 +111,7 @@ class Levels:
     def lvl(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError("Level must be an integer.")
-        new_lvl = max(1, min(value, self.max_level))
-        old = getattr(self, '_lvl', None)
-        self._lvl = new_lvl
-        # On actual level-up, trigger update
-        if old is not None and new_lvl > old:
-            try:
-                self.character.restore_all()
-                self.character.update_stats()
-            except AttributeError:
-                pass
-
+        self._lvl = max(1, min(value, self.max_level))
     @property
     def required_experience(self) -> int:
         """Total experience needed to reach the next level."""

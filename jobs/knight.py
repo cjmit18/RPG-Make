@@ -5,13 +5,7 @@ from items.armor_list import Shield
 from items.potion_list import Health_Potion
 class Knight(Base):
     def __init__(self, character, **kwargs):
-        stats = { "attack": 5,
-                  "defense": 7,
-                  "speed": 3,
-                  "health": 10,
-                  "mana": 2,
-                  "stamina": 5 
-                }
+        stats = {}
         items = [
                 StartingItem(
                         factory=Sword,
@@ -32,4 +26,11 @@ class Knight(Base):
                 StartingItem(Health_Potion, quantity=2, auto_equip=False),
                 ]
         super().__init__(character, stats=stats, starting_items=items, name="Knight")
-        job = "Knight"
+        
+    def base_stats(self, lvl: int) -> dict[str,int]:
+        # Start with the default curve…
+        stats = super().base_stats(lvl)
+        # …then add class‐specific bonuses per level:
+        stats["defense"] += lvl * 5    # Knights get +2 extra Defense per level
+        stats["health"] += lvl * 3   # +3 extra Health per level
+        return stats

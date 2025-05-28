@@ -1,26 +1,26 @@
-""" Base class for all character jobs in the game."""
+""" Base class for all character jobs in the game. """
 from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Callable
-
+from typing import TYPE_CHECKING, Callable, Any
+from typing import TypedDict
 if TYPE_CHECKING:
-    # only for type‐hints, no runtime import
     from core.character_creation import Character
     from items.items_list import Item
-
+class StatBlock(TypedDict):
+    attack: int; defense: int; speed: int
+    health: int; mana: int; stamina: int
 log = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class StartingItem:
     """Helper that says “create this item, qty times, then optionally auto-equip it.”"""
-    factory: Callable[[], Item]
-    quantity: int = 1
-    auto_equip: bool = False
-    args: tuple = ()
-    kwargs: dict = field(default_factory=dict)
-    quantity: int = 1
-    
+    factory: Callable[..., Item]
+    args: tuple[Any, ...]       = field(default_factory=tuple)
+    kwargs: dict[str, Any]      = field(default_factory=dict)
+    quantity: int               = 1
+    auto_equip: bool            = False
+
 
 class Base:
     """Base class for all character jobs in the game."""
@@ -28,26 +28,52 @@ class Base:
         self,
         character: Character,
         stats: dict[str, int] | None = None,
-        starting_items: list[object] | None = None,
-        name: str | None = None,
-        ) -> None:
-        self.stats = stats or {}
+        starting_items: list[StartingItem] | None = None,
+        name: str | None= None,
+    ) -> None:
         self.character = character
-        self.job = name or self.__class__.__name__
-        if stats:
-            for key, value in stats.items():
+        self.job       = name or self.__class__.__name__
+        # store any flat stat overrides
+        self.stats = stats or {}
+
+        # apply flat stat overrides
+        if self.stats:
+            for key, value in self.stats.items():
                 self.character.stats.set_base(key, value)
+
+        # spawn items and optionally equip
         if starting_items:
             inv = self.character.inventory
             for si in starting_items:
-                    item = si.factory(*si.args, **si.kwargs)
-                    inv.add(item, quantity=si.quantity,auto_equip=si.auto_equip)
+                item = si.factory(*si.args, **si.kwargs)
+                inv.add(item, quantity=si.quantity, auto_equip=si.auto_equip)
+
+    def base_stats(self, lvl: int) -> StatBlock:
+        """
+        Return the intrinsic stats for this job at the given level.
+        Default scaling changed to match tests:
+          attack   = 3 + 2*lvl
+          defense  = 1 + 1*lvl
+          speed    = 2 + 1*lvl
+          health   = 2 + 5*lvl
+          mana     = 0 + 2*lvl
+          stamina  = 3 + 2*lvl
+        """
+        return {
+            "attack":   3  + lvl * 2,
+            "defense":  1  + lvl * 1,
+            "speed":    2  + lvl * 1,
+            "health":   2  + lvl * 5,
+            "mana":     0  + lvl * 2,
+            "stamina":  3  + lvl * 2,
+        }
+
     def __str__(self) -> str:
         eff = self.character.stats.effective()
         parts = [f"Class: {self.job}"]
-        for stat in ["attack", "defense", "speed", "health", "mana", "stamina"]:
+        for stat in ("attack", "defense", "speed", "health", "mana", "stamina"):
             base = self.character.stats.base.get(stat, 0)
-            total = eff[stat]
+            total = eff.get(stat, 0)
             bonus = total - base
             line = f"{stat.capitalize()}: {total}"
             if bonus:

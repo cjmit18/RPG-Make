@@ -1,0 +1,64 @@
+[
+  {
+    "id": "health_potion",
+    "type": "consumable",
+    "name": "Health Potion",
+    "description": "Restores HP instantly.",
+    "price": 25,
+    "level": 1,
+    "effect": "health",
+    "amount": { "min": 30, "max": 50 },
+    "duration": 0
+  },
+  {
+    "id": "mana_potion",
+    "type": "consumable",
+    "name": "Mana Potion",
+    "description": "Restores MP instantly.",
+    "price": 20,
+    "level": 1,
+    "effect": "mana",
+    "amount": { "min": 20, "max": 30 },
+    "duration": 0
+  },
+  {
+    "id": "iron_sword",
+    "type": "equipment",
+    "name": "Iron Sword",
+    "description": "A basic steel blade.",
+    "price": 100,
+    "level": 1,
+    "slot": "weapon",
+    "bonuses": { "attack": { "min": 3, "max": 7 } }
+  },
+  {
+    "id": "leather_armor",
+    "type": "equipment",
+    "name": "Leather Armor",
+    "description": "Light protective armor.",
+    "price": 75,
+    "level": 1,
+    "slot": "armor",
+    "bonuses": { "defense": 2 }
+  },
+  {
+    "id": "ruby_band",
+    "type": "equipment",
+    "name": "Ruby Band",
+    "description": "A ring imbued with fire energy.",
+    "price": 50,
+    "level": 1,
+    "slot": "ring",
+    "bonuses": { "attack": 2 }
+  },
+  {
+    "id": "emerald_loop",
+    "type": "equipment",
+    "name": "Emerald Loop",
+    "description": "A ring set with a protective emerald.",
+    "price": 75,
+    "level": 2,
+    "slot": "ring",
+    "bonuses": { "defense": 3 }
+  }
+]

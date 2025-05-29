@@ -1,6 +1,6 @@
 import pytest
 from game_sys.core.actor import Actor
-from game_sys.jobs.knight import Knight
+from game_sys.jobs.factory import create_job
 
 def test_take_damage_clamps_and_reports_defeat(capfd):
     hero = Actor("Hero", level=1)
@@ -20,7 +20,7 @@ def test_assign_job_applies_stats_and_items():
     # initially has Base job (no mods)
     base_health = hero.stats.effective().get("health")
     # now assign Knight
-    hero.assign_job(Knight)
+    hero.assign_job_by_id("knight")
     eff = hero.stats.effective()
     # Knight base_health = 10 * lvl
     assert eff["health"] == 10 * hero.levels.lvl

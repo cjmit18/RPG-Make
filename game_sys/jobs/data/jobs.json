@@ -1,0 +1,30 @@
+[
+  {
+    "id": "knight",
+    "name": "Knight",
+    "description": "A stalwart defender with high resilience and moderate offense.",
+    "base_stats": {"attack": 5, "defense": 7, "speed": 3, "health": 10, "mana": 2, "stamina": 5},
+    "starting_items": ["iron_sword", "leather_armor", "ruby_band"]
+  },
+  {
+    "id": "mage",
+    "name": "Mage",
+    "description": "A master of arcane arts, trading physical power for high mana reserves.",
+    "base_stats": {"attack": 2, "defense": 3, "speed": 5, "health": 6, "mana": 10, "stamina": 3},
+    "starting_items": ["mana_potion", "ruby_band"]
+  },
+  {
+    "id": "healer",
+    "name": "Healer",
+    "description": "A supportive class specializing in healing and buffs.",
+    "base_stats": {"attack": 1, "defense": 4, "speed": 4, "health": 7, "mana": 8, "stamina": 4},
+    "starting_items": ["health_potion", "mana_potion"]
+  },
+  {
+    "id": "rogue",
+    "name": "Rogue",
+    "description": "A nimble combatant excelling in speed and critical strikes.",
+    "base_stats": {"attack": 4, "defense": 3, "speed": 8, "health": 8, "mana": 3, "stamina": 6},
+    "starting_items": ["iron_sword", "emerald_loop"]
+  }
+]

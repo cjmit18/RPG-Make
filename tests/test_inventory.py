@@ -1,9 +1,7 @@
 import pytest
 from game_sys.items.factory import create_item
 from game_sys.core.actor import Actor
-from game_sys.items.item_base import Equipable, Item
-from game_sys.items.consumable_list import Consumable
-
+from game_sys.items.item_base import Item
 def test_add_remove_and_equip():
     hero = Actor("Bob", level=1)
     sword = create_item("iron_sword")

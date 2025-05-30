@@ -16,6 +16,16 @@ class Inventory:
             "accessory": None,
             "ring": None,
         }
+    def __str__(self):
+        """Display inventory contents."""
+        lines = ["Inventory:"]
+        for item_id, entry in self.items.items():
+            item = entry["item"]
+            quantity = entry["quantity"]
+            lines.append(f"{item.name} (x{quantity})")
+        if not self.items:
+            lines.append("Empty")
+        return "\n".join(lines)
 
     def add_item(self, item: Item, quantity: int = 1, auto_equip: bool = False):
         """Add copies of `item` to inventory. If auto_equip and Equipable, equip it."""

@@ -117,7 +117,6 @@ class CombatCapabilities:
         # 6) outcome string
         crit_text = " Critical Hit!" if is_crit else ""
         txt = f"{attacker.name} deals {dmg} damage.{crit_text}"
-        log.info(txt)
         return txt
 
     def calculate_damage(

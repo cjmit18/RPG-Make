@@ -1,0 +1,28 @@
+{
+  "Player": {
+    "name": "Hero",
+    "level": 1,
+    "experience": 0,
+    "stats": {
+      "attack": 5,
+      "defense": 3,
+      "speed": 4,
+      "health": 10,
+      "mana": 10,
+      "stamina": 15
+    }
+  },
+  "Enemy": {
+    "name": "Goblin",
+    "level": 1,
+    "experience": 0,
+    "stats": {
+      "attack": 3,
+      "defense": 2,
+      "speed": 3,
+      "health": 12,
+      "mana": 0,
+      "stamina": 10
+    }
+  }
+}

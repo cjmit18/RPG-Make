@@ -3,7 +3,9 @@ This module defines the Encounter class, which manages the combat logic between 
 import random
 from typing import List, Callable, Optional
 from game_sys.core.actor import Actor
-from game_sys.core.combat_functions import CombatCapabilities
+from game_sys.core.combat import CombatCapabilities
+from logs.logs import get_logger
+log = get_logger(__name__)
 class Encounter:
     """
     A turn-based encounter between two groups: `party` and `enemies`.
@@ -50,11 +52,11 @@ class Encounter:
                 # use your existing 1-on-1 logic
                 combat = self._solo_combat(actor, target, rng=self.rng)
                 result = combat.calculate_damage(actor, target)
-                print(result)
+                log.info(result)
 
                 # remove dead target
                 if target.health <= 0:
-                    print(f"{target.name} has fallen!")
+                    log.info(f"{target.name} has fallen!")
                     if target in self.enemies:
                         self.enemies.remove(target)
                     else:

@@ -1,10 +1,11 @@
-# core/logging.py
+# logging_config.py
 
 import logging
 import logging.config
-import os
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
 
+# Ensure log directory exists
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
@@ -32,11 +33,13 @@ LOGGING_CONFIG = {
             "stream": "ext://sys.stdout",
         },
         "file": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "formatter": "file",
             "level": "DEBUG",
             "filename": str(LOG_DIR / "game.log"),
             "encoding": "utf-8",
+            "maxBytes": 1048576,  # 1MB
+            "backupCount": 3,
         },
     },
 
@@ -46,7 +49,6 @@ LOGGING_CONFIG = {
     },
 
     "loggers": {
-        # you can override levels for noisy third-party libs here, e.g.:
         "gen": {
             "level": "WARNING",
             "handlers": ["console"],
@@ -58,6 +60,13 @@ LOGGING_CONFIG = {
 
 def setup_logging():
     """
-    Call once at program start to configure logging for the entire project.
+    Call once at program start to configure logging.
     """
     logging.config.dictConfig(LOGGING_CONFIG)
+
+
+def get_logger(name=None):
+    """
+    Use in other modules: from logging_config import get_logger
+    """
+    return logging.getLogger(name or __name__)

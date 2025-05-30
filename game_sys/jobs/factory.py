@@ -1,14 +1,12 @@
 import copy
 from typing import Any, Dict
 import random
-
 from game_sys.jobs.loader import load_job_templates
 from game_sys.items.factory import create_item
 from game_sys.jobs.base import Job
 
 # load once
 _TEMPLATES: Dict[str, Dict[str, Any]] = load_job_templates()
-
 def create_job(job_id: str, level: int, rng: Any = random) -> Job:
     """
     Instantiate a generic Job from a template, scaling base_stats by level and
@@ -38,4 +36,5 @@ def create_job(job_id: str, level: int, rng: Any = random) -> Job:
     return job
 
 def list_job_ids() -> list[str]:
+    """Return a list of all available job IDs."""
     return list(_TEMPLATES.keys())

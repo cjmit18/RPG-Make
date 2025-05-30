@@ -1,14 +1,14 @@
 
 """This module contains the CombatCapabilities class for handling combat logic in a game."""
+from logs.logs import get_logger
 import logging
 import random
 from typing import Callable, List, Tuple, Optional, TYPE_CHECKING
-
+log = get_logger(__name__)
 # Only imported for static type checking to avoid runtime circular imports
 if TYPE_CHECKING:
     from core.actor import Actor
 
-log = logging.getLogger(__name__)
 
 class CombatCapabilities:
     """Combat handler with injectable RNG and action provider."""

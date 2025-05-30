@@ -1,24 +1,27 @@
-from logs.logs import setup_logging
-from game_sys.core.character_creation import create_character
-from game_sys.core.inventory_functions import Inventory
+from logs.logs import setup_logging, get_logger
+from game_sys.core.character.character_creation import create_character
+from game_sys.core.inventory.inventory import Inventory
 from game_sys.core.encounter import Encounter
-from game_sys.jobs.factory import create_job
 from game_sys.items.factory import create_item
-
+log = get_logger(__name__)
 setup_logging()
+
 def combat_test():
     """Test combat functionality with a player and enemies."""
     # Create a player character and some enemies for combat
     character = create_character("Hero", level=1, job_id="knight")
     enemy = create_character("Goblin", level=2, job_id="goblin_warrior")
-    combat = Encounter(character, enemy).start()
-    print(combat)
+    enemies = [enemy,enemy]
+    combat = Encounter(character, enemies).start()
+    log.info(f"\nCombat result: \n{combat}")
 def view_test():
     character = create_character("Player")
-    print(character)
+    # Create a job and assign it to the character
+    character.assign_job_by_id("rogue")
+    log.info(character)
 def inventory_test():
     # 1) Make a player
-    hero = Player("Aria", level=1)
+    hero = create_character("Player", name="Aria", level=1)
     
     # 2) Create some items from your JSON templates
     sword  = create_item("iron_sword")     # Equipable
@@ -26,13 +29,13 @@ def inventory_test():
     potion = create_item("health_potion")  # Consumable
 
     # 3) Add to inventory (without equipping)
-    hero.inventory.add_item(sword,  quantity=1)
+    hero.inventory.add_item(sword,  quantity=1, auto_equip=False)
     hero.inventory.add_item(armor,  quantity=1)
     hero.inventory.add_item(potion, quantity=2)
 
     # 4) Equip the sword and armor manually
-    hero.inventory.equip_item(sword.id)
-    hero.inventory.equip_item(armor.id)
+    hero.inventory.equip_item(sword)
+    hero.inventory.equip_item(armor)
 
     # 5) Or add+auto-equip in one go
     # (uses the `auto_equip=True` flag you added)
@@ -40,12 +43,12 @@ def inventory_test():
     hero.inventory.add_item(ring, quantity=1, auto_equip=True)
 
     # 6) Use a consumable
-    hero.take_damage(10)  # Simulate taking damage
-    print(f"Before potion: HP = {hero.current_health}/{hero.stats.effective().get('health')}")
+    hero.take_damage(5)  # Simulate taking damage
+    log.info(f"Before potion: HP = {hero.current_health}/{hero.stats.effective().get('health')}")
     hero.inventory.use_item(potion)  
-    print(f"After potion:  HP = {hero.current_health}/{hero.stats.effective().get('health')}")
+    log.info(f"After potion:  HP = {hero.current_health}/{hero.stats.effective().get('health')}")
 
     # 7) Inspect
-    print(hero.inventory)
+    log.info(hero)
 if __name__ == "__main__":
-    view_test()
+   view_test()

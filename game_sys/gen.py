@@ -3,8 +3,8 @@ clearing the screen, pausing execution, and waiting for a specified time."""
 import random
 import os
 import time
-import logging
-log = logging.getLogger(__name__)
+from logs.logs import get_logger
+log = get_logger(__name__)
 def generate_random_number(min_value: int = 1, max_value: int = 10) -> int:
     """Generate a random integer between min_value and max_value."""
     return random.randint(min_value, max_value) 

@@ -2,13 +2,14 @@
 This class handles character creation, job assignment, stat management, and inventory operations."""
 
 from typing import Type, Optional, Callable
-from game_sys.core.inventory_functions import Inventory
+from game_sys.core.inventory.inventory import Inventory
 from game_sys.jobs.factory import create_job
 from game_sys.jobs.base import Job
 from game_sys.core.experience_functions import Levels
 from game_sys.core.stats import Stats
 from game_sys.items.item_base import Equipable
-
+from logs.logs import get_logger
+log = get_logger(__name__)
 class Actor:
     def __init__(
         self,
@@ -67,8 +68,11 @@ class Actor:
 
     def assign_job_by_id(self, job_id: str) -> None:
         """Assign a job by its string ID."""
+        sample = create_job(job_id, self.levels.lvl)
+        if sample is None:
+            raise ValueError(f"Job with ID '{job_id}' not found.")
         self.assign_job(lambda lvl: create_job(job_id, lvl))
-
+        return self.job
     def remove_job(self) -> None:
         """Remove current job and revert to base job stats and items."""
         old_job = self.job
@@ -87,14 +91,20 @@ class Actor:
         self._initialize_job()
 
     def take_damage(self, amount: int) -> None:
-        """Reduce current health by amount, clamping at zero, and report defeat."""
-        self.health -= amount
-        if self.health == 0:
-            print(f"{self.name} has been defeated!")
+        # clamp current_health to ≥0
+        self.current_health = max(0, self.current_health - amount)
 
+        # on death, print the defeat line
+        if self.current_health == 0:
+            print(f"{self.name} has been defeated!")
     def drain_mana(self, amount: int) -> None:
         """Reduce current mana by amount, clamping at zero."""
         self.mana -= amount
+        log.info(f"{self.name} drains {amount} mana, mana now {self.mana}/{self.max_mana}")
+    def drain_stamina(self, amount: int) -> None:
+        """Reduce current stamina by amount, clamping at zero."""
+        self.stamina -= amount
+        log.info(f"{self.name} drains {amount} stamina, stamina now {self.stamina}/{self.max_stamina}")
 
     @property
     def attack(self) -> int:

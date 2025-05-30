@@ -1,6 +1,6 @@
 import json
 from game_sys.items.item_factory import item_from_dict
-from game_sys.core.character_creation import Character
+from game_sys.core.character.character_creation import Character
 
 def save_character(character: Character, filename: str):
     """Save a character to a JSON file."""

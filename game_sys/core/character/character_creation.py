@@ -1,12 +1,10 @@
 """Character Creation Module
 This module contains the Character class, its subclasses (NPC, Enemy, Player),
 and a built-in factory for creating characters from JSON templates or overrides."""
-
 from typing import Dict, Any, Type
 import json
 from pathlib import Path
 from dataclasses import asdict
-
 from game_sys.core.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.jobs.base import Job
@@ -16,11 +14,10 @@ from game_sys.items.consumable_list import Consumable
 # Load character templates
 _TEMPLATES_PATH = Path(__file__).parent / 'data' / 'character_templates.json'
 try:
-    with open(_TEMPLATES_PATH, 'r') as _f:
-        _CHAR_TEMPLATES: Dict[str, Dict[str, Any]] = json.load(_f)
+    with open(_TEMPLATES_PATH) as f:
+        _CHAR_TEMPLATES = json.load(f)
 except FileNotFoundError:
     _CHAR_TEMPLATES = {}
-
 
 class Character(Actor):
     """Base class for all characters in the game. Supports JSON serialization and
@@ -38,7 +35,7 @@ class Character(Actor):
         lines = [
             f"{self.__class__.__name__}: {self.name}",
             f"Level: {self.levels.lvl}  Experience: {self.levels.experience}",
-            f"Class: {self.job.__class__.__name__ if self.job.__class__.__name__ != 'Job' else 'None'}",
+            f"Class: {self.job.name }",
             "-" * 20,
         ]
         for stat in ("attack", "defense", "speed", "health", "mana", "stamina"):
@@ -93,7 +90,7 @@ class Character(Actor):
         )
         # Clear any starting inventory and equipment
         inst.inventory.items.clear()
-        inst.inventory.equipment = {slot: None for slot in inst.inventory.equipment}
+        inst.inventory._equipped_items = {slot: None for slot in inst.inventory.equipped_items}
         # Override stats from JSON
         inst.stats = Stats(data.get("stats", {}))
         # Refill current resources to full based on new stats

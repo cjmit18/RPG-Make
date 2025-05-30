@@ -5,6 +5,7 @@ from typing import Dict, Any, Type
 import json
 from pathlib import Path
 from dataclasses import asdict
+
 from game_sys.core.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.jobs.base import Job
@@ -18,6 +19,7 @@ try:
         _CHAR_TEMPLATES = json.load(f)
 except FileNotFoundError:
     _CHAR_TEMPLATES = {}
+
 
 class Character(Actor):
     """Base class for all characters in the game. Supports JSON serialization and
@@ -58,7 +60,9 @@ class Character(Actor):
             "level": self.levels.lvl,
             "experience": self.levels.experience,
             "job": self.job.__class__.__name__,
+            # Save effective stats
             "stats": {stat: eff.get(stat, 0) for stat in ("attack", "defense", "speed", "health", "mana", "stamina")},
+            # Save current resources
             "current": {stat: getattr(self, f"current_{stat}", 0) for stat in ("health", "mana", "stamina")},
             "inventory": []
         }
@@ -88,24 +92,26 @@ class Character(Actor):
             level=data.get("level", 1),
             experience=data.get("experience", 0)
         )
-        # Clear any starting inventory and equipment
+        # Clear inventory and equipped slots
         inst.inventory.items.clear()
         inst.inventory._equipped_items = {slot: None for slot in inst.inventory.equipped_items}
-        # Override stats from JSON
+
+        # Build stats from base values and scale by level
         inst.stats = Stats(data.get("stats", {}))
-        # Refill current resources to full based on new stats
+        inst.update_stats()
         caps = inst.stats.effective()
         inst.current_health = caps.get("health", 0)
         inst.current_mana = caps.get("mana", 0)
         inst.current_stamina = caps.get("stamina", 0)
-        # Apply JSON-provided current values
+
+        # Apply any provided current values (e.g. from save/load)
         for stat, val in data.get("current", {}).items():
             setattr(inst, f"current_{stat}", val)
+
         # Restore inventory items and auto-equip to apply modifiers
         for inv in data.get("inventory", []):
             item_info = inv.get("item", {})
             itype = item_info.get("type")
-            # Strip out type to pass remaining args
             item_args = {k: v for k, v in item_info.items() if k != "type"}
             qty = inv.get("quantity", 1)
             if itype == "Consumable":
@@ -115,6 +121,7 @@ class Character(Actor):
             else:
                 item_obj = BaseItem(**item_args)
             inst.inventory.add_item(item_obj, quantity=qty, auto_equip=isinstance(item_obj, Equipable))
+
         return inst
 
 
@@ -141,7 +148,6 @@ class Player(Character):
     """Player class for the main character; extend as needed."""
     def __init__(self, name: str = "Hero", level: int = 1, experience: int = 0) -> None:
         super().__init__(name, level, experience)
-        # add player-specific hooks here
 
 
 # JSON I/O utilities
@@ -165,11 +171,10 @@ def create_character(template_name: str, **overrides) -> Character:
     """
     Instantiate a Character using a template from character_templates.json.
     Keyword args override template values.
-    Example: create_character('Player') or create_character('Hero')
+    Example: create_character('Player', job_id='knight')
     """
-    # Try direct key lookup
+    # Lookup template
     tmpl = _CHAR_TEMPLATES.get(template_name)
-    # Fallback: search by inner `name` field
     if tmpl is None:
         for key, val in _CHAR_TEMPLATES.items():
             if val.get("name", "").lower() == template_name.lower():
@@ -178,6 +183,17 @@ def create_character(template_name: str, **overrides) -> Character:
     if tmpl is None:
         available = ", ".join(_CHAR_TEMPLATES.keys())
         raise KeyError(f"No character template for '{template_name}'. Available: {available}")
-    # Merge template with overrides
+
+    # Extract job override
+    job_id = overrides.pop("job_id", None)
+    # Merge template with other overrides
     data = {**tmpl, **overrides}
-    return Character.from_dict(data)
+    # Map base_stats (from template) into stats for scaling
+    stats = data.pop("base_stats", data.pop("stats", {}))
+    data["stats"] = stats
+
+    # Instantiate character and apply job override if provided
+    char = Character.from_dict(data)
+    if job_id:
+        char.assign_job_by_id(job_id)
+    return char

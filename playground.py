@@ -9,15 +9,15 @@ setup_logging()
 def combat_test():
     """Test combat functionality with a player and enemies."""
     # Create a player character and some enemies for combat
-    character = create_character("Hero", level=1, job_id="knight")
-    enemy = create_character("Goblin", level=2, job_id="goblin_warrior")
+    character = create_character("Hero", level=3, job_id="knight")
+    enemy = create_character("Goblin", level=2)
     enemies = [enemy,enemy]
     combat = Encounter(character, enemies).start()
     log.info(f"\nCombat result: \n{combat}")
+    log.info(character)
 def view_test():
-    character = create_character("Player")
+    character = create_character("Player", job_id="rogue", name="Aria", level=1)
     # Create a job and assign it to the character
-    character.assign_job_by_id("rogue")
     log.info(character)
 def inventory_test():
     # 1) Make a player
@@ -51,4 +51,4 @@ def inventory_test():
     # 7) Inspect
     log.info(hero)
 if __name__ == "__main__":
-   view_test()
+   combat_test()

@@ -3,7 +3,7 @@
     "name": "Hero",
     "level": 1,
     "experience": 0,
-    "stats": {
+    "base_stats": {
       "attack": 5,
       "defense": 3,
       "speed": 4,
@@ -16,7 +16,7 @@
     "name": "Goblin",
     "level": 1,
     "experience": 0,
-    "stats": {
+    "base_stats": {
       "attack": 3,
       "defense": 2,
       "speed": 3,

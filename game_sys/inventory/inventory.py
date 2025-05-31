@@ -10,7 +10,7 @@ from game_sys.items.item_base import Item
 from game_sys.items.factory import create_item
 from game_sys.items.consumable_list import Consumable
 if TYPE_CHECKING:
-    from game_sys.core.character.character_creation import Character
+    from game_sys.character.character_creation import Character
 
 log = logging.getLogger(__name__)
 

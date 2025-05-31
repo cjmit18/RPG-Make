@@ -2,7 +2,7 @@
 This class handles character creation, job assignment, stat management, and inventory operations."""
 
 from typing import Type, Optional, Callable
-from game_sys.core.inventory.inventory import Inventory
+from game_sys.inventory.inventory import Inventory
 from game_sys.jobs.factory import create_job
 from game_sys.jobs.base import Job
 from game_sys.core.experience_functions import Levels

@@ -1,0 +1,42 @@
+{
+  "goblin": [
+    {
+      "template_id": "goblin_dagger",
+      "chance": 0.75,
+      "min_qty": 1,
+      "max_qty": 2
+    },
+    {
+      "template_id": "health_potion",
+      "chance": 0.75,
+      "min_qty": 1,
+      "max_qty": 3
+    },
+    {
+      "template_id": "leather_armor",
+      "chance": 0.5,
+      "min_qty": 1,
+      "max_qty": 1
+    }
+  ],
+  "orc": [
+    {
+      "template_id": "orc_axe",
+      "chance": 0.75,
+      "min_qty": 1,
+      "max_qty": 1
+    },
+    {
+      "template_id": "health_potion",
+      "chance": 0.75,
+      "min_qty": 1,
+      "max_qty": 3
+    },
+    {
+      "template_id": "orc_shield",
+      "chance": 0.75,
+      "min_qty": 1,
+      "max_qty": 1
+    }
+  ]
+}

@@ -22,6 +22,28 @@
     "duration": 0
   },
   {
+    "id": "stamina_potion",
+    "type": "consumable",
+    "name": "Stamina Potion",
+    "description": "Restores stamina instantly.",
+    "price": 15,
+    "level": 1,
+    "effect": "stamina",
+    "amount": { "min": 10, "max": 20 },
+    "duration": 0
+  },
+  {
+    "id": "empower_potion",
+    "type": "consumable",
+    "name": "Empower Potion",
+    "description": "Temporarily increases attack by 5 for 3 turns.",
+    "price": 10,
+    "level": 1,
+    "effect": "attack",
+    "amount": { "min": 5, "max": 5 },
+    "duration": 3
+  },
+  {
     "id": "iron_sword",
     "type": "equipment",
     "name": "Iron Sword",
@@ -30,6 +52,27 @@
     "level": 1,
     "slot": "weapon",
     "bonuses": { "attack": { "min": 3, "max": 7 } }
+  },
+  {
+    "id": "dagger",
+    "type": "equipment",
+    "name": "Dagger",
+    "description": "A sharp, quick blade.",
+    "price": 80,
+    "level": 1,
+    "slot": "weapon",
+    "bonuses": { "attack": { "min": 1, "max": 4 }, "speed": 3 }
+  },
+  {
+    "id": "shield",
+    "type": "equipment",
+    "name": "Shield",
+    "description": "A basic wooden shield.",
+    "price": 50,
+    "level": 1,
+    "slot": "shield",
+    "bonuses": { "defense": 1 }
+
   },
   {
     "id": "leather_armor",
@@ -92,3 +135,4 @@
     "bonuses": { "defense": 4 }
   }
 ]
+

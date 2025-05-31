@@ -6887,3 +6887,2010 @@ Equipped:
   ring: Emerald Loop
   boots: (none)
   consumable: (none)
+2025-05-31 13:33:08 [  INFO  ] __main__:48 | Before potion: HP = 5/10
+2025-05-31 13:33:08 [  INFO  ] __main__:50 | After potion:  HP = 10/10
+2025-05-31 13:33:08 [  INFO  ] __main__:53 | Player: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 3/3
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:33:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:33:29 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:35:08 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:35:08 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:35:53 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:35:53 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:36:21 [  INFO  ] game_sys.core.encounter:55 | Hero deals 37 damage. Critical Hit!
+2025-05-31 13:36:21 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:36:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 13:36:47 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:38:08 [  INFO  ] game_sys.core.encounter:57 | Hero deals 53 damage. Critical Hit!
+2025-05-31 13:38:08 [  INFO  ] game_sys.core.encounter:61 | Goblin has fallen!
+2025-05-31 13:38:17 [  INFO  ] game_sys.core.encounter:57 | Hero deals 19 damage.
+2025-05-31 13:38:17 [  INFO  ] game_sys.core.encounter:61 | Goblin has fallen!
+2025-05-31 13:41:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:41:05 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:45:24 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:45:24 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:51:13 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:51:13 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:54:42 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 13:54:42 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:54:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:54:54 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:54:54 [  INFO  ] game_sys.core.combat:163 | Hero loots Goblin Dagger from Goblin.
+2025-05-31 13:54:54 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:54:54 [  INFO  ] __main__:18 | Enemy: Orc
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 13
+Defense: 9
+Speed: 2
+Health: 12/12
+Mana: 0/0
+Stamina: 10/10
+--------------------
+Orc's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:55:08 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 13:55:08 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:55:08 [  INFO  ] game_sys.core.combat:163 | Hero loots Goblin Dagger from Goblin.
+2025-05-31 13:55:08 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:55:08 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 30/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:56:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 13:56:06 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:56:06 [  INFO  ] game_sys.core.combat:163 | Hero loots Goblin Dagger from Goblin.
+2025-05-31 13:56:06 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:56:06 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 30/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:58:02 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 13:58:02 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:58:02 [  INFO  ] game_sys.core.combat:152 | Hero loots 1×Goblin Dagger from Goblin.
+2025-05-31 13:58:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 52 damage. Critical Hit!
+2025-05-31 13:58:06 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:58:06 [  INFO  ] game_sys.core.combat:152 | Hero loots 1×Goblin Dagger from Goblin.
+2025-05-31 13:59:03 [  INFO  ] game_sys.core.encounter:55 | Hero deals 27 damage.
+2025-05-31 13:59:03 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:59:03 [  INFO  ] game_sys.core.combat:153 | Hero loots 1×Leather Armor from Goblin.
+2025-05-31 13:59:03 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:59:03 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 23
+Defense: 23
+Speed: 9
+Health: 30/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:59:13 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:59:13 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:59:13 [  INFO  ] game_sys.core.combat:153 | Hero loots 1×Goblin Dagger from Goblin.
+2025-05-31 13:59:13 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:59:13 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 30/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Shield from Orc.
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:02:11 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Goblin Dagger from Goblin.
+2025-05-31 14:02:11 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:02:11 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 24/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Orc Shield (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Axe from Orc.
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 5 damage.
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:04:28 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Goblin Dagger from Goblin.
+2025-05-31 14:04:28 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:04:28 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 25/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Orc Axe (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Axe from Orc.
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:04:36 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Mana Potion from Goblin.
+2025-05-31 14:04:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:04:36 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 20
+Defense: 23
+Speed: 9
+Health: 24/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Orc Axe (x1)
+  Mana Potion (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.combat:155 | Hero loots 1 ×Mana Potion from Orc.
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:07:37 [  INFO  ] game_sys.core.combat:155 | Hero loots 1 ×Mana Potion from Goblin.
+2025-05-31 14:07:37 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:07:37 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 21
+Defense: 23
+Speed: 9
+Health: 24/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Mana Potion (x2)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.encounter:55 | Hero deals 32 damage. Critical Hit!
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Axe from Orc.
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.encounter:55 | Hero deals 45 damage. Critical Hit!
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:10:22 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Leather Armor from Goblin.
+2025-05-31 14:10:22 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:10:22 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 20
+Defense: 23
+Speed: 9
+Health: 22/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Orc Axe (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Shield from Orc.
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 47 damage. Critical Hit!
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:10:27 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Health Potion from Goblin.
+2025-05-31 14:10:27 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:10:27 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 23
+Defense: 23
+Speed: 9
+Health: 24/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Orc Shield (x1)
+  Health Potion (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.combat:153 | Hero loots 3 ×Mana Potion from Orc.
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:11:08 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Goblin Dagger from Goblin.
+2025-05-31 14:11:08 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:11:08 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 24/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Mana Potion (x3)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Health Potion from Goblin.
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.encounter:55 | Orc deals 10 damage.
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:11:12 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Shield from Orc.
+2025-05-31 14:11:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:11:12 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 20/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Health Potion (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.encounter:55 | Hero deals 28 damage.
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.combat:153 | Hero loots 3 ×Health Potion from Goblin.
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.encounter:55 | Orc deals 26 damage. Critical Hit!
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:11:57 [  INFO  ] game_sys.core.combat:153 | Hero loots 3 ×Health Potion from Orc.
+2025-05-31 14:11:57 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:11:57 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 4/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Health Potion (x6)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Goblin Dagger from Goblin.
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.encounter:55 | Orc deals 16 damage.
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:12:10 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Shield from Orc.
+2025-05-31 14:12:10 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:12:10 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 14/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Shield from Orc.
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 3 damage.
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:12:16 [  INFO  ] game_sys.core.combat:153 | Hero loots 3 ×Mana Potion from Goblin.
+2025-05-31 14:12:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:12:16 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 27/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Orc Shield (x1)
+  Mana Potion (x3)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.combat:153 | Hero loots 5 ×Mana Potion from Goblin.
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.encounter:55 | Orc deals 12 damage.
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:27:32 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Axe from Orc.
+2025-05-31 14:27:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:27:32 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 18/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Mana Potion (x5)
+  Orc Axe (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Goblin Dagger from Goblin.
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.encounter:55 | Orc deals 14 damage.
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:27:49 [  INFO  ] game_sys.core.combat:153 | Hero loots 2 ×Health Potion from Orc.
+2025-05-31 14:27:49 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:27:49 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 21
+Defense: 23
+Speed: 9
+Health: 16/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+  Health Potion (x2)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:29:23 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 29 damage.
+2025-05-31 14:29:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 14:29:23 [  INFO  ] game_sys.core.encounter:55 | Orc deals 12 damage.
+2025-05-31 14:29:23 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 14:29:23 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Iron Sword from Hero.
+2025-05-31 14:29:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 14:29:23 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:30:39 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 37 damage.
+2025-05-31 14:30:39 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 14:30:39 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 14:30:39 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 21
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 140 damage.
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.combat:153 | Hero loots 3 ×Health Potion from Goblin.
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.encounter:55 | Orc deals 1 damage.
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 167 damage.
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 14:30:47 [  INFO  ] game_sys.core.combat:153 | Hero loots 1 ×Orc Axe from Orc.
+2025-05-31 14:30:47 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 14:30:47 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 158
+Defense: 212
+Speed: 90
+Health: 299/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Health Potion (x3)
+  Orc Axe (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 14:48:56 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 189 damage.
+2025-05-31 14:48:56 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 14:51:19 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 182 damage.
+2025-05-31 14:51:19 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 152 damage.
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.combat:210 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.combat:210 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.combat:210 | Goblin carried Health Potion ×1 → potential loot: 1
+2025-05-31 14:52:10 [  INFO  ] game_sys.combat.combat:210 | Goblin carried Mana Potion ×1 → potential loot: 1
+2025-05-31 14:53:04 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 296 damage. Critical Hit!
+2025-05-31 14:53:04 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 14:56:13 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 128 damage.
+2025-05-31 14:56:13 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 14:56:22 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 128 damage.
+2025-05-31 14:56:22 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 174 damage.
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.combat:215 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.combat:215 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.combat:215 | Goblin carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:05:20 [  INFO  ] game_sys.combat.combat:215 | Goblin carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 183 damage.
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.combat:215 | Orc carried Orc Axe ×1 → potential loot: 1
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.combat:215 | Orc carried Orc Shield ×1 → potential loot: 1
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.combat:215 | Orc carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:10:19 [  INFO  ] game_sys.combat.combat:215 | Orc carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:15:42 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 180 damage.
+2025-05-31 15:15:42 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:15:42 [  INFO  ] game_sys.combat.combat:201 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 149 damage.
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Goblin carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Goblin carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Health Potion from Goblin
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Goblin Dagger from Goblin
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Leather Armor from Goblin
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:244 | Hero receives 1×Health Potion as a drop.
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Mana Potion from Goblin
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.encounter:55 | Orc deals 4 damage.
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 143 damage.
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Orc carried Orc Axe ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Orc carried Orc Shield ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Orc carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:216 | Orc carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:244 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Health Potion from Orc
+2025-05-31 15:17:35 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Mana Potion from Orc
+2025-05-31 15:17:35 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:17:35 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 157
+Defense: 212
+Speed: 90
+Health: 296/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Health Potion (x3)
+  Goblin Dagger (x1)
+  Mana Potion (x2)
+  Orc Axe (x2)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 170 damage.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Health Potion ×2
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Axe ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Shield ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Orc carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Orc carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 2×Health Potion from Orc
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Health Potion as a drop.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Mana Potion from Orc
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 28 damage.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 174 damage.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Health Potion ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Mana Potion ×1 → potential loot: 1
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 2×Goblin Dagger from Goblin
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Leather Armor from Goblin
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Health Potion from Goblin
+2025-05-31 15:19:36 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Mana Potion from Goblin
+2025-05-31 15:19:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:19:36 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 159
+Defense: 212
+Speed: 90
+Health: 272/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Orc Axe (x2)
+  Health Potion (x4)
+  Orc Shield (x1)
+  Mana Potion (x2)
+  Goblin Dagger (x3)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 157 damage.
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Goblin Dagger from Goblin
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Leather Armor from Goblin
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.encounter:55 | Orc deals 3 damage.
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 156 damage.
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Axe ×1 → potential loot: 1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Shield ×1 → potential loot: 1
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 15:22:21 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:22:21 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:22:21 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 159
+Defense: 212
+Speed: 90
+Health: 297/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Goblin Dagger (x2)
+  Orc Axe (x2)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 136 damage.
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:212 | Goblin carried Leather Armor ×1 → potential loot: 1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Goblin Dagger from Goblin
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Leather Armor from Goblin
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.encounter:55 | Orc deals 5 damage.
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 162 damage.
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:200 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Axe ×1 → potential loot: 1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:212 | Orc carried Orc Shield ×1 → potential loot: 1
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:240 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 15:23:18 [  INFO  ] game_sys.combat.combat:235 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:23:18 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:23:18 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 158
+Defense: 212
+Speed: 90
+Health: 295/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Goblin Dagger (x2)
+  Orc Axe (x2)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 167 damage.
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.combat:229 | No loot for Hero from defeating Orc.
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 26 damage.
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 175 damage.
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:26:00 [  INFO  ] game_sys.combat.combat:229 | No loot for Hero from defeating Goblin.
+2025-05-31 15:26:00 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:26:00 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 157
+Defense: 212
+Speed: 90
+Health: 274/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 165 damage.
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:244 | Hero receives 1×Health Potion as a drop.
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.encounter:55 | Orc deals 4 damage.
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 152 damage.
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Health Potion ×1
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:244 | Hero receives 1×Health Potion as a drop.
+2025-05-31 15:27:32 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:27:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:27:32 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 157
+Defense: 212
+Speed: 90
+Health: 296/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Health Potion (x2)
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 174 damage.
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Health Potion ×3
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:244 | Hero receives 3×Health Potion as a drop.
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 42 damage. Critical Hit!
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 159 damage.
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Goblin Dagger from Goblin
+2025-05-31 15:28:31 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Leather Armor from Goblin
+2025-05-31 15:28:31 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:28:31 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 155
+Defense: 212
+Speed: 90
+Health: 258/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Health Potion (x3)
+  Orc Shield (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 171 damage.
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Goblin Dagger from Goblin
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.encounter:55 | Orc deals 1 damage.
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 170 damage.
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:204 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Axe from Orc
+2025-05-31 15:31:03 [  INFO  ] game_sys.combat.combat:239 | Hero loots 1×Orc Shield from Orc
+2025-05-31 15:31:03 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 15:31:03 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 155
+Defense: 212
+Speed: 90
+Health: 299/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+  Goblin Dagger (x1)
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:35:16 [  INFO  ] __main__:48 | Before potion: HP = 5/10
+2025-05-31 15:35:16 [  INFO  ] __main__:50 | After potion:  HP = 10/10
+2025-05-31 15:35:16 [  INFO  ] __main__:53 | Player: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 9
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 3/3
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:35:31 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 9
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 15:43:24 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 10
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:25:04 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 10
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 310 damage. Critical Hit!
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.encounter:58 | Enemy has fallen!
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Goblin Dagger ×1 → potential loot: 1
+2025-05-31 16:35:27 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Leather Armor ×1 → potential loot: 1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 174 damage.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.encounter:58 | Enemy has fallen!
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×2
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Equipable(name='Orc Axe', description='A heavy axe wielded by orcs.', price=150, level=3, slot='weapon', bonuses={'attack': 7, 'stamina': 2}) ×1 → potential loot: 1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Equipable(name='Orc Shield', description='A sturdy shield made from orcish materials.', price=120, level=3, slot='shield', bonuses={'defense': 4}) ×1 → potential loot: 1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 2×Health Potion as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.encounter:55 | Enemy deals 25 damage.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 135 damage.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.encounter:58 | Enemy has fallen!
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×2
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Equipable(name='Goblin Dagger', description='A quick, lightweight dagger.', price=60, level=1, slot='weapon', bonuses={'attack': 3, 'speed': 2}) ×1 → potential loot: 1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:231 | Enemy carried Equipable(name='Leather Armor', description='Light protective armor.', price=75, level=1, slot='armor', bonuses={'defense': 2}) ×1 → potential loot: 1
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 2×Health Potion as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 16:36:49 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:36:49 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 16:36:49 [  INFO  ] __main__:18 | Character: Enemy
+Level: 10  Experience: 0
+Class: Goblin
+--------------------
+Attack: 33
+Defense: 22
+Speed: 62
+Health: 0/50
+Mana: 0/0
+Stamina: 70/70
+--------------------
+Enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 138 damage.
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×3
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:260 | Hero receives 3×Health Potion as a drop.
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 26 damage.
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 127 damage.
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×3
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:260 | Hero receives 2×Goblin Dagger as a drop.
+2025-05-31 16:40:18 [  INFO  ] game_sys.combat.combat:260 | Hero receives 3×Health Potion as a drop.
+2025-05-31 16:40:18 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 16:40:18 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 10  Experience: 1000
+Class: Goblin
+--------------------
+Attack: 33
+Defense: 22
+Speed: 62
+Health: 0/50
+Mana: 0/0
+Stamina: 70/70
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 143 damage.
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×3
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:260 | Hero receives 3×Health Potion as a drop.
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 20 damage.
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 133 damage.
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:40:41 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:40:41 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 16:40:41 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 158
+Defense: 212
+Speed: 90
+Health: 280/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Health Potion (x3)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 145 damage.
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.encounter:58 | Orc has fallen!
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.encounter:55 | Goblin deals 24 damage.
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.encounter:55 | Hero deals 309 damage. Critical Hit!
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.encounter:58 | Goblin has fallen!
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Health Potion as a drop.
+2025-05-31 16:45:13 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:45:13 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 16:45:13 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 155
+Defense: 212
+Speed: 90
+Health: 276/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Orc Axe (x1)
+  Orc Shield (x1)
+  Health Potion (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 187 damage.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:77 | Orc has fallen!
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×3
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 3×Health Potion as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 100 XP from defeating Orc.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:73 | Goblin deals 23 damage.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 301 damage. Critical Hit!
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:77 | Goblin has fallen!
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Goblin Dagger ×1
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Goblin Dagger as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Health Potion as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:45:54 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 1000 XP from defeating Goblin.
+2025-05-31 16:45:54 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero wins!
+2025-05-31 16:45:54 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 1100
+Class: Knight
+--------------------
+Attack: 158
+Defense: 212
+Speed: 90
+Health: 277/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Orc Axe (x1)
+  Health Potion (x4)
+  Orc Shield (x1)
+  Goblin Dagger (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 347 damage. Critical Hit!
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:77 | Goblin has fallen!
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Goblin Dagger ×2
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:260 | Hero receives 2×Goblin Dagger as a drop.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Health Potion as a drop.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 1340 XP from defeating Goblin.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:73 | Orc deals 3 damage. Critical Hit!
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 187 damage.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:77 | Orc has fallen!
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×3
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.combat:260 | Hero receives 3×Health Potion as a drop.
+2025-05-31 16:48:55 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 93 XP from defeating Orc.
+2025-05-31 16:48:55 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero wins!
+2025-05-31 16:48:55 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 1433
+Class: Knight
+--------------------
+Attack: 157
+Defense: 212
+Speed: 90
+Health: 297/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Goblin Dagger (x2)
+  Health Potion (x4)
+  Orc Axe (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 147 damage.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:77 | Orc has fallen!
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Axe ×1
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Health Potion ×2
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from orc: Orc Shield ×1
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Axe as a drop.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:260 | Hero receives 2×Health Potion as a drop.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Orc Shield as a drop.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 70 XP from defeating Orc.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:73 | Goblin deals 24 damage.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:73 | Hero deals 163 damage.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:77 | Goblin has fallen!
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Health Potion ×1
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:220 | Rolled drop from goblin: Leather Armor ×1
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Health Potion as a drop.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.combat:260 | Hero receives 1×Leather Armor as a drop.
+2025-05-31 16:48:56 [  INFO  ] game_sys.combat.encounter:100 | Hero gains 1420 XP from defeating Goblin.
+2025-05-31 16:48:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero wins!
+2025-05-31 16:48:56 [  INFO  ] __main__:18 | Character: Hero
+Level: 30  Experience: 1490
+Class: Knight
+--------------------
+Attack: 155
+Defense: 212
+Speed: 90
+Health: 276/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x2)
+  Ruby Band (x1)
+  Orc Axe (x1)
+  Health Potion (x3)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:54:04 [  INFO  ] __main__:23 | 9
+2025-05-31 16:54:04 [  INFO  ] __main__:26 | 9
+2025-05-31 16:54:25 [  INFO  ] __main__:23 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 11
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x2)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:54:25 [  INFO  ] __main__:26 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 11
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:58:01 [  INFO  ] __main__:23 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x2)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 16:58:47 [  INFO  ] __main__:23 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x2)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:01:10 [  INFO  ] __main__:24 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 3
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x2)
+  Emerald Loop (x2)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:11:03 [  INFO  ] __main__:24 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 3
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x2)
+  Emerald Loop (x2)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:14:10 [  INFO  ] __main__:24 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 3
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x2)
+  Emerald Loop (x2)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:21:42 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 5
+Defense: 6
+Speed: 11
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Dagger
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:24:08 [  INFO  ] __main__:23 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 4
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Dagger (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:24:17 [  INFO  ] __main__:23 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 5
+Defense: 6
+Speed: 11
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Dagger
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:24:44 [  INFO  ] __main__:24 | 4
+2025-05-31 17:24:49 [  INFO  ] __main__:24 | 4
+2025-05-31 17:24:50 [  INFO  ] __main__:24 | 4
+2025-05-31 17:24:51 [  INFO  ] __main__:24 | 4
+2025-05-31 17:24:52 [  INFO  ] __main__:24 | 4
+2025-05-31 17:25:03 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 7
+Defense: 6
+Speed: 11
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Dagger
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:36:18 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 7
+Defense: 6
+Speed: 11
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Dagger
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:36:27 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Mage
+--------------------
+Attack: 4
+Defense: 3
+Speed: 5
+Health: 6/6
+Mana: 10/10
+Stamina: 3/3
+--------------------
+Aria's Inventory:
+  Mana Potion (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 17:36:46 [  INFO  ] __main__:22 | Player: Aria
+Level: 1  Experience: 0
+Class: Knight
+--------------------
+Attack: 12
+Defense: 9
+Speed: 3
+Health: 10/10
+Mana: 2/2
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 18:09:05 [  INFO  ] __main__:22 | Character: Aria
+Level: 1  Experience: 0
+Class: Knight
+--------------------
+Attack: 14
+Defense: 9
+Speed: 3
+Health: 10/10
+Mana: 2/2
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 18:43:21 [  INFO  ] __main__:22 | Character: Aria
+Level: 1  Experience: 0
+Class: Knight
+--------------------
+Attack: 10
+Defense: 9
+Speed: 3
+Health: 10/10
+Mana: 2/2
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  (empty)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)

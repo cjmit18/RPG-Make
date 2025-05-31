@@ -123,7 +123,7 @@ This repository contains both the `game_sys/` package (core engine) and a `playg
         Saving/loading a character to/from JSON
 2. Import the package into your own code:
     "from game_sys.core.character_creation import create_character"
-    "from game_sys.core.combat_functions import Combat"
+    "_functions import Combat"
     "from game_sys.core.actor import Actor"
 
 3. Writing Your Own Script:

@@ -25,7 +25,7 @@
     "name": "Rogue",
     "description": "A nimble combatant excelling in speed and critical strikes.",
     "base_stats": {"attack": 4, "defense": 3, "speed": 8, "health": 8, "mana": 3, "stamina": 6},
-    "starting_items": ["iron_sword", "emerald_loop"]
+    "starting_items": ["dagger", "emerald_loop"]
   },
   {
     "id": "goblin",

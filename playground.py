@@ -1,7 +1,7 @@
 from logs.logs import setup_logging, get_logger
 from game_sys.character.character_creation import create_character
 from game_sys.inventory.inventory import Inventory
-from game_sys.core.encounter import Encounter
+from game_sys.combat.encounter import Encounter
 from game_sys.items.factory import create_item
 log = get_logger(__name__)
 setup_logging()
@@ -9,21 +9,20 @@ setup_logging()
 def combat_test():
     """Test combat functionality with a player and enemies."""
     # Create a player character and some enemies for combat
-    character = create_character("Hero", level=3, job_id="knight")
-    goblin = create_character("enemy", level=1, job_id="goblin")
+    character = create_character("Hero", level=30, job_id="knight")
+    goblin = create_character("enemy", level=10, job_id="goblin")
     orc = create_character("enemy", level=1, job_id="orc")
-    enemies = [goblin]
+    enemies = [goblin, orc]
     combat = Encounter(character, enemies).start()
     log.info(f"\nCombat result: \n{combat}")
-    log.info(orc)
+    log.info(character)
 def view_test():
-    character = create_character("player", job_id="rogue", name="Aria", level=1)
+    character = create_character("player", job_id="knight", name="Aria", level=1)
     # Create a job and assign it to the character
     log.info(character)
 def inventory_test():
     # 1) Make a player
     hero = create_character("player", name="Aria", level=1)
-    
     # 2) Create some items from your JSON templates
     sword  = create_item("iron_sword")     # Equipable
     armor  = create_item("leather_armor")  # Equipable
@@ -52,4 +51,4 @@ def inventory_test():
     # 7) Inspect
     log.info(hero)
 if __name__ == "__main__":
-   inventory_test()
+   view_test()

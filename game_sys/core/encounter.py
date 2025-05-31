@@ -7,9 +7,9 @@ from game_sys.core.combat import CombatCapabilities
 from logs.logs import get_logger
 log = get_logger(__name__)
 class Encounter:
-    """
-    A turn-based encounter between two groups: `party` and `enemies`.
-    """
+    """A turn-based encounter between two groups:
+      "party" and "enemies".
+    This class manages the combat logic between actors, """
     def __init__(
         self,
         party: Actor | list[Actor],
@@ -18,13 +18,13 @@ class Encounter:
         action_fn: Optional[Callable[[Actor], str]] = None,
     ):
         # 1) coerce single Actor → list, or leave list as-is
-        self.party   = party   if isinstance(party, list)   else [party]
+        self.party = party if isinstance(party, list) else [party]
         self.enemies = enemies if isinstance(enemies, list) else [enemies]
 
         # 2) FLATTEN into one list of Actors
         self.participants = self.party + self.enemies
 
-        self.rng       = rng or random.Random()
+        self.rng = rng or random.Random()
         self.action_fn = action_fn or (lambda actor: "attack")
 
         # we’ll reuse CombatCapabilities for each 1-on-1 attack
@@ -68,4 +68,3 @@ class Encounter:
             if not self.enemies:
                 return f"{self.party[0].name}'s Party wins!"
         return "Draw?"
-

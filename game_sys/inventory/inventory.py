@@ -2,8 +2,8 @@
 This class allows adding, removing, equipping, unequipping, using items,
  and loading templates from JSON."""
 import uuid
-import logging
 import json
+from logs.logs import get_logger
 from pathlib import Path
 from typing import TYPE_CHECKING
 from game_sys.items.item_base import Item
@@ -12,18 +12,23 @@ from game_sys.items.consumable_list import Consumable
 if TYPE_CHECKING:
     from game_sys.character.character_creation import Character
 
-log = logging.getLogger(__name__)
+log = get_logger(__name__)
 
 # Path to JSON inventory templates
 _TEMPLATES_PATH = Path(__file__).parent / 'data' / 'inventories.json'
 
 def get_equip_slot(item) -> str | None:
+    """Get the equipment slot for an item, if it has one.
+    Returns the slot name as a string, or None if not equippable."""
     return getattr(item, 'slot', None)
 
 def is_equippable(item) -> bool:
+    """Check if an item is equippable by checking if it has a slot attribute."""
     return get_equip_slot(item) is not None
 
 class Inventory:
+    """Inventory class for managing items and equipment for a character.
+    Supports adding, removing, equipping, unequipping items, and using consumables."""
     def __init__(self, owner: 'Character') -> None:
         self.owner = owner
         self._items: dict[uuid.UUID, dict[str, object]] = {}
@@ -66,10 +71,8 @@ class Inventory:
         return result
     @property
     def equipped_items(self) -> dict[str, uuid.UUID | None]:
-        """
-        Return the raw equipped‐item IDs by slot. 
-        Used internally for loading templates.
-        """
+        """Return the raw equipped‐item IDs by slot. 
+        Used internally for loading templates."""
         return self._equipped_items
     @property
     def items(self) -> dict:
@@ -80,6 +83,10 @@ class Inventory:
         return sum(entry['quantity'] for entry in self._items.values())
 
     def add_item(self, item, quantity: int = 1, auto_equip: bool = False) -> None:
+        """Add an item to the inventory. If auto_equip is True, try to equip it.
+        item_id can be a string or an Item instance.
+        Raises KeyError if item is not found in the inventory.
+        """
         if isinstance(item, str):
             item = create_item(item)
         if item.id in self._items:
@@ -101,6 +108,8 @@ class Inventory:
                 log.warning(f"Auto‑equip failed for {item}: {e}")
 
     def remove_item(self, item, quantity: int = 1) -> None:
+        """Remove an item from the inventory.
+        If quantity is greater than the available amount, it will remove all of them."""
         entry = self._items.get(item.id)
         if not entry:
             raise KeyError(f"Item {item} not in inventory")
@@ -109,6 +118,8 @@ class Inventory:
             del self._items[item.id]
 
     def equip_item(self, item) -> None:
+        """Equip an item by its ID or Item instance.
+        If the item is already equipped, it will be replaced."""
         if isinstance(item, str):
             found = self._find_item(item)
             if not found:
@@ -128,6 +139,8 @@ class Inventory:
         self.remove_item(item, 1)
 
     def unequip_item(self, identifier) -> None:
+        """Unequip an item by its ID, Item instance, or slot name.
+        If the item is not equipped, it will raise a ValueError."""
         if isinstance(identifier, str) and identifier in self._equipped_items:
             slot = identifier
             item_id = self._equipped_items.get(slot)
@@ -161,6 +174,8 @@ class Inventory:
         self.add_item(item, quantity=1)
 
     def use_item(self, item_ref) -> bool:
+        """Use a consumable item by its ID or Item instance.
+        If the item is not consumable, it raises a TypeError."""
         if isinstance(item_ref, Item):
             item_id = getattr(item_ref, "id", None)
             if item_id is None:
@@ -177,12 +192,16 @@ class Inventory:
         return True
 
     def _find_item(self, item_id: str):
+        """Find an item by its ID or name in the inventory.
+        Returns the Item instance if found, otherwise None."""
         for entry in self._items.values():
             if entry['item'].id == item_id or entry['item'].name == item_id:
                 return entry['item']
         return None
 
     def load_template(self, template_name: str) -> None:
+        """Load an inventory template from a JSON file.
+        Clears the current inventory and equips items as specified in the template."""
         with open(_TEMPLATES_PATH, 'r') as f:
             templates = json.load(f)
         entries = templates.get(template_name)

@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-from game_sys.core.character.character_creation import Player, Enemy
+from game_sys.character.character_creation import Player, Enemy
 
 _TEMPLATES_PATH = Path(__file__).parent / 'data' / 'character_templates.json'
 with open(_TEMPLATES_PATH) as f:

@@ -14,7 +14,7 @@ class Job:
     base_stats: Dict[str, int] = {
         "health": 10,
         "mana": 5,
-        "stamina": 5,
+        "stamina": 3,
         "attack": 5,
         "defense": 5,
         "speed": 5,

@@ -1,10 +1,14 @@
+"""Stats management for game characters."""
 from dataclasses import dataclass, field
 from typing import Dict, Literal, Tuple
 
 StatName = Literal["attack", "defense", "speed", "health", "mana", "stamina"]
 
+
 @dataclass
 class Stats:
+    """A class to manage character stats, including base values and modifiers.
+    Supports both simple stat modifiers and named modifiers (e.g. from items)."""
     base: Dict[StatName, int]
     # keeps simple per‑stat totals
     modifiers: Dict[StatName, int] = field(
@@ -17,9 +21,12 @@ class Stats:
 
     @staticmethod
     def stat_keys() -> Tuple[StatName, ...]:
+        """Return the keys for all stats in a tuple."""
         return ("attack", "defense", "speed", "health", "mana", "stamina")
 
     def effective(self) -> Dict[StatName, int]:
+        """Calculate the effective stats by combining base, simple modifiers, and named modifiers.
+        Returns a dictionary of effective stats with non-negative values."""
         # first sum up all named modifiers
         total_named = {s: 0 for s in Stats.stat_keys()}
         for mods in self._modifiers.values():
@@ -36,11 +43,8 @@ class Stats:
             for s in Stats.stat_keys()
         }
 
-    # simple, stat‑only modifiers (if you still need these)
-    def add_modifier(self, stat: StatName, amount: int) -> None:
-        self.modifiers[stat] = self.modifiers.get(stat, 0) + amount
-
     def clear_modifiers(self) -> None:
+        """Reset all simple modifiers to zero."""
         for s in Stats.stat_keys():
             self.modifiers[s] = 0
 
@@ -49,7 +53,9 @@ class Stats:
         self._modifiers.setdefault(mod_id, {})[stat] = amount
 
     def remove_modifier(self, mod_id: str) -> None:
+        """Remove a named modifier by its ID."""
         self._modifiers.pop(mod_id, None)
+
     def set_base(self, stat: StatName, value: int) -> None:
         """Override the base value for a given stat."""
         if stat not in Stats.stat_keys():

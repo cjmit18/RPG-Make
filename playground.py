@@ -9,19 +9,20 @@ setup_logging()
 def combat_test():
     """Test combat functionality with a player and enemies."""
     # Create a player character and some enemies for combat
-    character = create_character("Hero", level=5, job_id="knight")
-    enemy = create_character("Goblin", level=2)
-    enemies = [enemy,enemy]
+    character = create_character("Hero", level=3, job_id="knight")
+    goblin = create_character("enemy", level=1, job_id="goblin")
+    orc = create_character("enemy", level=1, job_id="orc")
+    enemies = [goblin]
     combat = Encounter(character, enemies).start()
     log.info(f"\nCombat result: \n{combat}")
-    log.info(character)
+    log.info(orc)
 def view_test():
-    character = create_character("Player", job_id="rogue", name="Aria", level=1)
+    character = create_character("player", job_id="rogue", name="Aria", level=1)
     # Create a job and assign it to the character
     log.info(character)
 def inventory_test():
     # 1) Make a player
-    hero = create_character("Player", name="Aria", level=1)
+    hero = create_character("player", name="Aria", level=1)
     
     # 2) Create some items from your JSON templates
     sword  = create_item("iron_sword")     # Equipable

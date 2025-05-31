@@ -60,5 +60,35 @@
     "level": 2,
     "slot": "ring",
     "bonuses": { "defense": 3 }
+  },
+  {
+    "id": "goblin_dagger",
+    "type": "equipment",
+    "name": "Goblin Dagger",
+    "description": "A quick, lightweight dagger.",
+    "price": 60,
+    "level": 1,
+    "slot": "weapon",
+    "bonuses": { "attack": { "min": 2, "max": 5 }, "speed": 2 }
+  },
+  {
+    "id": "orc_axe",
+    "type": "equipment",
+    "name": "Orc Axe",
+    "description": "A heavy axe wielded by orcs.",
+    "price": 150,
+    "level": 3,
+    "slot": "weapon",
+    "bonuses": { "attack": { "min": 5, "max": 10 }, "stamina": 2 }
+  },
+  {
+    "id": "orc_shield",
+    "type": "equipment",
+    "name": "Orc Shield",
+    "description": "A sturdy shield made from orcish materials.",
+    "price": 120,
+    "level": 3,
+    "slot": "shield",
+    "bonuses": { "defense": 4 }
   }
 ]

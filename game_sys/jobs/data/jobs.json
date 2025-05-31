@@ -26,5 +26,21 @@
     "description": "A nimble combatant excelling in speed and critical strikes.",
     "base_stats": {"attack": 4, "defense": 3, "speed": 8, "health": 8, "mana": 3, "stamina": 6},
     "starting_items": ["iron_sword", "emerald_loop"]
+  },
+  {
+    "id": "goblin",
+    "name": "Goblin",
+    "description": "A cunning creature with quick reflexes and a knack for mischief.",
+    "base_stats": {"attack": 3, "defense": 2, "speed": 6, "health": 5, "mana": 0, "stamina": 7},
+    "starting_items": ["goblin_dagger", "leather_armor"]
+  },
+  {
+    "id": "orc",
+    "name": "Orc",
+    "description": "A brutish warrior with immense strength and resilience.",
+    "base_stats": {"attack": 6, "defense": 5, "speed": 2, "health": 12, "mana": 0, "stamina": 8},
+    "starting_items": ["orc_axe", "orc_shield"]
   }
 ]
+
+

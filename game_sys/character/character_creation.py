@@ -1,17 +1,19 @@
 """Character Creation Module
-This module contains the Character class, its subclasses (NPC, Enemy, Player),
-and a built-in factory for creating characters from JSON templates or overrides."""
+This module contains the Character class,
+its subclasses (NPC, Enemy, Player),
+and a built-in factory for creating characters from JSON templates."""
 from typing import Dict, Any, Type
 import json
 from pathlib import Path
 from dataclasses import asdict
-
 from game_sys.core.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.jobs.base import Job
 from game_sys.items.item_base import Item as BaseItem, Equipable
 from game_sys.items.consumable_list import Consumable
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from game_sys.character.character_creation import Character
 # Load character templates
 _TEMPLATES_PATH = Path(__file__).parent / 'data' / 'character_templates.json'
 try:
@@ -22,7 +24,8 @@ except FileNotFoundError:
 
 
 class Character(Actor):
-    """Base class for all characters in the game. Supports JSON serialization and
+    """Base class for all characters in the game. 
+    Supports JSON serialization and
     inventory persistence."""
     def __init__(
         self,
@@ -37,9 +40,9 @@ class Character(Actor):
         lines = [
             f"{self.__class__.__name__}: {self.name}",
             f"Level: {self.levels.lvl}  Experience: {self.levels.experience}",
-            f"Class: {self.job.name }",
-            "-" * 20,
-        ]
+            f"Class: {self.job.name}",
+            "-" * 20
+            ]
         for stat in ("attack", "defense", "speed", "health", "mana", "stamina"):
             val = eff.get(stat, 0)
             if stat in ("health", "mana", "stamina"):
@@ -50,9 +53,9 @@ class Character(Actor):
         lines.append("-" * 20)
         lines.append(str(self.inventory))
         return "\n".join(lines)
-
     def to_dict(self) -> Dict[str, Any]:
-        """Serialize this character to a JSON-compatible dict, including inventory."""
+        """Serialize this character to a JSON-compatible dict,
+          including inventory."""
         eff = self.stats.effective()
         data: Dict[str, Any] = {
             "type": self.__class__.__name__,
@@ -61,9 +64,26 @@ class Character(Actor):
             "experience": self.levels.experience,
             "job": self.job.__class__.__name__,
             # Save effective stats
-            "stats": {stat: eff.get(stat, 0) for stat in ("attack", "defense", "speed", "health", "mana", "stamina")},
+            "stats": {
+                stat: eff.get(stat, 0) for stat in 
+                (
+                "attack",
+                "defense",
+                "speed", 
+                "health", 
+                "mana", 
+                "stamina"
+                )
+                },
             # Save current resources
-            "current": {stat: getattr(self, f"current_{stat}", 0) for stat in ("health", "mana", "stamina")},
+            "current": {
+                stat: getattr(self, f"current_{stat}", 0) for stat in 
+                (
+                "health", 
+                "mana", 
+                "stamina"
+                )
+                },
             "inventory": []
         }
         for entry in self.inventory.items.values():
@@ -75,8 +95,9 @@ class Character(Actor):
         return data
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Character":
-        """Recreate a Character, its base stats, current resources, and inventory, from a dict.
+    def from_dict(cls, data: Dict[str, Any]) -> 'Character':
+        """Recreate a Character, its base stats, 
+        current resources, and inventory, from a dict.
         This method clears defaults and applies JSON state entirely."""
         # Map types to classes
         type_map: Dict[str, Type[Character]] = {
@@ -97,7 +118,7 @@ class Character(Actor):
         inst.inventory._equipped_items = {slot: None for slot in inst.inventory.equipped_items}
 
         # Build stats from base values and scale by level
-        inst.stats = Stats(data.get("stats", {}))
+        inst.stats = Stats(dict(data.get("stats", {})))
         inst.update_stats()
         caps = inst.stats.effective()
         inst.current_health = caps.get("health", 0)
@@ -152,13 +173,13 @@ class Player(Character):
 
 # JSON I/O utilities
 
-def save_character_to_json(character: Character, path: str) -> None:
+def save_character_to_json(character: 'Character', path: str) -> None:
     """Save a character to disk as JSON."""
     with open(path, 'w') as f:
         json.dump(character.to_dict(), f, indent=2)
 
 
-def load_character_from_json(path: str) -> Character:
+def load_character_from_json(path: str) -> 'Character':
     """Load a Character instance from a JSON file."""
     with open(path, 'r') as f:
         data = json.load(f)
@@ -167,7 +188,7 @@ def load_character_from_json(path: str) -> Character:
 
 # Built-in factory: JSON templates with optional overrides
 
-def create_character(template_name: str, **overrides) -> Character:
+def create_character(template_name: str, **overrides) -> 'Character':
     """
     Instantiate a Character using a template from character_templates.json.
     Keyword args override template values.
@@ -191,9 +212,19 @@ def create_character(template_name: str, **overrides) -> Character:
     # Map base_stats (from template) into stats for scaling
     stats = data.pop("base_stats", data.pop("stats", {}))
     data["stats"] = stats
-
+    name = overrides.pop("name", None) or data.get("name", "Unnamed")
     # Instantiate character and apply job override if provided
-    char = Character.from_dict(data)
+    template_name = template_name.capitalize()
+    if template_name == "Player":
+        char = Player.from_dict(data)
+    elif template_name == "NPC":
+        char = NPC.from_dict(data)
+    elif template_name == "Enemy":
+        char = Enemy.from_dict(data)
+    else:
+        char = Character.from_dict(data)
     if job_id:
-        char.assign_job_by_id(job_id)
+        char.assign_job_by_id(job_id.lower())
+        if template_name == "Enemy":
+            char.name = char.job.name  # Enemies use job name as character name
     return char

@@ -1,15 +1,13 @@
 
-"""This module contains the CombatCapabilities class for handling combat logic in a game."""
+"""This module contains the CombatCapabilities class 
+for handling combat logic in a game."""
 from logs.logs import get_logger
-import logging
 import random
 from typing import Callable, List, Tuple, Optional, TYPE_CHECKING
 log = get_logger(__name__)
 # Only imported for static type checking to avoid runtime circular imports
 if TYPE_CHECKING:
     from core.actor import Actor
-
-
 class CombatCapabilities:
     """Combat handler with injectable RNG and action provider."""
 
@@ -43,10 +41,8 @@ class CombatCapabilities:
         return input(f"{actor.name}, action? (attack/defend): ").strip().lower()
 
     def start_combat_loop(self) -> str:
-        """
-        Executes turns until one side is defeated.
-        Returns a summary string like "Hero wins!".
-        """
+        """Executes turns until one side is defeated.
+        Returns a summary string like "Hero wins!"."""
         if not self.enemy:
             raise ValueError("Enemy must be provided for full combat loop")
         while True:
@@ -56,7 +52,6 @@ class CombatCapabilities:
                 if defender.health <= 0:
                     return f"{attacker.name} wins!"
                 self.turn_count += 1
-
     def _turn_order(self) -> List[Tuple['Actor', 'Actor']]:
         """
         Determines who goes first based on speed.
@@ -146,5 +141,6 @@ class CombatCapabilities:
             log.info(f"{winner.name} loots {qty}×{item.name} from {loser.name}.")
         loser.inventory.drop_all()
 
-# Alias for backward compatibility (tests or legacy code expecting `Combat`)
+# Alias for backward compatibility 
+# (tests or legacy code expecting `Combat`)
 Combat = CombatCapabilities

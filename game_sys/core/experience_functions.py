@@ -4,9 +4,10 @@ from logs.logs import get_logger
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game_sys.character.character_creation import Character, Enemy
+    from game_sys.character.character_creation import Character
 
 log = get_logger(__name__)
+
 
 class Levels:
     """Class to manage character levels and experience points."""

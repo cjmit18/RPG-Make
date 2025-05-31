@@ -2132,3 +2132,4758 @@ Equipped:
   ring: Emerald Loop
   boots: (none)
   consumable: (none)
+2025-05-31 09:23:08 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 09:23:08 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 09:23:08 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 12
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 09:51:05 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 09:51:05 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 09:51:05 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 9
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 09:51:06 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 09:51:06 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 09:51:06 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 09:53:59 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 09:53:59 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 09:53:59 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 9
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:31:27 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 10:31:27 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 10:31:27 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 11
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:31:35 [  INFO  ] game_sys.core.encounter:55 | Hero deals 31 damage.
+2025-05-31 10:31:35 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:31:35 [  INFO  ] game_sys.core.encounter:55 | Hero deals 32 damage.
+2025-05-31 10:31:35 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:31:35 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:31:35 [  INFO  ] __main__:17 | Character: Hero
+Level: 5  Experience: 0
+Class: Knight
+--------------------
+Attack: 32
+Defense: 37
+Speed: 15
+Health: 50/50
+Mana: 10/10
+Stamina: 25/25
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:32:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 10:32:05 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 10:32:05 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:05 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:32:05 [  INFO  ] __main__:17 | Character: Hero
+Level: 4  Experience: 0
+Class: Knight
+--------------------
+Attack: 27
+Defense: 30
+Speed: 12
+Health: 40/40
+Mana: 8/8
+Stamina: 20/20
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 18 damage. Critical Hit!
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:55 | Hero deals 49 damage. Critical Hit!
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 10:32:22 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:22 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:32:22 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 23
+Defense: 23
+Speed: 9
+Health: 3/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:32:47 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:32:47 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 10:32:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 14 damage.
+2025-05-31 10:32:47 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:32:47 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:32:47 [  INFO  ] __main__:16 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:32:47 [  INFO  ] __main__:17 | Character: Hero
+Level: 2  Experience: 0
+Class: Knight
+--------------------
+Attack: 18
+Defense: 16
+Speed: 6
+Health: 0/20
+Mana: 4/4
+Stamina: 10/10
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 10:32:55 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:32:55 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:32:55 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 20
+Defense: 23
+Speed: 9
+Health: 13/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:33:15 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:33:15 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:33:15 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 23
+Defense: 23
+Speed: 9
+Health: 14/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:33:29 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 10:33:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 10:33:29 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 14 damage. Critical Hit!
+2025-05-31 10:33:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 10:33:29 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:33:29 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:33:29 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 23
+Defense: 23
+Speed: 9
+Health: 9/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:33:45 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 10:33:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 10:33:45 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:33:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 10:33:45 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:33:45 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:33:45 [  INFO  ] __main__:17 | 21
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 11 damage.
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 10:34:14 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:34:14 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:34:14 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 10/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 15 damage.
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 28 damage. Critical Hit!
+2025-05-31 10:34:54 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:34:54 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 10:34:54 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Rogue
+--------------------
+Attack: 18
+Defense: 12
+Speed: 24
+Health: 8/24
+Mana: 9/9
+Stamina: 18/18
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 6 damage.
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 8 damage.
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 11 damage.
+2025-05-31 10:35:15 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:35:15 [  INFO  ] __main__:16 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:35:15 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Mage
+--------------------
+Attack: 8
+Defense: 9
+Speed: 15
+Health: 0/18
+Mana: 30/30
+Stamina: 9/9
+--------------------
+Hero's Inventory:
+  Mana Potion (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 3 damage.
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 2 damage.
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:35:28 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:35:28 [  INFO  ] __main__:16 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:35:28 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Healer
+--------------------
+Attack: 3
+Defense: 12
+Speed: 12
+Health: 0/21
+Mana: 24/24
+Stamina: 12/12
+--------------------
+Hero's Inventory:
+  Health Potion (x1)
+  Mana Potion (x1)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:55 | Orc deals 14 damage.
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:55 | Orc deals 30 damage. Critical Hit!
+2025-05-31 10:39:23 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:39:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:39:23 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:48:59 [  INFO  ] game_sys.core.encounter:55 | Orc deals 15 damage.
+2025-05-31 10:48:59 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:48:59 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 10:48:59 [  INFO  ] game_sys.core.encounter:55 | Orc deals 30 damage. Critical Hit!
+2025-05-31 10:48:59 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:48:59 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:48:59 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 22
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:49:11 [  INFO  ] game_sys.core.encounter:55 | Orc deals 16 damage.
+2025-05-31 10:49:11 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 10:49:11 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 10:49:11 [  INFO  ] game_sys.core.encounter:55 | Orc deals 11 damage.
+2025-05-31 10:49:11 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:49:11 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:49:11 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:50:05 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:50:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:50:05 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:50:05 [  INFO  ] game_sys.core.encounter:55 | Orc deals 22 damage.
+2025-05-31 10:50:05 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:50:05 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:50:05 [  INFO  ] __main__:18 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 21
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:50:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage. Critical Hit!
+2025-05-31 10:50:14 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:50:14 [  INFO  ] game_sys.core.encounter:55 | Orc deals 42 damage. Critical Hit!
+2025-05-31 10:50:14 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:50:14 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:50:14 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Goblin
+--------------------
+Attack: 9
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:50:35 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 75 damage.
+2025-05-31 10:50:35 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:50:35 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:50:35 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Goblin
+--------------------
+Attack: 64
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:51:12 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:51:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 10:51:12 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:51:12 [  INFO  ] game_sys.core.encounter:55 | Orc deals 22 damage.
+2025-05-31 10:51:12 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:51:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:51:12 [  INFO  ] __main__:18 | Character: Orc
+Level: 3  Experience: 10
+Class: Orc
+--------------------
+Attack: 28
+Defense: 19
+Speed: 6
+Health: 36/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+Orc's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:51:52 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 31 damage.
+2025-05-31 10:51:52 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:51:52 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:51:52 [  INFO  ] __main__:18 | Character: Orc
+Level: 3  Experience: 10
+Class: Orc
+--------------------
+Attack: 23
+Defense: 19
+Speed: 6
+Health: 36/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+Orc's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:52:01 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 26 damage.
+2025-05-31 10:52:01 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 10:52:01 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:52:01 [  INFO  ] game_sys.core.encounter:55 | Orc deals 49 damage. Critical Hit!
+2025-05-31 10:52:01 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:52:01 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:52:01 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Goblin
+--------------------
+Attack: 31
+Defense: 6
+Speed: 14
+Health: 0/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:52:06 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 70 damage. Critical Hit!
+2025-05-31 10:52:06 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:52:06 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:52:06 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Goblin
+--------------------
+Attack: 44
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:52:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage. Critical Hit!
+2025-05-31 10:52:14 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 10:52:14 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 10:52:14 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:52:14 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:52:14 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Goblin
+--------------------
+Attack: 10
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:53:07 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 10:53:07 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 10:53:07 [  INFO  ] game_sys.core.encounter:55 | Orc deals 27 damage.
+2025-05-31 10:53:07 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:53:07 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:53:07 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:53:33 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:53:33 [  INFO  ] game_sys.core.encounter:55 | Hero deals 27 damage.
+2025-05-31 10:53:33 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:53:33 [  INFO  ] game_sys.core.encounter:55 | Orc deals 32 damage.
+2025-05-31 10:53:33 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:53:33 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:53:33 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:53:48 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:53:48 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 10:53:48 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 10:53:48 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:53:48 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:53:48 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 2/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:54:42 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 10:54:42 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 10:54:42 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 10:54:42 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:54:42 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:54:42 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 3/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:55:19 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 11 damage.
+2025-05-31 10:55:19 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 10:55:19 [  INFO  ] game_sys.core.encounter:55 | Orc deals 24 damage.
+2025-05-31 10:55:19 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:55:19 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:55:19 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:57:37 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 10:57:37 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 10:57:37 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 10:57:37 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:57:37 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:57:37 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:57:48 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:57:48 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 10:57:48 [  INFO  ] game_sys.core.encounter:55 | Orc deals 22 damage.
+2025-05-31 10:57:48 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:57:48 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:57:48 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 1/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 10:57:59 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 10:57:59 [  INFO  ] game_sys.core.encounter:55 | Hero deals 50 damage. Critical Hit!
+2025-05-31 10:57:59 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 10:57:59 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 10:57:59 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 10:57:59 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 10:57:59 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 45 damage. Critical Hit!
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 11:00:06 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:00:06 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 11:00:06 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:00:39 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:00:39 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 11:00:39 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:00:39 [  INFO  ] game_sys.core.encounter:55 | Orc deals 26 damage.
+2025-05-31 11:00:39 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:00:39 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:00:39 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:01:36 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:01:36 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 11:01:36 [  INFO  ] game_sys.core.encounter:55 | Orc deals 18 damage.
+2025-05-31 11:01:36 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:01:36 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:01:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:01:36 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 1/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:02:16 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 11:02:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 11:02:16 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:02:16 [  INFO  ] game_sys.core.encounter:55 | Orc deals 27 damage.
+2025-05-31 11:02:16 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:02:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:02:16 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:02:39 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:02:39 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 11:02:39 [  INFO  ] game_sys.core.encounter:55 | Orc deals 32 damage.
+2025-05-31 11:02:39 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:02:39 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:02:39 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:02:50 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 11:02:50 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 11:02:50 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:02:50 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:02:50 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:02:50 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 100
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:03:25 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:03:25 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 11:03:25 [  INFO  ] game_sys.core.encounter:55 | Orc deals 61 damage. Critical Hit!
+2025-05-31 11:03:25 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:03:25 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:03:25 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 100
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:03:35 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:03:35 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 11:03:35 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 11:03:35 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:03:35 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:03:35 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:04:09 [  INFO  ] game_sys.core.encounter:55 | Enemy deals 7 damage.
+2025-05-31 11:04:09 [  INFO  ] game_sys.core.encounter:55 | Hero deals 48 damage. Critical Hit!
+2025-05-31 11:04:09 [  INFO  ] game_sys.core.encounter:59 | Enemy has fallen!
+2025-05-31 11:04:09 [  INFO  ] game_sys.core.encounter:55 | Orc deals 28 damage.
+2025-05-31 11:04:09 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:04:09 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:04:09 [  INFO  ] __main__:18 | Character: Enemy
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:15:58 [  INFO  ] game_sys.core.encounter:55 | Enemy deals 9 damage.
+2025-05-31 11:15:58 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 11:15:58 [  INFO  ] game_sys.core.encounter:55 | Orc deals 20 damage.
+2025-05-31 11:15:58 [  INFO  ] game_sys.core.encounter:55 | Enemy deals 8 damage.
+2025-05-31 11:15:58 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:15:58 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:15:58 [  INFO  ] __main__:18 | Character: Enemy
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 1/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:17:13 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 11:17:13 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 11:17:13 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:17:13 [  INFO  ] game_sys.core.encounter:55 | Orc deals 24 damage.
+2025-05-31 11:17:13 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:17:13 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:17:13 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:17:56 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 17 damage. Critical Hit!
+2025-05-31 11:17:56 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 11:17:56 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:17:56 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:17:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:17:56 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 10
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:18:32 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:18:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 11:18:32 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:18:32 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:18:32 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:18:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:18:32 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:20:34 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 11:20:34 [  INFO  ] game_sys.core.encounter:55 | Hero deals 52 damage. Critical Hit!
+2025-05-31 11:20:34 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:20:34 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:20:34 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:20:34 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:20:34 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:23:09 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:23:09 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 11:23:09 [  INFO  ] game_sys.core.encounter:55 | Orc deals 18 damage.
+2025-05-31 11:23:09 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 11:23:09 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:23:09 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:23:09 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:55 | Orc deals 13 damage.
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:55 | Hero deals 44 damage. Critical Hit!
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:55 | Orc deals 15 damage.
+2025-05-31 11:30:24 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:30:24 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:30:24 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:31:23 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 10 damage.
+2025-05-31 11:31:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 11:31:23 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:31:23 [  INFO  ] game_sys.core.encounter:55 | Orc deals 26 damage.
+2025-05-31 11:31:23 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:31:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:31:23 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 10
+Defense: 6
+Speed: 14
+Health: 0/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:35:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 9 damage.
+2025-05-31 11:35:14 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 11:35:14 [  INFO  ] game_sys.core.encounter:55 | Orc deals 20 damage.
+2025-05-31 11:35:14 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 11:35:14 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:35:14 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:35:14 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 10
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:55 | Orc deals 19 damage.
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 11:35:32 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:35:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:35:32 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 10
+Defense: 6
+Speed: 14
+Health: 0/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 6 damage.
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:55 | Orc deals 21 damage.
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 11:35:54 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:35:54 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:35:54 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 6
+Speed: 14
+Health: 0/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:36:50 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:36:50 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 11:36:50 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:36:50 [  INFO  ] game_sys.core.encounter:55 | Orc deals 22 damage.
+2025-05-31 11:36:50 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:36:50 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:36:50 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 11
+Defense: 6
+Speed: 14
+Health: 0/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:37:16 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:37:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 52 damage. Critical Hit!
+2025-05-31 11:37:16 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:37:16 [  INFO  ] game_sys.core.encounter:55 | Orc deals 29 damage.
+2025-05-31 11:37:16 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:37:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:37:16 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:37:48 [  INFO  ] game_sys.core.encounter:55 | Enemy deals 9 damage.
+2025-05-31 11:37:48 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 11:37:48 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:37:48 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:37:48 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:37:48 [  INFO  ] __main__:18 | Character: Enemy
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:40:10 [  INFO  ] game_sys.core.encounter:55 | enemy deals 17 damage. Critical Hit!
+2025-05-31 11:40:10 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 11:40:10 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 11:40:10 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:40:10 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:40:10 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:45:05 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 19 damage. Critical Hit!
+2025-05-31 11:45:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 35 damage. Critical Hit!
+2025-05-31 11:45:05 [  INFO  ] game_sys.core.encounter:55 | Orc deals 24 damage.
+2025-05-31 11:45:05 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:45:05 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:45:05 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:45:17 [  INFO  ] game_sys.core.encounter:55 | Gooblin deals 10 damage.
+2025-05-31 11:45:17 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 11:45:17 [  INFO  ] game_sys.core.encounter:59 | Gooblin has fallen!
+2025-05-31 11:45:17 [  INFO  ] game_sys.core.encounter:55 | Orc deals 20 damage.
+2025-05-31 11:45:17 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:45:17 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:45:17 [  INFO  ] __main__:18 | Enemy: Gooblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Gooblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:46:49 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 7 damage.
+2025-05-31 11:46:49 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 11:46:49 [  INFO  ] game_sys.core.encounter:55 | Orc deals 24 damage.
+2025-05-31 11:46:49 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:46:49 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:46:49 [  INFO  ] __main__:18 | Character: Goblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:47:49 [  INFO  ] game_sys.core.encounter:55 | Gooblin deals 9 damage.
+2025-05-31 11:47:49 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 11:47:49 [  INFO  ] game_sys.core.encounter:55 | Orc deals 21 damage.
+2025-05-31 11:47:49 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:47:49 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:47:49 [  INFO  ] __main__:18 | Character: Gooblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Gooblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:51:09 [  INFO  ] game_sys.core.encounter:55 | Gooblin deals 11 damage.
+2025-05-31 11:51:09 [  INFO  ] game_sys.core.encounter:55 | Hero deals 16 damage.
+2025-05-31 11:51:09 [  INFO  ] game_sys.core.encounter:55 | Orc deals 27 damage.
+2025-05-31 11:51:09 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:51:09 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:51:09 [  INFO  ] __main__:18 | Character: Gooblin
+Level: 2  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Gooblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:51:51 [  INFO  ] game_sys.core.encounter:55 | Gooblin deals 7 damage.
+2025-05-31 11:51:51 [  INFO  ] game_sys.core.encounter:55 | Hero deals 16 damage.
+2025-05-31 11:51:51 [  INFO  ] game_sys.core.encounter:55 | Orc deals 23 damage.
+2025-05-31 11:51:51 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:51:51 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:51:51 [  INFO  ] __main__:18 | Enemy: Gooblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 20/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Gooblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:56:53 [  INFO  ] game_sys.core.encounter:55 | Gooblin deals 10 damage.
+2025-05-31 11:56:53 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 11:56:53 [  INFO  ] game_sys.core.encounter:59 | Gooblin has fallen!
+2025-05-31 11:56:53 [  INFO  ] game_sys.core.encounter:55 | Orc deals 24 damage.
+2025-05-31 11:56:53 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:56:53 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:56:53 [  INFO  ] __main__:18 | Enemy: Gooblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Gooblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 11:57:12 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 11:57:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 11:57:12 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 11:57:12 [  INFO  ] game_sys.core.encounter:55 | Orc deals 27 damage.
+2025-05-31 11:57:12 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 11:57:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 11:57:12 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 10
+Health: 0/20
+Mana: 10/10
+Stamina: 10/10
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:02:49 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 8 damage.
+2025-05-31 12:02:49 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:02:49 [  INFO  ] game_sys.core.encounter:55 | Orc deals 25 damage.
+2025-05-31 12:02:49 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:02:49 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:02:49 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 11
+Defense: 6
+Speed: 14
+Health: 10/10
+Mana: 2/2
+Stamina: 8/8
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:04:37 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 12:04:37 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 19 damage.
+2025-05-31 12:04:37 [  INFO  ] game_sys.core.encounter:55 | enemy deals 19 damage.
+2025-05-31 12:04:37 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:04:37 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:04:37 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 23
+Defense: 17
+Speed: 8
+Health: 10/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:55 | Hero deals 27 damage.
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:55 | enemy deals 26 damage.
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:55 | enemy deals 26 damage.
+2025-05-31 12:05:00 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:05:00 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:05:00 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 22
+Defense: 17
+Speed: 8
+Health: 0/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:06:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 12:06:06 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 17 damage.
+2025-05-31 12:06:06 [  INFO  ] game_sys.core.encounter:55 | enemy deals 26 damage.
+2025-05-31 12:06:06 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:06:06 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:06:06 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 21
+Defense: 17
+Speed: 8
+Health: 10/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:08:26 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 16 damage.
+2025-05-31 12:08:26 [  INFO  ] game_sys.core.encounter:55 | enemy deals 16 damage.
+2025-05-31 12:08:26 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:08:26 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:08:26 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 15
+Defense: 15
+Speed: 15
+Health: 20/30
+Mana: 10/15
+Stamina: 10/15
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:08:27 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage.
+2025-05-31 12:08:27 [  INFO  ] game_sys.core.encounter:55 | enemy deals 32 damage. Critical Hit!
+2025-05-31 12:08:27 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:08:27 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:08:27 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 15
+Defense: 15
+Speed: 15
+Health: 20/30
+Mana: 10/15
+Stamina: 10/15
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage.
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:55 | enemy deals 12 damage.
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:55 | enemy deals 25 damage. Critical Hit!
+2025-05-31 12:09:36 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:09:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:09:36 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 15
+Defense: 15
+Speed: 15
+Health: 0/30
+Mana: 10/15
+Stamina: 10/15
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:10:24 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 14 damage.
+2025-05-31 12:10:24 [  INFO  ] game_sys.core.encounter:55 | enemy deals 13 damage.
+2025-05-31 12:10:24 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:10:24 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 16 damage.
+2025-05-31 12:10:24 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:10:24 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:10:24 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 15
+Defense: 15
+Speed: 15
+Health: 1/30
+Mana: 10/15
+Stamina: 10/15
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:11:07 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 12 damage.
+2025-05-31 12:11:07 [  INFO  ] game_sys.core.encounter:55 | enemy deals 16 damage.
+2025-05-31 12:11:07 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 12:11:07 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 13 damage.
+2025-05-31 12:11:07 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:11:07 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:11:07 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 15
+Defense: 15
+Speed: 15
+Health: 3/30
+Mana: 10/15
+Stamina: 10/15
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:14:03 [  INFO  ] game_sys.core.encounter:55 | Hero deals 36 damage. Critical Hit!
+2025-05-31 12:14:03 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:14:03 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage.
+2025-05-31 12:14:03 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:14:03 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:14:03 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:14:03 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 10/0
+Stamina: 10/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:14:38 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:14:38 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 20/36
+Mana: 10/0
+Stamina: 10/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | enemy deals 25 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:14:38 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:14:38 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:14:38 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Base
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 10/0
+Stamina: 10/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 16 damage.
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:55 | enemy deals 24 damage.
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:15:29 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:15:29 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:15:29 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 20
+Defense: 17
+Speed: 8
+Health: 0/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:15:42 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:15:42 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 18 damage.
+2025-05-31 12:15:42 [  INFO  ] game_sys.core.encounter:55 | enemy deals 24 damage.
+2025-05-31 12:15:42 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:15:42 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:15:42 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 3  Experience: 300
+Class: Orc
+--------------------
+Attack: 28
+Defense: 19
+Speed: 6
+Health: 15/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 16 damage.
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:55 | enemy deals 28 damage.
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:55 | enemy deals 30 damage.
+2025-05-31 12:16:45 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:16:45 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:16:45 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 3  Experience: 300
+Class: Orc
+--------------------
+Attack: 26
+Defense: 19
+Speed: 6
+Health: 19/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:17:05 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 12:17:05 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 20 damage.
+2025-05-31 12:17:05 [  INFO  ] game_sys.core.encounter:55 | enemy deals 21 damage.
+2025-05-31 12:17:05 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:17:05 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:17:05 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 22
+Defense: 17
+Speed: 8
+Health: 10/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:17:39 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:17:39 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 21 damage.
+2025-05-31 12:17:39 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:17:39 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:17:39 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:17:39 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 3  Experience: 300
+Class: Orc
+--------------------
+Attack: 25
+Defense: 19
+Speed: 6
+Health: 17/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:55 | enemy deals 27 damage.
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:55 | enemy deals 22 damage.
+2025-05-31 12:18:16 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:18:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:18:16 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 20
+Defense: 17
+Speed: 8
+Health: 0/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:55 | enemy deals 26 damage.
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:55 | enemy deals 22 damage.
+2025-05-31 12:18:17 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:18:17 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:18:17 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 21
+Defense: 17
+Speed: 8
+Health: 0/36
+Mana: 2/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:55 | enemy deals 20 damage.
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:55 | enemy deals 25 damage.
+2025-05-31 12:18:43 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:18:43 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:18:43 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 23
+Defense: 17
+Speed: 8
+Health: 0/36
+Mana: 16/0
+Stamina: 8/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:19:08 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:19:08 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 18 damage.
+2025-05-31 12:19:08 [  INFO  ] game_sys.core.encounter:55 | enemy deals 24 damage.
+2025-05-31 12:19:08 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:19:08 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:19:08 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 21
+Defense: 17
+Speed: 8
+Health: 5/36
+Mana: 0/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:19:31 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:19:31 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 15 damage.
+2025-05-31 12:19:31 [  INFO  ] game_sys.core.encounter:55 | enemy deals 30 damage.
+2025-05-31 12:19:31 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:19:31 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:19:31 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 5/36
+Mana: 0/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:20:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:20:29 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 33 damage. Critical Hit!
+2025-05-31 12:20:29 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:20:29 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:20:29 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 5/36
+Mana: 0/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:55 | enemy deals 22 damage.
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:20:39 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:20:39 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:20:39 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 1/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:22:56 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 12:22:56 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:22:56 [  INFO  ] game_sys.core.encounter:55 | enemy deals 51 damage. Critical Hit!
+2025-05-31 12:22:56 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:22:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:22:56 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 1/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:55 | enemy deals 20 damage.
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:55 | enemy deals 53 damage. Critical Hit!
+2025-05-31 12:23:56 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:23:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:23:56 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 1/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:24:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:24:12 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 17 damage.
+2025-05-31 12:24:12 [  INFO  ] game_sys.core.encounter:55 | enemy deals 27 damage.
+2025-05-31 12:24:12 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:24:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:24:12 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 5/36
+Mana: 1/0
+Stamina: 4/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:26:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:26:27 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:26:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 12:26:27 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:26:27 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:26:27 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Base
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:55 | Hero deals 33 damage. Critical Hit!
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:55 | Hero deals 16 damage.
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:55 | enemy deals 22 damage.
+2025-05-31 12:27:18 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:27:18 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:27:18 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 0/0
+Stamina: 0/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:29:32 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:29:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:29:32 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Base
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 0/0
+Stamina: 0/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 31 damage. Critical Hit!
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:55 | enemy deals 19 damage.
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:55 | Hero deals 46 damage. Critical Hit!
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:55 | enemy deals 21 damage.
+2025-05-31 12:29:45 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:29:45 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:29:45 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 0/36
+Mana: 0/0
+Stamina: 0/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:30:12 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:30:12 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 19 damage.
+2025-05-31 12:30:12 [  INFO  ] game_sys.core.encounter:55 | enemy deals 23 damage.
+2025-05-31 12:30:12 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:30:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:30:12 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 18
+Defense: 15
+Speed: 6
+Health: 10/36
+Mana: 0/0
+Stamina: 0/24
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:55 | enemy deals 24 damage.
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:55 | enemy deals 25 damage.
+2025-05-31 12:31:11 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 12:31:11 [  INFO  ] __main__:17 | 
+Combat result: 
+Enemies win!
+2025-05-31 12:31:11 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 3  Experience: 300
+Class: Orc
+--------------------
+Attack: 26
+Defense: 19
+Speed: 6
+Health: 16/36
+Mana: 0/0
+Stamina: 26/26
+--------------------
+enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:31:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 43 damage. Critical Hit!
+2025-05-31 12:31:15 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:31:15 [  INFO  ] game_sys.core.encounter:55 | enemy deals 12 damage.
+2025-05-31 12:31:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 37 damage. Critical Hit!
+2025-05-31 12:31:15 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:31:15 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:31:15 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 15
+Defense: 9
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 10/10
+--------------------
+enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:31:58 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:31:58 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:31:58 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:31:58 [  INFO  ] game_sys.core.encounter:55 | Hero deals 41 damage. Critical Hit!
+2025-05-31 12:31:58 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:31:58 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:31:58 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:32:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:32:23 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:32:23 [  INFO  ] game_sys.core.encounter:55 | enemy deals 5 damage.
+2025-05-31 12:32:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:32:23 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:32:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:32:23 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:32:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 12:32:29 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:32:29 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:32:29 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:32:29 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:32:29 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:32:29 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:33:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:33:28 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:28 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:33:28 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 12:33:28 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:28 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:33:28 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Gooblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:33:44 [  INFO  ] game_sys.core.encounter:55 | Hero deals 27 damage.
+2025-05-31 12:33:44 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:44 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:33:44 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:44 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:33:44 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Gooblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:33:53 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:33:53 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:53 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 12:33:53 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:33:53 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:33:53 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 2  Experience: 200
+Class: Gooblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:34:18 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:34:18 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:34:18 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:34:18 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:34:18 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:34:18 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:34:18 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:34:33 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 12:34:33 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:34:33 [  INFO  ] game_sys.core.encounter:55 | enemy deals 5 damage.
+2025-05-31 12:34:33 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:34:33 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:34:33 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:34:33 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:37:21 [  INFO  ] game_sys.core.encounter:55 | Hero deals 44 damage. Critical Hit!
+2025-05-31 12:37:21 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:37:21 [  INFO  ] game_sys.core.encounter:55 | Hero deals 23 damage.
+2025-05-31 12:37:21 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:37:21 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:37:21 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:41:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:41:23 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:41:23 [  INFO  ] game_sys.core.encounter:55 | enemy deals 5 damage.
+2025-05-31 12:41:23 [  INFO  ] game_sys.core.encounter:55 | Hero deals 42 damage. Critical Hit!
+2025-05-31 12:41:23 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:41:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:41:23 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:43:20 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 12:43:20 [  INFO  ] game_sys.core.encounter:59 |  has fallen!
+2025-05-31 12:43:20 [  INFO  ] game_sys.core.encounter:55 |  deals 5 damage.
+2025-05-31 12:43:20 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:43:20 [  INFO  ] game_sys.core.encounter:59 |  has fallen!
+2025-05-31 12:43:20 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:43:20 [  INFO  ] __main__:18 | Enemy: 
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+'s Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:43:55 [  INFO  ] game_sys.core.encounter:55 | Knight deals 49 damage. Critical Hit!
+2025-05-31 12:43:55 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:43:55 [  INFO  ] game_sys.core.encounter:55 | Orc deals 4 damage.
+2025-05-31 12:43:55 [  INFO  ] game_sys.core.encounter:55 | Knight deals 17 damage.
+2025-05-31 12:43:55 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 12:43:55 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:43:55 [  INFO  ] __main__:18 | Enemy: Orc
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+Orc's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:45:12 [  INFO  ] game_sys.core.encounter:55 | Knight deals 23 damage.
+2025-05-31 12:45:12 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:45:12 [  INFO  ] game_sys.core.encounter:55 | Orc deals 10 damage. Critical Hit!
+2025-05-31 12:45:12 [  INFO  ] game_sys.core.encounter:55 | Knight deals 27 damage.
+2025-05-31 12:45:12 [  INFO  ] game_sys.core.encounter:59 | Orc has fallen!
+2025-05-31 12:45:12 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:45:12 [  INFO  ] __main__:18 | Enemy: Orc
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+Orc's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:45:23 [  INFO  ] game_sys.core.encounter:55 | Knight deals 19 damage.
+2025-05-31 12:45:23 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:45:23 [  INFO  ] game_sys.core.encounter:55 | Orcs deals 6 damage.
+2025-05-31 12:45:23 [  INFO  ] game_sys.core.encounter:55 | Knight deals 27 damage.
+2025-05-31 12:45:23 [  INFO  ] game_sys.core.encounter:59 | Orcs has fallen!
+2025-05-31 12:45:23 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:45:23 [  INFO  ] __main__:18 | Enemy: Orcs
+Level: 1  Experience: 100
+Class: Orcs
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+Orcs's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:46:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 12:46:15 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:15 [  INFO  ] game_sys.core.encounter:55 | enemy deals 5 damage.
+2025-05-31 12:46:15 [  INFO  ] game_sys.core.encounter:55 | Hero deals 42 damage. Critical Hit!
+2025-05-31 12:46:15 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:15 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:46:15 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 8/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:46:24 [  INFO  ] game_sys.core.encounter:55 | Hero deals 28 damage.
+2025-05-31 12:46:24 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:24 [  INFO  ] game_sys.core.encounter:55 | Hero deals 25 damage.
+2025-05-31 12:46:24 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:24 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:46:24 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 2  Experience: 200
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:46:52 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 12:46:52 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:52 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:46:52 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 12:46:52 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:46:52 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:46:52 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:47:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:47:06 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:47:06 [  INFO  ] game_sys.core.encounter:55 | enemy deals 4 damage.
+2025-05-31 12:47:06 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:47:06 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:47:06 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:47:06 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:47:59 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:47:59 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:47:59 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:47:59 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:47:59 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:47:59 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 7
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:48:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 22 damage.
+2025-05-31 12:48:27 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:48:27 [  INFO  ] game_sys.core.encounter:55 | enemy deals 5 damage.
+2025-05-31 12:48:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 17 damage.
+2025-05-31 12:48:27 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:48:27 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:48:27 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 5
+Speed: 2
+Health: 0/12
+Mana: 0/0
+Stamina: 0/8
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:48:54 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 12:48:54 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:48:54 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:48:54 [  INFO  ] __main__:17 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:49:33 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 12:49:33 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 12:49:33 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 12:49:33 [  INFO  ] __main__:17 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:49:55 [  INFO  ] game_sys.core.encounter:55 | Knight deals 24 damage.
+2025-05-31 12:49:55 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:49:55 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:49:55 [  INFO  ] __main__:17 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:50:42 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 12:50:42 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:50:42 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:50:42 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 12
+Defense: 10
+Speed: 4
+Health: 0/24
+Mana: 0/2
+Stamina: 0/14
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:51:14 [  INFO  ] game_sys.core.encounter:55 | Knight deals 21 damage.
+2025-05-31 12:51:14 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:51:14 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:51:14 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:52:24 [  INFO  ] game_sys.core.encounter:55 | Knight deals 35 damage. Critical Hit!
+2025-05-31 12:52:24 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:52:24 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:52:24 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:52:56 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 12:52:56 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:52:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:52:56 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 1/0
+Stamina: 7/0
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:53:44 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 12:53:44 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:53:44 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:53:44 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 12
+Defense: 10
+Speed: 4
+Health: 0/24
+Mana: 1/2
+Stamina: 7/16
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:54:08 [  INFO  ] game_sys.core.encounter:55 | Knight deals 44 damage. Critical Hit!
+2025-05-31 12:54:08 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:54:08 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:54:08 [  INFO  ] __main__:17 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 3
+Defense: 2
+Speed: 6
+Health: 0/5
+Mana: 1/1
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:54:19 [  INFO  ] game_sys.core.encounter:55 | Knight deals 17 damage.
+2025-05-31 12:54:19 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:54:19 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:54:19 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 12
+Defense: 10
+Speed: 4
+Health: 0/24
+Mana: 1/2
+Stamina: 7/16
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:54:32 [  INFO  ] game_sys.core.encounter:55 | Knight deals 19 damage.
+2025-05-31 12:54:32 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:54:32 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:54:32 [  INFO  ] __main__:18 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 12
+Defense: 10
+Speed: 4
+Health: 0/24
+Mana: 1/2
+Stamina: 7/16
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 12:54:40 [  INFO  ] game_sys.core.encounter:55 | Knight deals 19 damage.
+2025-05-31 12:54:40 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 12:54:40 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 12:54:40 [  INFO  ] __main__:17 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 3
+Defense: 2
+Speed: 6
+Health: 0/5
+Mana: 1/1
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:05:55 [  INFO  ] game_sys.core.encounter:55 | Knight deals 24 damage.
+2025-05-31 13:05:55 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:05:55 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:05:55 [  INFO  ] __main__:17 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 3
+Defense: 2
+Speed: 6
+Health: 0/5
+Mana: 1/1
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:07:01 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 13:07:01 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:07:01 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:07:01 [  INFO  ] __main__:17 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 3
+Defense: 2
+Speed: 6
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:07:44 [  INFO  ] game_sys.core.encounter:55 | Knight deals 21 damage.
+2025-05-31 13:07:44 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:07:44 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:07:44 [  INFO  ] __main__:17 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 5
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:07:52 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 13:07:52 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:07:52 [  INFO  ] __main__:16 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:07:52 [  INFO  ] __main__:17 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 7
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:08:11 [  INFO  ] game_sys.core.encounter:55 | Knight deals 19 damage.
+2025-05-31 13:08:11 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:08:11 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:08:11 [  INFO  ] __main__:18 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:08:20 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 13:08:20 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:08:20 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:08:20 [  INFO  ] __main__:18 | Character: Orc
+Level: 1  Experience: 0
+Class: Orc
+--------------------
+Attack: 11
+Defense: 9
+Speed: 2
+Health: 12/12
+Mana: 0/0
+Stamina: 10/10
+--------------------
+Orc's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:09:47 [  INFO  ] game_sys.core.encounter:55 | Knight deals 44 damage. Critical Hit!
+2025-05-31 13:09:47 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:09:47 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:09:47 [  INFO  ] __main__:18 | Character: Goblin
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:10:36 [  INFO  ] game_sys.core.encounter:55 | Knight deals 24 damage.
+2025-05-31 13:10:36 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:10:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:10:36 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:10:42 [  INFO  ] game_sys.core.encounter:55 | Knight deals 22 damage.
+2025-05-31 13:10:42 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:10:42 [  INFO  ] __main__:17 | 
+Combat result: 
+Knight's Party wins!
+2025-05-31 13:10:42 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:11:13 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:11:13 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 13:11:13 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:11:13 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:11:50 [  INFO  ] game_sys.core.encounter:55 | Hero deals 21 damage.
+2025-05-31 13:11:50 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 13:11:50 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:11:50 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:13:07 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:13:07 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 13:13:07 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:13:07 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:14:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 24 damage.
+2025-05-31 13:14:16 [  INFO  ] game_sys.core.encounter:59 | Base has fallen!
+2025-05-31 13:14:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:14:16 [  INFO  ] __main__:18 | Enemy: Base
+Level: 1  Experience: 100
+Class: Base
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Base's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:14:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 18 damage.
+2025-05-31 13:14:47 [  INFO  ] game_sys.core.encounter:59 | enemy has fallen!
+2025-05-31 13:14:47 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:14:47 [  INFO  ] __main__:18 | Enemy: enemy
+Level: 1  Experience: 100
+Class: Base
+--------------------
+Attack: 0
+Defense: 0
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+enemy's Inventory:
+  (empty)
+
+Equipped:
+  weapon: (none)
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:16:16 [  INFO  ] game_sys.core.encounter:55 | Hero deals 53 damage. Critical Hit!
+2025-05-31 13:16:16 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:16:16 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:16:16 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 8
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:19:47 [  INFO  ] game_sys.core.encounter:55 | Hero deals 44 damage. Critical Hit!
+2025-05-31 13:19:47 [  INFO  ] game_sys.core.encounter:59 | Enemy has fallen!
+2025-05-31 13:19:47 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:19:47 [  INFO  ] __main__:18 | Enemy: Enemy
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 7
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:19:56 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:19:56 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:19:56 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:19:56 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:20:27 [  INFO  ] game_sys.core.encounter:55 | Hero deals 20 damage.
+2025-05-31 13:20:27 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:20:27 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:20:27 [  INFO  ] __main__:18 | Enemy: Goblin
+Level: 1  Experience: 100
+Class: Goblin
+--------------------
+Attack: 7
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Goblin's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:23:36 [  INFO  ] game_sys.core.encounter:55 | Hero deals 26 damage.
+2025-05-31 13:23:36 [  INFO  ] game_sys.core.encounter:59 | Enemy has fallen!
+2025-05-31 13:23:36 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:23:36 [  INFO  ] __main__:18 | Character: Enemy
+Level: 1  Experience: 0
+Class: Goblin
+--------------------
+Attack: 6
+Defense: 4
+Speed: 8
+Health: 0/5
+Mana: 0/0
+Stamina: 7/7
+--------------------
+Enemy's Inventory:
+  Goblin Dagger (x1)
+  Leather Armor (x1)
+
+Equipped:
+  weapon: Goblin Dagger
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:23:42 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:23:42 [  INFO  ] game_sys.core.encounter:59 | Enemy has fallen!
+2025-05-31 13:23:42 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:23:42 [  INFO  ] __main__:18 | Character: Enemy
+Level: 1  Experience: 0
+Class: Orc
+--------------------
+Attack: 14
+Defense: 9
+Speed: 2
+Health: 12/12
+Mana: 0/0
+Stamina: 10/10
+--------------------
+Enemy's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:25:09 [  INFO  ] game_sys.core.encounter:55 | Hero deals 19 damage.
+2025-05-31 13:25:09 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 13:25:09 [  INFO  ] __main__:17 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 13:25:09 [  INFO  ] __main__:18 | Enemy: Orc
+Level: 1  Experience: 100
+Class: Orc
+--------------------
+Attack: 15
+Defense: 9
+Speed: 2
+Health: 12/12
+Mana: 0/0
+Stamina: 10/10
+--------------------
+Orc's Inventory:
+  Orc Axe (x1)
+  Orc Shield (x1)
+
+Equipped:
+  weapon: Orc Axe
+  shield: Orc Shield
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: (none)
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:25:56 [  INFO  ] __main__:48 | Before potion: HP = 0/0
+2025-05-31 13:25:56 [  INFO  ] __main__:50 | After potion:  HP = 0/0
+2025-05-31 13:25:56 [  INFO  ] __main__:53 | Player: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 6
+Defense: 5
+Speed: 0
+Health: 0/0
+Mana: 0/0
+Stamina: 0/0
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 13:26:38 [  INFO  ] __main__:48 | Before potion: HP = 5/10
+2025-05-31 13:26:38 [  INFO  ] __main__:50 | After potion:  HP = 10/10
+2025-05-31 13:26:38 [  INFO  ] __main__:53 | Player: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 10
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 3/3
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)

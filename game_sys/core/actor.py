@@ -1,5 +1,6 @@
 """Actor class for managing game characters, their jobs, stats, and inventory.
-This class handles character creation, job assignment, stat management, and inventory operations."""
+This class handles character creation, job assignment,
+ stat management, and inventory operations."""
 
 from typing import Type, Optional, Callable
 from game_sys.inventory.inventory import Inventory
@@ -9,6 +10,8 @@ from game_sys.core.experience_functions import Levels
 from game_sys.core.stats import Stats
 from game_sys.items.item_base import Equipable
 from logs.logs import get_logger
+
+
 log = get_logger(__name__)
 class Actor:
     def __init__(
@@ -24,15 +27,12 @@ class Actor:
         # initialize stats with zeroed base values
         self.stats = Stats({stat: 0 for stat in Job.base_stats.keys()})
         self.inventory = Inventory(self)
-
         # initialize job
         self.job: Job = job_class(self.levels.lvl)
         self._initialize_job()
-
     def _initialize_job(self) -> None:
-        """
-        Apply job effects: set stats, add & auto-equip starting items, refill resources.
-        """
+        """Apply job effects: set stats, add & 
+        auto-equip starting items, refill resources."""
         self.update_stats()
         # add and equip starting items
         for item in self.job.starting_items:
@@ -49,10 +49,11 @@ class Actor:
 
     def update_stats(self) -> None:
         """Rebuild base stats from job and clear existing modifiers."""
-        for stat, val in self.job.stats_mods.items():
-            self.stats.set_base(stat, val)
+        # Take a fresh copy of the job’s stats_mods dict,
+        # so nobody else can mutate our private map.
+        mods = self.job.stats_mods.copy()
+        self.stats = Stats(mods)     # ← brand-new dict, not shared
         self.stats.clear_modifiers()
-
     def assign_job(
         self,
         new_job_class: Callable[[int], Job],
@@ -85,15 +86,12 @@ class Actor:
                 self.inventory.remove_item(item, quantity=1)
             except ValueError:
                 pass
-
         # revert to base job
         self.job = Job(self.levels.lvl)
         self._initialize_job()
-
     def take_damage(self, amount: int) -> None:
         # clamp current_health to ≥0
         self.current_health = max(0, self.current_health - amount)
-
         # on death, print the defeat line
         if self.current_health == 0:
             print(f"{self.name} has been defeated!")
@@ -105,7 +103,7 @@ class Actor:
         """Reduce current stamina by amount, clamping at zero."""
         self.stamina -= amount
         log.info(f"{self.name} drains {amount} stamina, stamina now {self.stamina}/{self.max_stamina}")
-
+        
     @property
     def attack(self) -> int:
         """Effective attack stat from base + modifiers."""

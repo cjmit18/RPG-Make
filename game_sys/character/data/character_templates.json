@@ -1,9 +1,10 @@
 {
-  "Player": {
+  "player": {
     "name": "Hero",
     "level": 1,
     "experience": 0,
-    "base_stats": {
+    "base_stats": 
+    {
       "attack": 5,
       "defense": 3,
       "speed": 4,
@@ -12,16 +13,17 @@
       "stamina": 15
     }
   },
-  "Enemy": {
-    "name": "Goblin",
+  "enemy": {
+    "name": "Enemy",
     "level": 1,
     "experience": 0,
-    "base_stats": {
+    "base_stats": 
+    {
       "attack": 3,
       "defense": 2,
       "speed": 3,
       "health": 12,
-      "mana": 0,
+      "mana": 1,
       "stamina": 10
     }
   }

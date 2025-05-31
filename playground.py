@@ -1,6 +1,6 @@
 from logs.logs import setup_logging, get_logger
-from game_sys.core.character.character_creation import create_character
-from game_sys.core.inventory.inventory import Inventory
+from game_sys.character.character_creation import create_character
+from game_sys.inventory.inventory import Inventory
 from game_sys.core.encounter import Encounter
 from game_sys.items.factory import create_item
 log = get_logger(__name__)
@@ -9,7 +9,7 @@ setup_logging()
 def combat_test():
     """Test combat functionality with a player and enemies."""
     # Create a player character and some enemies for combat
-    character = create_character("Hero", level=3, job_id="knight")
+    character = create_character("Hero", level=5, job_id="knight")
     enemy = create_character("Goblin", level=2)
     enemies = [enemy,enemy]
     combat = Encounter(character, enemies).start()
@@ -51,4 +51,4 @@ def inventory_test():
     # 7) Inspect
     log.info(hero)
 if __name__ == "__main__":
-   combat_test()
+   inventory_test()

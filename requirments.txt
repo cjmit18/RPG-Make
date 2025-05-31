@@ -1,0 +1,8 @@
+# Runtime dependencies (if you have none, leave blank or remove)
+# e.g., numpy>=1.21.0
+
+# Dev dependencies (for testing and linting)
+pytest>=6.0
+pytest-cov
+flake8
+mypy

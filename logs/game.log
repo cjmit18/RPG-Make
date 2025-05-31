@@ -1993,3 +1993,142 @@ Equipped:
   ring: Ruby Band
   boots: (none)
   consumable: (none)
+2025-05-31 08:45:13 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 16 damage. Critical Hit!
+2025-05-31 08:45:13 [  INFO  ] game_sys.core.encounter:55 | Goblin deals 20 damage. Critical Hit!
+2025-05-31 08:45:13 [  INFO  ] game_sys.core.encounter:59 | Hero has fallen!
+2025-05-31 08:45:13 [  INFO  ] __main__:16 | 
+Combat result: 
+Enemies win!
+2025-05-31 08:45:13 [  INFO  ] __main__:17 | Character: Hero
+Level: 3  Experience: 0
+Class: Knight
+--------------------
+Attack: 24
+Defense: 23
+Speed: 9
+Health: 0/30
+Mana: 6/6
+Stamina: 15/15
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 08:45:34 [  INFO  ] game_sys.core.encounter:55 | Hero deals 147 damage.
+2025-05-31 08:45:34 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 08:45:34 [  INFO  ] game_sys.core.encounter:55 | Hero deals 127 damage.
+2025-05-31 08:45:34 [  INFO  ] game_sys.core.encounter:59 | Goblin has fallen!
+2025-05-31 08:45:34 [  INFO  ] __main__:16 | 
+Combat result: 
+Hero's Party wins!
+2025-05-31 08:45:34 [  INFO  ] __main__:17 | Character: Hero
+Level: 30  Experience: 0
+Class: Knight
+--------------------
+Attack: 156
+Defense: 212
+Speed: 90
+Health: 300/300
+Mana: 60/60
+Stamina: 150/150
+--------------------
+Hero's Inventory:
+  Iron Sword (x1)
+  Leather Armor (x1)
+  Ruby Band (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Ruby Band
+  boots: (none)
+  consumable: (none)
+2025-05-31 08:46:11 [  INFO  ] __main__:21 | Character: Aria
+Level: 1  Experience: 0
+Class: Rogue
+--------------------
+Attack: 10
+Defense: 6
+Speed: 8
+Health: 8/8
+Mana: 3/3
+Stamina: 6/6
+--------------------
+Aria's Inventory:
+  Iron Sword (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: (none)
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 08:46:33 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 08:46:33 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 08:46:33 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 12
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)
+2025-05-31 09:19:41 [  INFO  ] __main__:47 | Before potion: HP = 5/10
+2025-05-31 09:19:41 [  INFO  ] __main__:49 | After potion:  HP = 10/10
+2025-05-31 09:19:41 [  INFO  ] __main__:52 | Character: Aria
+Level: 1  Experience: 0
+Class: Base
+--------------------
+Attack: 8
+Defense: 10
+Speed: 5
+Health: 10/10
+Mana: 5/5
+Stamina: 5/5
+--------------------
+Aria's Inventory:
+  Health Potion (x1)
+  Emerald Loop (x1)
+
+Equipped:
+  weapon: Iron Sword
+  shield: (none)
+  offhand: (none)
+  armor: Leather Armor
+  amulet: (none)
+  ring: Emerald Loop
+  boots: (none)
+  consumable: (none)

@@ -4,7 +4,7 @@ from logs.logs import get_logger
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game_sys.core.character.character_creation import Character, Enemy
+    from game_sys.character.character_creation import Character, Enemy
 
 log = get_logger(__name__)
 
@@ -32,7 +32,7 @@ class Levels:
         return self.__str__()
 
     def add_experience(self, exp: int) -> None:
-        from game_sys.core.character.character_creation import Enemy
+        from game_sys.character.character_creation import Enemy
         """Add experience and level up if threshold reached."""
         if not isinstance(exp, int):
             raise TypeError("Experience must be an integer.")

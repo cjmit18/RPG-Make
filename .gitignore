@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+
+# Logs
+*.log
+logs/*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Pytest cache
+.pytest_cache/
+
+# Mac / Linux swap files
+*.swp
+*~
+
+# IDE / editor folders
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

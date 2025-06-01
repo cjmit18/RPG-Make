@@ -1,4 +1,4 @@
-# game_sys/combat/status.py
+# /mnt/data/status.py
 
 from typing import Dict
 

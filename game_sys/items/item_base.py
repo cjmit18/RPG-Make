@@ -1,56 +1,59 @@
-import uuid
-from dataclasses import dataclass
+# game_sys/items/item_base.py
+
 from typing import Dict
 
-@dataclass
 class Item:
-    """
-    Base class for all items (equippable, consumable, etc.).
-    """
-    name: str
-    description: str
-    price: int
-    level: int
-
+    def __init__(self, name: str, description: str, price: int, level: int):
+        self.name = name
+        self.description = description
+        self.price = price
+        self.level = level
+        self.id = None
 
 class Equipable(Item):
-    """
-    An equipable item occupies one slot (e.g. "weapon", "armor", "ring")
-    and grants stat bonuses. Each instance carries a unique ID.
-    """
-    slot: str                 # e.g. "weapon", "armor", "ring"
-    bonuses: Dict[str, int]   # e.g. {"attack": 5, "defense": 2}
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        price: int,
-        level: int,
-        slot: str,
-        bonuses: Dict[str, int],
-        id: str = None,
-    ):
-        # Initialize the base Item fields
+    def __init__(self, name: str, description: str, price: int, level: int, slot: str, bonuses: Dict[str, int]):
         super().__init__(name, description, price, level)
-
-        # Store slot & bonuses on this instance
         self.slot = slot
         self.bonuses = bonuses
 
-        # Auto-generate a UUID if no `id` was supplied
-        self.id = id or str(uuid.uuid4())
+    def apply(self, actor):
+        """
+        When equipped, apply bonuses as status modifiers.
+        (Simplest approach: modify actor.stats directly, then call update_stats.)
+        """
+        for stat, amt in self.bonuses.items():
+            actor.stats.add_modifier(self.id, stat, amt)
+        try:
+            actor.update_stats()
+        except AttributeError:
+            pass
 
-    def apply(self, owner) -> None:
+    def remove(self, actor):
         """
-        Apply this equipment’s bonuses to the character’s stats.
-        Uses the item.id as the modifier key.
+        When unequipped, remove bonuses from actor.stats.
         """
-        for stat, amount in self.bonuses.items():
-            owner.stats.add_modifier(self.id, stat, amount)
+        actor.stats.remove_modifier(self.id)
+        try:
+            actor.update_stats()
+        except AttributeError:
+            pass
 
-    def remove(self, owner) -> None:
+class Consumable(Item):
+    def __init__(self, name: str, description: str, price: int, level: int, effect: str, amount: int, duration: int):
+        super().__init__(name, description, price, level)
+        self.effect = effect
+        self.amount = amount
+        self.duration = duration
+
+    def apply(self, actor):
         """
-        Remove this equipment’s bonuses from the character’s stats.
+        When used, create a StatusEffect on the actor for buffs, or heal immediately.
         """
-        owner.stats.remove_modifier(self.id)
+        from game_sys.combat.status import StatusEffect
+        if self.effect == "health":
+            actor.heal(self.amount)
+        else:
+            # effect names match status fields (e.g. 'attack', 'defense', etc.)
+            mods = {self.effect: self.amount}
+            status = StatusEffect(mods, self.duration)
+            actor.add_status(status)

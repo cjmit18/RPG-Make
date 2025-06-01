@@ -1,45 +1,122 @@
 [
   {
+    "id": "commoner",
+    "name": "Commoner",
+    "description": "A basic class with balanced stats, suitable for beginners.",
+    "base_stats": 
+    {
+    "attack": 0, 
+    "defense": 3, 
+    "speed": 3, 
+    "health": 5, 
+    "mana": 0, 
+    "stamina": 5,
+    "intellect": 0
+  },
+    "starting_items": 
+    [
+      "tattered_robe","knife"
+    ]
+  },
+  {
     "id": "knight",
     "name": "Knight",
     "description": "A stalwart defender with high resilience and moderate offense.",
-    "base_stats": {"attack": 5, "defense": 7, "speed": 3, "health": 10, "mana": 2, "stamina": 5},
+    "base_stats": {
+      "attack": 5, 
+      "defense": 7, 
+      "speed": 3, 
+      "health": 10, 
+      "mana": 2, 
+      "stamina": 5, 
+      "intellect": 1
+    },
     "starting_items": ["iron_sword", "leather_armor", "ruby_band"]
   },
   {
     "id": "mage",
     "name": "Mage",
     "description": "A master of arcane arts, trading physical power for high mana reserves.",
-    "base_stats": {"attack": 2, "defense": 3, "speed": 5, "health": 6, "mana": 10, "stamina": 3},
+    "base_stats": {
+      "attack": 2, 
+      "defense": 3, 
+      "speed": 5, 
+      "health": 6, 
+      "mana": 10, 
+      "stamina": 3,
+      "intellect": 5
+    },
     "starting_items": ["mana_potion", "ruby_band"]
   },
   {
     "id": "healer",
     "name": "Healer",
     "description": "A supportive class specializing in healing and buffs.",
-    "base_stats": {"attack": 1, "defense": 4, "speed": 4, "health": 7, "mana": 8, "stamina": 4},
+    "base_stats": {"attack": 1, 
+    "defense": 4, 
+    "speed": 4, 
+    "health": 7, 
+    "mana": 8, 
+    "stamina": 4, 
+    "intellect": 6
+  },
     "starting_items": ["health_potion", "mana_potion"]
   },
   {
     "id": "rogue",
     "name": "Rogue",
     "description": "A nimble combatant excelling in speed and critical strikes.",
-    "base_stats": {"attack": 4, "defense": 3, "speed": 8, "health": 8, "mana": 3, "stamina": 6},
-    "starting_items": ["dagger", "emerald_loop"]
+    "base_stats": {
+      "attack": 4,
+      "defense": 3, 
+      "speed": 8, 
+      "health": 8, 
+      "mana": 3, 
+      "stamina": 6, 
+      "intellect": 2
+    },
+    "starting_items": ["dagger", "dagger","emerald_loop"]
   },
   {
     "id": "goblin",
     "name": "Goblin",
     "description": "A cunning creature with quick reflexes and a knack for mischief.",
-    "base_stats": {"attack": 3, "defense": 2, "speed": 6, "health": 5, "mana": 0, "stamina": 7},
+    "base_stats": {
+      "attack": 3, 
+      "defense": 2, 
+      "speed": 6, 
+      "health": 5, 
+      "stamina": 7
+    },
     "starting_items": ["goblin_dagger", "leather_armor"]
   },
   {
     "id": "orc",
     "name": "Orc",
     "description": "A brutish warrior with immense strength and resilience.",
-    "base_stats": {"attack": 6, "defense": 5, "speed": 2, "health": 12, "mana": 0, "stamina": 8},
+    "base_stats": {
+      "attack": 6, 
+      "defense": 5, 
+      "speed": 2, 
+      "health": 12,
+      "mana": 0, 
+      "stamina": 8
+    },
     "starting_items": ["orc_axe", "orc_shield"]
+  },
+  {
+    "id": "dummy",
+    "name": "Training Dummy",
+    "description": "A stationary target used for training purposes.",
+    "base_stats": {
+      "attack": 0, 
+      "defense": 0, 
+      "speed": 0, 
+      "health": 100, 
+      "mana": 0, 
+      "stamina": 0, 
+      "intellect": 0
+    }
   }
 ]
 

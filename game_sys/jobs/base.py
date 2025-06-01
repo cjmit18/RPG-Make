@@ -1,33 +1,39 @@
-"""Base Job Class
-This module defines the base class for all jobs in the game system."""
-from typing import Dict, List
-from game_sys.items.factory import create_item
-from game_sys.items.item_base import Equipable, Item
-from game_sys.items.consumable_list import Consumable
+# game_sys/jobs/base.py
+
+from typing import List, Dict
+
 
 class Job:
     """
-    Base class for all Jobs.
-    Holds base stat modifiers (scaled by level) and starting equipment.
+    Base Job class. Every concrete job must subclass this and set:
+      - base_stats: Dict[str, int]   (e.g. {"health": 50, "attack": 10, ...})
+      - starting_items: List[object]  (list of item objects to give/equip on assign)
+      - name: str                     (human-readable job name)
+      - stats_mods (optional)         (used by Character.assign_job_by_id)
     """
-    name: str = "Base"
+
+    # Example default—concrete subclasses should override this:
     base_stats: Dict[str, int] = {
-        "health": 10,
-        "mana": 5,
-        "stamina": 3,
-        "attack": 5,
-        "defense": 5,
-        "speed": 5,
+        "health": 0,
+        "mana": 0,
+        "stamina": 0,
+        "attack": 0,
+        "defense": 0,
+        "speed": 0,
+        "intellect": 0,
     }
-    starting_item_ids: List[str] = []
 
-    def __init__(self, level: int = 1):
+    starting_items: List[object] = []
+    stats_mods: Dict[str, int] = {}
+
+    def __init__(self, level: int) -> None:
         self.level = level
-        # Scale each base stat by level
-        self.stats_mods = {stat: val * self.level for stat, val in self.base_stats.items()}
-        # Instantiate starting items from their IDs
-        self.starting_items = [create_item(item_id) for item_id in self.starting_item_ids]
+        # Concrete subclasses can scale base_stats/stats_mods by level if needed.
 
-    def description(self) -> str:
-        """Default description for the Base job."""
-        return "A generic adventurer with no specialization."
+    @property
+    def name(self) -> str:
+        """
+        Return the job's internal name (typically the class name in lowercase).
+        Concrete subclasses can override if they want a different display name.
+        """
+        return self.__class__.__name__.lower()

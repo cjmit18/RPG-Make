@@ -1,25 +1,28 @@
 # game_sys/core/actor.py
 
-"""
-Actor class for managing game characters, their jobs, stats, inventory, and status effects.
-"""
+from typing import Any, Dict, List, Optional, Type
+from logs.logs import get_logger
 
-from typing import Type, Optional, Callable
 from game_sys.inventory.inventory import Inventory
-from game_sys.jobs.factory import create_job
-from game_sys.jobs.base import Job
 from game_sys.core.experience_functions import Levels
 from game_sys.core.stats import Stats
 from game_sys.items.item_base import Equipable
 from game_sys.combat.status import StatusEffect
-from logs.logs import get_logger
 
 log = get_logger(__name__)
 
+
 class Actor:
     """
-    Base class for all game actors (characters, NPCs, etc.).
-    Manages job assignment, stats, inventory, status effects, and combat-related methods.
+    Base class for all actors (Player, Enemy, NPC).
+    Each Actor has:
+      - name (str)
+      - levels (Levels): handles XP and leveling
+      - job (optional): assigned via assign_job_by_id()
+      - stats (Stats): base and derived stats
+      - current_health, current_mana, current_stamina
+      - inventory (Inventory)
+      - statuses (active StatusEffect objects)
     """
 
     def __init__(
@@ -27,195 +30,289 @@ class Actor:
         name: str,
         level: int = 1,
         experience: int = 0,
-        job_class: Type[Job] = Job,
-    ):
+        job_class: Optional[Type[Any]] = None,
+    ) -> None:
         self.name: str = name
+
+        # 1) Levels and experience tracker
         self.levels: Levels = Levels(self, level, experience)
 
-        # Initialize base stats to zeros; job will override in _initialize_job()
-        self.stats: Stats = Stats({stat: 0 for stat in Job.base_stats.keys()})
+        # 2) Placeholder for job (assigned later if job_class provided)
+        self.job: Optional[Any] = None
 
-        # Inventory (manages items, equipment, consumables)
+        # 3) Stats object: initialize all keys to zero
+        zeroed = {stat: 0 for stat in self._all_job_stats_keys()}
+        self.stats: Stats = Stats(zeroed)
+
+        # 4) Current resources
+        self.current_health: int = 0
+        self.current_mana: int = 0
+        self.current_stamina: int = 0
+
+        # 5) Inventory (manages items, equipment, consumables)
         self.inventory: Inventory = Inventory(self)
 
-        # Assign initial job
-        self.job: Job = job_class(self.levels.lvl)
+        # 6) Active status effects
+        self.statuses: Dict[str, StatusEffect] = {}
 
-        # Who last dealt lethal damage (used in loot logic)
-        self.last_damager: Optional["Actor"] = None
+        # 7) If a job_class was specified, assign it now
+        if job_class:
+            self.assign_job_by_id(job_class.__name__.lower())
 
-        # Active temporary stat modifiers (list of StatusEffect)
-        self.status_effects: list[StatusEffect] = []
-
-        # Call initializer to apply job stats/items
-        self._initialize_job()
-
-    def _initialize_job(self) -> None:
+    @staticmethod
+    def _all_job_stats_keys() -> List[str]:
         """
-        Apply job effects: set stats, add & auto-equip starting items, refill resources.
+        Return all valid stat keys from Job.base_stats. Uses a lazy import
+        to avoid circular dependencies.
         """
-        self.update_stats()
+        try:
+            from game_sys.jobs.base import Job
+            return list(Job.base_stats.keys())
+        except ImportError:
+            return []
 
-        # Add and auto-equip any starting items from the job
-        for item in self.job.starting_items:
-            self.inventory.add_item(
-                item,
-                quantity=1,
-                auto_equip=isinstance(item, Equipable),
-            )
+    @property
+    def status_effects(self) -> List[StatusEffect]:
+        return list(self.statuses.values())
 
-        # Refill current health/mana/stamina to their max
-        caps = self.stats.effective()
-        self.current_health = caps.get("health", 0)
-        self.current_mana = caps.get("mana", 0)
-        self.current_stamina = caps.get("stamina", 0)
+    # ------------------------------------------------------------------------
+    # 1) Status & Damage Helpers
+    # ------------------------------------------------------------------------
+    def add_status(self, status_obj: StatusEffect) -> None:
+        """
+        Attach a new StatusEffect to this actor. Logs the applied modifiers and duration.
+        """
+        self.statuses[status_obj.name] = status_obj
+        mods = status_obj.stat_mods
+        dur = status_obj.duration
+        log.info(
+            "%s gains status '%s' (mods=%s) for %d turns.",
+            self.name,
+            status_obj.name,
+            mods,
+            dur,
+        )
 
-    def update_stats(self) -> None:
+    def tick_statuses(self) -> None:
         """
-        Rebuild base stats from the assigned job, clearing any existing modifiers.
+        Called once per turn: decrement each effect's duration by 1.
+        If any expire, remove them and call on_expire() if defined.
         """
-        mods = self.job.stats_mods.copy()
-        self.stats = Stats(mods)
-        self.stats.clear_modifiers()  # Removes any legacy stat adjustments
+        expired: List[str] = []
 
-    def assign_job(self, new_job_class: Callable[[int], Job], level: Optional[int] = None) -> None:
-        """
-        Change this Actor’s job, removing the old one first.
-        """
-        if self.job:
-            self.remove_job()
+        for name, effect in list(self.statuses.items()):
+            effect.tick()
+            if effect.is_expired():
+                expired.append(name)
 
-        job_level = level if level is not None else self.levels.lvl
-        self.job = new_job_class(job_level)
-        self._initialize_job()
-
-    def assign_job_by_id(self, job_id: str) -> Job:
-        """
-        Assign a job by its string ID. Raises ValueError if ID not found.
-        """
-        sample = create_job(job_id, self.levels.lvl)
-        if sample is None:
-            raise ValueError(f"Job with ID '{job_id}' not found.")
-        self.assign_job(lambda lvl: create_job(job_id, lvl))
-        return self.job
-
-    def remove_job(self) -> None:
-        """
-        Remove current job and revert to a default Job, removing starting items.
-        """
-        old_job = self.job
-        if not old_job:
-            return
-
-        # Remove starting items from inventory, if they exist
-        for item in old_job.starting_items:
+        for name in expired:
+            effect = self.statuses.pop(name)
             try:
-                self.inventory.remove_item(item, quantity=1)
-            except KeyError:
+                effect.on_expire(self)
+            except AttributeError:
                 pass
-
-        # Revert to the base Job
-        self.job = Job(self.levels.lvl)
-        self._initialize_job()
+            log.info("%s's status '%s' has expired.", self.name, name)
 
     def take_damage(self, amount: int) -> None:
         """
-        Reduce current health by amount (clamped at zero). If health = 0, log defeat.
+        Reduce current_health by 'amount', clamped at 0. If reduced to 0, log defeat.
         """
+        # Check for DamageReduction status
+        dr_effect = self.statuses.get("DamageReduction")
+        if dr_effect:
+            reduction_pct = dr_effect.stat_mods.get("DamageReduction", 0)
+            reduced_amount = amount * (100 - reduction_pct) // 100
+            log.info(
+                "%s's DamageReduction (%d%%) reduces incoming from %d to %d.",
+                self.name,
+                reduction_pct,
+                amount,
+                reduced_amount,
+            )
+            amount = reduced_amount
+
         self.current_health = max(0, self.current_health - amount)
+        log.info(
+            "%s takes %d damage; HP is now %d/%d.",
+            self.name,
+            amount,
+            self.current_health,
+            self.max_health,
+        )
+
         if self.current_health == 0:
-            print(f"{self.name} has been defeated!")
-            log.info(f"{self.name} has been defeated!")
+            log.info("%s has been defeated!", self.name)
 
-    def drain_mana(self, amount: int) -> None:
+    def heal(self, amount: int) -> None:
         """
-        Reduce current mana by amount (clamped at zero).
+        Increase current_health by 'amount', clamped at max_health.
         """
-        self.current_mana = max(0, self.current_mana - amount)
-        log.info(f"{self.name} drains {amount} mana ({self.current_mana}/{self.max_mana}).")
+        old_hp = self.current_health
+        self.current_health = min(self.max_health, self.current_health + amount)
+        healed_amt = self.current_health - old_hp
+        log.info(
+            "%s heals %d HP; HP is now %d/%d.",
+            self.name,
+            healed_amt,
+            self.current_health,
+            self.max_health,
+        )
 
-    def drain_stamina(self, amount: int) -> None:
+    # ------------------------------------------------------------------------
+    # 2) Resource Restoration & Stat Placeholder
+    # ------------------------------------------------------------------------
+    def restore_all(self) -> None:
         """
-        Reduce current stamina by amount (clamped at zero).
+        Restore health, mana, and stamina to their max values based on stats.effective().
         """
-        self.current_stamina = max(0, self.current_stamina - amount)
-        log.info(f"{self.name} drains {amount} stamina ({self.current_stamina}/{self.max_stamina}).")
+        eff = self.stats.effective()
+        self.current_health = eff.get("health", self.current_health)
+        self.current_mana = eff.get("mana", self.current_mana)
+        self.current_stamina = eff.get("stamina", self.current_stamina)
+        log.info(
+            "%s restores to HP=%d, MP=%d, ST=%d.",
+            self.name,
+            self.current_health,
+            self.current_mana,
+            self.current_stamina,
+        )
 
-    # ----------------------------
-    # STAT PROPERTIES (with buffs)
-    # ----------------------------
+    def update_stats(self) -> None:
+        """
+        Recalculate derived stats (e.g., after leveling or equipment change).
+        Subclasses may override this.
+        """
+        pass
 
+    # ------------------------------------------------------------------------
+    # 3) Stat Properties (base + status modifiers)
+    # ------------------------------------------------------------------------
     @property
     def attack(self) -> int:
-        """
-        Total attack = base from stats + sum of active 'attack' buffs.
-        """
         base = self.stats.effective().get("attack", 0)
-        bonus = sum(eff.stat_mods.get("attack", 0) for eff in self.status_effects)
+        bonus = sum(
+            mods.get("attack", 0)
+            for mods in (e.stat_mods for e in self.status_effects)
+        )
         return base + bonus
 
     @property
     def defense(self) -> int:
-        """
-        Total defense = base from stats + sum of active 'defense' buffs.
-        """
         base = self.stats.effective().get("defense", 0)
-        bonus = sum(eff.stat_mods.get("defense", 0) for eff in self.status_effects)
+        bonus = sum(
+            mods.get("defense", 0)
+            for mods in (e.stat_mods for e in self.status_effects)
+        )
         return base + bonus
 
     @property
     def speed(self) -> int:
-        """
-        Total speed = base from stats + sum of active 'speed' buffs.
-        """
         base = self.stats.effective().get("speed", 0)
-        bonus = sum(eff.stat_mods.get("speed", 0) for eff in self.status_effects)
+        bonus = sum(
+            mods.get("speed", 0)
+            for mods in (e.stat_mods for e in self.status_effects)
+        )
         return base + bonus
 
     @property
-    def health(self) -> int:
-        """Current health of the actor."""
-        return getattr(self, "current_health", 0)
-
-    @health.setter
-    def health(self, value: int) -> None:
-        """Set health, clamped between 0 and max_health."""
-        max_h = self.max_health
-        self.current_health = max(0, min(value, max_h))
-
-    @property
     def max_health(self) -> int:
-        """Maximum health from stats."""
         return self.stats.effective().get("health", 0)
 
     @property
-    def mana(self) -> int:
-        """Current mana of the actor."""
-        return getattr(self, "current_mana", 0)
+    def health(self) -> int:
+        return self.current_health
 
-    @mana.setter
-    def mana(self, value: int) -> None:
-        """Set mana, clamped between 0 and max_mana."""
-        max_m = self.max_mana
-        self.current_mana = max(0, min(value, max_m))
+    @health.setter
+    def health(self, value: int) -> None:
+        self.current_health = max(0, min(value, self.max_health))
 
     @property
     def max_mana(self) -> int:
-        """Maximum mana from stats."""
         return self.stats.effective().get("mana", 0)
 
     @property
-    def stamina(self) -> int:
-        """Current stamina of the actor."""
-        return getattr(self, "current_stamina", 0)
+    def mana(self) -> int:
+        return self.current_mana
 
-    @stamina.setter
-    def stamina(self, value: int) -> None:
-        """Set stamina, clamped between 0 and max_stamina."""
-        max_s = self.max_stamina
-        self.current_stamina = max(0, min(value, max_s))
+    @mana.setter
+    def mana(self, value: int) -> None:
+        self.current_mana = max(0, min(value, self.max_mana))
 
     @property
     def max_stamina(self) -> int:
-        """Maximum stamina from stats."""
         return self.stats.effective().get("stamina", 0)
+
+    @property
+    def stamina(self) -> int:
+        return self.current_stamina
+
+    @stamina.setter
+    def stamina(self, value: int) -> None:
+        self.current_stamina = max(0, min(value, self.max_stamina))
+
+    # ------------------------------------------------------------------------
+    # 4) Job Initialization & Helpers
+    # ------------------------------------------------------------------------
+    def assign_job_by_id(self, job_id: str) -> None:
+        """
+        Assign a job by its string ID (e.g., 'knight', 'mage').
+        Uses lazy imports to avoid circular dependencies.
+        """
+        from game_sys.jobs.factory import create_job
+        from game_sys.jobs.base import Job
+
+        try:
+            self.job = create_job(job_id, self.levels.lvl)
+            log.info("%s assigned job '%s'.", self.name, job_id)
+        except Exception as e:
+            self.job = None
+            log.warning("Failed to assign job '%s' to %s: %s", job_id, self.name, e)
+            return
+
+        # 1) Overwrite stats with this job’s base stats (defaulting missing keys to 0)
+        base_stats = getattr(self.job, "base_stats", {})
+        all_stats = {stat: base_stats.get(stat, 0) for stat in Job.base_stats.keys()}
+        self.stats = Stats(all_stats)
+
+        # 2) Restore resources
+        self.restore_all()
+
+        # 3) Auto-equip any starting_items
+        for item_obj in getattr(self.job, "starting_items", []):
+            self.inventory.add_item(item_obj, quantity=1)
+            if isinstance(item_obj, Equipable):
+                self.inventory.equip_item(item_obj.id)
+
+    def remove_job(self) -> None:
+        """
+        Remove the current job’s starting items, clear job, zero out stats,
+        and reset current resources.
+        """
+        if not self.job:
+            return
+
+        from game_sys.jobs.base import Job
+
+        old_job = self.job
+
+        # 1) Unequip & remove all of old_job’s starting_items
+        for item_obj in getattr(old_job, "starting_items", []):
+            for slot, equipped_id in list(self.inventory._equipped_items.items()):
+                if equipped_id == item_obj.id:
+                    self.inventory.unequip_item(slot)
+            entry = self.inventory._items.get(item_obj.id)
+            if entry:
+                try:
+                    self.inventory.remove_item(item_obj.id, quantity=entry["quantity"])
+                except KeyError:
+                    pass
+
+        # 2) Clear job reference
+        self.job = None
+
+        # 3) Zero out all base stats
+        zeroed = {stat: 0 for stat in Job.base_stats.keys()}
+        self.stats = Stats(zeroed)
+
+        # 4) Reset current resources to match zeroed stats
+        self.restore_all()

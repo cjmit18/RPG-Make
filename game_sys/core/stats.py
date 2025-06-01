@@ -22,7 +22,7 @@ class Stats:
     @staticmethod
     def stat_keys() -> Tuple[StatName, ...]:
         """Return the keys for all stats in a tuple."""
-        return ("attack", "defense", "speed", "health", "mana", "stamina")
+        return ("attack", "defense", "speed", "health", "mana", "stamina", "intellect")
 
     def effective(self) -> Dict[StatName, int]:
         """Calculate the effective stats by combining base, simple modifiers, and named modifiers.

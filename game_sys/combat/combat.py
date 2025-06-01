@@ -1,277 +1,145 @@
-"""
-This module contains the CombatCapabilities class 
-for handling combat and loot logic in a game.
-"""
+# game_sys/combat/combat.py
 
-import json
 import random
-from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Callable,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
-
+from typing import Optional
 from logs.logs import get_logger
+from game_sys.core.actor import Actor
+from game_sys.combat.drop_tables import DROP_TABLES
 from game_sys.items.factory import create_item
-from game_sys.items.item_base import Item
+from game_sys.items.item_base import Equipable
 
 log = get_logger(__name__)
 
-if TYPE_CHECKING:
-    from game_sys.core.actor import Actor
-    from game_sys.character.character_creation import Enemy
 
-# -------------------------------------------------------------------------------
-# Constants for combat
-# -------------------------------------------------------------------------------
-CRIT_CHANCE: float = 0.10
-DAMAGE_VARIANCE_MIN: float = 0.8
-DAMAGE_VARIANCE_MAX: float = 1.2
-DEFENSE_SCALING: float = 0.05
-
-# -------------------------------------------------------------------------------
-# 1) LOAD DROP TABLES FROM JSON
-# -------------------------------------------------------------------------------
-_DROP_TABLES_PATH = Path(__file__).parent / "data" / "drop_tables.json"
-try:
-    with open(_DROP_TABLES_PATH, "r", encoding="utf-8") as f:
-        _RAW_DROP_TABLES: dict[str, List[dict]] = json.load(f)
-except FileNotFoundError:
-    _RAW_DROP_TABLES = {}
-
-# DROP_TABLES maps job_id -> list of (factory, chance, min_qty, max_qty)
-DROP_TABLES: dict[str, List[Tuple[Callable[[], Item], float, int, int]]] = {}
-
-for job_id, entries in _RAW_DROP_TABLES.items():
-    parsed_list: List[Tuple[Callable[[], Item], float, int, int]] = []
-    for entry in entries:
-        template_id = entry["template_id"]
-        chance = float(entry["chance"])
-        min_q = int(entry["min_qty"])
-        max_q = int(entry["max_qty"])
-        # Each factory returns a fresh Item instance
-        factory = lambda tid=template_id: create_item(tid)
-        parsed_list.append((factory, chance, min_q, max_q))
-    DROP_TABLES[job_id] = parsed_list
-
-
-# -------------------------------------------------------------------------------
-# 2) CombatCapabilities Class
-# -------------------------------------------------------------------------------
 class CombatCapabilities:
     """
-    Combat handler with injectable RNG, action provider, and separated loot logic.
+    Handles 1-on-1 combat resolution and looting.
+      - calculate_damage(attacker, defender)
+      - roll_loot(defeated)
+      - transfer_loot(winner, defeated)
     """
 
-    def __init__(
-        self,
-        character: "Actor",
-        enemy: Optional["Actor"] = None,
-        rng: Optional[random.Random] = None,
-        action_fn: Optional[Callable[["Actor"], str]] = None,
-        on_turn: Optional[Callable[[str], None]] = None,
-    ) -> None:
-        """
-        Args:
-            character: the active Actor (e.g., player)
-            enemy:     the opponent Actor (for single‐combat loops)
-            rng:       a random.Random instance for deterministic rolls
-            action_fn: function taking an Actor -> "attack"/"defend"
-            on_turn:   callback invoked each turn with the outcome string
-        """
+    def __init__(self, character: Actor, enemy: Actor, rng: Optional[random.Random] = None):
         self.character = character
         self.enemy = enemy
-        self.rng = rng if rng is not None else random.Random()
-        self.action_fn = action_fn if action_fn is not None else self._default_action
-        self.on_turn = on_turn if on_turn is not None else (lambda outcome: None)
-        self.turn_count = 0
+        self.rng = rng or random.Random()
 
-        # Initialize defending flags
-        character.defending = False
-        if enemy:
-            enemy.defending = False
-
-    def _default_action(self, actor: "Actor") -> str:
-        """Console‐based fallback I/O (outside core logic)."""
-        return input(f"{actor.name}, action? (attack/defend): ").strip().lower()
-
-    def start_combat_loop(self) -> str:
+    def calculate_damage(self, attacker: Actor, defender: Actor) -> str:
         """
-        Executes turns until one side is defeated.
-        Returns a summary string like "Hero wins!".
+        Compute and apply damage:
+          - base = attack − (defense * 0.05)
+          - variance = uniform(0,1)
+          - crit if random() < 0.1 ⇒ ×2
+          - round final; halve if defender.defending.
         """
-        if not self.enemy:
-            raise ValueError("Enemy must be provided for full combat loop")
+        base = attacker.attack - (defender.defense * 0.05)
+        variance = self.rng.uniform(0, 1)
+        damage = base * variance
 
-        while True:
-            for attacker, defender in self._turn_order():
-                action = self.action_fn(attacker)
-                outcome = self._execute(attacker, defender, action)
-                self.on_turn(outcome)
+        is_crit = False
+        if self.rng.random() < 0.1:
+            damage *= 2
+            is_crit = True
 
-                if defender.health <= 0:
-                    return f"{attacker.name} wins!"
-                self.turn_count += 1
-
-    def _turn_order(self) -> List[Tuple["Actor", "Actor"]]:
-        """
-        Determines who goes first based on speed.
-        Pure comparison, no I/O.
-        """
-        if self.character.speed >= self.enemy.speed:
-            return [(self.character, self.enemy), (self.enemy, self.character)]
-        return [(self.enemy, self.character), (self.character, self.enemy)]
-
-    def _execute(
-        self,
-        attacker: "Actor",
-        defender: "Actor",
-        action: str,
-    ) -> str:
-        """
-        Core dispatch: no I/O, just logic.
-        Returns the outcome string for this action.
-        """
-        action_lower = action.lower()
-        if action_lower == "attack":
-            return self._attack(attacker, defender)
-        if action_lower == "defend":
-            attacker.defending = True
-            log.info(f"{attacker.name} defends.")
-            return f"{attacker.name} defends."
-        log.info(f"Unknown action '{action}' by {attacker.name}")
-        return f"{attacker.name} does nothing."
-
-    def _attack(
-        self,
-        attacker: "Actor",
-        defender: "Actor",
-    ) -> str:
-    
-        """
-        Pure damage calculation & application.
-        No direct prints: just state changes + return text.
-        """
-        # 1) Compute base damage
-        base_damage = max(0.0, attacker.attack - defender.defense * DEFENSE_SCALING)
-
-        # 2) Apply random variance
-        variance = self.rng.uniform(DAMAGE_VARIANCE_MIN, DAMAGE_VARIANCE_MAX)
-        dmg_float = base_damage * variance
-
-        # 3) Check for critical hit
-        is_crit = self.rng.random() < CRIT_CHANCE
-        if is_crit:
-            dmg_float *= 2.0
-
-        # 4) If defender is defending, halve damage and reset flag
+        final = round(damage)
         if defender.defending:
-            dmg_float *= 0.5
+            final = round(final * 0.5)
             defender.defending = False
 
-        # 5) Finalize & apply damage (round to nearest int)
-        dmg = round(dmg_float)
-        defender.health -= dmg  # uses Actor.health setter (clamped at zero)
+        defender.take_damage(final)
+        result = f"{attacker.name} deals {final} damage"
+        if is_crit:
+            result += ". Critical Hit!"
+        return result
 
-        # 6) Build outcome string
-        crit_text = " Critical Hit!" if is_crit else ""
-        return f"{attacker.name} deals {dmg} damage.{crit_text}"
-
-    def calculate_damage(
-        self,
-        attacker: "Actor",
-        defender: "Actor",
-    ) -> str:
+    def roll_loot(self, defeated: Actor):
         """
-        One-off damage call without involving turn loop.
-        Returns same outcome string as _attack.
+        Look up DROP_TABLES[job_id], find the matching level‐bucket, and
+        roll each drop entry: return list of (Item, quantity).
         """
-        return self._attack(attacker, defender)
+        drops = []
+        job_id = None
+        if getattr(defeated, "job", None) and defeated.job.name:
+            job_id = defeated.job.name.lower()
 
-    def check_defeat(self, character: "Actor") -> bool:
-        """Pure check—no I/O. Returns True if health <= 0."""
-        return character.health <= 0
+        if job_id not in DROP_TABLES:
+            log.info("No drop table for job '%s'; skipping item drops from %s.",
+                     job_id or "(none)", defeated.name)
+            return drops
 
-    # ----------------------------------------------------------------------------
-    # 3) LOOT LOGIC: Separate roll_loot() and transfer_loot()
-    # ----------------------------------------------------------------------------
+        enemy_level = defeated.levels.lvl
+        buckets = DROP_TABLES[job_id]
+        matching = None
+        for bucket in buckets:
+            if bucket["min_level"] <= enemy_level <= bucket["max_level"]:
+                matching = bucket
+                break
 
-    def roll_loot(self, defeated: "Actor") -> List[Tuple[Union[Item, str], int]]:
-        """
-        Roll the drop table for this foe's job (using job.name.lower()).
-        If defeated is an Enemy, only drop from the JSON table.
-        Otherwise, include carried items.
+        if not matching:
+            log.info(
+                "No drop-bucket for '%s' at level %d; skipping items from %s.",
+                job_id, enemy_level, defeated.name
+            )
+            return drops
 
-        Returns a list of (Item instance OR item_id string, quantity).
-        Does NOT modify any inventories.
-        """
-        drops: List[Tuple[Union[Item, str], int]] = []
-        job_id = defeated.job.name.lower()
+        for entry in matching["drops"]:
+            item_id = entry["item_id"]
+            chance = float(entry["chance"])
+            min_q = int(entry["min_qty"])
+            max_q = int(entry["max_qty"])
 
-        # 1) “New drops” via JSON‐driven DROP_TABLES
-        for factory, chance, min_qty, max_qty in DROP_TABLES.get(job_id, []):
-            if self.rng.random() <= chance:
-                quantity = min_qty if min_qty == max_qty else self.rng.randint(min_qty, max_qty)
-                new_item = factory()
-                drops.append((new_item, quantity))
-                log.info(f"Rolled drop from {job_id}: {new_item.name} ×{quantity}")
-
-        # 2) If defeated is NOT an Enemy, include carried items (by ID)
-        from game_sys.character.character_creation import Enemy as _EnemyType
-
-        if not isinstance(defeated, _EnemyType):
-            for slot in defeated.inventory.items.values():
-                item_id: str = slot["item"]       # inventory stores IDs as strings
-                qty_available: int = slot["quantity"]
-                if qty_available > 0:
-                    drops.append((item_id, qty_available))
+            roll = self.rng.random()
+            if roll <= chance:
+                qty = self.rng.randint(min_q, max_q)
+                try:
+                    item_obj = create_item(item_id)
+                    drops.append((item_obj, qty))
                     log.info(
-                        f"{defeated.name} carried {item_id} ×{qty_available} → potential loot: {qty_available}"
+                        "%s looted %d× %s from %s (level %d). [%.2f ≤ %.2f]",
+                        self.character.name, qty, item_obj.name, defeated.name,
+                        enemy_level, roll, chance
                     )
-
+                except Exception:
+                    log.warning(
+                        "Failed to create looted item '%s' for %s.",
+                        item_id, self.character.name
+                    )
+            else:
+                log.debug(
+                    "%s rolled %.2f > %.2f: no '%s' from %s.",
+                    self.character.name, roll, chance, item_id, defeated.name
+                )
         return drops
 
-    def transfer_loot(self, winner: "Actor", defeated: "Actor") -> None:
+    def transfer_loot(self, winner: Actor, defeated: Actor) -> None:
         """
-        Remove carried items from defeated.inventory and add to winner.inventory,
-        then add all “new drops” as fresh stacks.
+        Mint dropped items (via roll_loot) into the winner's inventory.
         """
-        loot_list = self.roll_loot(defeated)
-        if not loot_list:
-            log.info(f"No loot for {winner.name} from defeating {defeated.name}.")
-            return
+        drops = self.roll_loot(defeated)
+        for item_obj, qty in drops:
+            # always quantity=qty, never auto-equip
+            winner.inventory.add_item(item_obj, quantity=qty, auto_equip=False)
 
-        for item_obj, qty in loot_list:
-            # CASE A: carried‐item (item_obj is a string ID)
-            if isinstance(item_obj, str):
-                # 1) Remove by ID from defeated’s inventory
-                defeated.inventory.remove_item(item_obj, qty)
-                # 2) Create a fresh Item for the winner
-                real_item = create_item(item_obj)
-                winner.inventory.add_item(real_item, qty)
-                log.info(f"{winner.name} loots {qty}×{real_item.name} from {defeated.name}")
-
-            # CASE B: “New drop” (item_obj is already an Item instance)
-            else:
-                winner.inventory.add_item(item_obj, qty)
-                log.info(f"{winner.name} receives {qty}×{item_obj.name} as a drop.")
-
-        # Optionally prune zero‐quantity slots from defeated
-        if hasattr(defeated.inventory, "compact"):
-            defeated.inventory.compact()
-        elif hasattr(defeated.inventory, "remove_empty_slots"):
-            defeated.inventory.remove_empty_slots()
-
-    def loot(self, winner: "Actor", loser: "Actor") -> None:
+    def loot(self, killer: Actor, defeated: Actor) -> None:
         """
-        Backward‐compatible alias for transfer_loot().
+        Legacy alias: transfer_loot(killer, defeated) + gold logic.
         """
-        self.transfer_loot(winner, loser)
+        # 1) Items
+        self.transfer_loot(killer, defeated)
 
+        # 2) Gold
+        gold_amt = 0
+        if hasattr(defeated, "gold_min") and hasattr(defeated, "gold_max"):
+            gm = getattr(defeated, "gold_min", 0)
+            gx = getattr(defeated, "gold_max", gm)
+            gold_amt = self.rng.randint(gm, gx) if gx > gm else gm
+        elif hasattr(defeated, "gold"):
+            avail = getattr(defeated, "gold", 0)
+            if avail > 0:
+                gold_amt = self.rng.randint(1, avail)
 
-# Alias for backward compatibility
-Combat = CombatCapabilities
+        if gold_amt:
+            killer.gold = getattr(killer, "gold", 0) + gold_amt
+            log.info("%s looted %d gold from %s.", killer.name, gold_amt, defeated.name)
+        else:
+            log.info("%s had no gold to drop.", defeated.name)

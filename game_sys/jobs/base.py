@@ -24,6 +24,7 @@ class Job:
     }
 
     starting_items: List[object] = []
+    starting_skills: list[object]  = []
     stats_mods: Dict[str, int] = {}
 
     def __init__(self, level: int) -> None:

@@ -3,11 +3,10 @@
 import random
 from typing import List, Optional, Callable, Union
 from logs.logs import get_logger
-
+from game_sys.core.damage_types import DamageType
 from game_sys.core.actor import Actor
 from game_sys.combat.combat import CombatCapabilities
 from game_sys.character.character_creation import Enemy
-
 log = get_logger(__name__)
 
 
@@ -105,7 +104,7 @@ class CombatEngine:
 
         combat = CombatCapabilities(actor, target, rng=self.rng)
         if action == "attack":
-            result = combat.calculate_damage(actor, target)
+            result = combat.calculate_damage(actor, target, damage_type = DamageType.PHYSICAL)
             if target.health <= 0:
                 target.last_damager = actor
                 self.last_defeated = target

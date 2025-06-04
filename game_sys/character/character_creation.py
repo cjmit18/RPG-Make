@@ -5,20 +5,28 @@ import json
 from pathlib import Path
 from random import randint
 from typing import Any, Dict, Optional
-
 from game_sys.core.actor import Actor
 from game_sys.core.stats import Stats
-from game_sys.inventory.inventory import Inventory
-from game_sys.items.item_base import Equipable
-from game_sys.skills.learning import LearningSystem
+from game_sys.skills.learning import LearningSystem, SkillRegistry
 
-# _CHAR_TEMPLATES is loaded once at import time
-_TEMPLATES_PATH = Path(__file__).parent / "data" / "character_templates.json"
+# two separate template files
+_CHAR_TEMPLATES_PATH = Path(__file__).parent / "data" / "character_templates.json"
+_JOB_TEMPLATES_PATH  = Path(__file__).parent.parent / "jobs" / "data" / "jobs.json"
+
+# load each one into its own dict
 try:
-    with open(_TEMPLATES_PATH, "r", encoding="utf-8") as f:
+    with open(_CHAR_TEMPLATES_PATH, "r", encoding="utf-8") as f:
         _CHAR_TEMPLATES = json.load(f)
 except FileNotFoundError:
     _CHAR_TEMPLATES = {}
+
+try:
+    from pathlib import Path
+    with open(_JOB_TEMPLATES_PATH, "r", encoding="utf-8") as f:
+        job_list = json.load(f)
+        _JOB_TEMPLATES = {tpl["id"].lower(): tpl for tpl in job_list}
+except FileNotFoundError:
+    _JOB_TEMPLATES = {}
 
 
 class Character(Actor):
@@ -41,17 +49,6 @@ class Character(Actor):
         # 1) Call Actor.__init__ with no job (so Actor doesn’t auto-equip anything yet)
         super().__init__(name=name, level=level, experience=experience, job_class=None)
 
-        # 2) Immediately assign “commoner.” Because _job_item_ids exists,
-        #    any commoner items will be recorded there.
-        try:
-            self.assign_job_by_id("commoner")
-        except Exception:
-            # If “commoner” job is missing, reset stats to zeros
-            from game_sys.jobs.base import Job as BaseJob
-
-            self.job = None
-            self.stats = Stats({stat: 0 for stat in BaseJob.base_stats.keys()})
-            self.restore_all()
 
     def __str__(self) -> str:
         """String representation of the character showing name, level, stats, and inventory."""
@@ -59,9 +56,9 @@ class Character(Actor):
         lines = [
             f"{self.__class__.__name__}: {self.name}",
             f"Level: {self.levels.lvl}  Experience: {self.levels.experience}",
-            f"Class: {self.job.name if self.job else 'None'}",
+            f"Class: {self.job.name.capitalize() if self.job else 'None'}",
             f"Gold : {getattr(self, 'gold', 0)}",
-            "-" * 20,
+            "-" * 20
         ]
         for stat in ("attack", "defense", "speed", "health", "mana", "stamina", "intellect"):
             val = eff.get(stat, 0)
@@ -184,7 +181,18 @@ class Player(Character):
         super().__init__(name, level, experience)
         self.learning = LearningSystem(self, initial_sp=0)
         self.current_xp = self.levels.experience
+            # 2) Immediately assign “commoner.” Because _job_item_ids exists,
+        #    any commoner items will be recorded there.
+        try:
+            self.assign_job_by_id("commoner")
+        except Exception:
+            # If “commoner” job is missing, reset stats to zeros
+            from game_sys.jobs.base import Job as BaseJob
 
+            self.job = None
+            self.stats = Stats({stat: 0 for stat in BaseJob.base_stats.keys()})
+            
+            self.restore_all()
 
 def create_character(template_name: str = "character", **overrides) -> Character:
     """
@@ -194,93 +202,109 @@ def create_character(template_name: str = "character", **overrides) -> Character
     """
     key = template_name.lower()
     requested_job: Optional[str] = overrides.pop("job_id", None)
+    raw_resistance: dict[str, float] = {}
+    raw_weakness: dict[str, float] = {}
     if requested_job:
         requested_job = requested_job.lower()
+    raw_weakness: dict[str, float] = _JOB_TEMPLATES.get(requested_job, {}).get("weakness", {}) or {}
+    raw_resistance: dict[str, float] = _JOB_TEMPLATES.get(requested_job, {}).get("resistance", {}) or {}
 
     # ---------------------------------------------------------------------
     # 1) If user explicitly asked for a subclass by name, build that subclass
     # ---------------------------------------------------------------------
     if key == "player":
         # 1a) Build a bare Player (this already assigns “commoner” in __init__)
-        data = {**_CHAR_TEMPLATES.get("Player", {}), **overrides}
-        data["type"] = "player"
-        player: Player = Player.from_dict(data)
-
+        data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
+        template: Player = Player.from_dict(data)
         # 1b) If job_id was provided, switch to that job and skip template items
         if requested_job:
-            player.assign_job_by_id(requested_job)
-
-        return player
-
-    if key == "npc":
-        data = {**_CHAR_TEMPLATES.get("NPC", {}), **overrides}
-        data["type"] = "npc"
-        npc: NPC = NPC.from_dict(data)
+            template.assign_job_by_id(requested_job)
+# ---------------------------------------------------------------------
+    elif key == "npc":
+        data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
+        data["type"] = key
+        template: NPC = NPC.from_dict(data)
         if requested_job:
-            npc.assign_job_by_id(requested_job)
-        return npc
-
-    if key == "enemy":
-        data = {**_CHAR_TEMPLATES.get("Enemy", {}), **overrides}
+            template.assign_job_by_id(requested_job)
+# ---------------------------------------------------------------------
+    # 2) If user asked for a specific enemy type, build that subclass
+    elif key in ["enemy", "goblin", "orc", "dragon", "zombie"]:
+        data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
         data["type"] = "enemy"
-        enemy: Enemy = Enemy.from_dict(data)
-
-        gold_min = _CHAR_TEMPLATES.get("Enemy", {}).get("gold_min", 0)
-        gold_max = _CHAR_TEMPLATES.get("Enemy", {}).get("gold_max", 0)
-        if gold_min or gold_max:
-            enemy.gold_min = gold_min
-            enemy.gold_max = gold_max
-            enemy.gold = randint(gold_min, gold_max)
+        template: Enemy = Enemy.from_dict(data)
+        template.name = data.get("name", key.capitalize())  # Default name if not provided
+        template.assign_job_by_id(key if key != "enemy" else "goblin")
+        gold_min = _CHAR_TEMPLATES.get(key, {}).get("gold_min", 0)
+        gold_max = _CHAR_TEMPLATES.get(key, {}).get("gold_max", 0)
+        if gold_min and gold_max:
+            template.gold_min = gold_min
+            template.gold_max = gold_max
+            try:
+                template.gold = randint(randint(gold_min,gold_max),(randint(gold_min, gold_max) * template.levels.lvl))
+            except ValueError:
+                template.gold = randint(1, 100) * template.levels.lvl
         else:
-            enemy.gold = randint(1, enemy.levels.lvl * 10)
-
-        # Add level-based template items if any (but if job_id, we’ll override them)
-        buckets = _CHAR_TEMPLATES.get("Enemy", {}).get("starting_items_by_level", [])
-        for bucket in buckets:
-            if bucket["min_level"] <= enemy.levels.lvl <= bucket["max_level"]:
-                for item_id in bucket.get("items", []):
-                    try:
-                        item_obj = enemy.inventory.generate_item(item_id)
-                        if item_obj:
-                            enemy.inventory.add_item(item_obj, quantity=1, auto_equip=True)
-                    except Exception:
-                        pass
-                break
-
-        job_to_assign = requested_job or data.get("name", "").lower()
-        if job_to_assign:
-            enemy.assign_job_by_id(job_to_assign)
-
-        return enemy
-
-    if key == "character":
-        data = {**_CHAR_TEMPLATES.get("Character", {}), **overrides}
+            template.gold = randint(1, 100) * template.levels.lvl
+    elif key == "character":
+        data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
+        template: Character = Character.from_dict(data)
+    else:
+        data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
         data["type"] = "character"
-        char: Character = Character.from_dict(data)
-        if requested_job:
-            char.assign_job_by_id(requested_job)
-        return char
-
+        template: Character = Character.from_dict(data)
     # ---------------------------------------------------------------------
-    # 2) Otherwise, find a template by name (e.g. “Goblin” → “Enemy” template)
+    if raw_weakness:
+        from game_sys.core.damage_types import DamageType
+        weak_parsed: dict[DamageType, float] = {}
+        for key_str, mult in raw_weakness.items():
+            try:
+                dt = DamageType[key_str.upper()]
+                weak_parsed[dt] = mult
+            except KeyError:
+                continue  # Skip any unknown damage types
+        template.weakness = weak_parsed
+    if raw_resistance:
+        from game_sys.core.damage_types import DamageType
+        resis_parsed: dict[DamageType, float] = {}
+        for key_str, mult in raw_resistance.items():
+            try:
+                dt = DamageType[key_str.upper()]
+                resis_parsed[dt] = mult
+            except KeyError:
+                continue  # Skip any unknown damage types
+        template.resistance = resis_parsed
     # ---------------------------------------------------------------------
-    tmpl = _CHAR_TEMPLATES.get(template_name)
-    if tmpl is None:
-        for val in _CHAR_TEMPLATES.values():
-            if val.get("name", "").lower() == key:
-                tmpl = val
-                break
-
-    if tmpl is None:
-        available = ", ".join(_CHAR_TEMPLATES.keys())
-        raise KeyError(f"No character template for '{template_name}'. Available: {available}")
-
-    data = {**tmpl, **overrides}
-    ttype = data.get("type", "character").lower()
-
     if requested_job:
-        new_char: Character = Character.from_dict(data)
-        new_char.assign_job_by_id(requested_job)
-        return new_char
+        # (a) Reload the SkillRegistry from wherever you store your JSON of skills.
+        #     For example, if your skills live in "game_sys/skills/data/skills.json":
+        SkillRegistry.load_from_file(
+            Path(__file__).parent.parent / "skills" / "data" / "skills.json"
+        )
 
-    return Character.from_dict(data)
+        # (b) Collect the “starting_skills” list from jobs.json, plus any override list:
+        job_tpl: dict = _JOB_TEMPLATES.get(requested_job, {})
+        json_skills: list[str] = job_tpl.get("starting_skills", []) or []
+        override_skills: list[str] = overrides.get("starting_skills", []) or []
+
+        # Properly concatenate the two lists (instead of `{**...}`):
+        all_starting_skills = list(json_skills) + list(override_skills)
+
+        # (c) Use the Player’s existing learning system; give them some SP so they can learn.
+        #     so we need to top them up to at least enough SP. For simplicity, give 100 SP:
+        if isinstance(template, Player):
+            template.learning.add_sp(100)
+
+        # (d) Now loop through each skill ID and call .learn()
+        for skill_id in all_starting_skills:
+            if not skill_id:
+                continue
+            try:
+                template.learning.learn(skill_id)
+            except Exception as e:
+                # If SP or prereqs fail, you might want to log or ignore—
+                # but this shows why a “starting_skills” didn’t get applied.
+                print(f"Warning: could not learn '{skill_id}' on creation: {e}")
+        if isinstance(template, Player):
+            template.learning.available_sp = 0  # No SP left after learning all starting skills
+
+    return template

@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional, Type
 from logs.logs import get_logger
-
+from game_sys.core.damage_types import DamageType
 from game_sys.inventory.inventory import Inventory
 from game_sys.core.experience_functions import Levels
 from game_sys.core.stats import Stats
@@ -28,9 +28,12 @@ class Actor:
     def __init__(
         self,
         name: str,
+        gold: Optional[int] = None,
         level: int = 1,
         experience: int = 0,
         job_class: Optional[Type[Any]] = None,
+        weakness: Dict[DamageType, float] = None,
+        resistance: Dict[DamageType, float] = None,
     ) -> None:
         self.name: str = name
 
@@ -58,6 +61,12 @@ class Actor:
         # 7) If a job_class was specified, assign it now
         if job_class:
             self.assign_job_by_id(job_class.__name__.lower())
+
+        # 8) Weaknesses to damage types (e.g., fire, ice)
+        self.weakness: Dict[DamageType, float] = weakness or {}
+        self.resistance: Dict[DamageType, float] = resistance or {}
+        
+        self.gold: int = gold or 0  # Placeholder for gold or currency
 
     @staticmethod
     def _all_job_stats_keys() -> List[str]:
@@ -143,6 +152,21 @@ class Actor:
         if self.current_health == 0:
             log.info("%s has been defeated!", self.name)
 
+    def drain_mana(self, amount: int) -> None:
+        """
+        Reduce current_mana by 'amount', clamped at 0.
+        """
+        old_mp = self.current_mana
+        self.current_mana = max(0, self.current_mana - amount)
+        drained_amt = old_mp - self.current_mana
+        log.info(
+            "%s drains %d MP; MP is now %d/%d.",
+            self.name,
+            drained_amt,
+            self.current_mana,
+            self.max_mana,
+        )
+
     def heal(self, amount: int) -> None:
         """
         Increase current_health by 'amount', clamped at max_health.
@@ -156,6 +180,20 @@ class Actor:
             healed_amt,
             self.current_health,
             self.max_health,
+        )
+    def restore_mana(self, amount: int) -> None:
+        """
+        Increase current_mana by 'amount', clamped at max_mana.
+        """
+        old_mp = self.current_mana
+        self.current_mana = min(self.max_mana, self.current_mana + amount)
+        restored_amt = self.current_mana - old_mp
+        log.info(
+            "%s restores %d MP; MP is now %d/%d.",
+            self.name,
+            restored_amt,
+            self.current_mana,
+            self.max_mana,
         )
 
     # ------------------------------------------------------------------------
@@ -316,3 +354,20 @@ class Actor:
 
         # 4) Reset current resources to match zeroed stats
         self.restore_all()
+    
+    def get_weakness_multiplier(self, damage_type: DamageType) -> float:
+        """
+        Get the weakness multiplier for a specific damage type.
+        Returns 1.0 if no weakness is defined for that type.
+        """
+        if damage_type in self.weakness:
+            return self.weakness[damage_type]
+        return 1.0
+    def get_resistance_multiplier(self, damage_type: DamageType) -> float:
+        """
+        Get the resistance multiplier for a specific damage type.
+        Returns 1.0 if no resistance is defined for that type.
+        """
+        if damage_type in self.resistance:
+            return self.resistance[damage_type]
+        return 1.0

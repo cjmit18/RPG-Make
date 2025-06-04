@@ -55,47 +55,6 @@
     "prereq_skills": []
   },
   {
-    "skill_id": "fireball",
-    "name": "Fireball",
-    "description": "Launch a fireball at an enemy, dealing 20 fire damage and igniting them for 3 turns.",
-    "mana_cost": 1,
-    "stamina_cost": 0,
-    "cooldown": 0,
-    "effects": [
-      {
-        "type": "Damage",
-        "value": 20,
-        "element": "Fire",
-        "multiplier": 1.0
-      },
-      {
-        "type": "ApplyStatus",
-        "status": "Burning",
-        "duration": 3
-      }
-    ],
-    "sp_cost": 2,
-    "min_level": 4,
-    "prereq_skills": []
-  },
-  {
-    "skill_id": "heal",
-    "name": "Heal",
-    "description": "Restore 15 health to a target ally or self.",
-    "mana_cost": 3,
-    "stamina_cost": 0,
-    "cooldown": 4,
-    "effects": [
-      {
-        "type": "Heal",
-        "value": 15
-      }
-    ],
-    "sp_cost": 1,
-    "min_level": 1,
-    "prereq_skills": []
-  },
-  {
     "skill_id": "shield_block",
     "name": "Shield Block",
     "description": "Temporarily raise shield to block incoming attacks, reducing damage by 50% for one turn.",

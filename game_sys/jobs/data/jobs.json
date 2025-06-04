@@ -31,7 +31,8 @@
       "stamina": 5, 
       "intellect": 1
     },
-    "starting_items": ["iron_sword", "leather_armor", "ruby_band"]
+    "starting_items": ["iron_sword", "leather_armor", "ruby_band"],
+    "starting_skills": ["shield_block", "sword_mastery"]
   },
   {
     "id": "mage",
@@ -46,7 +47,8 @@
       "stamina": 3,
       "intellect": 5
     },
-    "starting_items": ["mana_potion", "ruby_band"]
+    "starting_items": ["mana_potion", "ruby_band"],
+    "starting_skills": ["stealth"]
   },
   {
     "id": "healer",
@@ -75,7 +77,8 @@
       "stamina": 6, 
       "intellect": 2
     },
-    "starting_items": ["dagger", "dagger","emerald_loop"]
+    "starting_items": ["dagger", "dagger","emerald_loop"],
+    "starting_skills": ["stealth", "backstab"]
   },
   {
     "id": "goblin",
@@ -88,7 +91,13 @@
       "health": 5, 
       "stamina": 7
     },
-    "starting_items": ["goblin_dagger", "leather_armor"]
+    "starting_items": ["goblin_dagger", "goblin_spear"],
+    "weakness": {
+      "physical": 1.5
+    },
+    "resistance": {
+      "physical": 2.0
+    }
   },
   {
     "id": "orc",

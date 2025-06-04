@@ -14,7 +14,7 @@ import json
 import random
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
+from game_sys.skills.learning import SkillRegistry
 from game_sys.items.factory import create_item
 
 # --------------------------------------------------------------------------
@@ -134,5 +134,5 @@ def create_job(
         except KeyError:
             # Skip unknown item IDs silently
             continue
-
+ 
     return Job(stats_mods, starting_items, job_id)

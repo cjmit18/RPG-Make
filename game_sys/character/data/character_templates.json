@@ -2,82 +2,37 @@
   "Player": {
     "name": "Hero",
     "type": "player",
-    "gold_min": 10,
-    "gold_max": 50,
-    "starting_items_by_level": [
-      {
-        "min_level": 1,
-        "max_level": 4,
-        "items": ["wood_sword", "leather_armor"]
-      },
-      {
-        "min_level": 5,
-        "max_level": 9,
-        "items": ["iron_sword", "chainmail_armor"]
-      },
-      {
-        "min_level": 10,
-        "max_level": 99,
-        "items": ["steel_sword", "plate_armor", "health_potion"]
-      }
-    ]
+    "gold_min": 1,
+    "gold_max": 5
   },
   "Enemy": {
     "name": "Generic Enemy",
-    "gold_min": 5,
-    "gold_max": 15,
-    "starting_items_by_level": [
-      {
-        "min_level": 1,
-        "max_level": 4,
-        "items": ["wood_sword", "leather_armor"]
-      },
-      {
-        "min_level": 5,
-        "max_level": 9,
-        "items": ["iron_sword", "chainmail_armor"]
-      },
-      {
-        "min_level": 10,
-        "max_level": 99,
-        "items": ["steel_sword", "plate_armor", "health_potion"]
-      }
-    ]
+    "type": "enemy",
+    "gold_min": 10,
+    "gold_max":50
   },
   "Goblin": {
-    "name": "Goblin",
+    "name": "Goblinn",
     "type": "enemy",
     "gold_min": 1,
-    "gold_max": 5,
-    "starting_items_by_level": [
-      {
-        "min_level": 1,
-        "max_level": 3,
-        "items": ["goblin_dagger", "leather_armor"]
-      },
-      {
-        "min_level": 4,
-        "max_level": 10,
-        "items": ["goblin_spear", "chainmail_armor", "health_potion"]
-      }
-    ]
+    "gold_max": 50
   },
   "Orc": {
     "name": "Orc",
     "type": "enemy",
-    "gold_min": 3,
-    "gold_max": 10,
-    "starting_items_by_level": [
-      {
-        "min_level": 1,
-        "max_level": 7,
-        "items": ["orc_axe", "orc_shield"]
-      },
-      {
-        "min_level": 8,
-        "max_level": 20,
-        "items": ["steel_axe", "plate_shield", "health_potion"]
-      }
-    ]
+    "gold_min": 25,
+    "gold_max": 100
+  },
+  "Dragon": {
+    "name": "Dragon",
+    "type": "boss",
+    "gold_min": 100,
+    "gold_max": 500
+  },
+  "NPC": {
+    "name": "Knight",
+    "type": "npc",
+    "gold_min": 5,
+    "gold_max": 20
   }
 }

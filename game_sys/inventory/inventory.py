@@ -220,13 +220,11 @@ class Inventory:
             else:
                 # primary is occupied; check offhand fallback
                 if getattr(item_obj, "offhand", False) and self._equipped_items.get("offhand") is None:
+                    # If item is offhand-eligible and offhand is free, use it
                     slot_to_use = "offhand"
                 else:
-                    raise ValueError(
-                        f"No free slot for '{item_obj.name}': "
-                        f"{primary!r} occupied"
-                        + ("" if getattr(item_obj, "offhand", False) else " [offhand not allowed]")
-                    )
+                    self.unequip_item(primary)  # Unequip primary slot
+                    slot_to_use = primary  # Now we can use primary
 
         # 4) Remove one copy from inventory._items
         inv_entry = self._items.get(item_obj.id)

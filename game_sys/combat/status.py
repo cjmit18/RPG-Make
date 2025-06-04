@@ -7,7 +7,7 @@ class StatusEffect:
     Represents a temporary buff (or debuff) that modifies one or more stats
     for a given number of turns.
     """
-    def __init__(self, name: str, stat_mods: Dict[str, int], duration: int):
+    def __init__(self, name: str, stat_mods: Dict[str, int], duration: int = 0):
         """
         Args:
           name:       e.g. "Strength Brew Buff"

@@ -1,7 +1,5 @@
 # game_sys/items/item_base.py
-
 from typing import Dict
-
 class Item:
     def __init__(self, name: str, description: str, price: int, level: int):
         self.name = name
@@ -11,11 +9,25 @@ class Item:
         self.id = None
 
 class Equipable(Item):
-    def __init__(self, name: str, description: str, price: int, level: int, slot: str, bonuses: Dict[str, int]):
+    def __init__(self, 
+                 name: str, 
+                 description: str, 
+                 price: int, 
+                 level: int, 
+                 slot: str, 
+                 bonuses: Dict[str, int], 
+                 grade: int, 
+                 rarity: str, 
+                 is_enchanable: bool,
+                 offhand: bool
+                 ):
         super().__init__(name, description, price, level)
         self.slot = slot
         self.bonuses = bonuses
-
+        self.grade = grade
+        self.rarity = rarity
+        self.is_enchantable = is_enchanable
+        self.offhand = offhand
     def apply(self, actor):
         """
         When equipped, apply bonuses as status modifiers.
@@ -52,8 +64,5 @@ class Consumable(Item):
         from game_sys.combat.status import StatusEffect
         if self.effect == "health":
             actor.heal(self.amount)
-        else:
-            # effect names match status fields (e.g. 'attack', 'defense', etc.)
-            mods = {self.effect: self.amount}
-            status = StatusEffect(mods, self.duration)
-            actor.add_status(status)
+        elif self.effect == "mana":
+            actor.restore_mana(self.amount)

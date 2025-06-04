@@ -32,7 +32,7 @@ def _instantiate(template: Dict[str, Any], rng: Any = random) -> Item:
     description = template.get("description", "")
     price = int(template.get("price", 0))
     level = int(template.get("level", 1))
-
+    duration = int(template.get("duration", 0))
     if item_type == "consumable":
         eff = template["effect"][0]
         stat_name = eff["stat_name"]
@@ -41,7 +41,6 @@ def _instantiate(template: Dict[str, Any], rng: Any = random) -> Item:
         amount = rng.randint(amount_spec["min"], amount_spec["max"]) \
                  if isinstance(amount_spec, dict) else int(amount_spec)
 
-        duration = int(eff.get("duration", 0))
 
         obj = Consumable(
             name=name,
@@ -56,7 +55,11 @@ def _instantiate(template: Dict[str, Any], rng: Any = random) -> Item:
         return obj
 
     elif item_type in ("equipment", "equipable"):
-        slot = template["slot"]
+        slot: str = template["slot"]
+        offhand: bool = template.get("offhand", False)
+        grade: int = template.get("grade", "1")
+        is_enchantable: bool = template.get("is_enchantable", False)
+        rarity: str = template.get("rarity", "common")
         raw_bonuses: Dict[str, Any] = template.get("bonuses", {})
         bonuses: Dict[str, int] = {}
         for stat, spec in raw_bonuses.items():
@@ -69,10 +72,13 @@ def _instantiate(template: Dict[str, Any], rng: Any = random) -> Item:
             level=level,
             slot=slot,
             bonuses=bonuses,
+            grade=grade,
+            is_enchanable=is_enchantable,
+            rarity=rarity,
+            offhand=offhand,
         )
         obj.id = item_id
 
-        obj.offhand = bool(template.get("offhand", False))
         return obj
 
     else:

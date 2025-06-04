@@ -1,13 +1,12 @@
 # game_sys/combat/combat.py
-
 import random
+from game_sys.core.damage_types import DamageType
 from typing import Optional
 from logs.logs import get_logger
 from game_sys.core.actor import Actor
 from game_sys.combat.drop_tables import DROP_TABLES
 from game_sys.items.factory import create_item
-from game_sys.items.item_base import Equipable
-
+from random import randint
 log = get_logger(__name__)
 
 
@@ -24,7 +23,7 @@ class CombatCapabilities:
         self.enemy = enemy
         self.rng = rng or random.Random()
 
-    def calculate_damage(self, attacker: Actor, defender: Actor) -> str:
+    def calculate_damage(self, attacker: Actor, defender: Actor, damage_type: DamageType = DamageType.PHYSICAL) -> str:
         """
         Compute and apply damage:
           - base = attack − (defense * 0.05)
@@ -35,6 +34,8 @@ class CombatCapabilities:
         base = attacker.attack - (defender.defense * 0.05)
         variance = self.rng.uniform(0, 1)
         damage = base * variance
+        dmg_mult = defender.get_weakness_multiplier(damage_type)
+        dmg_resist = defender.get_resistance_multiplier(damage_type)
 
         is_crit = False
         if self.rng.random() < 0.1:
@@ -45,11 +46,17 @@ class CombatCapabilities:
         if defender.defending:
             final = round(final * 0.5)
             defender.defending = False
-
+        final = round((dmg_mult * final) - ((dmg_resist * final)/3))
+    
         defender.take_damage(final)
-        result = f"{attacker.name} deals {final} damage"
+        result = f"{attacker.name} deals {final} damage."
         if is_crit:
-            result += ". Critical Hit!"
+            result += "\n(CRITICAL HIT!)"
+        if dmg_mult > 1:
+            result += f"\n(Weakness multiplier: {dmg_mult}×)"
+        if dmg_resist:
+            result += f"\n(Resistance multiplier: {dmg_resist}×)"
+
         return result
 
     def roll_loot(self, defeated: Actor):

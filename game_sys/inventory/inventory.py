@@ -1,12 +1,10 @@
-# game_sys/inventory/inventory.py
-
 import uuid
 import json
 from logs.logs import get_logger
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union, Dict, Any, List
 
-from game_sys.items.item_base import Item
+from game_sys.items.item_base import Item, ConsumableItem
 from game_sys.items.factory import create_item
 from game_sys.items.consumable_list import Consumable
 
@@ -22,7 +20,6 @@ _TEMPLATES_PATH = Path(__file__).parent / "data" / "inventories.json"
 def get_equip_slot(item: Item) -> Optional[str]:
     """
     Return the item’s primary equipment slot (e.g. "weapon", "shield", "armor", etc.).
-    We do NOT force offhand here; offhand‐eligible items are handled in equip_item().
     """
     return getattr(item, "slot", None)
 
@@ -137,11 +134,9 @@ class Inventory:
         'item' can be a string (item_id) or an Item instance.
         Raises KeyError if creation fails.
         """
-        # 1) If given a string, create the Item instance
         if isinstance(item, str):
             item = create_item(item)
 
-        # 2) Increment quantity or add new slot
         iid = item.id
         if iid in self._items:
             self._items[iid]["quantity"] += quantity
@@ -150,7 +145,6 @@ class Inventory:
 
         log.info("Added %d× %s (ID=%s) to %s's inventory.", quantity, item.name, item.id, self.owner.name)
 
-        # 3) If auto_equip, equip now (without removing from inventory)
         if auto_equip and is_equippable(item):
             try:
                 self.equip_item(item.id)
@@ -163,7 +157,6 @@ class Inventory:
         `item` can be an Item instance or an item_id string.
         Raises KeyError if not enough copies exist.
         """
-        entry = None
         if isinstance(item, Item):
             entry = self._items.get(item.id)
         else:
@@ -190,14 +183,13 @@ class Inventory:
           1) If slot is given, force that slot (e.g. "offhand" or "weapon").
           2) Otherwise, try primary = get_equip_slot(item). If primary is free, use it.
              If primary is occupied and item.offhand==True and offhand is free, use "offhand".
-             Else: ValueError.
+             Else: unequip primary and re-equip there.
         Then:
           - Remove one copy from self._items
           - Place item.ID in self._equipped_items[slot_to_use]
           - Call owner.stats.add_modifier(...) for each bonus in item.bonuses,
             using a unique modifier key = f"{item.id}_{slot_to_use}"
         """
-        # 1) Resolve item_ref → actual Item instance
         if isinstance(item_ref, Item):
             item_obj = item_ref
         else:
@@ -206,27 +198,22 @@ class Inventory:
                 raise KeyError(f"No such item '{item_ref}' in inventory")
             item_obj = inv_entry["item"]
 
-        # 2) Determine primary slot
         primary = get_equip_slot(item_obj)
         if primary is None:
             raise ValueError(f"Item '{item_obj.name}' (ID={item_obj.id}) not equippable")
 
-        # 3) Decide final slot_to_use
         if slot:
             slot_to_use = slot
         else:
             if self._equipped_items.get(primary) is None:
                 slot_to_use = primary
             else:
-                # primary is occupied; check offhand fallback
                 if getattr(item_obj, "offhand", False) and self._equipped_items.get("offhand") is None:
-                    # If item is offhand-eligible and offhand is free, use it
                     slot_to_use = "offhand"
                 else:
-                    self.unequip_item(primary)  # Unequip primary slot
-                    slot_to_use = primary  # Now we can use primary
+                    self.unequip_item(primary)
+                    slot_to_use = primary
 
-        # 4) Remove one copy from inventory._items
         inv_entry = self._items.get(item_obj.id)
         if not inv_entry or inv_entry["quantity"] < 1:
             raise KeyError(f"No copies of '{item_obj.name}' to equip")
@@ -234,11 +221,9 @@ class Inventory:
         if inv_entry["quantity"] == 0:
             del self._items[item_obj.id]
 
-        # 5) Place the item into the chosen slot
         self._equipped_items[slot_to_use] = item_obj.id
         self._equipped_item_objs[slot_to_use] = item_obj
 
-        # 6) Add its bonuses to owner.stats, using a unique modifier key
         mod_key = f"{item_obj.id}_{slot_to_use}"
         for stat_name, amount in getattr(item_obj, "bonuses", {}).items():
             self.owner.stats.add_modifier(mod_key, stat_name, int(amount))
@@ -249,52 +234,40 @@ class Inventory:
         """
         Unequip an item either by passing a slot name (e.g. "weapon", "offhand")
         or by passing the item-ID or a substring of the item’s name.
-
         Steps:
-          1) Figure out which slot to unequip using slot_or_identifier.
-          2) Remove stats modifiers via owner.stats.remove_modifier(f"{item_id}_{slot}").
+          1) Determine which slot to unequip.
+          2) Remove stat modifiers via owner.stats.remove_modifier(f"{item_id}_{slot}").
           3) Delete from _equipped_items/_equipped_item_objs and restore one copy to _items.
         """
-        # 1A) If exact slot name given, use it
         if slot_or_identifier in self._equipped_items:
             slot = slot_or_identifier
         else:
-            # 1B) Otherwise, try to match against equipped Item IDs or name substrings
             needle = slot_or_identifier.lower()
             found_slot = None
             for s, obj in self._equipped_item_objs.items():
                 if obj is None:
                     continue
-                # Match if ID matches exactly
-                if obj.id == slot_or_identifier:
-                    found_slot = s
-                    break
-                # Or if substring of the name matches
-                if needle in obj.name.lower():
+                if obj.id == slot_or_identifier or needle in obj.name.lower():
                     found_slot = s
                     break
             if found_slot is None:
                 raise KeyError(f"No equipped item matching '{slot_or_identifier}'")
             slot = found_slot
 
-        # 2) Get the Item instance & its ID
         equipped_id = self._equipped_items.get(slot)
         equipped_obj = self._equipped_item_objs.get(slot)
         if equipped_id is None or equipped_obj is None:
             raise KeyError(f"No item equipped in slot '{slot}'")
 
-        # 3) Remove stat modifiers for that item (using the unique modifier key)
         mod_key = f"{equipped_id}_{slot}"
         try:
             self.owner.stats.remove_modifier(mod_key)
         except Exception:
-            pass  # ignore if not present
+            pass
 
-        # 4) Remove from equipped dicts
         del self._equipped_items[slot]
         del self._equipped_item_objs[slot]
 
-        # 5) Return one copy to inventory._items
         entry = self._items.get(equipped_id)
         if entry:
             entry["quantity"] += 1
@@ -306,32 +279,38 @@ class Inventory:
     def use_item(self, item_ref: Union[str, Item]) -> bool:
         """
         Use a consumable item by its ID or Item instance.
-        Raises TypeError if item is not consumable or ValueError if not found.
+        Raises TypeError if item is not consumable, ValueError if not found.
         """
         if isinstance(item_ref, Item):
             item_id = getattr(item_ref, "id", None)
             if item_id is None:
                 raise ValueError(f"Item {item_ref} has no ID; cannot use")
         else:
-            item_id = uuid.UUID(item_ref) if self._is_uuid(item_ref) else None
-        if not item_id:
-            raise ValueError(f"Invalid item reference '{item_ref}'")
+            # If string, try to parse as UUID or treat as raw ID
+            try:
+                item_id = uuid.UUID(item_ref)
+            except Exception:
+                item_id = item_ref
 
         item = self._find_item(item_id)
         if not item:
             raise ValueError(f"No item '{item_ref}' in inventory")
-        if not isinstance(item, Consumable):
+        if not isinstance(item, (Consumable, ConsumableItem)):
             raise TypeError(f"{item.name} is not consumable")
 
-        item.apply(self.owner)
+        # Apply with combat_engine=None (outside of combat)
+        log_str = item.apply(self.owner, None)
+        for line in log_str.split("\n"):
+            log.info(line)
+
         self.remove_item(item, 1)
         log.info(f"{self.owner.name} used {item.name}.")
         return True
 
     def load_template(self, template_name: str) -> None:
         """
-        Load an inventory template from a JSON file under 'data/inventories.json'.
-        Clears current inventory and equips items as specified in the template.
+        Load an inventory template from 'data/inventories.json'.
+        Clears current inventory and equips items as specified.
         """
         with open(_TEMPLATES_PATH, "r") as f:
             templates = json.load(f)
@@ -339,7 +318,6 @@ class Inventory:
         if entries is None:
             raise KeyError(f"No inventory template '{template_name}' in {_TEMPLATES_PATH}")
 
-        # Clear current inventory & equipment
         self._items.clear()
         self._equipped_items = {slot: None for slot in self._equipped_items}
         self._equipped_item_objs = {slot: None for slot in self._equipped_items}

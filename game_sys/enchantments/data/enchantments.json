@@ -1,0 +1,31 @@
+[
+  {
+    "enchant_id": "flamebrand",
+    "name": "Flamebrand",
+    "description": "Adds extra Fire damage to this weapon.",
+    "bonus_ranges": {
+      "damage_map": {
+        "FIRE": { "min": 2, "max": 5 }
+      },
+      "percent_bonuses": {
+        "physical": 10
+      }
+    },
+    "applicable_slots": ["weapon"],
+    "level_requirement": 1,
+    "rarity": "RARE"
+  },
+  {
+    "enchant_id": "ice_guardian",
+    "name": "Ice Guardian",
+    "description": "Armor that grants Cold resistance.",
+    "bonus_ranges": {
+      "percent_bonuses": {
+        "cold_resistance": 15
+      }
+    },
+    "applicable_slots": ["armor"],
+    "level_requirement": 3,
+    "rarity": "UNCOMMON"
+  }
+]

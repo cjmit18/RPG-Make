@@ -8,13 +8,15 @@ to CombatEngine.
 
 from typing import List, Union, Optional, Callable
 import random
+
 from game_sys.core.actor import Actor
 from game_sys.combat.combat_engine import CombatEngine
+
 
 class Encounter:
     """
     Thin wrapper around CombatEngine. Accepts the same constructor args,
-    but simply calls engine.run() from start().
+    but delegates the fight loop to CombatEngine.
     """
 
     def __init__(
@@ -25,9 +27,21 @@ class Encounter:
         action_fn: Optional[Callable[[Actor], str]] = None,
         max_turns: int = 100,
     ):
+        # Ensure 'party' is always a list of Actor
+        if isinstance(party, Actor):
+            party_list: List[Actor] = [party]
+        else:
+            party_list = list(party)
+
+        # Ensure 'enemies' is always a list of Actor
+        if isinstance(enemies, Actor):
+            enemies_list: List[Actor] = [enemies]
+        else:
+            enemies_list = list(enemies)
+
         self.engine = CombatEngine(
-            party=party,
-            enemies=enemies,
+            party=party_list,
+            enemies=enemies_list,
             rng=rng,
             action_fn=action_fn,
             max_turns=max_turns,

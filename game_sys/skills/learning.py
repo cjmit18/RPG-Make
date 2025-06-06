@@ -7,7 +7,8 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 from game_sys.effects.base import Effect
 from game_sys.core.actor import Actor
-from game_sys.skills.skills import Skill
+from game_sys.skills.base import Skill
+
 
 __all__ = ["SkillRecord", "SkillRegistry", "LearningSystem"]
 
@@ -84,27 +85,6 @@ class SkillRecord:
         """
         Read a JSON array of skill definitions (UTF-8), convert each “effects” entry
         via Effect.from_dict(...), and return a list of SkillRecord instances.
-
-        Example JSON entry:
-          {
-            "skill_id": "backstab",
-            "name": "Backstab",
-            "description": "Strike a targeted enemy ...",
-            "mana_cost": 0,
-            "stamina_cost": 3,
-            "cooldown": 8,
-            "effects": [
-              {
-                "type": "Damage",
-                "value": 15,
-                "multiplier": 2.0,
-                "requires_status": "Invisible"
-              }
-            ],
-            "sp_cost": 2,
-            "min_level": 3,
-            "prereq_skills": ["stealth"]
-          }
         """
         path_obj = Path(path)
         if not path_obj.is_file():
@@ -193,7 +173,7 @@ class SkillRegistry:
     @classmethod
     def load_from_file(cls, path: Union[str, Path]) -> None:
         """
-        Clear the registry, then load all SkillRecords from the JSON at `path`.
+        Clear the registry, then load all SkillRecords from the JSON at path.
         """
         cls._registry.clear()
         records = SkillRecord.load_from_json_array(path)
@@ -203,13 +183,7 @@ class SkillRegistry:
 
 class LearningSystem:
     """
-    Tracks a character’s known skills and unspent skill points (SP).
-    
-    Example usage:
-        player = Actor("Mage", level=1)
-        learning = LearningSystem(owner=player, initial_sp=5)
-        learning.learn("stealth")        # requires at least min_level and SP
-        skill_obj = learning.get_skill_object("stealth")
+    Tracks a character's known skills and unspent skill points (SP).
     """
 
     def __init__(self, owner: Actor, initial_sp: int = 0) -> None:
@@ -222,26 +196,16 @@ class LearningSystem:
         return self.available_sp
 
     def add_sp(self, amount: int) -> None:
-        """
-        Add skill points. Amount must be non-negative.
-        """
         if amount < 0:
             raise ValueError(f"Cannot add negative SP: {amount}")
         self.available_sp += amount
 
     def spend_sp(self, amount: int) -> None:
-        """
-        Deduct SP; raises if insufficient.
-        """
         if amount > self.available_sp:
             raise RuntimeError(f"Not enough SP: required={amount}, available={self.available_sp}")
         self.available_sp -= amount
 
     def learn(self, skill_id: str) -> None:
-        """
-        Learn a new skill if possible; deduct SP, instantiate Skill.
-        Raises if already known or prerequisites/SP not met.
-        """
         if skill_id in self.known_skills:
             raise RuntimeError(f"Already learned '{skill_id}'.")
 
@@ -262,9 +226,6 @@ class LearningSystem:
         self.instantiated_skills[skill_id] = record.build_skill_instance()
 
     def unlearn(self, skill_id: str) -> None:
-        """
-        Unlearn a skill, refund its SP cost. (Does not cascade‐remove dependents.)
-        """
         if skill_id not in self.known_skills:
             raise RuntimeError(f"'{skill_id}' is not known.")
 
@@ -282,9 +243,6 @@ class LearningSystem:
         return self.instantiated_skills[skill_id]
 
     def available_to_learn(self) -> List[str]:
-        """
-        Return all skill_ids that can be learned right now.
-        """
         can_learn: List[str] = []
         for sid in SkillRegistry.all_ids():
             if sid in self.known_skills:
@@ -299,9 +257,6 @@ class LearningSystem:
         return can_learn
 
     def tick_all_cooldowns(self) -> None:
-        """
-        Decrement all known skills’ cooldown counters.
-        """
         for skill in self.instantiated_skills.values():
             try:
                 skill.tick_cooldown()

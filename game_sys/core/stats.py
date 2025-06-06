@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, Literal, Tuple
 
-StatName = Literal["attack", "defense", "speed", "health", "mana", "stamina"]
+StatName = Literal["attack", "defense", "speed", "health", "mana", "stamina", "intellect"]
 
 
 @dataclass

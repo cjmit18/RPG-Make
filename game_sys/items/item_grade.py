@@ -1,12 +1,12 @@
-from enum import Enum
+from enum import Enum, auto
 class ItemGrade(Enum):
-    ONE = 1
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
-    SIX = 6
-    SEVEN = 7
+    ONE = auto()
+    TWO = auto()
+    THREE = auto()
+    FOUR = auto()
+    FIVE = auto()
+    SIX = auto()
+    SEVEN = auto()
 @classmethod
 def get_all_grades(cls):
     """

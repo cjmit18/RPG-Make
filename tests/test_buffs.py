@@ -2,7 +2,7 @@
 import pytest
 from game_sys.character.character_creation import Player
 from game_sys.items.factory import create_item
-from game_sys.combat.status import StatusEffect
+from game_sys.effects.status import StatusEffect
 
 
 @pytest.fixture

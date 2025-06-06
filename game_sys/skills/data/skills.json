@@ -2,7 +2,7 @@
   {
     "skill_id": "stealth",
     "name": "Stealth",
-    "description": "Become invisible to enemies for a short duration, reducing chance to be detected.",
+    "description": "Become invisible to enemies for a short duration…",
     "mana_cost": 0,
     "stamina_cost": 5,
     "cooldown": 10,
@@ -18,6 +18,54 @@
     "prereq_skills": []
   },
   {
+    "skill_id": "fireball",
+    "name": "Fireball",
+    "description": "Hurl a blazing orb at your foe.",
+    "mana_cost": 10,
+    "stamina_cost": 0,
+    "cooldown": 3,
+    "effects": [
+      {
+        "type": "Damage",
+        "damage": {
+          "FIRE": 12,
+          "PHYSICAL": 3
+        },
+        "stat_name": "intellect",
+        "multiplier": 2.0,
+        "crit_chance": 0.1,
+        "variance": 1.0
+      }
+    ],
+    "sp_cost": 2,
+    "min_level": 1,
+    "prereq_skills": []
+  },
+  {
+    "skill_id": "ice_spear",
+    "name": "Ice Spear",
+    "description": "Pierce your enemy with a chilling lance.",
+    "mana_cost": 8,
+    "stamina_cost": 0,
+    "cooldown": 4,
+    "effects": [
+      {
+        "type": "Damage",
+        "damage": {
+          "COLD": 8,
+          "PHYSICAL": 4
+        },
+        "stat_name": "intellect",
+        "multiplier": 1.5,
+        "crit_chance": 0.1,
+        "variance": 1.0
+      }
+    ],
+    "sp_cost": 2,
+    "min_level": 2,
+    "prereq_skills": []
+  },
+  {
     "skill_id": "backstab",
     "name": "Backstab",
     "description": "Strike a targeted enemy for high damage if attacking from stealth.",
@@ -27,7 +75,9 @@
     "effects": [
       {
         "type": "Damage",
-        "value": 15,
+        "damage": {
+          "PHYSICAL": 25
+        },
         "multiplier": 2.0,
         "requires_status": "Invisible"
       }
@@ -35,59 +85,5 @@
     "sp_cost": 2,
     "min_level": 3,
     "prereq_skills": ["stealth"]
-  },
-  {
-    "skill_id": "sword_mastery",
-    "name": "Sword Mastery",
-    "description": "Increase damage dealt with one‐handed swords by 10%.",
-    "mana_cost": 0,
-    "stamina_cost": 0,
-    "cooldown": 0,
-    "effects": [
-      {
-        "type": "ModifyWeaponDamage",
-        "weapon_type": "OneHandedSword",
-        "percent_bonus": 10
-      }
-    ],
-    "sp_cost": 1,
-    "min_level": 2,
-    "prereq_skills": []
-  },
-  {
-    "skill_id": "shield_block",
-    "name": "Shield Block",
-    "description": "Temporarily raise shield to block incoming attacks, reducing damage by 50% for one turn.",
-    "mana_cost": 0,
-    "stamina_cost": 2,
-    "cooldown": 5,
-    "effects": [
-      {
-        "type": "DamageReduction",
-        "value": 50,
-        "duration": 1,
-        "applicable_to": "Self"
-      }
-    ],
-    "sp_cost": 1,
-    "min_level": 1,
-    "prereq_skills": []
-  },
-  {
-    "skill_id": "lockpicking",
-    "name": "Lockpicking",
-    "description": "Allows opening locked chests or doors without requiring a key. Success chance depends on lock difficulty.",
-    "mana_cost": 0,
-    "stamina_cost": 1,
-    "cooldown": 0,
-    "effects": [
-      {
-        "type": "Unlock",
-        "target_type": "ContainerOrDoor"
-      }
-    ],
-    "sp_cost": 1,
-    "min_level": 1,
-    "prereq_skills": []
   }
 ]

@@ -22,7 +22,7 @@ def view_character_test():
     """
     Demonstrate character creation and basic stats display.
     """
-    person = create_character("Player", name = "Hero", level=100, job_id="commoner")
+    person = create_character("Player", level=1, job_id="knight")
     # Create a level-1 Knight named Aria
     character = create_character("Goblin", level=10, name="Aria", job_id="goblin")
     #character.inventory.unequip_item("knife")
@@ -30,7 +30,7 @@ def view_character_test():
     log.info("=== Character View Test ===")
     health = create_item("health_potion")
     
-    log.info(person.intellect)  # Should show 20 SP available
+    log.info(character.resistance)  # Should show 20 SP available
     #log.info(character)  # __str__ will show name, level, stats, inventory, etc.
 
 
@@ -102,7 +102,7 @@ def learning_system_test():
                  to_unlearn, player.learning.unspent_sp())
         log.info("Known skills now: %s", player.learning.get_known_skills())
 
-    log.info(f"Final Player State: {player}")
+
 def inventory_system_test():
     """
     Demonstrate inventory operations: adding items, auto-equipping,
@@ -133,28 +133,25 @@ def inventory_system_test():
     log.info("Equipped iron_sword and leather_armor:")
 
     # 5) Add + auto-equip a special ring in one call
-    item = create_item("ruby_band")
-    hero.inventory.add_item(item, quantity=1, auto_equip=True)
-    log.info("Added and auto-equipped:")
+    emerald_ring = create_item("emerald_loop")
+    hero.inventory.add_item(emerald_ring, quantity=1, auto_equip=True)
+    log.info("Added and auto-equipped emerald_ring:")
 
     # 6) Simulate taking damage, then use a health potion
     hero.take_damage(10)
     before_hp = hero.current_health
-    log.info("Hero's health before potion: %d", before_hp)
-    hero.inventory.use_item(health_potion)
     max_hp = hero.stats.effective().get("health")
+
+    hero.inventory.use_item(health_potion)
     after_hp = hero.current_health
-    log.info("Hero's health after potion: %d (max: %d)", after_hp, max_hp)
-    
 
     # 7) Use a mana potion to restore mana
     hero.drain_mana(5) 
     before_mp = hero.current_mana # Simulate mana usage
-    log.info("Hero's mana before potion: %d", before_mp)
     max_mp = hero.stats.effective().get("mana")
+
     hero.inventory.use_item(mana_potion)
     after_mp = hero.current_mana
-    log.info("Hero's mana after potion: %d (max: %d)", after_mp, max_mp)
     
     # 8) Attempt to use consumable when none remain (should handle gracefully)
     #    Remove all health potions first
@@ -176,7 +173,7 @@ def combat_system_test():
     log.info("=== Combat System Test ===")
 
     # 1) Create a high-level Player (combat-ready) and assign job "knight"
-    player = create_character("Player", name="Warrior", level=10., job_id="knight")
+    player = create_character("Player", name="Warrior", level=5)
     log.info("Created player: %s (Level %d)", player.name, player.levels.lvl)
 
     # 2) Create two enemies: goblin and orc
@@ -201,4 +198,4 @@ def combat_system_test():
     log.info("Player post-combat stats: %s", player)
 if __name__ == "__main__":
     # Run each test in sequence
-    inventory_system_test()
+    view_character_test()

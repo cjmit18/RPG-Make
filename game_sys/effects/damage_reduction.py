@@ -22,6 +22,6 @@ class DamageReductionEffect:
         # If the JSON said "applicable_to": "Self", we attach to caster, else to target
         actual_target = caster if self.target == "Self" else target
         # Wrap in a StatusEffect so that Actor.take_damage sees it:
-        from game_sys.combat.status import StatusEffect
+        from game_sys.effects.status import StatusEffect
         stat_mods = {"DamageReduction": self.percent}
         actual_target.add_status(StatusEffect(name="DamageReduction", stat_mods=stat_mods, duration=self.duration))

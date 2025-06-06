@@ -1,19 +1,19 @@
 # game_sys/combat/combat.py
 import random
-from game_sys.core.damage_types import DamageType
-from typing import Optional
+from typing import Dict, Optional
 from logs.logs import get_logger
 from game_sys.core.actor import Actor
+from game_sys.core.damage_types import DamageType
 from game_sys.combat.drop_tables import DROP_TABLES
 from game_sys.items.factory import create_item
-from random import randint
+
 log = get_logger(__name__)
 
 
 class CombatCapabilities:
     """
     Handles 1-on-1 combat resolution and looting.
-      - calculate_damage(attacker, defender)
+      - calculate_damage(attacker, defender, damage_map, …)
       - roll_loot(defeated)
       - transfer_loot(winner, defeated)
     """
@@ -23,118 +23,90 @@ class CombatCapabilities:
         self.enemy = enemy
         self.rng = rng or random.Random()
 
-    def calculate_damage(self, attacker: Actor, defender: Actor, damage_type: DamageType = DamageType.PHYSICAL) -> str:
+    def calculate_damage(
+        self,
+        attacker: Actor,
+        defender: Actor,
+        damage_map: Dict[DamageType, float],
+        stat_name: Optional[str] = None,
+        multiplier: float = 1.0,
+        crit_chance: float = 0.0,
+        variance: float = 0.0,
+    ) -> str:
         """
-        Compute and apply damage:
-          - base = attack − (defense * 0.05)
-          - variance = uniform(0,1)
-          - crit if random() < 0.1 ⇒ ×2
-          - round final; halve if defender.defending.
+        Multi-type damage resolution. For each (dtype → base_amount) pair in damage_map:
+          1) Combine base_amount + (attacker.stat * multiplier) if stat_name is given
+          2) Apply random variance and potential crit
+          3) Multiply by weakness/resistance
+          4) Halve if defender.defending
+          5) Call defender.take_damage(final)
+        Returns a concatenated log string (one block per DamageType).
         """
-        base = attacker.attack - (defender.defense * 0.05)
-        variance = self.rng.uniform(0, 1)
-        damage = base * variance
-        dmg_mult = defender.get_weakness_multiplier(damage_type)
-        dmg_resist = defender.get_resistance_multiplier(damage_type)
+        log_parts = []
 
-        is_crit = False
-        if self.rng.random() < 0.1:
-            damage *= 2
-            is_crit = True
+        for dtype, base_amount in damage_map.items():
+            # (A) Compute raw from base_amount + stat scaling
+            raw = base_amount
+            if stat_name:
+                stat_val = getattr(attacker.stats, stat_name, 0)
+                raw += stat_val * multiplier
 
-        final = round(damage)
-        if defender.defending:
-            final = round(final * 0.5)
-            defender.defending = False
-        final = round((dmg_mult * final) - ((dmg_resist * final)/3))
-    
-        defender.take_damage(final)
-        result = f"{attacker.name} deals {final} damage."
-        if is_crit:
-            result += "\n(CRITICAL HIT!)"
-        if dmg_mult > 1:
-            result += f"\n(Weakness multiplier: {dmg_mult}×)"
-        if dmg_resist:
-            result += f"\n(Resistance multiplier: {dmg_resist}×)"
+            # (B) Apply variance
+            var_roll = raw * self.rng.uniform(1 - variance, 1 + variance)
 
-        return result
+            # (C) Crit check
+            is_crit = False
+            if self.rng.random() < crit_chance:
+                var_roll *= 2
+                is_crit = True
 
-    def roll_loot(self, defeated: Actor):
+            # (D) Weakness / Resistance multipliers
+            weak = defender.get_weakness_multiplier(dtype)
+            resist = defender.get_resistance_multiplier(dtype)
+            adjusted = round(var_roll * weak * resist)
+
+            # (E) If defender is defending, halve and reset defending flag
+            if defender.defending:
+                adjusted = round(adjusted * 0.5)
+                defender.defending = False
+
+            # (F) Actually deal the damage (clamped by Actor.take_damage)
+            defender.take_damage(adjusted)
+
+            # (G) Build per-type log line
+            part = f"{attacker.name} deals {adjusted} {dtype.name} damage."
+            if is_crit:
+                part += " (CRITICAL HIT!)"
+            if weak != 1.0:
+                part += f"\n(Weakness multiplier: {weak}×)"
+            if resist != 1.0:
+                part += f"\n(Resistance multiplier: {resist}×)"
+            log_parts.append(part)
+
+        return "\n".join(log_parts)
+
+    def roll_loot(self, defeated: Actor) -> list:
         """
-        Look up DROP_TABLES[job_id], find the matching level‐bucket, and
-        roll each drop entry: return list of (Item, quantity).
+        Roll and return a list of items dropped by the defeated actor.
         """
-        drops = []
-        job_id = None
-        if getattr(defeated, "job", None) and defeated.job.name:
-            job_id = defeated.job.name.lower()
-
-        if job_id not in DROP_TABLES:
-            log.info("No drop table for job '%s'; skipping item drops from %s.",
-                     job_id or "(none)", defeated.name)
-            return drops
-
-        enemy_level = defeated.levels.lvl
-        buckets = DROP_TABLES[job_id]
-        matching = None
-        for bucket in buckets:
-            if bucket["min_level"] <= enemy_level <= bucket["max_level"]:
-                matching = bucket
-                break
-
-        if not matching:
-            log.info(
-                "No drop-bucket for '%s' at level %d; skipping items from %s.",
-                job_id, enemy_level, defeated.name
-            )
-            return drops
-
-        for entry in matching["drops"]:
-            item_id = entry["item_id"]
-            chance = float(entry["chance"])
-            min_q = int(entry["min_qty"])
-            max_q = int(entry["max_qty"])
-
-            roll = self.rng.random()
-            if roll <= chance:
-                qty = self.rng.randint(min_q, max_q)
-                try:
-                    item_obj = create_item(item_id)
-                    drops.append((item_obj, qty))
-                    log.info(
-                        "%s looted %d× %s from %s (level %d). [%.2f ≤ %.2f]",
-                        self.character.name, qty, item_obj.name, defeated.name,
-                        enemy_level, roll, chance
-                    )
-                except Exception:
-                    log.warning(
-                        "Failed to create looted item '%s' for %s.",
-                        item_id, self.character.name
-                    )
-            else:
-                log.debug(
-                    "%s rolled %.2f > %.2f: no '%s' from %s.",
-                    self.character.name, roll, chance, item_id, defeated.name
-                )
-        return drops
+        items = []
+        table = DROP_TABLES.get(type(defeated).__name__, {})
+        for item_id, chance in table.items():
+            if self.rng.random() < chance:
+                items.append(create_item(item_id))
+        return items
 
     def transfer_loot(self, winner: Actor, defeated: Actor) -> None:
         """
-        Mint dropped items (via roll_loot) into the winner's inventory.
+        Transfer both items and gold from defeated to winner.
         """
-        drops = self.roll_loot(defeated)
-        for item_obj, qty in drops:
-            # always quantity=qty, never auto-equip
-            winner.inventory.add_item(item_obj, quantity=qty, auto_equip=False)
+        # (1) Transfer items
+        items = self.roll_loot(defeated)
+        for item in items:
+            winner.inventory.add_item(item)
+            log.info("%s looted %s from %s.", winner.name, item.name, defeated.name)
 
-    def loot(self, killer: Actor, defeated: Actor) -> None:
-        """
-        Legacy alias: transfer_loot(killer, defeated) + gold logic.
-        """
-        # 1) Items
-        self.transfer_loot(killer, defeated)
-
-        # 2) Gold
+        # (2) Transfer gold
         gold_amt = 0
         if hasattr(defeated, "gold_min") and hasattr(defeated, "gold_max"):
             gm = getattr(defeated, "gold_min", 0)
@@ -146,7 +118,7 @@ class CombatCapabilities:
                 gold_amt = self.rng.randint(1, avail)
 
         if gold_amt:
-            killer.gold = getattr(killer, "gold", 0) + gold_amt
-            log.info("%s looted %d gold from %s.", killer.name, gold_amt, defeated.name)
+            winner.gold = getattr(winner, "gold", 0) + gold_amt
+            log.info("%s looted %d gold from %s.", winner.name, gold_amt, defeated.name)
         else:
             log.info("%s had no gold to drop.", defeated.name)

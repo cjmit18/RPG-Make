@@ -6,15 +6,12 @@
     "description": "Restores HP instantly.",
     "price": 25,
     "level": 1,
-    "duration": 1,
     "rarity": "common",
     "is_enchantable": false,
-    "effect": [
+    "effects": [
       {
-        "type": "InstantStatBuff",
-        "stat_name": "health",
-        "amount": { "min": 20, "max": 50 },
-        "duration": 0
+        "type": "Heal",
+        "amount": { "min": 20, "max": 50 }
       }
     ]
   },
@@ -27,12 +24,10 @@
     "level": 1,
     "rarity": "common",
     "is_enchantable": false,
-    "effect": [
+    "effects": [
       {
-        "type": "InstantStatBuff",
-        "stat_name": "mana",
-        "amount": { "min": 20, "max": 50 },
-        "duration": 0
+        "type": "InstantMana",
+        "amount": { "min": 20, "max": 50 }
       }
     ]
   },
@@ -45,11 +40,11 @@
     "level": 1,
     "rarity": "common",
     "is_enchantable": false,
-    "effect": [
+    "effects": [
       {
-        "type": "InstantStatBuff",
+        "type": "TemporaryStatBuff",
         "stat_name": "stamina",
-        "amount": { "min": 20, "max": 50 },
+        "amount": 20,
         "duration": 0
       }
     ]
@@ -60,11 +55,10 @@
     "name": "Empower Potion",
     "description": "Temporarily increases attack by 5 for 3 turns.",
     "price": 10,
-    "duration": 3,
     "level": 1,
     "rarity": "common",
     "is_enchantable": false,
-    "effect": [
+    "effects": [
       {
         "type": "TemporaryStatBuff",
         "stat_name": "attack",
@@ -75,333 +69,480 @@
   },
   {
     "id": "iron_sword",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Iron Sword",
     "description": "A basic steel blade.",
     "price": 100,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 3, "max": 7 } },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 3, "max": 7 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "steel_sword",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Steel Sword",
     "description": "A sturdy sword made of steel.",
     "price": 200,
     "level": 2,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 5, "max": 10 }, "speed": 2 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 5, "max": 10 },
+      "speed": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "dagger",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Dagger",
     "description": "A sharp, quick blade.",
     "price": 80,
     "level": 1,
-    "slot": "weapon",
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
+    "slot": "weapon",
     "offhand": true,
-    "bonuses": { "attack": 2, "speed": 3 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 2, "max": 2 },
+      "speed": { "min": 3, "max": 3 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "knife",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Knife",
     "description": "A small, versatile knife.",
     "price": 40,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
     "offhand": true,
-    "bonuses": { "attack": { "min": 1, "max": 3 }, "speed": 1 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 1, "max": 3 },
+      "speed": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "bow",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Bow",
     "description": "A simple wooden bow for ranged attacks.",
     "price": 120,
     "level": 2,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 2, "max": 6 }, "speed": 1 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 2, "max": 6 },
+      "speed": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "spear",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Spear",
     "description": "A long weapon for thrusting attacks.",
     "price": 110,
     "level": 2,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 3, "max": 8 }, "speed": 1 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 3, "max": 8 },
+      "speed": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "staff",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Staff",
     "description": "A wooden staff used for casting spells.",
     "price": 90,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": true,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 1, "max": 3 }, "mana": 5 },
-    "damage_type": "magic"
+    "base_bonus_ranges": {
+      "attack": { "min": 1, "max": 3 },
+      "mana": { "min": 5, "max": 5 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
-{
+  {
     "id": "wooden_sword",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Wooden Sword",
     "description": "A basic wooden sword.",
     "price": 30,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 1, "max": 3 } },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 1, "max": 3 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "wooden_shield",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Wooden Shield",
     "description": "A basic wooden shield.",
     "price": 40,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "shield",
-    "bonuses": { "defense": 2 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "defense": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
-
   {
     "id": "shield",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Shield",
     "description": "A basic wooden shield.",
     "price": 50,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "shield",
-    "bonuses": { "defense": 1 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "defense": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "plate_armor",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Plate Armor",
     "description": "Heavy armor made of metal plates.",
     "price": 300,
     "level": 3,
     "grade": 2,
-    "rarity": "rare",
+    "rarity": "RARE",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 5, "stamina": 3 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "defense": { "min": 5, "max": 5 },
+      "stamina": { "min": 3, "max": 3 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "knights_armor",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Knight's Armor",
     "description": "Sturdy armor worn by knights.",
     "price": 250,
     "level": 2,
     "grade": 1,
-    "rarity": "uncommon",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 4, "stamina": 2 }
+    "base_bonus_ranges": {
+      "defense": { "min": 4, "max": 4 },
+      "stamina": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
-    {
+  {
     "id": "mage_robe",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Mage's Robe",
     "description": "A robe that enhances magical abilities.",
     "price": 200,
     "level": 2,
     "grade": 1,
-    "rarity": "uncommon",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 3, "mana": 5 }
+    "base_bonus_ranges": {
+      "defense": { "min": 3, "max": 3 },
+      "mana": { "min": 5, "max": 5 }
     },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
+  },
   {
     "id": "leather_armor",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Leather Armor",
     "description": "Light protective armor.",
     "price": 75,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 2 }
+    "base_bonus_ranges": {
+      "defense": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "chainmail_armor",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Chainmail Armor",
     "description": "Armor made of interlinked metal rings.",
     "price": 150,
     "level": 2,
     "grade": 1,
-    "rarity": "uncommon",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 4, "stamina": 1 }
+    "base_bonus_ranges": {
+      "defense": { "min": 4, "max": 4 },
+      "stamina": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "tattered_robe",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Tattered Robe",
     "description": "A worn robe providing minimal protection.",
     "price": 30,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "armor",
-    "bonuses": { "defense": 1, "mana": 2 }
+    "base_bonus_ranges": {
+      "defense": { "min": 1, "max": 1 },
+      "mana": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "iron_helmet",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Iron Helmet",
     "description": "A sturdy helmet made of iron.",
     "price": 80,
     "level": 2,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "head",
-    "bonuses": { "defense": 3 }
+    "base_bonus_ranges": {
+      "defense": { "min": 3, "max": 3 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "leather_boots",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Leather Boots",
     "description": "Light boots for mobility.",
     "price": 40,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "feet",
-    "bonuses": { "speed": 2 }
+    "base_bonus_ranges": {
+      "speed": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "ruby_band",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Ruby Band",
     "description": "A ring imbued with fire energy.",
     "price": 50,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "ring",
-    "bonuses": { "attack": 2 }
+    "base_bonus_ranges": {
+      "attack": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "emerald_loop",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Emerald Loop",
     "description": "A ring set with a protective emerald.",
     "price": 75,
     "level": 2,
     "grade": 1,
-    "rarity": "uncommon",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "ring",
-    "bonuses": { "defense": 3 }
+    "base_bonus_ranges": {
+      "defense": { "min": 3, "max": 3 }
+    },
+    "raw_damage_map": {},
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "goblin_dagger",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Goblin Dagger",
     "description": "A quick, lightweight dagger.",
     "price": 60,
     "level": 1,
     "grade": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 2, "max": 5 }, "speed": 2 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 2, "max": 5 },
+      "speed": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "goblin_spear",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Goblin Spear",
     "description": "A crude spear used by goblins.",
     "price": 90,
     "level": 2,
     "grade": 1,
-    "rarity": "uncommon",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 3, "max": 7 }, "speed": 1 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 3, "max": 7 },
+      "speed": { "min": 1, "max": 1 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "orc_axe",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Orc Axe",
     "description": "A heavy axe wielded by orcs.",
     "price": 150,
     "level": 3,
     "grade": 2,
-    "rarity": "rare",
+    "rarity": "RARE",
     "is_enchantable": false,
     "slot": "weapon",
-    "bonuses": { "attack": { "min": 5, "max": 10 }, "stamina": 2 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "attack": { "min": 5, "max": 10 },
+      "stamina": { "min": 2, "max": 2 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   },
   {
     "id": "orc_shield",
-    "type": "equipment",
+    "type": "equipable",
     "name": "Orc Shield",
     "description": "A sturdy shield made from orcish materials.",
     "price": 120,
     "level": 3,
     "grade": 2,
-    "rarity": "rare",
+    "rarity": "RARE",
     "is_enchantable": false,
     "slot": "shield",
-    "bonuses": { "defense": 4 },
-    "damage_type": "physical"
+    "base_bonus_ranges": {
+      "defense": { "min": 4, "max": 4 }
+    },
+    "raw_damage_map": {
+      "physical": { "min": 1, "max": 3 }
+    },
+    "percent_bonuses": {},
+    "passive_Effects": []
   }
 ]
-

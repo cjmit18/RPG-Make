@@ -1,15 +1,15 @@
-from enum import Enum
+from enum import Enum, auto
 class DamageType(Enum):
-    NONE = 0
-    PHYSICAL = 1
-    FIRE = 2
-    COLD = 3
-    LIGHTNING = 4
-    POISON = 5
-    ARCANE = 6
-    HOLY = 7
-    DARK = 8
-    MAGIC = 9
+    NONE = auto()
+    PHYSICAL = auto()
+    FIRE = auto()
+    COLD = auto()
+    LIGHTNING = auto()
+    POISON = auto()
+    ARCANE = auto()
+    HOLY =  auto()
+    DARK = auto()
+    MAGIC =  auto()
     # Add more damage types as needed
 
     @classmethod

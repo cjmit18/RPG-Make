@@ -1,16 +1,32 @@
 # game_sys/effects/unlock.py
-from typing import Any
-class UnlockEffect:
+
+from typing import Any, Dict
+from game_sys.effects.base import Effect
+
+
+class UnlockEffect(Effect):
     """
-    Allows opening locked chests/doors. Implementation depends on your world logic.
+    Allows opening locked chests/doors. JSON:
+      {
+        "type": "Unlock",
+        "target_type": "<identifier_of_lock>"
+      }
     """
 
     def __init__(self, target_type: str) -> None:
         self.target_type = target_type
 
-    def apply(self, caster: Any, target: Any) -> None:
-        # E.g. if target is a chest, set target.locked = False
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "UnlockEffect":
+        target_type = data.get("target_type", "")
+        return cls(target_type)
+
+    def apply(self, caster: Any, target: Any, combat_engine: Any) -> str:
+        """
+        Attempts to set target.locked = False. Returns success/failure.
+        """
         try:
             setattr(target, "locked", False)
+            return f"{caster.name} unlocks {self.target_type}."
         except Exception:
-            pass
+            return f"{caster.name} failed to unlock {self.target_type}."

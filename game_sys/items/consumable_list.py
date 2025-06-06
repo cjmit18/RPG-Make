@@ -1,6 +1,6 @@
 # game_sys/items/consumable_list.py
 
-from .item_base import Consumable
+from .item_base import ConsumableItem
 
-class Consumable(Consumable):
+class Consumable(ConsumableItem):
     pass

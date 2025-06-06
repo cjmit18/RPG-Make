@@ -5,7 +5,7 @@
     "description": "A basic class with balanced stats, suitable for beginners.",
     "base_stats": 
     {
-    "attack": 0, 
+    "attack": 3, 
     "defense": 3, 
     "speed": 3, 
     "health": 5, 
@@ -96,7 +96,7 @@
       "physical": 1.5
     },
     "resistance": {
-      "physical": 2.0
+      "physical": 0.2
     }
   },
   {
@@ -111,7 +111,13 @@
       "mana": 0, 
       "stamina": 8
     },
-    "starting_items": ["orc_axe", "orc_shield"]
+    "starting_items": ["orc_axe", "orc_shield"],
+    "weakness": {
+      "physical": 1.5
+    },
+    "resistance": {
+      "physical": 0.2
+    }
   },
   {
     "id": "dummy",
@@ -125,6 +131,13 @@
       "mana": 0, 
       "stamina": 0, 
       "intellect": 0
+    },
+    "starting_items": [],
+    "weakness": {
+      "physical": 0
+    },
+    "resistance": {
+      "physical": 0
     }
   }
 ]

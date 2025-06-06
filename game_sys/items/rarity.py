@@ -1,12 +1,14 @@
-from enum import Enum
+from enum import Enum, auto
 
 class Rarity(Enum):
-    COMMON = 0
-    UNCOMMON = 1
-    RARE = 2
-    EPIC = 3
-    LEGENDARY = 4
-    MYTHIC = 5
+    COMMON = auto()
+    UNCOMMON = auto()
+    RARE = auto()
+    EPIC = auto()
+    LEGENDARY = auto()
+    MYTHIC = auto()
+    EXOTIC = auto()
+    DIVINE = auto()
 
     @classmethod
     def get_all_rarities(cls):

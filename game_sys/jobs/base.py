@@ -21,6 +21,7 @@ class Job:
         "defense": 0,
         "speed": 0,
         "intellect": 0,
+        "magic_power": 0,
     }
 
     starting_items: List[object] = []

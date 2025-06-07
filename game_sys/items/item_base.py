@@ -10,7 +10,7 @@ from game_sys.core.experience_functions import Levels
 
 if TYPE_CHECKING:
     # Only for type hints; actual imports happen inside methods
-    from game_sys.core.actor import Actor
+    from game_sys.character.actor import Actor
     from game_sys.effects.base import Effect
 
 

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game_sys.core.actor import Actor
+    from game_sys.character.actor import Actor
     from game_sys.combat.combat import CombatCapabilities
 
 

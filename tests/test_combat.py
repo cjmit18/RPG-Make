@@ -3,7 +3,7 @@
 import pytest
 import random
 
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 from game_sys.character.character_creation import Enemy, Player
 from game_sys.combat.combat import CombatCapabilities
 

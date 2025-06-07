@@ -94,9 +94,6 @@ class Actor:
         """
         return list(self.statuses.values())
 
-    # ------------------------------------------------------------------------
-    # 1) Status & Damage Helpers
-    # ------------------------------------------------------------------------
     def add_status(self, status_obj: Any) -> None:
         """
         Attach a new StatusEffect to this actor. Logs the applied modifiers and duration.
@@ -131,40 +128,57 @@ class Actor:
                 pass
             log.info("%s's status '%s' has expired.", self.name, name)
 
-    def take_damage(self, amount: int) -> None:
+    def take_damage(self, amount: int, damage_type: Optional[DamageType] = None) -> None:
         """
-        Reduce current_health by 'amount', clamped at 0. If reduced to 0, log defeat.
+        Apply incoming damage:
+          - Adjust for weakness & resistance (combined)
+          - Apply DamageReduction status
+          - Halve if defending
+          - Clamp at zero and log defeat
         """
-        # Check for DamageReduction status
+        # 1) Weakness & Resistance
+        if damage_type:
+            resist = self.resistance.get(damage_type, 1.0)
+            weak = self.weakness.get(damage_type, 1.0)
+            multiplier = resist * weak
+            original = amount
+            amount = round(amount * multiplier)
+            if  multiplier != 1.0:
+                log.info(
+                    "%s is hit with %s damage. Multiplier: %.2f× (from %d to %d)",
+                    self.name, damage_type.name, multiplier, original, amount
+            )
+            else:
+                log.info(
+                    "%s is hit with %s damage.",
+                    self.name, damage_type.name
+                )
+
+        # 2) DamageReduction effect
         dr_effect = self.statuses.get("DamageReduction")
         if dr_effect:
             reduction_pct = dr_effect.stat_mods.get("DamageReduction", 0)
             reduced_amount = amount * (100 - reduction_pct) // 100
             log.info(
                 "%s's DamageReduction (%d%%) reduces incoming from %d to %d.",
-                self.name,
-                reduction_pct,
-                amount,
-                reduced_amount,
+                self.name, reduction_pct, amount, reduced_amount
             )
             amount = reduced_amount
 
-        # If defending, half incoming damage
+        # 3) Defending halves damage
         if self.defending:
-            amount = amount // 2
+            amount //= 2
             self.defending = False
             log.info("%s defended, halving damage to %d.", self.name, amount)
 
-        # Apply damage
+        # 4) Apply to health
         self.current_health = max(0, self.current_health - amount)
         log.info(
             "%s takes %d damage; HP is now %d/%d.",
-            self.name,
-            amount,
-            self.current_health,
-            self.max_health,
+            self.name, amount, self.current_health, self.max_health
         )
 
+        # 5) Defeat check
         if self.current_health == 0:
             log.info("%s has been defeated!", self.name)
 
@@ -214,7 +228,7 @@ class Actor:
         )
 
     # ------------------------------------------------------------------------
-    # 2) Resource Restoration & Stat Placeholder
+    # Resource Restoration & Stat Placeholder
     # ------------------------------------------------------------------------
     def restore_all(self) -> None:
         """
@@ -237,88 +251,66 @@ class Actor:
         Recalculate derived stats (e.g., after leveling or equipment change).
         Subclasses may override this.
         """
-        # Default implementation does nothing; jobs may override
         pass
 
     # ------------------------------------------------------------------------
-    # 3) Stat Properties (base + equipment + status modifiers)
+    # Stat Properties (base + equipment + status modifiers)
     # ------------------------------------------------------------------------
     @property
     def attack(self) -> int:
         """
-        Calculate this Actor’s total attack:
-          - Base from stats.effective()["attack"] (might be 0 for commoner)
-          - + equipped weapon’s bonuses["attack"] if a weapon is equipped
-          - + any active status_effects’ stat_mods["attack"]
-          - If still zero (no weapon, no base), fall back to unarmed base of 1.
+        Calculate total attack:
+          - Base from stats.effective()["attack"]
+          - + equipped weapon bonus
+          - + status_effect modifiers
+          - Falls back to 1 if still zero
         """
-        # 1) Base attack from effective stats
         base = self.stats.effective().get("attack", 0)
-
-        # 2) Add weapon’s attack bonus, if any
-        from game_sys.items.item_base import EquipableItem
         weapon = self.inventory.equipment.get("weapon")
         if isinstance(weapon, EquipableItem):
             base += weapon.bonuses.get("attack", 0)
-
-        # 3) Add status‐effect modifiers
-        bonus = 0
         for status in self.status_effects:
-            bonus += status.stat_mods.get("attack", 0)
+            base += status.stat_mods.get("attack", 0)
+        return base if base > 0 else 1
 
-        total = base + bonus
-
-        # 4) If total is still zero (i.e. unarmed commoner), give them a minimal unarmed attack
-        if total <= 0:
-            total = 1
-
-        return total
     @property
     def defense(self) -> int:
         """
-        Calculate total defense:
-          - Base from stats.effective()["defense"]
-          - + equipped armor’s bonuses["defense"] if armor is equipped
-          - + any active status_effects’ stat_mods["defense"]
+        Calculate total defense.
         """
         base = self.stats.effective().get("defense", 0)
-
         armor = self.inventory.equipment.get("armor")
         if isinstance(armor, EquipableItem):
             base += armor.bonuses.get("defense", 0)
-
-        bonus = 0
         for status in self.status_effects:
-            bonus += status.stat_mods.get("defense", 0)
-
-        return base + bonus
+            base += status.stat_mods.get("defense", 0)
+        return base
 
     @property
     def speed(self) -> int:
         """
-        Calculate total speed:
-          - Base from stats.effective()["speed"]
-          - + equipped boots’ bonuses["speed"] if boots are equipped
-          - + any active status_effects’ stat_mods["speed"]
+        Calculate total speed.
         """
         base = self.stats.effective().get("speed", 0)
-
         boots = self.inventory.equipment.get("boots")
         if isinstance(boots, EquipableItem):
             base += boots.bonuses.get("speed", 0)
-
-        bonus = 0
         for status in self.status_effects:
-            bonus += status.stat_mods.get("speed", 0)
-
-        return base + bonus
+            base += status.stat_mods.get("speed", 0)
+        return base
 
     @property
     def max_health(self) -> int:
+        """
+        Return the maximum health based on effective stats.
+        """
         return self.stats.effective().get("health", 0)
 
     @property
     def health(self) -> int:
+        """
+        Return current health, clamped between 0 and max_health.
+        """
         return self.current_health
 
     @health.setter
@@ -348,30 +340,37 @@ class Actor:
     @stamina.setter
     def stamina(self, value: int) -> None:
         self.current_stamina = max(0, min(value, self.max_stamina))
-    
+
     @property
     def intellect(self) -> int:
         """
-        Calculate total intellect:
-          - Base from stats.effective()["intellect"]
-          - + any active status_effects’ stat_mods["intellect"]
+        Calculate total intellect.
         """
         base = self.stats.effective().get("intellect", 0)
-
-        bonus = 0
         for status in self.status_effects:
-            bonus += status.stat_mods.get("intellect", 0)
+            base += status.stat_mods.get("intellect", 0)
+        return base
 
-        return base + bonus
-    
+    @property
+    def magic_power(self) -> int:
+        """
+        Calculate total magic power.
+        """
+        return self.stats.effective().get("magic_power", 0) + self.intellect
+
+    @property
+    def level(self) -> int:
+        """
+        Return the current level.
+        """
+        return self.levels.lvl
 
     # ------------------------------------------------------------------------
-    # 4) Job Initialization & Helpers
+    # Job Initialization & Helpers
     # ------------------------------------------------------------------------
     def assign_job_by_id(self, job_id: str) -> None:
         """
         Assign a job by its string ID (e.g., 'knight', 'mage').
-        Uses lazy imports to avoid circular dependencies.
         """
         from game_sys.jobs.factory import create_job
         from game_sys.jobs.base import Job
@@ -384,64 +383,48 @@ class Actor:
             log.warning("Failed to assign job '%s' to %s: %s", job_id, self.name, e)
             return
 
-        # 1) Overwrite stats with this job’s base stats (defaulting missing keys to 0)
-        base_stats = getattr(self.job, "base_stats", {})
-        all_stats = {stat: base_stats.get(stat, 0) for stat in Job.base_stats.keys()}
+        # Overwrite stats with this job’s base stats
+        base = getattr(self.job, "base_stats", {})
+        all_stats = {k: base.get(k, 0) for k in Job.base_stats.keys()}
         self.stats = Stats(all_stats)
 
-        # 2) Restore resources to full (based on new stats)
+        # Restore and auto-equip
         self.restore_all()
-
-        # 3) Auto-equip any starting_items
-        for item_obj in getattr(self.job, "starting_items", []):
-            self.inventory.add_item(item_obj, quantity=1)
-            if isinstance(item_obj, EquipableItem):
-                self.inventory.equip_item(item_obj.id)
+        for item in getattr(self.job, "starting_items", []):
+            self.inventory.add_item(item, 1)
+            if isinstance(item, EquipableItem):
+                self.inventory.equip_item(item.id)
 
     def remove_job(self) -> None:
         """
-        Remove the current job’s starting items, clear job, zero out stats,
-        and reset current resources.
+        Remove current job, unequip & remove starting items, zero stats.
         """
+        from game_sys.jobs.base import Job
+
         if not self.job:
             return
 
-        from game_sys.jobs.base import Job
+        old = self.job
+        for slot, eid in list(self.inventory._equipped_items.items()):
+            if eid in {i.id for i in getattr(old, "starting_items", [])}:
+                self.inventory.unequip_item(slot)
 
-        old_job = self.job
+        for itm in getattr(old, "starting_items", []):
+            self.inventory.remove_item(itm.id, self.inventory._items.get(itm.id, {}).get("quantity", 0))
 
-        # 1) Unequip & remove all of old_job’s starting_items
-        for item_obj in getattr(old_job, "starting_items", []):
-            for slot, equipped_id in list(self.inventory._equipped_items.items()):
-                if equipped_id == item_obj.id:
-                    self.inventory.unequip_item(slot)
-            entry = self.inventory._items.get(item_obj.id)
-            if entry:
-                try:
-                    self.inventory.remove_item(item_obj.id, quantity=entry["quantity"])
-                except KeyError:
-                    pass
-
-        # 2) Clear job reference
         self.job = None
-
-        # 3) Zero out all base stats
-        zeroed = {stat: 0 for stat in Job.base_stats.keys()}
+        zeroed = {k: 0 for k in Job.base_stats.keys()}
         self.stats = Stats(zeroed)
-
-        # 4) Reset current resources to match zeroed stats
         self.restore_all()
 
     def get_weakness_multiplier(self, damage_type: DamageType) -> float:
         """
         Get the weakness multiplier for a specific damage type.
-        Returns 1.0 if no weakness is defined for that type.
         """
         return self.weakness.get(damage_type, 1.0)
 
     def get_resistance_multiplier(self, damage_type: DamageType) -> float:
         """
         Get the resistance multiplier for a specific damage type.
-        Returns 1.0 if no resistance is defined for that type.
         """
         return self.resistance.get(damage_type, 1.0)

@@ -1,0 +1,7 @@
+# game_sys/core/stat_keys.py
+from enum import Enum
+
+class StatKey(str, Enum):
+    STRENGTH   = "strength"
+    DEXTERITY  = "dexterity"
+    INTELLECT  = "intellect"

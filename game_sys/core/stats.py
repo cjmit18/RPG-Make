@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, Literal, Tuple
 
-StatName = Literal["attack", "defense", "speed", "health", "mana", "stamina", "intellect"]
+StatName = Literal["attack", "defense", "speed", "health", "mana", "stamina", "intellect", "magic_power"]
 
 
 @dataclass
@@ -22,7 +22,7 @@ class Stats:
     @staticmethod
     def stat_keys() -> Tuple[StatName, ...]:
         """Return the keys for all stats in a tuple."""
-        return ("attack", "defense", "speed", "health", "mana", "stamina", "intellect")
+        return ("attack", "defense", "speed", "health", "mana", "stamina", "intellect", "magic_power")
 
     def effective(self) -> Dict[StatName, int]:
         """Calculate the effective stats by combining base, simple modifiers, and named modifiers.

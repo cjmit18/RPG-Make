@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
 
 from game_sys.effects.base import Effect
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 from game_sys.skills.base import Skill
 
 
@@ -32,6 +32,7 @@ class SkillRecord:
         sp_cost: int = 1,
         min_level: int = 1,
         prereq_skills: Optional[List[str]] = None,
+        requirements: Dict[str, Any] = None,
     ) -> None:
         self.skill_id: str = skill_id
         self.name: str = name
@@ -43,7 +44,7 @@ class SkillRecord:
         self.sp_cost: int = sp_cost
         self.min_level: int = min_level
         self.prereq_skills: Set[str] = set(prereq_skills or [])
-
+        self.requirements: Dict[str, int] = requirements or {}
     def can_character_learn(
         self,
         actor: Actor,
@@ -62,6 +63,11 @@ class SkillRecord:
             return False
         if not self.prereq_skills.issubset(known_skills):
             return False
+        for stat_name, threshold in self.requirements.items():
+            if not hasattr(actor, stat_name):
+                raise ValueError(f"Actor does not have stat '{stat_name}'")
+            if getattr(actor, stat_name , 0) < threshold:
+                return False
         return True
 
     def build_skill_instance(self) -> Skill:
@@ -76,6 +82,7 @@ class SkillRecord:
             stamina_cost=self.stamina_cost,
             cooldown=self.cooldown,
             effects=list(self.effects),
+            requirements=self.requirements,
         )
 
     @classmethod
@@ -110,6 +117,7 @@ class SkillRecord:
             spc    = entry.get("sp_cost", 1)
             minl   = entry.get("min_level", 1)
             prereqs = entry.get("prereq_skills", [])
+            requirements = entry.get("requirements", {})
 
             # Validate required top‐level fields:
             if not isinstance(sid, str):
@@ -128,6 +136,8 @@ class SkillRecord:
                 raise ValueError(f"SkillRecord requires integer 'min_level', got {minl!r}")
             if not isinstance(prereqs, list) or not all(isinstance(x, str) for x in prereqs):
                 raise ValueError(f"SkillRecord requires list-of-strings 'prereq_skills', got {prereqs!r}")
+            if not isinstance(requirements, dict):
+                raise ValueError(f"SkillRecord requires dict 'requirements', got {requirements!r}")
 
             # 3) Construct the SkillRecord
             rec = SkillRecord(
@@ -141,6 +151,7 @@ class SkillRecord:
                 sp_cost=spc,
                 min_level=minl,
                 prereq_skills=prereqs,
+                requirements=requirements,
             )
             records.append(rec)
 

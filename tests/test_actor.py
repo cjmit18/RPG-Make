@@ -1,5 +1,5 @@
 import pytest
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 from game_sys.jobs.factory import create_job
 
 def test_take_damage_clamps_and_reports_defeat(capfd):

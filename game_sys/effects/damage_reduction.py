@@ -1,7 +1,7 @@
 # game_sys/effects/damage_reduction.py
 from __future__ import annotations
 from typing import Optional
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 
 class DamageReductionEffect:
     """

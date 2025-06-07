@@ -13,6 +13,9 @@
         "duration": 5
       }
     ],
+    "requirements": {
+      "intellect": 1
+        },
     "sp_cost": 1,
     "min_level": 1,
     "prereq_skills": []
@@ -21,24 +24,26 @@
     "skill_id": "fireball",
     "name": "Fireball",
     "description": "Hurl a blazing orb at your foe.",
-    "mana_cost": 10,
+    "mana_cost": 5,
     "stamina_cost": 0,
     "cooldown": 3,
     "effects": [
       {
         "type": "Damage",
         "damage": {
-          "FIRE": 12,
-          "PHYSICAL": 3
+          "PHYSICAL": 10
         },
-        "stat_name": "intellect",
-        "multiplier": 2.0,
-        "crit_chance": 0.1,
+        "stat_name": "magic_power",
+        "multiplier": 1.5,
+        "crit_chance": 0.2,
         "variance": 1.0
       }
     ],
+    "requirements": {
+      "intellect": 3
+        },
     "sp_cost": 2,
-    "min_level": 1,
+    "min_level": 2,
     "prereq_skills": []
   },
   {
@@ -53,14 +58,17 @@
         "type": "Damage",
         "damage": {
           "COLD": 8,
-          "PHYSICAL": 4
+          "MAGIC": 4
         },
-        "stat_name": "intellect",
+        "stat_name": "magic_power",
         "multiplier": 1.5,
         "crit_chance": 0.1,
         "variance": 1.0
       }
     ],
+    "requirements": {
+      "intellect": 2
+        },
     "sp_cost": 2,
     "min_level": 2,
     "prereq_skills": []
@@ -78,10 +86,15 @@
         "damage": {
           "PHYSICAL": 25
         },
+        "stat_name": "attack",
+        "crit_chance": 0.5,
         "multiplier": 2.0,
         "requires_status": "Invisible"
       }
     ],
+    "requirements": {
+      "intellect": 1
+        },
     "sp_cost": 2,
     "min_level": 3,
     "prereq_skills": ["stealth"]

@@ -9,7 +9,7 @@ to CombatEngine.
 from typing import List, Union, Optional, Callable
 import random
 
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 from game_sys.combat.combat_engine import CombatEngine
 
 

@@ -6,6 +6,7 @@ from game_sys.skills.learning import SkillRegistry
 from game_sys.inventory.inventory import Inventory
 from game_sys.items.factory import create_item
 from game_sys.combat.encounter import Encounter, CombatEngine
+from game_sys.core.damage_types import DamageType
 
 log = get_logger(__name__)
 setup_logging()
@@ -30,7 +31,7 @@ def view_character_test():
     log.info("=== Character View Test ===")
     health = create_item("health_potion")
     
-    log.info(person.intellect)  # Should show 20 SP available
+    log.info(person)  # Should show 20 SP available
     #log.info(character)  # __str__ will show name, level, stats, inventory, etc.
 
 
@@ -42,7 +43,7 @@ def learning_system_test():
     log.info("=== Learning System Test ===")
 
     # 1) Create a Player at level 1 with no SP initially
-    player = create_character("Player", name="Mage", level=100, job_id="knight")
+    player = create_character("Player", name="Mage", level=2, job_id="mage")
     log.info("Player created: %s", player.name)
 
     # 2) Show unspent SP (should be zero)
@@ -50,7 +51,7 @@ def learning_system_test():
 
     # 3) Award 2 skill points manually (simulate level-ups or rewards)
     player.learning.add_sp(20)
-    log.info("Unspent SP after awarding 2 points: %d", player.learning.unspent_sp())
+    log.info("Unspent SP after awarding 20 points: %d", player.learning.unspent_sp())
 
     # 4) List all skills the player can learn right now
     available = player.learning.available_to_learn()
@@ -72,9 +73,8 @@ def learning_system_test():
     log.info("Remaining SP: %d", player.learning.unspent_sp())
 
     # 6) Create a dummy Enemy to test casting
-    enemy = create_character("Enemy", name="Training Dummy", level=1)
-    enemy.assign_job_by_id("dummy")  # Assign a dummy job for testing
-    
+    enemy = create_character("NPC", name="Training Dummy", level= 1, job_id="dummy")
+    enemyhelth = enemy.current_health
     log.info("Enemy starting health: %d", enemy.current_health)
 
     # 7) Attempt to cast each known skill on the enemy
@@ -102,7 +102,7 @@ def learning_system_test():
                  to_unlearn, player.learning.unspent_sp())
         log.info("Known skills now: %s", player.learning.get_known_skills())
 
-    log.info(f"Final Player State: {player}")
+    log.info(f"Final Player State{enemy}:")
 def inventory_system_test():
     """
     Demonstrate inventory operations: adding items, auto-equipping,
@@ -138,7 +138,8 @@ def inventory_system_test():
     log.info("Added and auto-equipped:")
 
     # 6) Simulate taking damage, then use a health potion
-    hero.take_damage(10)
+    hero.take_damage(10
+                      )
     before_hp = hero.current_health
     log.info("Hero's health before potion: %d", before_hp)
     hero.inventory.use_item(health_potion)
@@ -201,4 +202,7 @@ def combat_system_test():
     log.info("Player post-combat stats: %s", player)
 if __name__ == "__main__":
     # Run each test in sequence
-    inventory_system_test()
+    #view_character_test()
+    #learning_system_test()
+    #inventory_system_test()
+    combat_system_test()

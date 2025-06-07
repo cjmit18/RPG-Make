@@ -1,7 +1,7 @@
 # game_sys/skills/skill_base.py
 
-from typing import List, Any
-from game_sys.core.actor import Actor
+from typing import List, Any, Dict, Optional
+from game_sys.character.actor import Actor
 from game_sys.combat.combat import CombatCapabilities
 
 class Skill:
@@ -18,6 +18,7 @@ class Skill:
         stamina_cost: int,
         cooldown: int,
         effects: List[Any],  # Actually List[Effect]
+        requirements: Dict[str, int] = None,
     ) -> None:
         self.id: str = skill_id
         self.name: str = name
@@ -27,15 +28,20 @@ class Skill:
         self.cooldown: int = cooldown
         self.effects: List[Any] = list(effects)
         self._current_cooldown: int = 0
+        self.requirements: Dict[str, int] = requirements or {}
 
     def can_cast(self, caster: Actor) -> bool:
         """
         Return True if caster has enough resources and no cooldown.
         """
+        
         if caster.current_mana < self.mana_cost or caster.current_stamina < self.stamina_cost:
             return False
         if self._current_cooldown > 0:
             return False
+        for req, amount in self.requirements.items():
+            if getattr(caster, req, 0) < amount:
+                return False
         return True
 
     def use(self, caster: Actor, target: Actor, combat_engine: CombatCapabilities) -> str:

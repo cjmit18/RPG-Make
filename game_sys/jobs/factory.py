@@ -115,7 +115,7 @@ def create_job(
     # 2) Read "base_stats" from JSON, default‐to‐0 for any missing stat
     # ------------------------------------------------------------------------
     raw_stats = template.get("base_stats", {})
-    allowed_keys = ["health", "attack", "defense", "speed", "mana", "stamina", "intellect"]
+    allowed_keys = ["health", "attack", "defense", "speed", "mana", "stamina", "intellect", "magic_power"]
     stats_mods: Dict[str, int] = {}
     for stat_name in allowed_keys:
         base_val = int(raw_stats.get(stat_name, 0))

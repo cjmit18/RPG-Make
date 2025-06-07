@@ -1,7 +1,7 @@
 # game_sys/effects/status.py
 
 from typing import Dict, Any
-from game_sys.core.actor import Actor
+from game_sys.character.actor import Actor
 from game_sys.combat.combat import CombatCapabilities
 from game_sys.effects.base import Effect
 

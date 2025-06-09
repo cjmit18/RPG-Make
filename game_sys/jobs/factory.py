@@ -1,138 +1,97 @@
-# game_sys/jobs/factory.py
-
-"""
-Job factory that reads all job definitions from a JSON file under
-`game_sys/jobs/data/jobs.json`. Supports both object and array formats.
-Each template must include:
-  - "base_stats": a dict mapping stat names → base value at level 1.
-       (Valid keys: "health", "attack", "defense", "speed", "mana", "stamina", "intellect")
-  - "starting_items": a list of item_id strings (optional)
-  - "id" (or "job_id" or "name"): the job’s string ID
-"""
+# File: game_sys/jobs/factory.py
 
 import json
 import random
+import copy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from game_sys.skills.learning import SkillRegistry
+
 from game_sys.items.factory import create_item
+from game_sys.items.rarity import Rarity
+from game_sys.core.scaler import scale_stat, scale_damage_map
+from game_sys.jobs.base import Job
 
-# --------------------------------------------------------------------------
-# 1) Load raw JSON; handle both "dict" and "list" formats
-# --------------------------------------------------------------------------
-_JOBS_PATH = Path(__file__).parent / "data" / "jobs.json"
-try:
-    _raw_data = json.loads(_JOBS_PATH.read_text(encoding="utf-8"))
-    if isinstance(_raw_data, list):
-        _RAW_JOB_TEMPLATES: Dict[str, Dict[str, Any]] = {}
-        for entry in _raw_data:
-            key = entry.get("id") or entry.get("job_id") or entry.get("name")
-            if isinstance(key, str) and entry:
-                _RAW_JOB_TEMPLATES[key] = entry
-    elif isinstance(_raw_data, dict):
-        _RAW_JOB_TEMPLATES = _raw_data  # type: ignore[var-annotated]
-    else:
-        _RAW_JOB_TEMPLATES = {}
-except FileNotFoundError:
-    _RAW_JOB_TEMPLATES: Dict[str, Dict[str, Any]] = {}
+# Grade-based multiplier modifiers
+_GRADE_MODIFIERS: Dict[int, float] = {
+    1: 1.0,
+    2: 1.1,
+    3: 1.25,
+    4: 1.5,
+    5: 2.0,
+}
 
 
-class Job:
+def load_templates() -> Dict[str, Any]:
     """
-    Minimal Job object holding:
-      - stats_mods: Dict[str, int]   (final rolled stats at this level)
-      - starting_items: List[Any]    (instantiated item objects)
-      - name: str                    (job_id)
+    Load all job templates from JSON files under game_sys/jobs/data/.
+    Returns a dict mapping job_id to its template.
     """
+    templates: Dict[str, Any] = {}
+    data_dir = Path(__file__).parent / "data"
+    for json_file in data_dir.glob("*.json"):
+        with json_file.open(encoding="utf-8") as f:
+            entries = json.load(f)
+            for entry in entries:
+                jid = entry.get("id") or entry.get("job_id") or entry.get("name")
+                templates[jid] = entry
+    return templates
 
-    def __init__(
-        self,
-        stats_mods: Dict[str, int],
-        starting_items: List[Any],
-        name: str,
-    ) -> None:
-        self.stats_mods: Dict[str, int] = stats_mods
-        self.starting_items: List[Any] = starting_items
-        self.name: str = name
-
-
-def list_job_ids() -> List[str]:
-    """Return a list of all valid job IDs (keys from JSON)."""
-    return list(_RAW_JOB_TEMPLATES.keys())
+_TEMPLATES = load_templates()
 
 
-def roll_stat_triangular(
-    base: int,
-    level: int,
-    rng: random.Random,
-    low_pct: float = 0.5,
-    high_pct: float = 1.0,
-    mode_pct: float = 0.8,
-) -> int:
-    """
-    Triangular‐distribution roll between [base * level * low_pct, base * level * high_pct],
-    peaking (most likely) at base * level * mode_pct. Returns an int.
-
-    Args:
-        base: Base stat value at level 1.
-        level: Character level.
-        rng: A random.Random instance for reproducibility.
-        low_pct: Minimum percentage multiplier (default 0.5).
-        high_pct: Maximum percentage multiplier (default 1.0).
-        mode_pct: Mode percentage multiplier (default 0.8).
-
-    Returns:
-        Rolled stat as an integer.
-    """
-    low = int(base * level * low_pct)
-    high = int(base * level * high_pct)
-    mode = int(base * level * mode_pct)
-    return int(round(rng.triangular(low, high, mode)))
+def list_all_ids() -> List[str]:
+    """Return all defined job IDs."""
+    return list(_TEMPLATES.keys())
 
 
 def create_job(
     job_id: str,
     level: int,
-    rng: Optional[random.Random] = None,
+    grade: int = 1,
+    rarity: Rarity = Rarity.COMMON,
+    seed: Optional[int] = None,
+    rng: Optional[random.Random] = None
 ) -> Job:
     """
-    Instantiate a Job for `job_id` at the given `level`.
-
-      - Reads raw_stats from JSON under "base_stats" (missing keys → treated as 0).
-      - For each of the seven stats, does a triangular roll → final stat_mods[stat].
-      - Instantiates each starting item via create_item(item_id).
-
-    Raises:
-        KeyError: If `job_id` not found in JSON.
+    Instantiate a Job with scaled base stats and starting items.
+    - Rolls any min/max ranges in base_stats via RNG.
+    - Scales via scale_stat and applies grade modifiers.
     """
-    rng = rng or random.Random()
-    template = _RAW_JOB_TEMPLATES.get(job_id)
+    # Prepare RNG
+    if rng is None:
+        rng = random.Random(seed) if seed is not None else random.Random()
+
+    # Fetch and copy template
+    template = _TEMPLATES.get(job_id)
     if template is None:
-        available = ", ".join(list_job_ids())
-        raise KeyError(f"No job template for '{job_id}'. Available: {available}")
+        raise KeyError(f"No job template for id={job_id!r}")
+    templ = copy.deepcopy(template)
 
-    # ------------------------------------------------------------------------
-    # 2) Read "base_stats" from JSON, default‐to‐0 for any missing stat
-    # ------------------------------------------------------------------------
-    raw_stats = template.get("base_stats", {})
-    allowed_keys = ["health", "attack", "defense", "speed", "mana", "stamina", "intellect", "magic_power"]
-    stats_mods: Dict[str, int] = {}
-    for stat_name in allowed_keys:
-        base_val = int(raw_stats.get(stat_name, 0))
-        stats_mods[stat_name] = roll_stat_triangular(base_val, level, rng)
+    # Scale base stats
+    raw_stats = templ.get("base_stats", {})
+    scaled_stats: Dict[str, int] = {}
+    for stat_name, spec in raw_stats.items():
+        # Roll if spec is a dict range
+        if isinstance(spec, dict):
+            lo = int(spec.get("min", 0))
+            hi = int(spec.get("max", lo))
+            rolled = rng.randint(lo, hi) if hi >= lo else lo
+        else:
+            rolled = int(spec)
+        # Scale and apply grade multiplier
+        val = scale_stat(rolled, level, grade=grade, rarity=rarity)
+        val = int(val * _GRADE_MODIFIERS.get(grade, 1.0))
+        scaled_stats[stat_name] = val
 
-    # ------------------------------------------------------------------------
-    # 3) Instantiate starting_items (if any)
-    # ------------------------------------------------------------------------
-    starting_items: List[Any] = []
-    for item_id in template.get("starting_items", []):
-        if not isinstance(item_id, str):
-            continue
+    # Instantiate starting items
+    items: List[Any] = []
+    for item_id in templ.get("starting_items", []):
         try:
-            item = create_item(item_id)
-            starting_items.append(item)
+            items.append(create_item(item_id, seed=seed, rng=rng, level=level, grade=1, rarity=rarity))
+        # If create_item fails, it will raise an exception; we can handle it or skip
         except KeyError:
-            # Skip unknown item IDs silently
             continue
- 
-    return Job(stats_mods, starting_items, job_id)
+
+    # Finally, return a Job instance (adjust signature if needed by your Job class)
+    # Here we pass level and scaled_stats; your Job.__init__ may vary.
+    return Job(level=level, base_stats=scaled_stats, starting_items=items, job_id=job_id)

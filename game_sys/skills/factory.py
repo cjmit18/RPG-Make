@@ -1,66 +1,107 @@
-# game_sys/skills/skills.py
+# file: game_sys/skills/factory.py
 
-import json
 import os
+import json
+import copy
+import random
 from typing import Dict, Any, List, Optional
-from game_sys.items.scaler import scale_damage_map
+from logs.logs import get_logger
+log = get_logger(__name__)
+
 from game_sys.core.damage_types import DamageType
+from game_sys.items.rarity import Rarity
+from game_sys.core.scaler import scale_damage_map
 from game_sys.effects.base import Effect
 from game_sys.skills.base import Skill
 
+# Load skill templates from JSON
 _THIS_DIR = os.path.dirname(__file__)
 _SKILLS_JSON_PATH = os.path.join(_THIS_DIR, "data", "skills.json")
-
 with open(_SKILLS_JSON_PATH, "r", encoding="utf-8") as f:
     _skills_list: List[Dict[str, Any]] = json.load(f)
 
-_skill_defs: Dict[str, Dict[str, Any]] = {
-    entry["skill_id"]: entry for entry in _skills_list
+# Map skill_id → template dict
+_skill_defs: Dict[str, Dict[str, Any]] = {t["skill_id"]: t for t in _skills_list}
+
+# Grade-based multiplier modifiers
+_GRADE_MODIFIERS: Dict[int, float] = {
+    1: 1.0,
+    2: 1.1,
+    3: 1.25,
+    4: 1.5,
+    5: 2.0,
+    6: 2.5,
+    7: 3.0,
 }
 
 
-def create_skill(skill_id: str, level: Optional[int] = None) -> Skill:
+def create_skill(
+    skill_id: str,
+    level: Optional[int] = None,
+    grade: int = 1,
+    rarity: Rarity = Rarity.COMMON,
+    seed: Optional[int] = None,
+    rng: Optional[random.Random] = None
+) -> Skill:
     """
-    Instantiate a Skill, converting each JSON “effects” entry
-    into an Effect object via Effect.from_dict(...).
-    If `level` is provided, also scale any `damage_map` in the JSON.
+    Instantiate a Skill with optional scaling:
+    - `level`, `grade`, and `rarity` determine damage scaling.
+    - `seed` or `rng` for reproducible randomness in variable damage.
     """
+    # Determine RNG
+    if rng is None:
+        rng = random.Random(seed) if seed is not None else random.Random()
+
     template = _skill_defs.get(skill_id)
-    if not template:
+    if template is None:
         raise KeyError(f"Skill ID '{skill_id}' not found in skills.json.")
 
-    # (A) Parse each effect JSON dict into an Effect instance
+    # Deep copy to avoid mutating original
+    templ_copy = copy.deepcopy(template)
+
+    # Process and scale effects
     effect_objs: List[Effect] = []
-    for eff_data in template.get("effects", []):
-        effect_objs.append(Effect.from_dict(eff_data))
+    for eff_data in templ_copy.get("effects", []):
+        eff_copy = eff_data.copy()
+        if eff_copy.get("type") == "Damage" and level is not None:
+            raw_damage_spec = eff_copy.get("damage", {})
+            # Convert and roll raw damage per type
+            raw_dtype_map: Dict[DamageType, int] = {}
+            for dt_str, spec in raw_damage_spec.items():
+                dt = DamageType[dt_str.upper()]
+                if isinstance(spec, dict):
+                    lo = int(spec.get("min", 0))
+                    hi = int(spec.get("max", lo))
+                    val = rng.randint(lo, hi) if hi >= lo else lo
+                else:
+                    val = int(spec)
+                raw_dtype_map[dt] = val
 
-    # (B) Parse and SCALE raw damage_map (if present)
-    scaled_map: Dict[DamageType, int] = {}
-    raw_map_json: Dict[str, Any] = template.get("damage_map", {}) or {}
-    if raw_map_json and level is not None:
-        # Convert JSON-keys (e.g. "FIRE") → DamageType enums, values → ints
-        raw_dtype_map: Dict[DamageType, int] = {}
-        for dt_str, amt in raw_map_json.items():
-            try:
-                dt_enum = DamageType[dt_str.upper()]
-                raw_dtype_map[dt_enum] = int(amt)
-            except KeyError:
-                # unknown damage type in JSON; skip it
-                continue
-        # Now scale the entire map at once
-        scaled_map = scale_damage_map(raw_dtype_map, level)
+            # Scale by level, grade, rarity
+            scaled_map = scale_damage_map(
+                raw_dtype_map,
+                level,
+                grade=grade,
+                rarity=rarity
+            )
+            # Apply grade modifier
+            for dt, dmg in scaled_map.items():
+                scaled_map[dt] = int(dmg * _GRADE_MODIFIERS.get(grade, 1.0))
 
-    # (C) Instantiate Skill, passing along scaled_map
-    new_skill = Skill(
-        skill_id=template["skill_id"],
-        name=template["name"],
-        description=template.get("description", ""),
-        mana_cost=template.get("mana_cost", 0),
-        stamina_cost=template.get("stamina_cost", 0),
-        cooldown=template.get("cooldown", 0),
-        damage_map=scaled_map,    # <— store the scaled values here
+            # Write back scaled damage to effect
+            eff_copy["damage"] = { dt.name: dmg for dt, dmg in scaled_map.items() }
+
+        # Instantiate the Effect
+        effect_objs.append(Effect.from_dict(eff_copy))
+
+    # Build and return Skill
+    return Skill(
+        skill_id=templ_copy["skill_id"],
+        name=templ_copy.get("name", ""),
+        description=templ_copy.get("description", ""),
+        mana_cost=int(templ_copy.get("mana_cost", 0)),
+        stamina_cost=int(templ_copy.get("stamina_cost", 0)),
+        cooldown=int(templ_copy.get("cooldown", 0)),
         effects=effect_objs,
-        requirements=template.get("requirements", {}) or {},
+        requirements=templ_copy.get("requirements", {}) or {},
     )
-
-    return new_skill

@@ -1,51 +1,110 @@
-# game_sys/enchantments/factory.py
+# File: game_sys/enchantments/factory.py
 
-import os
-import json
-from typing import Dict
-from .base import Enchantment
+import random
+import copy
+from typing import Dict, Any, Optional, List
 
-_THIS_DIR = os.path.dirname(__file__)
-_JSON_PATH = os.path.join(_THIS_DIR, "data", "enchantments.json")
+from .loader import load_templates
+from game_sys.enchantments.base import Enchantment
+from game_sys.core.scaler import scale_stat, scale_damage_map
+from game_sys.items.rarity import Rarity
+from game_sys.core.damage_types import DamageType
 
-# Load once at import time
-try:
-    with open(_JSON_PATH, "r", encoding="utf-8") as f:
-        _raw_list = json.load(f)
-except FileNotFoundError:
-    _raw_list = []
+# Grade-based multiplier modifiers (tweak as needed)
+_GRADE_MODIFIERS: Dict[int, float] = {
+    1: 1.0,
+    2: 1.1,
+    3: 1.25,
+    4: 1.5,
+    5: 2.0,
+}
 
-_ENCHANTMENTS: Dict[str, Enchantment] = {}
-for entry in _raw_list:
-    try:
-        obj = Enchantment.from_dict(entry)
-    except Exception:
-        continue
-    _ENCHANTMENTS[obj.enchant_id] = obj
+# Load all enchantment templates at import
+_TEMPLATES: Dict[str, Any] = load_templates()
 
 
-def create_enchantment(enchant_id: str) -> Enchantment:
+def _roll_range(spec: Any, rng: random.Random) -> int:
     """
-    Given an enchant_id, return a new Enchantment instance.
-    Raises KeyError if not found.
+    Given a spec dict with 'min'/'max', roll an integer between them.
     """
-    if enchant_id not in _ENCHANTMENTS:
-        raise KeyError(f"Enchantment '{enchant_id}' not found.")
-    # Return a shallow copy (so caller cannot mutate the template directly)
-    base = _ENCHANTMENTS[enchant_id]
+    lo = int(spec.get("min", 0))
+    hi = int(spec.get("max", lo))
+    return rng.randint(lo, hi) if hi >= lo else lo
+
+
+def _instantiate(template: Dict[str, Any], rng: random.Random) -> Enchantment:
+    """
+    Build an Enchantment from a JSON template dict, applying level/grade/rarity scaling.
+    """
+    ench_id = template.get("id")
+    name = template.get("name", "")
+    description = template.get("description", "")
+    level = int(template.get("level", 1))
+    grade = int(template.get("grade", 1))
+    rarity = Rarity[ template.get("rarity", "COMMON").upper() ]
+
+    # 1) Scale stat bonuses
+    scaled_stats: Dict[str, int] = {}
+    for stat, spec in template.get("stat_bonuses", {}).items():
+        rolled = _roll_range(spec, rng)
+        scaled = scale_stat(rolled, level, grade=grade, rarity=rarity)
+        final = int(scaled * _GRADE_MODIFIERS.get(grade, 1.0))
+        scaled_stats[stat] = final
+
+    # 2) Scale damage modifiers
+    raw_damage_map: Dict[DamageType, int] = {}
+    for dt_str, spec in template.get("damage_modifiers", {}).items():
+        rolled = _roll_range(spec, rng)
+        raw_damage_map[DamageType[dt_str.upper()]] = rolled
+
+    scaled_damage_map = scale_damage_map(
+        raw_damage_map, level, grade=grade, rarity=rarity
+    )
+    for dt in scaled_damage_map:
+        scaled_damage_map[dt] = int(
+            scaled_damage_map[dt] * _GRADE_MODIFIERS.get(grade, 1.0)
+        )
+
+    # 3) Instantiate Enchantment object
     return Enchantment(
-        enchant_id=base.enchant_id,
-        name=base.name,
-        description=base.description,
-        bonus_ranges=base.bonus_ranges.copy(),
-        applicable_slots=list(base.applicable_slots),
-        level_requirement=base.level_requirement,
-        rarity=base.rarity,
+        id=ench_id,
+        name=name,
+        description=description,
+        level=level,
+        grade=grade,
+        rarity=rarity,
+        stat_bonuses=scaled_stats,
+        damage_modifiers={dt.name: dmg for dt, dmg in scaled_damage_map.items()},
     )
 
 
-def list_all_enchantments() -> Dict[str, Enchantment]:
+def create_enchantment(
+    enchant_id: str,
+    level: Optional[int] = None,
+    grade: int = 1,
+    rarity: Rarity = Rarity.COMMON,
+    seed: Optional[int] = None,
+    rng: Optional[random.Random] = None
+) -> Enchantment:
     """
-    Return the mapping of all loaded enchant_id → Enchantment template.
+    Public factory: returns a scaled, randomized Enchantment instance by ID.
     """
-    return dict(_ENCHANTMENTS)
+    if rng is None:
+        rng = random.Random(seed) if seed is not None else random.Random()
+
+    templ = _TEMPLATES.get(enchant_id)
+    if templ is None:
+        raise KeyError(f"No enchantment template for id={enchant_id!r}")
+
+    templ_copy = copy.deepcopy(templ)
+    if level is not None:
+        templ_copy["level"] = level
+    templ_copy["grade"] = grade
+    templ_copy["rarity"] = rarity.name
+
+    return _instantiate(templ_copy, rng)
+
+
+def list_all_ids() -> List[str]:
+    """Return all defined enchantment IDs."""
+    return list(_TEMPLATES.keys())

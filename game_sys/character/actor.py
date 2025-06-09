@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Type
 from logs.logs import get_logger
 from game_sys.core.damage_types import DamageType
 from game_sys.inventory.inventory import Inventory
-from game_sys.core.experience_functions import Levels
+from game_sys.core.experience import Levels
 from game_sys.core.stats import Stats
 from game_sys.items.item_base import EquipableItem
 
@@ -62,7 +62,7 @@ class Actor:
 
         # 8) If a job_class was specified, assign it now
         if job_class:
-            self.assign_job_by_id(job_class.__name__.lower())
+            self.assign_job_by_id("commoner")
 
         # 9) Weaknesses & Resistances to damage types
         self.weakness: Dict[DamageType, float] = weakness or {}

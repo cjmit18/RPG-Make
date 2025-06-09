@@ -190,6 +190,10 @@ class Inventory:
           - Call owner.stats.add_modifier(...) for each bonus in item.bonuses,
             using a unique modifier key = f"{item.id}_{slot_to_use}"
         """
+        health = (self.owner.current_health == self.owner.max_health)
+        mana = (self.owner.current_mana == self.owner.max_mana)
+        stamina = (self.owner.current_stamina == self.owner.max_stamina)
+
         if isinstance(item_ref, Item):
             item_obj = item_ref
         else:
@@ -226,8 +230,13 @@ class Inventory:
 
         mod_key = f"{item_obj.id}_{slot_to_use}"
         for stat_name, amount in getattr(item_obj, "bonuses", {}).items():
-            self.owner.stats.add_modifier(mod_key, stat_name, int(amount))
-
+            self.owner.stats.add_modifier(mod_key, stat_name, int(amount)) # Ensure int conversion
+        if health:
+            self.owner.health = self.owner.max_health
+        if mana:
+            self.owner.mana = self.owner.max_mana
+        if stamina:
+            self.owner.stamina = self.owner.max_stamina
         log.info("%s equipped '%s' into slot '%s'.", self.owner.name, item_obj.name, slot_to_use)
 
     def unequip_item(self, slot_or_identifier: str) -> None:
@@ -251,22 +260,24 @@ class Inventory:
                     found_slot = s
                     break
             if found_slot is None:
-                raise KeyError(f"No equipped item matching '{slot_or_identifier}'")
+                pass
             slot = found_slot
 
         equipped_id = self._equipped_items.get(slot)
         equipped_obj = self._equipped_item_objs.get(slot)
         if equipped_id is None or equipped_obj is None:
-            raise KeyError(f"No item equipped in slot '{slot}'")
-
+            pass
         mod_key = f"{equipped_id}_{slot}"
         try:
             self.owner.stats.remove_modifier(mod_key)
         except Exception:
             pass
-
-        del self._equipped_items[slot]
-        del self._equipped_item_objs[slot]
+        try:
+            del self._equipped_items[slot]
+            del self._equipped_item_objs[slot]
+        except KeyError:
+            log.warning("Tried to unequip from slot '%s' but it was not equipped.", slot)
+            return
 
         entry = self._items.get(equipped_id)
         if entry:
@@ -323,12 +334,30 @@ class Inventory:
         self._equipped_item_objs = {slot: None for slot in self._equipped_items}
 
         for entry in entries:
-            itm = create_item(entry["item_id"])
+            itm = create_item(entry["item_id"], 
+                              level=entry.get("level", 1),
+                              grade=entry.get("grade", 1),
+                              rarity=entry.get("rarity", "COMMON").upper())
             qty = entry.get("quantity", 1)
             auto_eq = entry.get("auto_equip", False)
             self.add_item(itm, quantity=qty, auto_equip=auto_eq)
 
         log.info("Loaded inventory template '%s' for %s.", template_name, self.owner.name)
+
+    def view_item(self, item_ref: Union[str, Item]) -> Optional[Item]:
+        """
+        View details of an item by its ID or Item instance.
+        Returns the Item instance or None if not found.
+        """
+        if isinstance(item_ref, Item):
+            item_id = item_ref.id
+        else:
+            try:
+                item_id = uuid.UUID(item_ref)
+            except Exception:
+                item_id = item_ref
+
+        return self._find_item(item_id)
 
     @staticmethod
     def _is_uuid(value: str) -> bool:

@@ -2,19 +2,31 @@
   "goblin": [
     {
       "min_level": 1,
-      "max_level": 5,
+      "max_level": 600,
+      "min_grade": 1,
+      "max_grade": 7,
       "drops": [
         { 
           "item_id": "goblin_dagger",  
-          "chance": 0.30,
+          "chance": 0.5,
           "min_qty": 1, 
-          "max_qty": 1 
+          "max_qty": 1,
+          "rarity_weights": {
+            "common": 0.70,
+            "uncommon": 0.20,
+            "rare": 0.10
+          }
         },
         { 
           "item_id": "health_potion", 
-           "chance": 0.20, 
-           "min_qty": 1, 
-           "max_qty": 1 
+           "chance": 0.30, 
+           "min_qty": 2, 
+           "max_qty": 2,
+            "rarity_weights": {
+              "common": 0.60,
+              "uncommon": 0.25,
+              "rare": 0.05              
+            }
           }
       ]
     },
@@ -24,15 +36,25 @@
       "drops": [
         { 
           "item_id": "goblin_dagger",  
-        "chance": 0.25, 
+        "chance": 0.75, 
         "min_qty": 1, 
-        "max_qty": 1 
+        "max_qty": 1,
+        "rarity_weights": {
+          "common": 0.60,
+          "uncommon": 0.30,
+          "rare": 0.10
+        }
       },
         { 
-          "item_id": "health_potion",  
-        "chance": 0.40, 
+        "item_id": "health_potion",  
+        "chance": 0.50, 
         "min_qty": 1, 
-        "max_qty": 2 
+        "max_qty": 2,
+          "rarity_weights": {
+            "common": 0.60,
+            "uncommon": 0.25,
+            "rare": 0.05
+      }
       }
       ]
     }
@@ -40,19 +62,40 @@
   "orc": [
     {
       "min_level": 1,
-      "max_level": 8,
+      "max_level": 100,
       "drops": [
         { 
           "item_id": "orc_axe",       
-          "chance": 0.40, 
+          "chance": 0.25, 
           "min_qty": 1, 
-          "max_qty": 1 
+          "max_qty": 1,
+          "rarity_weights": {
+            "common": 0.50,
+            "uncommon": 0.30,
+            "rare": 0.10
+          }
         },
         { 
           "item_id": "health_potion", 
-          "chance": 0.10, 
+          "chance": 0.75, 
           "min_qty": 1, 
-          "max_qty": 1 
+          "max_qty": 2,
+          "rarity_weights": {
+            "common": 0.60,
+            "uncommon": 0.30,
+            "rare": 0.10
+          }
+        },
+        {
+          "item_id": "mana_potion",
+          "chance": 100,
+          "min_qty": 1,
+          "max_qty": 1,
+          "rarity_weights": {
+            "common": 0.60,
+            "uncommon": 0.30,
+            "rare": 0.10
+          }
         }
       ]
     },
@@ -62,15 +105,20 @@
       "drops": [
         { 
           "item_id": "orc_axe",     
-          "chance": 0.35, 
+          "chance": 0.60, 
           "min_qty": 1, 
-          "max_qty": 1 
+          "max_qty": 1,
+          "rarity_weights": {
+            "common": 0.40,
+            "uncommon": 0.40,
+            "rare": 0.20
+          }
         },
         { 
           "item_id": "health_potion", 
-          "chance": 0.30, 
-          "min_qty": 1, 
-          "max_qty": 2 }
+          "chance": 0.75, 
+          "min_qty": 2, 
+          "max_qty": 4 }
       ]
     }
   ]

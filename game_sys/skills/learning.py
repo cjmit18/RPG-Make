@@ -1,14 +1,21 @@
-# game_sys/skills/learning.py
+# File: game_sys/skills/learning.py
 
 from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
+import random
 
+from game_sys.core.damage_types import DamageType
+from game_sys.items.rarity import Rarity
+from game_sys.core.scaler import scale_damage_map
 from game_sys.effects.base import Effect
-from game_sys.character.actor import Actor
 from game_sys.skills.base import Skill
-
+from game_sys.skills.factory import create_skill
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from game_sys.character.actor import Actor
+    from game_sys.skills.factory import create_skill
 
 __all__ = ["SkillRecord", "SkillRegistry", "LearningSystem"]
 
@@ -17,9 +24,8 @@ class SkillRecord:
     """
     Holds metadata for a Skill:
       - skill_id, name, description, mana_cost, stamina_cost, cooldown, effects
-      - sp_cost, min_level, prereq_skills
+      - sp_cost, min_level, prereq_skills, requirements, grade, rarity
     """
-
     def __init__(
         self,
         skill_id: str,
@@ -29,35 +35,34 @@ class SkillRecord:
         stamina_cost: int,
         cooldown: int,
         effects: List[Effect],
-        sp_cost: int = 1,
-        min_level: int = 1,
-        prereq_skills: Optional[List[str]] = None,
-        requirements: Dict[str, Any] = None,
+        sp_cost: int,
+        min_level: int,
+        prereq_skills: Set[str],
+        requirements: Dict[str, int],
+        grade: int = 1,
+        rarity: Rarity = Rarity.COMMON,
     ) -> None:
-        self.skill_id: str = skill_id
-        self.name: str = name
-        self.description: str = description
-        self.mana_cost: int = mana_cost
-        self.stamina_cost: int = stamina_cost
-        self.cooldown: int = cooldown
-        self.effects: List[Effect] = list(effects)
-        self.sp_cost: int = sp_cost
-        self.min_level: int = min_level
-        self.prereq_skills: Set[str] = set(prereq_skills or [])
-        self.requirements: Dict[str, int] = requirements or {}
+        self.skill_id = skill_id
+        self.name = name
+        self.description = description
+        self.mana_cost = mana_cost
+        self.stamina_cost = stamina_cost
+        self.cooldown = cooldown
+        self.effects = list(effects)
+        self.sp_cost = sp_cost
+        self.min_level = min_level
+        self.prereq_skills = set(prereq_skills or [])
+        self.requirements = requirements or {}
+        self.grade = grade
+        self.rarity = rarity
+
     def can_character_learn(
         self,
         actor: Actor,
         known_skills: Set[str],
         available_sp: int,
     ) -> bool:
-        """
-        Return True if:
-          - actor.levels.lvl ≥ min_level
-          - available_sp ≥ sp_cost
-          - prereq_skills ⊆ known_skills
-        """
-        if actor.levels.lvl < self.min_level:
+        if actor.level < self.min_level:
             return False
         if available_sp < self.sp_cost:
             return False
@@ -66,23 +71,26 @@ class SkillRecord:
         for stat_name, threshold in self.requirements.items():
             if not hasattr(actor, stat_name):
                 raise ValueError(f"Actor does not have stat '{stat_name}'")
-            if getattr(actor, stat_name , 0) < threshold:
+            if getattr(actor, stat_name) < threshold:
                 return False
         return True
 
-    def build_skill_instance(self) -> Skill:
+    def build_skill_instance(
+        self,
+        actor: Actor,
+        seed: Optional[int] = None,
+        rng: Optional[random.Random] = None,
+    ) -> Skill:
         """
-        Instantiate a Skill (with a shallow copy of effects).
+        Instantiate a Skill via factory to apply scaling, grade, rarity, and RNG.
         """
-        return Skill(
-            skill_id=self.skill_id,
-            name=self.name,
-            description=self.description,
-            mana_cost=self.mana_cost,
-            stamina_cost=self.stamina_cost,
-            cooldown=self.cooldown,
-            effects=list(self.effects),
-            requirements=self.requirements,
+        return create_skill(
+            self.skill_id,
+            level=actor.level,
+            grade=self.grade,
+            rarity=self.rarity,
+            seed=seed,
+            rng=rng,
         )
 
     @classmethod
@@ -98,48 +106,53 @@ class SkillRecord:
             raise FileNotFoundError(f"Skill JSON file not found at: {path_obj}")
 
         raw_text = path_obj.read_text(encoding="utf-8")
-        raw_list: List[Dict[str, Any]] = json.loads(raw_text)
+        try:
+            data = json.loads(raw_text)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in skill file {path}: {e}") from e
 
         records: List[SkillRecord] = []
-        for entry in raw_list:
-            # 1) Build a list of Effect objects for this skill
-            effect_objs: List[Effect] = []
-            for e in entry.get("effects", []):
-                effect_objs.append(Effect.from_dict(e))
-
-            # 2) Required fields (error if missing or wrong type)
-            sid    = entry.get("skill_id")
-            name   = entry.get("name")
-            desc   = entry.get("description", "")
-            m_cost = entry.get("mana_cost", 0)
-            s_cost = entry.get("stamina_cost", 0)
-            cd     = entry.get("cooldown", 0)
-            spc    = entry.get("sp_cost", 1)
-            minl   = entry.get("min_level", 1)
-            prereqs = entry.get("prereq_skills", [])
-            requirements = entry.get("requirements", {})
-
-            # Validate required top‐level fields:
+        for entry in data:
+            sid = entry.get("skill_id")
             if not isinstance(sid, str):
-                raise ValueError(f"SkillRecord requires string 'skill_id', got {sid!r}")
-            if not isinstance(name, str):
-                raise ValueError(f"SkillRecord requires string 'name', got {name!r}")
-            if not isinstance(m_cost, int):
-                raise ValueError(f"SkillRecord requires integer 'mana_cost', got {m_cost!r}")
-            if not isinstance(s_cost, int):
-                raise ValueError(f"SkillRecord requires integer 'stamina_cost', got {s_cost!r}")
-            if not isinstance(cd, int):
-                raise ValueError(f"SkillRecord requires integer 'cooldown', got {cd!r}")
-            if not isinstance(spc, int):
-                raise ValueError(f"SkillRecord requires integer 'sp_cost', got {spc!r}")
-            if not isinstance(minl, int):
-                raise ValueError(f"SkillRecord requires integer 'min_level', got {minl!r}")
-            if not isinstance(prereqs, list) or not all(isinstance(x, str) for x in prereqs):
-                raise ValueError(f"SkillRecord requires list-of-strings 'prereq_skills', got {prereqs!r}")
-            if not isinstance(requirements, dict):
-                raise ValueError(f"SkillRecord requires dict 'requirements', got {requirements!r}")
+                raise ValueError(f"SkillRecord requires 'skill_id' string, got {sid!r}")
 
-            # 3) Construct the SkillRecord
+            name = entry.get("name", "")
+            desc = entry.get("description", "")
+            m_cost = int(entry.get("mana_cost", 0))
+            s_cost = int(entry.get("stamina_cost", 0))
+            cd = int(entry.get("cooldown", 0))
+
+            # Effects
+            effs = entry.get("effects", [])
+            effect_objs: List[Effect] = []
+            if not isinstance(effs, list):
+                raise ValueError(f"'effects' must be a list for skill '{sid}'")
+            for eff in effs:
+                effect_objs.append(Effect.from_dict(eff.copy()))
+
+            # SP cost
+            spc = int(entry.get("sp_cost", 1))
+            # Min level
+            minl = int(entry.get("min_level", 1))
+
+            # Prereq skills
+            prereqs = entry.get("prereq_skills", []) or []
+            if not isinstance(prereqs, list):
+                raise ValueError(f"'prereq_skills' must be a list for skill '{sid}'")
+
+            # Requirements
+            reqs = entry.get("requirements", {}) or {}
+            requirements: Dict[str, int] = {stat: int(val) for stat, val in reqs.items()}
+
+            # Grade & Rarity
+            g = int(entry.get("grade", 1))
+            r_str = entry.get("rarity", "COMMON").upper()
+            try:
+                r = Rarity[r_str]
+            except KeyError:
+                raise ValueError(f"Unknown rarity '{r_str}' for skill '{sid}'")
+
             rec = SkillRecord(
                 skill_id=sid,
                 name=name,
@@ -150,8 +163,10 @@ class SkillRecord:
                 effects=effect_objs,
                 sp_cost=spc,
                 min_level=minl,
-                prereq_skills=prereqs,
+                prereq_skills=set(prereqs),
                 requirements=requirements,
+                grade=g,
+                rarity=r,
             )
             records.append(rec)
 
@@ -162,7 +177,6 @@ class SkillRegistry:
     """
     Global registry mapping skill_id → SkillRecord.
     """
-
     _registry: Dict[str, SkillRecord] = {}
 
     @classmethod
@@ -196,10 +210,9 @@ class LearningSystem:
     """
     Tracks a character's known skills and unspent skill points (SP).
     """
-
     def __init__(self, owner: Actor, initial_sp: int = 0) -> None:
-        self.owner: Actor = owner
-        self.available_sp: int = initial_sp
+        self.owner = owner
+        self.available_sp = initial_sp
         self.known_skills: Set[str] = set()
         self.instantiated_skills: Dict[str, Skill] = {}
 
@@ -219,27 +232,16 @@ class LearningSystem:
     def learn(self, skill_id: str) -> None:
         if skill_id in self.known_skills:
             raise RuntimeError(f"Already learned '{skill_id}'.")
-
-        try:
-            record = SkillRegistry.get(skill_id)
-        except KeyError as e:
-            raise RuntimeError(f"Unknown skill '{skill_id}'") from e
-
-        if not record.can_character_learn(
-            self.owner,
-            self.known_skills,
-            self.available_sp,
-        ):
+        rec = SkillRegistry.get(skill_id)
+        if not rec.can_character_learn(self.owner, self.known_skills, self.available_sp):
             raise RuntimeError(f"Cannot learn '{skill_id}': prerequisites or SP not met.")
-
-        self.spend_sp(record.sp_cost)
+        self.spend_sp(rec.sp_cost)
         self.known_skills.add(skill_id)
-        self.instantiated_skills[skill_id] = record.build_skill_instance()
+        self.instantiated_skills[skill_id] = rec.build_skill_instance(self.owner)
 
     def unlearn(self, skill_id: str) -> None:
         if skill_id not in self.known_skills:
             raise RuntimeError(f"'{skill_id}' is not known.")
-
         rec = SkillRegistry.get(skill_id)
         self.available_sp += rec.sp_cost
         self.known_skills.remove(skill_id)
@@ -259,11 +261,7 @@ class LearningSystem:
             if sid in self.known_skills:
                 continue
             rec = SkillRegistry.get(sid)
-            if rec.can_character_learn(
-                self.owner,
-                self.known_skills,
-                self.available_sp,
-            ):
+            if rec.can_character_learn(self.owner, self.known_skills, self.available_sp):
                 can_learn.append(sid)
         return can_learn
 

@@ -1,48 +1,110 @@
 # game_sys/items/item_base.py
 
 from typing import Dict, List, Optional, Any, TYPE_CHECKING
-import random
 
 from game_sys.core.damage_types import DamageType
 from game_sys.items.rarity import Rarity
-from game_sys.items.scaler import scale_stat, scale_damage_map
-from game_sys.core.experience_functions import Levels
+from game_sys.core.experience import Levels
 
 if TYPE_CHECKING:
-    # Only for type hints; actual imports happen inside methods
     from game_sys.character.actor import Actor
     from game_sys.effects.base import Effect
 
 
+def _format_effects(effects: List[Any]) -> List[str]:
+    """
+    Return a list of formatted effect descriptions.
+    """
+    out = []
+    for eff in effects:
+        name = type(eff).__name__
+        if hasattr(eff, 'amount'):
+            out.append(f"{name}: {eff.amount}")
+        else:
+            out.append(name)
+    return out
+
+
+def _format_damage_map(damage_map: Dict[DamageType, int]) -> List[str]:
+    """
+    Return a list of damage type strings.
+    """
+    return [f"{dtype.name.capitalize()}: {amt}" for dtype, amt in damage_map.items()]
+
+
 class Item:
     """
-    Base class for all items (Equipable or Consumable).
+    Base class for all items.
     """
 
     def __init__(self, id: str, name: str, description: str, price: int, level: int):
-        self.id: str = id
-        self.name: str = name
-        self.description: str = description
-        self.price: int = price
-        self.level: Levels = Levels(self, level, 0)  # store price as experience placeholder
+        self.id = id
+        self.name = name
+        self.description = description
+        self.price = price
+        self.level: Levels = Levels(self, level, 0)
 
-    def __repr__(self):
-        return f"<Item id={self.id!r}, level={self.level.lvl}>"
+    def __repr__(self) -> str:
+        return f"<{type(self).__name__} name={self.name!r}, level={self.level.lvl}>"
 
-    def __str__(self):
-        return f"{self.name} (lvl {self.level.lvl})"
+    def __str__(self) -> str:
+        rarity = getattr(self, 'rarity', Rarity.COMMON)
+        lines: List[str] = []
+        # Header
+        lines.append(f"{self.name} (ID: {self.id})")
+        # Basic info
+        lines.append(f"  Level: {self.level.lvl}")
+        lines.append(f"  Price: {self.price} gold")
+        lines.append(f"  Rarity: {rarity.name.capitalize()}")
+        lines.append(f"  Grade: {getattr(self, 'grade', 0)}")
+        lines.append(f"  Description: {self.description}")
+
+        # Consumable effects
+        
+        if hasattr(self, 'effects'):
+            effs = _format_effects(self.effects)
+            lines.append("Effects:")
+            for e in effs:
+                lines.append(f"    - {e}")
+
+        # Equipable stats
+        if hasattr(self, 'slot'):
+            lines.append(f"Slot: {self.slot}")
+            # Flat bonuses
+            if getattr(self, 'bonuses', None):
+                lines.append("Bonuses:")
+                for stat, val in self.bonuses.items():
+                    lines.append(f"    - {stat.capitalize()}: {val}")
+            # Percent bonuses
+            if getattr(self, 'percent_bonuses', None):
+                lines.append("Percent Bonuses:")
+                for stat, pct in self.percent_bonuses.items():
+                    lines.append(f"    - {stat.capitalize()}: +{pct}%")
+            # Damage map
+            if getattr(self, 'damage_map', None):
+                dmg_lines = _format_damage_map(self.damage_map)
+                lines.append("Damage:")
+                for d in dmg_lines:
+                    lines.append(f"    - {d}")
+            # Passive effects
+            if getattr(self, 'passive_Effects', None):
+                lines.append("Passive Effects:")
+                for pe in self.passive_Effects:
+                    lines.append(f"    - {pe}")
+            # Enchantable flag
+            lines.append(f"Enchantable: {'Yes' if getattr(self, 'is_enchantable', False) else 'No'}")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def view_item(item: "Item") -> str:
+        return str(item)
 
 
 class EquipableItem(Item):
     """
-    An item that can be equipped by a character. Supports:
-      - grade & rarity scaling
-      - base bonuses (e.g. {"attack": {"min":1,"max":3}})
-      - raw damage map (e.g. {"PHYSICAL": {"min":2,"max":5}})
-      - percent bonuses (e.g. {"attack": 10})
-      - passive_Effects: a list of JSON‐dicts, each representing an Effect to add when equipped
+    Equipable item: holds stat bonuses and passive effects.
     """
-
     def __init__(
         self,
         id: str,
@@ -60,132 +122,69 @@ class EquipableItem(Item):
         passive_Effects: Optional[List[Dict[str, Any]]] = None,
     ):
         super().__init__(id, name, description, price, level)
+        self.slot = slot
+        self.grade = grade
+        self.rarity = rarity
+        self.is_enchantable = is_enchantable
 
-        self.slot: str = slot  # e.g. "weapon", "armor", "amulet", etc.
-        self.grade: int = grade
-        self.rarity: Rarity = rarity
-        self.is_enchantable: bool = is_enchantable
+        # Base definitions
+        self.base_bonus_ranges = base_bonus_ranges.copy()
+        self.raw_damage_map = raw_damage_map.copy()
 
-        # Base‐range dicts from JSON, before scaling
-        #   e.g. {"attack": {"min":1,"max":3}, ...}
-        self.base_bonus_ranges: Dict[str, Dict[str, int]] = base_bonus_ranges.copy()
-        #   e.g. {"PHYSICAL": {"min":2,"max":5}, ...}
-        self.raw_damage_map: Dict[str, Dict[str, int]] = raw_damage_map.copy()
-
-        # After scaling, these two hold final numerical values:
+        # Computed values
         self.bonuses: Dict[str, int] = {}
+        self.percent_bonuses = percent_bonuses or {}
         self.damage_map: Dict[DamageType, int] = {}
-
-        # Percent bonuses applied after numeric scaling:
-        #   e.g. {"attack": 10} means +10% to final 'attack' bonus
-        self.percent_bonuses: Dict[str, float] = percent_bonuses.copy() if percent_bonuses else {}
-
-        # Passive effects to apply when equipped (list of JSON dicts)
-        self.passive_Effects: List[Dict[str, Any]] = passive_Effects.copy() if passive_Effects else []
-
-        # Track whether this item has been enchanted (if your code uses that)
-        self.is_enchanted: bool = False
+        self.passive_Effects = passive_Effects or []
 
     def rescale(self, current_level: int) -> None:
         """
-        Recompute:
-          - self.bonuses: Dict[str, int]
-          - self.damage_map: Dict[DamageType, int]
-        using scale_stat and scale_damage_map.
-        Call whenever:
-          - the item is first created
-          - after an enchantment
-          - when the owner’s level changes
+        Recompute bonuses and damage_map based on level, grade, and rarity.
         """
-        # Clear existing maps
+        from random import randint
+        from game_sys.core.scaler import scale_stat, scale_damage_map
+
+        # Clear previous
         self.bonuses.clear()
         self.damage_map.clear()
 
-        # 1) Scale base bonuses
-        for stat_name, rng_dict in self.base_bonus_ranges.items():
-            lo = int(rng_dict.get("min", 0))
-            hi = int(rng_dict.get("max", lo))
-            # Pass a (lo, hi) tuple to scale_stat, not a dict
-            rolled = scale_stat((lo, hi), current_level, self.grade, self.rarity)
-            self.bonuses[stat_name] = rolled
+        # Flat bonuses
+        for stat, spec in self.base_bonus_ranges.items():
+            lo = spec.get('min', 0)
+            hi = spec.get('max', lo)
+            rolled = scale_stat((lo, hi), current_level, grade=self.grade, rarity=self.rarity)
+            # apply percent buffs later
+            self.bonuses[stat] = rolled
 
-        # 2) Scale raw_damage_map → damage_map
-        # First roll each damage type from its range, then call scale_damage_map
-        rolled_damage: Dict[str, int] = {}
-        for dt_str, rng_dict in self.raw_damage_map.items():
-            lo = int(rng_dict.get("min", 0))
-            hi = int(rng_dict.get("max", lo))
-            rolled_amount = random.randint(lo, hi)
-            rolled_damage[dt_str.upper()] = rolled_amount
+        # Raw damage roll
+        raw_rolls: Dict[str, int] = {}
+        for dt_str, spec in self.raw_damage_map.items():
+            lo = spec.get('min', 0)
+            hi = spec.get('max', lo)
+            raw_rolls[dt_str.upper()] = randint(lo, hi)
 
-        scaled = scale_damage_map(rolled_damage, current_level, self.grade, self.rarity)
-        final_map: Dict[DamageType, int] = {}
+        # Scale damage_map
+        scaled = scale_damage_map(raw_rolls, current_level, grade=self.grade, rarity=self.rarity)
         for dt_str, amt in scaled.items():
             try:
-                dt_enum = DamageType[dt_str.upper()]
-                final_map[dt_enum] = amt
-            except Exception:
-                # Skip unknown damage types
-                continue
-        self.damage_map = final_map
-
-        # 3) Apply percent bonuses on top of numeric bonuses
-        for stat_name, pct in self.percent_bonuses.items():
-            if stat_name in self.bonuses:
-                self.bonuses[stat_name] = int(round(self.bonuses[stat_name] * (1.0 + pct / 100.0)))
-            else:
-                # If stat wasn't in bonuses, initialize to 0
-                self.bonuses[stat_name] = 0
-
-    def apply_passives_to(self, owner: "Actor", combat_engine) -> None:
-        """
-        When equipped, convert each JSON dict in self.passive_Effects into an Effect
-        and add it to owner.effects.
-        """
-        from game_sys.effects.base import Effect  # local import
-
-        for eff_data in self.passive_Effects:
-            try:
-                eff_obj = Effect.from_dict(eff_data)
-                owner.effects.add(eff_obj)
-            except Exception:
+                dt = DamageType[dt_str.upper()]
+                self.damage_map[dt] = amt
+            except KeyError:
                 continue
 
-    def remove_passives_from(self, owner: "Actor") -> None:
-        """
-        When unequipped, remove Effects that were added by this item.
-        """
-        from game_sys.effects.base import Effect  # local import
+        # Percent bonuses
+        for stat, pct in self.percent_bonuses.items():
+            base = self.bonuses.get(stat, 0)
+            self.bonuses[stat] = int(round(base * (1 + pct / 100.0)))
 
-        to_remove: List["Effect"] = []
-        for eff_data in self.passive_Effects:
-            try:
-                candidate = Effect.from_dict(eff_data)
-                for active in owner.effects:
-                    if type(active) is type(candidate) and active.__dict__ == candidate.__dict__:
-                        to_remove.append(active)
-                        break
-            except Exception:
-                continue
-
-        for eff in to_remove:
-            try:
-                owner.effects.remove(eff)
-            except ValueError:
-                pass
-
-    def __repr__(self):
-        return (
-            f"<EquipableItem id={self.id!r}, slot={self.slot!r}, "
-            f"level={self.level.lvl}, grade={self.grade}, rarity={self.rarity.name}>"
-        )
+    def __repr__(self) -> str:
+        return f"<EquipableItem name={self.name!r}, slot={self.slot}>"
 
 
 class ConsumableItem(Item):
     """
-    A consumable that applies a sequence of Effects to the actor (self‐target).
+    Consumable: applies effects when used.
     """
-
     def __init__(
         self,
         id: str,
@@ -194,32 +193,17 @@ class ConsumableItem(Item):
         price: int,
         level: int,
         effects_data: List[Dict[str, Any]],
+        grade: int,
+        rarity: Rarity
     ):
         super().__init__(id, name, description, price, level)
-        from game_sys.effects.base import Effect  # local import
-
-        self.effects: List["Effect"] = []
-        for e_data in effects_data:
-            try:
-                self.effects.append(Effect.from_dict(e_data))
-            except Exception:
-                continue
-
+        from game_sys.effects.base import Effect
+        self.effects: List[Any] = [Effect.from_dict(e) for e in effects_data]
     def apply(self, actor: "Actor", combat_engine) -> str:
-        """
-        Apply each Effect in self.effects to the target (actor). Return a newline‐joined log.
-        """
-        log_parts: List[str] = []
+        logs = []
         for eff in self.effects:
-            try:
-                msg = eff.apply(actor, actor, combat_engine)
-                log_parts.append(msg)
-            except Exception as e:
-                log_parts.append(f"[Error applying effect {type(e).__name__}: {e}]")
-        return "\n".join(log_parts)
+            logs.append(eff.apply(actor, actor, combat_engine))
+        return "\n".join(logs)
 
-    def __repr__(self):
-        return f"<ConsumableItem id={self.id!r}, level={self.level.lvl}, effects={len(self.effects)}>"
-
-    # Alias so legacy code expecting “Equipable” continues to work
-    Equipable = EquipableItem
+    def __repr__(self) -> str:
+        return f"<ConsumableItem name={self.name!r}, effects={len(self.effects)}>"

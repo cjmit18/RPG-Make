@@ -1,16 +1,12 @@
 # game_sys/core/experience_functions.py
-
 """
 Experience and Leveling System for RPG Game.
 This module handles experience accumulation and level-ups.
-(No import of LearningSystem here—that belongs in Player.)
 """
-
 from logs.logs import get_logger
-from typing import TYPE_CHECKING
+from typing import Any
+# Import character and item classes for isinstance checks
 
-if TYPE_CHECKING:
-    from game_sys.character.character_creation import Character
 
 log = get_logger(__name__)
 
@@ -18,18 +14,17 @@ log = get_logger(__name__)
 class Levels:
     """
     Manages a thing’s level and experience.
-    If the thing has a `gain_experience` method (i.e. Player), defer to it
-    so that Player can award skill points. Otherwise, auto-level up here.
+    If the thing has a `gain_experience` method (i.e. Player), defer to it.
     """
 
     def __init__(
         self,
-        thing: object,
+        thing: Any,
         level: int = 1,
         experience: int = 0,
         max_level: int = 100,
     ) -> None:
-        self.thing: object = thing
+        self.thing: Any = thing
         self.max_level: int = max_level
         self._lvl: int = 1
         self._experience: int = 0
@@ -37,7 +32,10 @@ class Levels:
         self.experience = experience
 
     def __str__(self) -> str:
-        return f"Name: {self.thing.name}\nLevel: {self.lvl} Experience: {self.experience}"
+        return (
+            f"Name: {self.thing.name}\n"
+            f"Level: {self.lvl} Experience: {self.experience}"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -45,8 +43,7 @@ class Levels:
     def add_experience(self, exp: int) -> None:
         """
         Add experience points, and level up if thresholds are reached.
-        If `self.thing` has `gain_experience`, return immediately so that
-        Player.gain_experience handles the leveling (and skill points).
+        If `self.thing` has `gain_experience`, defer to that method.
         """
         if not isinstance(exp, int):
             raise TypeError("Experience must be an integer.")
@@ -54,11 +51,12 @@ class Levels:
         self.experience += exp
 
         if hasattr(self.thing, "gain_experience"):
-            # Defer leveling (and awarding SP) to Player.gain_experience
+            # Delegate leveling logic to the thing
             return
 
         # NPC/Enemy: auto-level up here
-        while self.lvl < self.max_level and self.experience >= self.required_experience():
+        while (self.lvl < self.max_level and
+               self.experience >= self.required_experience()):
             self.level_up()
 
     def remove_experience(self, exp: int) -> None:
@@ -69,18 +67,25 @@ class Levels:
         log.info(f"{self.thing.name} lost {exp} experience points.")
 
     def level_up(self) -> None:
-        """Internal level-up: deduct needed XP, bump level, recalc stats, restore resources."""
-        from game_sys.items.item_base import Item
+        """
+        Internal level-up: deduct needed XP, bump level,
+        and perform character-specific actions like
+        recalc stats, restore resources.
+        """
         to_next = self.required_experience()
         self.experience -= to_next
         self.lvl += 1
-        if isinstance(self.thing, Character):
+
+        # Character-specific hooks
+        from game_sys.character.actor import Actor
+        from game_sys.items.item_base import Item
+        if isinstance(self.thing, Actor):
             try:
                 self.thing.update_stats()
                 self.thing.restore_all()
             except AttributeError:
-                # Some subclasses may not implement update_stats/restore_all
                 pass
+        # Item rescaling on level change
         elif isinstance(self.thing, Item):
             try:
                 self.thing.rescale(self.lvl)
@@ -90,11 +95,11 @@ class Levels:
         log.info(f"{self.thing.name} reached level {self.lvl}!")
 
     def change_level(self, new_level: int) -> None:
-        """Force‐set the thing's level (with validation)."""
+        """Force-set the thing's level (with validation)."""
         if not isinstance(new_level, int):
             raise TypeError("Level must be an integer.")
-        self._lvl = max(1, min(new_level, self.max_level))
-        log.info(f"{self.thing.name} level changed to {self._lvl}.")
+        self.lvl = new_level
+        log.info(f"{self.thing.name} level changed to {self.lvl}.")
 
     def reset_experience(self) -> None:
         """Reset XP to zero."""
@@ -112,10 +117,9 @@ class Levels:
         self.reset_level()
         log.info("Experience and level have been reset.")
 
-    def gain_from(self, enemy: object) -> None:
+    def gain_from(self, enemy: Any) -> None:
         """
-        If `enemy` has an `exp_value` attribute, gain that much XP.
-        Otherwise do nothing.
+        Gain XP from an enemy if it has an 'exp_value' attribute.
         """
         reward = getattr(enemy, "exp_value", None)
         if reward is None:
@@ -124,7 +128,7 @@ class Levels:
 
     def required_experience(self) -> int:
         """
-        XP needed to reach the next level. Example formula: 100*lvl^2 + 100*lvl.
+        XP needed to reach the next level. Formula: 100*lvl^2 + 100*lvl.
         """
         if self.lvl >= self.max_level:
             return float("inf")

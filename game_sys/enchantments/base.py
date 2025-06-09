@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 from typing import Dict, Any, List
 from game_sys.items.rarity import Rarity
-
+from logs.logs import get_logger
+log = get_logger(__name__)
 class Enchantment:
     """
     Represents a single enchantment template. JSON schema example:
@@ -107,7 +108,7 @@ class Enchantment:
             text = path.read_text(encoding="utf-8")
             raw_list = json.loads(text)
         except Exception as e:
-            print(f"[Warning] Could not load enchantments JSON at {path}: {e}")
+            log.warning(f"[Warning] Could not load enchantments JSON at {path}: {e}")
             return {}
 
         result: Dict[str, Enchantment] = {}
@@ -115,7 +116,7 @@ class Enchantment:
             try:
                 ench = cls.from_dict(entry)
             except Exception as exc:
-                print(f"[Warning] Skipping invalid enchantment entry: {exc}")
+                log.warning(f"[Warning] Skipping invalid enchantment entry: {exc}")
                 continue
             result[ench.enchant_id] = ench
         return result

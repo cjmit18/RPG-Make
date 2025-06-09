@@ -7,7 +7,6 @@ class Rarity(Enum):
     EPIC = auto()
     LEGENDARY = auto()
     MYTHIC = auto()
-    EXOTIC = auto()
     DIVINE = auto()
 
     @classmethod

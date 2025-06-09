@@ -6,12 +6,13 @@
     "description": "Restores HP instantly.",
     "price": 25,
     "level": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
+    "grade": 1,
     "is_enchantable": false,
     "effects": [
       {
         "type": "Heal",
-        "amount": { "min": 20, "max": 50 }
+        "amount": { "min": 50, "max": 50 }
       }
     ]
   },
@@ -21,8 +22,9 @@
     "name": "Mana Potion",
     "description": "Restores MP instantly.",
     "price": 20,
-    "level": 1,
-    "rarity": "common",
+    "level": 12,
+    "rarity": "COMMON",
+    "grade": 1,
     "is_enchantable": false,
     "effects": [
       {
@@ -38,7 +40,7 @@
     "description": "Restores stamina instantly.",
     "price": 15,
     "level": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "effects": [
       {
@@ -56,7 +58,7 @@
     "description": "Temporarily increases attack by 5 for 3 turns.",
     "price": 10,
     "level": 1,
-    "rarity": "common",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "effects": [
       {
@@ -71,7 +73,7 @@
     "id": "iron_sword",
     "type": "equipable",
     "name": "Iron Sword",
-    "description": "A basic steel blade.",
+    "description": "A basic iron blade.",
     "price": 100,
     "level": 1,
     "grade": 1,
@@ -212,7 +214,7 @@
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
-    "percent_bonuses": {},
+    "percent_bonuses": {"intellect": 0.5},
     "passive_Effects": []
   },
   {
@@ -473,6 +475,7 @@
     "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
+    "offhand": true,
     "base_bonus_ranges": {
       "attack": { "min": 2, "max": 5 },
       "speed": { "min": 2, "max": 2 }
@@ -480,8 +483,13 @@
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
-    "percent_bonuses": {},
-    "passive_Effects": []
+    "percent_bonuses": {
+    },
+    "passive_Effects": [
+      {
+        
+      }
+    ]
   },
   {
     "id": "goblin_spear",

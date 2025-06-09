@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 from game_sys.character.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.skills.learning import LearningSystem, SkillRegistry
-from game_sys.items.scaler import scale_stat
+from game_sys.core.scaler import scale_stat
 from game_sys.items.rarity import Rarity
 
 # Paths to JSON templates
@@ -28,7 +28,7 @@ try:
     with open(_JOB_TEMPLATES_PATH, "r", encoding="utf-8") as f:
         job_list = json.load(f)
         _JOB_TEMPLATES: Dict[str, Dict[str, Any]] = {
-            tpl["id"].lower(): tpl for tpl in job_list
+            tpl["job_id"].lower(): tpl for tpl in job_list
         }
 except FileNotFoundError:
     _JOB_TEMPLATES = {}
@@ -91,15 +91,8 @@ class Character(Actor):
 
     def assign_job_by_id(self, job_id: str) -> None:
         """
-        Assign a job to this Character by its string ID.
-        Steps:
-          1) Unequip & remove all old job items (as many copies as exist).
-          2) Build the new Job via create_job(job_id, level).
-          3) Overwrite self.stats with new_job.stats_mods, scaled by this Character’s level.
-             (We wrap base_value in a range tuple since scale_stat expects a two-element iterable.)
-          4) Restore current_health/current_mana/current_stamina from those stats.
-          5) Auto-equip any starting_items that the Job defines, recording those IDs
-             in self._job_item_ids (for future removal).
+        Assign a job to this character by its ID, loading the job template.
+        This will also apply starting items and skills from the job template.
         """
         from game_sys.jobs.factory import create_job
 
@@ -187,7 +180,7 @@ class Enemy(Character):
         if experience == 0:
             # give random XP in [50×level .. 150×level]
             self.levels.experience = randint(50, 150) * level
-
+        
 
 class Player(Character):
     """Player subclass: includes a LearningSystem."""
@@ -221,13 +214,13 @@ def create_character(template_name: str = "character", **overrides) -> Character
     to job-assignment, so no leftover “commoner” items remain.
     """
     key = template_name.lower()
-    requested_job: Optional[str] = overrides.pop("job_id", None)
-
+    requested_job: Optional[str] = overrides.pop("job_id", None).lower() if "job_id" in overrides else None
+    print(f"Creating character from template: {key}, requested job: {requested_job}")
     raw_weakness: dict[str, float] = {}
     raw_resistance: dict[str, float] = {}
 
     if requested_job:
-        requested_job = requested_job.lower()
+        print(f"Requested job: {requested_job}")
         raw_weakness = _JOB_TEMPLATES.get(requested_job, {}).get("weakness", {}) or {}
         raw_resistance = _JOB_TEMPLATES.get(requested_job, {}).get("resistance", {}) or {}
 
@@ -242,7 +235,7 @@ def create_character(template_name: str = "character", **overrides) -> Character
         template: Player = Player.from_dict(data)
         if requested_job:
             template.assign_job_by_id(requested_job)
-
+            print(f"Assigned job: {template.job.name}")
     # ---------------------------------------------------------------------
     elif key == "npc":
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
@@ -281,7 +274,7 @@ def create_character(template_name: str = "character", **overrides) -> Character
                 template.gold = randint(1, 100) * template.levels.lvl
         else:
             template.gold = randint(1, 100) * template.levels.lvl
-
+        template.grade = overrides.get("grade", 1)
     elif key == "character":
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
         data["level"] = int(data.get("level", 1))

@@ -33,14 +33,13 @@ class CombatEngine:
         self.party = party
         self.enemies = enemies
         self.rng = rng or random.Random()
-        # We accept action_fn for backward compatibility, but do not use it here.
         self.action_fn = action_fn
         self.max_turns = max_turns
 
     def _perform_actor_turn(self, actor: Actor, foes: List[Actor]) -> Optional[str]:
         """
         Let `actor` take an action against one randomly chosen foe (among those still alive).
-        If the action kills the target, award XP and loot. Return a result string ("Party wins!", etc.) if fight over.
+        If the action kills the target, award XP and loot. Return a result string if fight over.
         Otherwise return None.
         """
         # 1) Choose a random foe who is still alive
@@ -57,7 +56,7 @@ class CombatEngine:
         combat = CombatCapabilities(actor, target, rng=self.rng)
 
         if action == "attack":
-            # (a) Compute base physical damage: actor.attack – (target.defense × 0.05)
+            # (a) Compute base physical damage: actor.attack − (target.defense × 0.05)
             base_amount = actor.attack - (target.defense * 0.05)
             base_amount = max(0, base_amount)
 
@@ -75,16 +74,22 @@ class CombatEngine:
                 variance=0.10,
             )
 
-            # (e) If the target died, award XP/loot and possibly end the fight
+            # (d) If the target died, award XP/loot and possibly end the fight
             if target.current_health <= 0:
                 # Award XP to entire living party (including `actor`)
                 xp_share = target.levels.experience
                 if xp_share > 0:
                     living_members = [m for m in self.party if m.current_health > 0]
-                    share = xp_share // len(living_members)
-                    for member in living_members:
-                        member.levels.add_experience(share)
-                        log.info("%s receives %d XP from defeating %s.", member.name, share, target.name)
+                    if living_members:
+                        share = xp_share // len(living_members)
+                        for member in living_members:
+                            member.levels.add_experience(share)
+                            log.info(
+                                "%s receives %d XP from defeating %s.",
+                                member.name,
+                                share,
+                                target.name,
+                            )
 
                 # Transfer loot to the actor who landed the killing blow
                 combat.transfer_loot(winner=actor, defeated=target)

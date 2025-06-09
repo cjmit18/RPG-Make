@@ -123,9 +123,9 @@ class DamageEffect(Effect):
             frag = f"{lost} {dt.name.lower()}"
             mult = weak_mul * res_mul
             if mult > 1.0:
-                frag += f"(super effective x{mult:.1f})"
+                frag += f" (super effective x{mult:.1f})"
             elif mult < 1.0:
-                frag += f"(not very effective x{mult:.1f})"
+                frag += f" (not very effective x{mult:.1f})"
             summary_parts.append(frag)
 
         # 6) Build the final string

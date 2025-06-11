@@ -33,15 +33,15 @@ class Inventory:
     """
     Inventory class for managing a character's items:
 
-      - self._items: maps item_id (UUID or str) → {"item": Item, "quantity": int}
-      - self._equipped_items: slot_name → item_id (UUID or str) or None
+      - self._items: maps item_id (uuid4 or str) → {"item": Item, "quantity": int}
+      - self._equipped_items: slot_name → item_id (uuid4 or str) or None
       - self._equipped_item_objs: slot_name → Item instance or None
     """
 
     def __init__(self, owner: "Character") -> None:
         self.owner = owner
-        self._items: Dict[uuid.UUID | str, Dict[str, Any]] = {}
-        self._equipped_items: Dict[str, uuid.UUID | str | None] = {
+        self._items: Dict[uuid.uuid4 | str, Dict[str, Any]] = {}
+        self._equipped_items: Dict[str, uuid.uuid4 | str | None] = {
             "weapon": None,
             "offhand": None,
             "shield": None,
@@ -297,9 +297,9 @@ class Inventory:
             if item_id is None:
                 raise ValueError(f"Item {item_ref} has no ID; cannot use")
         else:
-            # If string, try to parse as UUID or treat as raw ID
+            # If string, try to parse as uuid4 or treat as raw ID
             try:
-                item_id = uuid.UUID(item_ref)
+                item_id = uuid.uuid4(item_ref)
             except Exception:
                 item_id = item_ref
 
@@ -353,7 +353,7 @@ class Inventory:
             item_id = item_ref.id
         else:
             try:
-                item_id = uuid.UUID(item_ref)
+                item_id = uuid.uuid4(item_ref)
             except Exception:
                 item_id = item_ref
 
@@ -361,9 +361,9 @@ class Inventory:
 
     @staticmethod
     def _is_uuid(value: str) -> bool:
-        """Return True if a string is a valid UUID."""
+        """Return True if a string is a valid uuid4."""
         try:
-            uuid.UUID(value)
+            uuid.uuid4(value)
             return True
         except Exception:
             return False

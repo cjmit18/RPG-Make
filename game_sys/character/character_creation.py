@@ -3,18 +3,20 @@
 from __future__ import annotations
 import json
 from pathlib import Path
-from random import randint
 from typing import Any, Dict, Optional
-
 from game_sys.character.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.skills.learning import LearningSystem, SkillRegistry
 from game_sys.core.scaler import scale_stat
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 
 # Paths to JSON templates
-_CHAR_TEMPLATES_PATH = Path(__file__).parent / "data" / "character_templates.json"
-_JOB_TEMPLATES_PATH = Path(__file__).parent.parent / "jobs" / "data" / "jobs.json"
+_CHAR_TEMPLATES_PATH = (
+    Path(__file__).parent / "data" / "character_templates.json"
+)
+_JOB_TEMPLATES_PATH = (
+    Path(__file__).parent.parent / "jobs" / "data" / "jobs.json"
+)
 
 # Load character templates
 try:
@@ -46,11 +48,17 @@ class Character(Actor):
         level: int = 1,
         experience: int = 0,
     ) -> None:
-        # Track which item IDs were granted by the current job, so we can remove them later
+        # Track which item IDs were granted by the current job,
+        # so we can remove them later
         self._job_item_ids: list[str] = []
 
-        # Call Actor.__init__ with job_class=None (so Actor doesn’t auto-equip anything yet)
-        super().__init__(name=name, level=level, experience=experience, job_class=None)
+        # Call Actor.__init__ with job_class=None
+        # (so Actor doesn’t auto-equip anything yet)
+        super().__init__(
+            name=name,
+            level=level,
+            experience=experience,
+            job_class=None)
 
         # Restore current HP/MP/ST to match whatever Actor.__init__ set up
         self.restore_all()
@@ -59,13 +67,41 @@ class Character(Actor):
         """String repr showing name, level, stats, and inventory."""
         eff = self.stats.effective()
         lines = [
-            f"{self.__class__.__name__}: {self.name}",
-            f"Level: {self.levels.lvl}  Experience: {self.levels.experience}",
-            f"Class: {self.job.name.capitalize() if self.job else 'None'}",
-            f"Gold : {getattr(self, 'gold', 0)}",
+            f"\n{
+                self.__class__.__name__
+                }: {
+                    self.name
+                    }",
+            f"Level: {
+                self.levels.lvl
+                }  Experience: {
+                    self.levels.experience
+                    }",
+            f"Class: {
+                self.job.name.capitalize() if self.job else 'None'
+                }",
+            f"Gold : {
+                getattr(self, 'gold', 0)
+                }",
+            f"Grade: {
+                getattr(self, 'grade', 1) if hasattr(self, 'grade') else 1
+                }",
+            f"Rarity: {
+                getattr(self, 'rarity').name.capitalize()
+                if hasattr(self, 'rarity') else 'Common'
+                }",
             "-" * 20,
         ]
-        for stat in ("attack", "defense", "speed", "health", "mana", "stamina", "intellect", "magic_power"):
+        for stat in (
+            "attack",
+            "defense",
+            "speed",
+            "health",
+            "mana",
+            "stamina",
+            "intellect",
+            "magic_power"
+                ):
             val = eff.get(stat, 0)
             if stat in ("health", "mana", "stamina"):
                 cur = getattr(self, f"current_{stat}", 0)
@@ -104,7 +140,8 @@ class Character(Actor):
         # 1) Remove old job’s items (if any)
         for old_item_id in self._job_item_ids:
             # If that item is currently equipped, unequip it
-            for slot, equipped_id in list(self.inventory._equipped_items.items()):
+            for slot, equipped_id in list(
+                    self.inventory._equipped_items.items()):
                 if equipped_id == old_item_id:
                     self.inventory.unequip_item(slot)
             # Now remove as many copies as exist
@@ -112,7 +149,9 @@ class Character(Actor):
             if entry:
                 qty_to_remove = entry["quantity"]
                 try:
-                    self.inventory.remove_item(old_item_id, quantity=qty_to_remove)
+                    self.inventory.remove_item(
+                        old_item_id, quantity=qty_to_remove
+                    )
                 except KeyError:
                     pass
         self._job_item_ids.clear()
@@ -128,8 +167,8 @@ class Character(Actor):
             scaled_stats[stat_name] = scale_stat(
                 (base_value, base_value),
                 self.levels.lvl,
-                grade=1,
-                rarity=Rarity.COMMON,
+                grade=getattr(self, "grade", 1),
+                rarity=getattr(self, "rarity", Rarity.COMMON)
             )
         # Ensure every stat key exists
         from game_sys.jobs.base import Job as BaseJob
@@ -177,10 +216,7 @@ class Enemy(Character):
         experience: int = 0,
     ) -> None:
         super().__init__(name, level, experience)
-        if experience == 0:
-            # give random XP in [50×level .. 150×level]
-            self.levels.experience = randint(50, 150) * level
-        
+
 
 class Player(Character):
     """Player subclass: includes a LearningSystem."""
@@ -207,74 +243,201 @@ class Player(Character):
             self.restore_all()
 
 
-def create_character(template_name: str = "character", **overrides) -> Character:
+def create_character(
+    template_name: str = "character",
+    **overrides
+) -> Character:
     """
-    Instantiate a Character (or subclass) from JSON templates, then apply any overrides.
-    If 'job_id' is passed, we skip the template’s starting_items and go directly
-    to job-assignment, so no leftover “commoner” items remain.
+    Instantiate a Character (or subclass) from JSON templates,
+    then apply any overrides.
+    If 'job_id' is passed, we skip the template's starting_items
+    and go directly to job-assignment,
+    so no leftover “commoner” items remain.
     """
-    key = template_name.lower()
-    requested_job: Optional[str] = overrides.pop("job_id", None).lower() if "job_id" in overrides else None
-    print(f"Creating character from template: {key}, requested job: {requested_job}")
+    from game_sys.core.rarity import Rarity
+    from random import randint, choice
+    key = template_name.capitalize()
+    requested_job: Optional[str] = (
+        overrides.pop("job_id", None).lower()
+        if "job_id" in overrides else None
+    )
     raw_weakness: dict[str, float] = {}
     raw_resistance: dict[str, float] = {}
 
     if requested_job:
-        print(f"Requested job: {requested_job}")
-        raw_weakness = _JOB_TEMPLATES.get(requested_job, {}).get("weakness", {}) or {}
-        raw_resistance = _JOB_TEMPLATES.get(requested_job, {}).get("resistance", {}) or {}
+        raw_weakness = (
+            _JOB_TEMPLATES.get(requested_job, {}).get("weakness", {}) or {}
+        )
+        raw_resistance = (
+            _JOB_TEMPLATES.get(requested_job, {}).get("resistance", {}) or {}
+        )
 
     # ---------------------------------------------------------------------
     # 1) If user explicitly asked for a subclass by name, build that subclass
     # ---------------------------------------------------------------------
-    if key == "player":
+    if key.lower() == "player":
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
-        data["level"] = int(data.get("level", 1))
-        data["experience"] = int(data.get("experience", 0))
-
         template: Player = Player.from_dict(data)
+        template.name = data.get("name", "Hero")
+        template.levels.lvl = int(data.get("level", 1))
+        template.levels.experience = int(data.get("experience", 0))
+        import random
+        if overrides.get("rarity"):
+            rarity = overrides.get("rarity", Rarity.COMMON)
+            if isinstance(rarity, str):
+                rarity = Rarity[rarity.upper()]
+        elif random.uniform(0, 1) < 0.001:
+            # 0.01% chance to get a high-rarity character
+            rarity = choice([
+                Rarity.EPIC,
+                Rarity.LEGENDARY,
+                Rarity.MYTHIC
+            ])
+            template.rarity = rarity
+        if overrides.get("grade"):
+            grade = overrides.get("grade", 1)
+            if isinstance(grade, str):
+                grade = int(grade)
+            template.grade = grade
+        elif random.uniform(0, 1) < 0.0001:
+            # 0.01% chance to get a high-grade character
+            grade = choice([4, 5, 6, 7])
+            template.grade = grade
         if requested_job:
             template.assign_job_by_id(requested_job)
-            print(f"Assigned job: {template.job.name}")
     # ---------------------------------------------------------------------
-    elif key == "npc":
+    elif key.lower() == "npc":
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
-        data["type"] = key
-        data["level"] = int(data.get("level", 1))
-        data["experience"] = int(data.get("experience", 0))
-
         template: NPC = NPC.from_dict(data)
+        template.name = data.get("name", "NPC")
+        template.levels.lvl = int(data.get("level", 1))
+        template.levels.experience = int(data.get("experience", 0))
+        if overrides.get("rarity"):
+            rarity = overrides.get("rarity", Rarity.COMMON)
+            if isinstance(rarity, str):
+                rarity = Rarity[rarity.upper()]
+            template.rarity = rarity
+        if overrides.get("grade"):
+            grade = overrides.get("grade", 1)
+            if isinstance(grade, str):
+                grade = int(grade)
+            template.grade = grade
         if requested_job:
             template.assign_job_by_id(requested_job)
 
     # ---------------------------------------------------------------------
     # 2) If user asked for a specific enemy type
     # ---------------------------------------------------------------------
-    elif key in ["enemy", "goblin", "orc", "dragon", "zombie"]:
+    elif key.lower() in ["enemy", "goblin", "orc", "dragon", "zombie"]:
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
-        data["type"] = "enemy"
-        data["level"] = int(data.get("level", 1))
-        data["experience"] = int(data.get("experience", 0))
-
         template: Enemy = Enemy.from_dict(data)
         template.name = data.get("name", key.capitalize())
+        if "level" in overrides:
+            template.levels.lvl = int(overrides["level"])
+        else:
+            min_level = _CHAR_TEMPLATES.get(key, {}).get("min_level", 1)
+            max_level = _CHAR_TEMPLATES.get(key, {}).get("max_level", 100)
+            template.levels.lvl = randint(min_level, max_level)
+        # 1) Determine grade & rarity *before* we assign the job
+        if overrides.get("grade"):
+            grade = overrides.get("grade", 1)
+            if isinstance(grade, str):
+                grade = int(grade)
+            template.grade = grade
+        else:
+            # Randomly choose grade between 1 and 7)
+            grade_choices = [1, 2, 3, 4, 5, 6, 7]
+            if template.levels.lvl <= 15:
+                grade_choices = grade_choices[:3]
+            elif template.levels.lvl <= 50:
+                grade_choices = grade_choices[:5]
+            elif template.levels.lvl < 70:
+                grade_choices = grade_choices[:6]
+            elif template.levels.lvl >= 70:
+                grade_choices = grade_choices[:7]
+            template.grade = choice(grade_choices)
+        # -----------------------------------------------------------------
+        if overrides.get("rarity"):
+            rarity = overrides.get("rarity", Rarity.COMMON)
+            if isinstance(rarity, str):
+                rarity = Rarity[rarity.upper()]
+            template.rarity = rarity
+        else:
+            # Randomly choose rarity based on grade
+            rarity_choices = [
+                Rarity.COMMON,
+                Rarity.UNCOMMON,
+                Rarity.RARE,
+                Rarity.EPIC,
+                Rarity.LEGENDARY,
+                Rarity.MYTHIC,
+                Rarity.DIVINE
+            ]
+
+            if template.grade <= 3:
+                rarity_choices = rarity_choices[:3]
+            elif template.grade <= 5:
+                rarity_choices = rarity_choices[:5]
+            elif template.grade <= 6:
+                rarity_choices = rarity_choices[:6]
+            elif template.grade == 7:
+                rarity_choices = rarity_choices[:7]
+            template.rarity = choice(rarity_choices)
+
+        if "experience" in overrides:
+            template.levels.experience = int(overrides["experience"])
+        else:
+            # Randomly assign experience based on level
+            template.levels.experience = randint(
+                template.levels.lvl *
+                template.rarity.value *
+                template.grade * 10,
+                template.levels.lvl *
+                template.rarity.value *
+                template.grade * 100
+            )//4
+        # -----------------------------------------------------------------
+        # 2) Now assigns stats/items via our patched assign_job_by_id
         template.assign_job_by_id(key if key != "enemy" else "goblin")
 
+        # 3) Roll gold
         gold_min = _CHAR_TEMPLATES.get(key, {}).get("gold_min", 0)
         gold_max = _CHAR_TEMPLATES.get(key, {}).get("gold_max", 0)
         if gold_min and gold_max:
-            template.gold_min = gold_min
-            template.gold_max = gold_max
             try:
-                template.gold = randint(
-                    randint(gold_min, gold_max),
-                    (randint(gold_min, gold_max) * template.levels.lvl),
-                )
+                template.gold = (randint(
+                                        randint(gold_min, gold_max),
+                                        (randint(gold_min, gold_max) *
+                                            template.levels.lvl *
+                                            template.grade *
+                                            template.rarity.value),
+                ))
             except ValueError:
                 template.gold = randint(1, 100) * template.levels.lvl
         else:
             template.gold = randint(1, 100) * template.levels.lvl
-        template.grade = overrides.get("grade", 1)
+
+        # 4) Parse weaknesses/resistances
+        from game_sys.core.damage_types import DamageType
+        raw_weak = _CHAR_TEMPLATES.get(key, {}).get("weakness", {})
+        weak_parsed: dict[DamageType, float] = {}
+        for k_str, mult in raw_weak.items():
+            try:
+                dt = DamageType[k_str.upper()]
+                weak_parsed[dt] = mult
+            except KeyError:
+                continue
+        template.weakness = weak_parsed
+
+        raw_res = _CHAR_TEMPLATES.get(key, {}).get("resistance", {})
+        resis_parsed: dict[DamageType, float] = {}
+        for k_str, mult in raw_res.items():
+            try:
+                dt = DamageType[k_str.upper()]
+                resis_parsed[dt] = mult
+            except KeyError:
+                continue
+        template.resistance = resis_parsed
     elif key == "character":
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
         data["level"] = int(data.get("level", 1))
@@ -336,8 +499,15 @@ def create_character(template_name: str = "character", **overrides) -> Character
             try:
                 template.learning.learn(skill_id)
             except Exception as e:
-                print(f"Warning: could not learn '{skill_id}' on creation: {e}")
-
+                # Log the error but continue learning other skills
+                from logs.logs import get_logger
+                log = get_logger(__name__)
+                log.error(
+                    (
+                        f"Failed to learn skill '{skill_id}' for "
+                        f"{template.name}: {e}"
+                    )
+                )
         if isinstance(template, Player):
             template.learning.available_sp = 0
 

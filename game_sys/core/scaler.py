@@ -2,7 +2,7 @@
 
 from typing import Tuple, Dict, Union
 import random
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 
 # Example multipliers (tweak to taste)
 _RARITY_STATS_MULTIPLIER: Dict[Rarity, float] = {
@@ -22,14 +22,14 @@ _GRADE_STATS_MULTIPLIER: Dict[int, float] = {
     4: 1.75,
     5: 2.00,
     6: 2.50,
-    7: 3.00,
+    7: 5.00,
 }
 
 def scale_stat(
     base_range: Union[int, Tuple[int, int]],
     level: int,
-    grade: int = 0,
-    rarity: Rarity = Rarity.COMMON,
+    grade: int,
+    rarity: Rarity
 ) -> int:
     """
     Pick a “raw” value from base_range, then bump it

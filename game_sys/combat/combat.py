@@ -7,7 +7,7 @@ from game_sys.character.actor import Actor
 from game_sys.core.damage_types import DamageType
 from game_sys.combat.loader import DROP_TABLES
 from game_sys.items.factory import create_item
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -32,10 +32,10 @@ class CombatCapabilities:
         attacker: Actor,
         defender: Actor,
         damage_map: Dict[DamageType, float],
-        stat_name: Optional[str] = None,
+        stat_name: Optional[str] = "attack",
         multiplier: float = 1.0,
-        crit_chance: float = 0.0,
-        variance: float = 0.0,
+        crit_chance: float = 0.10,
+        variance: float = 0.10,
     ) -> None:
         for dtype, base_amount in damage_map.items():
             raw = base_amount
@@ -85,7 +85,7 @@ class CombatCapabilities:
             return items
 
         for drop in chosen["drops"]:
-            if self.rng.uniform(0, 100) <= drop["chance"]:
+            if self.rng.uniform(0, 1) <= drop["chance"]:
                 qty = self.rng.randint(drop["min_qty"], drop["max_qty"])
                 # sample rarity
                 rarities = drop.get("rarity_weights", {"common": 1.0})

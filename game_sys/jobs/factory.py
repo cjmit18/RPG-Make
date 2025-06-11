@@ -7,19 +7,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from game_sys.items.factory import create_item
-from game_sys.items.rarity import Rarity
-from game_sys.core.scaler import scale_stat, scale_damage_map
+from game_sys.core.rarity import Rarity
+from game_sys.core.scaler import scale_stat, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
 from game_sys.jobs.base import Job
-
-# Grade-based multiplier modifiers
-_GRADE_MODIFIERS: Dict[int, float] = {
-    1: 1.0,
-    2: 1.1,
-    3: 1.25,
-    4: 1.5,
-    5: 2.0,
-}
-
 
 def load_templates() -> Dict[str, Any]:
     """
@@ -32,9 +22,14 @@ def load_templates() -> Dict[str, Any]:
         with json_file.open(encoding="utf-8") as f:
             entries = json.load(f)
             for entry in entries:
-                jid = entry.get("id") or entry.get("job_id") or entry.get("name")
+                jid = (
+                    entry.get("id")
+                    or entry.get("job_id")
+                    or entry.get("name")
+                )
                 templates[jid] = entry
     return templates
+
 
 _TEMPLATES = load_templates()
 
@@ -87,11 +82,21 @@ def create_job(
     items: List[Any] = []
     for item_id in templ.get("starting_items", []):
         try:
-            items.append(create_item(item_id, seed=seed, rng=rng, level=level, grade=1, rarity=rarity))
-        # If create_item fails, it will raise an exception; we can handle it or skip
+            items.append(create_item(item_id, seed=seed,
+                                     rng=rng,
+                                     level=level,
+                                     grade=1,
+                                     rarity=rarity
+                                     ))
+        # If create_item fails, it will raise an exception;
+        # we can handle it or skip
         except KeyError:
             continue
 
-    # Finally, return a Job instance (adjust signature if needed by your Job class)
-    # Here we pass level and scaled_stats; your Job.__init__ may vary.
-    return Job(level=level, base_stats=scaled_stats, starting_items=items, job_id=job_id)
+    # Finally, return a Job instance (adjust signature if needed by your Job
+    # class). Here we pass level and scaled_stats; your Job.__init__ may vary.
+    return Job(
+            level=level, base_stats=scaled_stats,
+            starting_items=items,
+            job_id=job_id
+            )

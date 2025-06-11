@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any
 
+
 def load_templates() -> Dict[str, Any]:
     """
     Load every .json file in game_sys/enchantments/data/ and return a dict

@@ -12,7 +12,7 @@
     "effects": [
       {
         "type": "Heal",
-        "amount": { "min": 50, "max": 50 }
+        "amount": { "min": 25, "max": 50 }
       }
     ]
   },
@@ -29,7 +29,7 @@
     "effects": [
       {
         "type": "InstantMana",
-        "amount": { "min": 20, "max": 50 }
+        "amount": { "min": 25, "max": 50 }
       }
     ]
   },
@@ -95,19 +95,19 @@
     "name": "Steel Sword",
     "description": "A sturdy sword made of steel.",
     "price": 200,
-    "level": 2,
-    "grade": 1,
-    "rarity": "COMMON",
+    "level": 1,
+    "grade": 2,
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "weapon",
     "base_bonus_ranges": {
-      "attack": { "min": 5, "max": 10 },
-      "speed": { "min": 2, "max": 2 }
+      "attack": { "min": 5, "max": 15 },
+      "speed": { "min": 2, "max": 10 }
     },
     "raw_damage_map": {
-      "physical": { "min": 1, "max": 3 }
+      "fire": { "min": 1, "max": 10 }
     },
-    "percent_bonuses": {},
+    "percent_bonuses": {"attack": 10.0},
     "passive_Effects": []
   },
   {
@@ -289,13 +289,13 @@
     "is_enchantable": false,
     "slot": "armor",
     "base_bonus_ranges": {
-      "defense": { "min": 5, "max": 5 },
+      "defense": { "min": 5, "max": 10 },
       "stamina": { "min": 3, "max": 3 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
-    "percent_bonuses": {},
+    "percent_bonuses": {"defense": 5.0},
     "passive_Effects": []
   },
   {
@@ -528,9 +528,9 @@
       "stamina": { "min": 2, "max": 2 }
     },
     "raw_damage_map": {
-      "physical": { "min": 1, "max": 3 }
+      "physical": { "min": 1, "max": 10 }
     },
-    "percent_bonuses": {},
+    "percent_bonuses": {"attack": 2.0},
     "passive_Effects": []
   },
   {

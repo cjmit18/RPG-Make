@@ -1,8 +1,9 @@
 # game_sys/skills/skill_base.py
 
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict
 from game_sys.character.actor import Actor
 from game_sys.combat.combat import CombatCapabilities
+
 
 class Skill:
     """
@@ -34,8 +35,8 @@ class Skill:
         """
         Return True if caster has enough resources and no cooldown.
         """
-        
-        if caster.current_mana < self.mana_cost or caster.current_stamina < self.stamina_cost:
+        if (caster.current_mana < self.mana_cost or
+                caster.current_stamina < self.stamina_cost):
             return False
         if self._current_cooldown > 0:
             return False
@@ -44,11 +45,17 @@ class Skill:
                 return False
         return True
 
-    def use(self, caster: Actor, target: Actor, combat_engine: CombatCapabilities) -> str:
+    def use(
+        self,
+        caster: Actor,
+        target: Actor,
+        combat_engine: CombatCapabilities
+    ) -> str:
         """
         1) Check can_cast. If false, return a warning string.
         2) Deduct mana/stamina, set cooldown.
-        3) For each effect in self.effects, call eff.apply(caster, target, combat_engine)
+        3) For each effect in self.effects, call
+           eff.apply(caster, target, combat_engine)
            and collect its return string.
         4) Return the concatenated log lines.
         """
@@ -76,6 +83,7 @@ class Skill:
         # (D) Combine all logs into one response string
         return "\n".join(log_parts)
     cast = use  # Alias for compatibility
+
     def tick_cooldown(self) -> None:
         """
         Decrement cooldown by 1 (clamped at zero).

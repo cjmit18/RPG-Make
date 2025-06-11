@@ -4,20 +4,9 @@ from typing import Dict, Any, List, Optional, Union
 
 from .item_base import Item, EquipableItem, ConsumableItem
 from .loader import load_templates
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 from game_sys.core.scaler import scale_stat, scale_damage_map
 from game_sys.core.damage_types import DamageType
-
-# Grade-based multiplier modifiers
-_GRADE_MODIFIERS: Dict[int, float] = {
-    1: 1.0,
-    2: 1.1,
-    3: 1.25,
-    4: 1.5,
-    5: 2.0,
-    6: 2.5,
-    7: 3.0,
-}
 
 # Load all item templates at module-import time
 _TEMPLATES: Dict[str, Dict[str, Any]] = {}
@@ -41,10 +30,10 @@ def _roll_field(spec: Union[int, float, str, bool, Dict[str, Any], List[Any]],
         return _roll_field(rng.choice(spec), rng)
     return spec
 
-
 def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
     item_type = template.get('type')
     item_id = template.get('id', '<unknown>')
+    IID = template.get('IID', None)
     name = template.get('name', '')
     description = template.get('description', '')
     level = int(template.get('level', 1))
@@ -60,7 +49,7 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
             rarity = Rarity.COMMON
 
     base_price = int(template.get('price', 0))
-    price = int(round(base_price * _GRADE_MODIFIERS.get(grade, 1.0)))
+    price = int(round(base_price * grade * rarity.value * level))
 
     if item_type == 'equipable':
         slot = template.get('slot', '')
@@ -97,6 +86,7 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
             is_enchantable=bool(template.get('is_enchantable', False)),
             percent_bonuses=percent_bonuses,
             passive_Effects=passive_effects,
+            IID=IID
         )
         item.rescale(level)
         return item
@@ -124,7 +114,8 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
             level=level,
             effects_data=effects_data,
             grade=grade,
-            rarity=rarity
+            rarity=rarity,
+            IID=IID
         )
         # assign for display
         item.grade = grade

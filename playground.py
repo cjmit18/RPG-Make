@@ -27,7 +27,6 @@ def view_character_test():
     # Create a level-1 Knight named Aria
     character = create_character(
         "Goblin",
-        level=10,
         name="Aria",
         job_id="goblin"
     )
@@ -47,7 +46,12 @@ def learning_system_test():
     log.info("=== Learning System Test ===")
 
     # 1) Create a Player at level 1 with no SP initially
-    player = create_character("Player", name="Mage", level=2, job_id="mage")
+    player = create_character(
+        "Player",
+        name="Mage",
+        level=10,
+        job_id="mage",
+        )
     log.info("Player created: %s", player.name)
 
     # 2) Show unspent SP (should be zero)
@@ -162,7 +166,7 @@ def inventory_system_test():
     log.info("Added and auto-equipped:")
 
     # 6) Simulate taking damage, then use a health potion
-    hero.take_damage(random.randint(1, 100), damage_type=DamageType.PHYSICAL)
+    hero.take_damage(random.randint(1, 100), damage_type=DamageType.FIRE)
     before_hp = hero.current_health
     log.info("Hero's health before potion: %d", before_hp)
     hero.inventory.use_item(health_potion)
@@ -202,20 +206,19 @@ def combat_system_test():
     # 1) Create a high-level Player (combat-ready) and assign job "knight"
     player = create_character(
         "Player",
-        name="Warrior",
+        name="Sir Lancelot",
         level=1,
-        job_id="knight"
+        job_id="knight",
+        grade=1,
+        rarity="common",
         )
     log.info("Created player: %s (Level %d)", player.name, player.levels.lvl)
-
     # 2) Create two enemies: goblin and orc
     goblin = create_character(
         "goblin",
-        job_id="goblin",
-        level=3,
-        name="Grim"
+        name="Grim",
         )
-    orc = create_character("goblin", job_id="goblin", level=3)
+    orc = create_character("Orc", job_id="orc", level=1)
     enemies = [goblin, orc]
     log.info("Enemies: %s, %s", goblin.name, orc.name)
 
@@ -232,12 +235,12 @@ def combat_system_test():
     log.info("Combat result:\n%s", result)
 
     # 5) After combat, log player’s remaining health and status
-    log.info("Player post-combat stats: %s", player)
+    log.info("Player post-combat stats: %s", goblin)
 
 
 if __name__ == "__main__":
     # Run each test in sequence
     # view_character_test()
-    # learning_system_test()
+    learning_system_test()
     # inventory_system_test()
-    combat_system_test()
+    # combat_system_test()

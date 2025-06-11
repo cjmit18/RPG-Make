@@ -6,19 +6,11 @@ from typing import Dict, Any, Optional, List
 
 from .loader import load_templates
 from game_sys.enchantments.base import Enchantment
-from game_sys.core.scaler import scale_stat, scale_damage_map
-from game_sys.items.rarity import Rarity
+from game_sys.core.scaler import scale_stat, scale_damage_map, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
+from game_sys.core.rarity import Rarity
 from game_sys.core.damage_types import DamageType
 
-# Grade-based multiplier modifiers (tweak as needed)
-_GRADE_MODIFIERS: Dict[int, float] = {
-    1: 1.0,
-    2: 1.1,
-    3: 1.25,
-    4: 1.5,
-    5: 2.0,
-}
-
+# Grade modifiers for scaling stats and damage (example values, adjust as needed)
 # Load all enchantment templates at import
 _TEMPLATES: Dict[str, Any] = load_templates()
 
@@ -41,7 +33,7 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Enchantment:
     description = template.get("description", "")
     level = int(template.get("level", 1))
     grade = int(template.get("grade", 1))
-    rarity = Rarity[ template.get("rarity", "COMMON").upper() ]
+    rarity = Rarity[template.get("rarity", "COMMON").upper()]
 
     # 1) Scale stat bonuses
     scaled_stats: Dict[str, int] = {}

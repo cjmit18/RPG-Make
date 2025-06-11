@@ -1,4 +1,6 @@
 from enum import Enum, auto
+
+
 class ItemGrade(Enum):
     ONE = auto()
     TWO = auto()
@@ -7,12 +9,16 @@ class ItemGrade(Enum):
     FIVE = auto()
     SIX = auto()
     SEVEN = auto()
+
+
 @classmethod
 def get_all_grades(cls):
     """
     Returns a list of all item grades.
     """
     return [member for member in cls]
+
+
 @classmethod
 def get_grade_by_value(cls, value):
     """

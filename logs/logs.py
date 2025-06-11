@@ -3,8 +3,6 @@
 import logging
 import logging.config
 from pathlib import Path
-from logging.handlers import RotatingFileHandler
-
 # Ensure log directory exists
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)

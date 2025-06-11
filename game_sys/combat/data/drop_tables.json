@@ -8,7 +8,7 @@
       "drops": [
         { 
           "item_id": "goblin_dagger",  
-          "chance": 0.5,
+          "chance": 0.75,
           "min_qty": 1, 
           "max_qty": 1,
           "rarity_weights": {

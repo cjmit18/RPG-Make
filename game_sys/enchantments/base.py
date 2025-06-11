@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import Dict, Any, List
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 from logs.logs import get_logger
 log = get_logger(__name__)
 class Enchantment:

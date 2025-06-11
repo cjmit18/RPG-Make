@@ -7,8 +7,10 @@ class Job:
     """
     Base Job class. Every concrete job must subclass this and set:
       - base_stats: Dict[str, int]   (e.g. {"health": 50, "attack": 10, ...})
-      - starting_items: List[Any]     (list of item objects to give/equip on assign)
-      - starting_skills: List[Any]    (optional list of skill IDs to grant at start)
+      - starting_items: List[Any]
+        (list of item objects to give/equip on assign)
+      - starting_skills: List[Any]
+        (optional list of skill IDs to grant at start)
       - name: str                     (human-readable job name)
     """
     # Default template stats (override per subclass or via base_stats arg)
@@ -42,7 +44,8 @@ class Job:
             job_id: Internal ID for the job template.
         """
         self.level = level
-        # Use passed-in stats_mods if provided, else default to class base_stats
+        # Use passed-in stats_mods if provided,
+        # else default to class base_stats
         if base_stats is not None:
             self.stats_mods = base_stats
         else:

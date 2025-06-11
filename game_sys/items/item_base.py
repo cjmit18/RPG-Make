@@ -1,14 +1,13 @@
 # game_sys/items/item_base.py
 
 from typing import Dict, List, Optional, Any, TYPE_CHECKING
-
+import uuid
 from game_sys.core.damage_types import DamageType
-from game_sys.items.rarity import Rarity
+from game_sys.core.rarity import Rarity
 from game_sys.core.experience import Levels
 
 if TYPE_CHECKING:
     from game_sys.character.actor import Actor
-    from game_sys.effects.base import Effect
 
 
 def _format_effects(effects: List[Any]) -> List[str]:
@@ -29,7 +28,10 @@ def _format_damage_map(damage_map: Dict[DamageType, int]) -> List[str]:
     """
     Return a list of damage type strings.
     """
-    return [f"{dtype.name.capitalize()}: {amt}" for dtype, amt in damage_map.items()]
+    return [
+        f"{dtype.name.capitalize()}: {amt}"
+        for dtype, amt in damage_map.items()
+    ]
 
 
 class Item:
@@ -37,15 +39,26 @@ class Item:
     Base class for all items.
     """
 
-    def __init__(self, id: str, name: str, description: str, price: int, level: int):
+    def __init__(
+            self,
+            id: str,
+            name: str,
+            description: str,
+            price: int,
+            level: int,
+            IID: uuid.UUID
+            ):
         self.id = id
         self.name = name
         self.description = description
         self.price = price
         self.level: Levels = Levels(self, level, 0)
+        self.IID = IID or uuid.uuid4()
 
     def __repr__(self) -> str:
-        return f"<{type(self).__name__} name={self.name!r}, level={self.level.lvl}>"
+        return (f"<{type(self).__name__}\
+                 name={self.name!r},\
+                 level={self.level.lvl}>")
 
     def __str__(self) -> str:
         rarity = getattr(self, 'rarity', Rarity.COMMON)
@@ -60,7 +73,6 @@ class Item:
         lines.append(f"  Description: {self.description}")
 
         # Consumable effects
-        
         if hasattr(self, 'effects'):
             effs = _format_effects(self.effects)
             lines.append("Effects:")
@@ -92,7 +104,8 @@ class Item:
                 for pe in self.passive_Effects:
                     lines.append(f"    - {pe}")
             # Enchantable flag
-            lines.append(f"Enchantable: {'Yes' if getattr(self, 'is_enchantable', False) else 'No'}")
+            lines.append(f"Enchantable: {'Yes' if getattr(
+                self, 'is_enchantable', False) else 'No'}")
 
         return "\n".join(lines)
 
@@ -118,10 +131,11 @@ class EquipableItem(Item):
         base_bonus_ranges: Dict[str, Dict[str, int]],
         raw_damage_map: Dict[str, Dict[str, int]],
         is_enchantable: bool,
-        percent_bonuses: Optional[Dict[str, float]] = None,
-        passive_Effects: Optional[List[Dict[str, Any]]] = None,
+        percent_bonuses: Optional[Dict[str, float]],
+        passive_Effects: Optional[List[Dict[str, Any]]],
+        IID: uuid.UUID
     ):
-        super().__init__(id, name, description, price, level)
+        super().__init__(id, name, description, price, level, IID)
         self.slot = slot
         self.grade = grade
         self.rarity = rarity
@@ -152,7 +166,12 @@ class EquipableItem(Item):
         for stat, spec in self.base_bonus_ranges.items():
             lo = spec.get('min', 0)
             hi = spec.get('max', lo)
-            rolled = scale_stat((lo, hi), current_level, grade=self.grade, rarity=self.rarity)
+            rolled = scale_stat(
+                                (lo, hi),
+                                current_level,
+                                grade=self.grade,
+                                rarity=self.rarity
+                                )
             # apply percent buffs later
             self.bonuses[stat] = rolled
 
@@ -164,7 +183,12 @@ class EquipableItem(Item):
             raw_rolls[dt_str.upper()] = randint(lo, hi)
 
         # Scale damage_map
-        scaled = scale_damage_map(raw_rolls, current_level, grade=self.grade, rarity=self.rarity)
+        scaled = scale_damage_map(
+            raw_rolls,
+            current_level,
+            grade=self.grade,
+            rarity=self.rarity
+            )
         for dt_str, amt in scaled.items():
             try:
                 dt = DamageType[dt_str.upper()]
@@ -194,11 +218,13 @@ class ConsumableItem(Item):
         level: int,
         effects_data: List[Dict[str, Any]],
         grade: int,
-        rarity: Rarity
+        rarity: Rarity,
+        IID: uuid.UUID
     ):
-        super().__init__(id, name, description, price, level)
+        super().__init__(id, name, description, price, level, IID)
         from game_sys.effects.base import Effect
         self.effects: List[Any] = [Effect.from_dict(e) for e in effects_data]
+
     def apply(self, actor: "Actor", combat_engine) -> str:
         logs = []
         for eff in self.effects:
@@ -206,4 +232,7 @@ class ConsumableItem(Item):
         return "\n".join(logs)
 
     def __repr__(self) -> str:
-        return f"<ConsumableItem name={self.name!r}, effects={len(self.effects)}>"
+        return (
+                f"<ConsumableItem name={self.name!r},\
+                effects={len(self.effects)}>"
+                )

@@ -93,8 +93,8 @@
       "attack": 3, 
       "defense": 2, 
       "speed": 6, 
-      "health": 5, 
-      "stamina": 7,
+      "health": 6, 
+      "stamina": 4,
       "mana": 0
     },
     "starting_items": ["goblin_dagger"],
@@ -102,8 +102,6 @@
       "PHYSICAL": 1.5
     },
     "resistance": {
-      "MAGIC": 0.2
-
     }
   },
   {
@@ -119,12 +117,12 @@
       "stamina": 8,
       "intellect": 1
     },
-    "starting_items": ["orc_axe", "orc_shield"],
+    "starting_items": ["orc_axe", "orc_shield", "leather_armor"],
     "weakness": {
       "FIRE": 1.5
     },
     "resistance": {
-      "PHYSICAL": 0.5
+      "PHYSICAL": 0.8
     }
   },
   {

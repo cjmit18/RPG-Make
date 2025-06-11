@@ -19,7 +19,8 @@ class Actor:
       - levels (Levels): handles XP and leveling
       - job (optional): assigned via assign_job_by_id()
       - stats (Stats): base and derived stats
-      - current_health, current_mana, current_stamina (with max determined by stats)
+      - current_health, current_mana, current_stamina
+        (with max determined by stats)
       - inventory (Inventory)
       - statuses (active StatusEffect objects)
     """
@@ -42,7 +43,8 @@ class Actor:
         # 2) Placeholder for job (assigned later if job_class provided)
         self.job: Optional[Any] = None
 
-        # 3) Stats object: initialize all keys to zero (will be overwritten by job or remain zeros)
+        # 3) Stats object: initialize all keys to zero
+        # (will be overwritten by job or remain zeros)
         zeroed = {stat: 0 for stat in self._all_job_stats_keys()}
         self.stats: Stats = Stats(zeroed)
 
@@ -71,8 +73,9 @@ class Actor:
         # 10) Gold or currency
         self.gold: int = gold or 0
 
-        # 11) Initialize resources to max based on current (possibly zero) stats
-        #     Subclasses/jobs will set stats and then call restore_all()
+        # 11) Initialize resources to max based
+        # on current (possibly zero) stats
+        # Subclasses/jobs will set stats and then call restore_all()
         self.restore_all()
 
     @staticmethod
@@ -96,7 +99,8 @@ class Actor:
 
     def add_status(self, status_obj: Any) -> None:
         """
-        Attach a new StatusEffect to this actor. Logs the applied modifiers and duration.
+        Attach a new StatusEffect to this actor.
+        Logs the applied modifiers and duration.
         """
         self.statuses[status_obj.name] = status_obj
         mods = status_obj.stat_mods
@@ -128,7 +132,11 @@ class Actor:
                 pass
             log.info("%s's status '%s' has expired.", self.name, name)
 
-    def take_damage(self, amount: int, damage_type: Optional[DamageType] = None) -> None:
+    def take_damage(
+            self,
+            amount: int,
+            damage_type: Optional[DamageType] = None
+            ) -> None:
         """
         Apply incoming damage:
           - Adjust for weakness & resistance (combined)
@@ -143,11 +151,11 @@ class Actor:
             multiplier = resist * weak
             original = amount
             amount = round(amount * multiplier)
-            if  multiplier != 1.0:
+            if multiplier != 1.0:
                 log.info(
-                    "%s is hit with %s damage. Multiplier: %.2f× (from %d to %d)",
-                    self.name, damage_type.name, multiplier, original, amount
-            )
+                    "%s is hit with %s damage. "
+                    "Multiplier: %.2fx (from %d to %d)",
+                    self.name, damage_type.name, multiplier, original, amount)
             else:
                 log.info(
                     "%s is hit with %s damage.",
@@ -202,7 +210,9 @@ class Actor:
         Increase current_health by 'amount', clamped at max_health.
         """
         old_hp = self.current_health
-        self.current_health = min(self.max_health, self.current_health + amount)
+        self.current_health = min(
+            self.max_health,
+            self.current_health + amount)
         healed_amt = self.current_health - old_hp
         log.info(
             "%s heals %d HP; HP is now %d/%d.",
@@ -232,7 +242,8 @@ class Actor:
     # ------------------------------------------------------------------------
     def restore_all(self) -> None:
         """
-        Restore health, mana, and stamina to their max values based on stats.effective().
+        Restore health, mana, and stamina to their max values
+        based on stats.effective().
         """
         eff = self.stats.effective()
         self.current_health = eff.get("health", self.current_health)
@@ -380,7 +391,8 @@ class Actor:
             log.info("%s assigned job '%s'.", self.name, job_id)
         except Exception as e:
             self.job = None
-            log.warning("Failed to assign job '%s' to %s: %s", job_id, self.name, e)
+            log.warning("Failed to assign job '%s' to %s: %s",
+                        job_id, self.name, e)
             return
 
         # Overwrite stats with this job’s base stats
@@ -410,7 +422,8 @@ class Actor:
                 self.inventory.unequip_item(slot)
 
         for itm in getattr(old, "starting_items", []):
-            self.inventory.remove_item(itm.id, self.inventory._items.get(itm.id, {}).get("quantity", 0))
+            quantity = self.inventory._items.get(itm.id, {}).get("quantity", 0)
+            self.inventory.remove_item(itm.id, quantity)
 
         self.job = None
         zeroed = {k: 0 for k in Job.base_stats.keys()}

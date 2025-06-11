@@ -3,36 +3,48 @@
     "name": "Hero",
     "type": "player",
     "gold_min": 1,
-    "gold_max": 5
+    "gold_max": 5,
+    "level": 1,
+    "experience": 0
   },
   "Enemy": {
     "name": "Generic Enemy",
     "type": "enemy",
     "gold_min": 10,
-    "gold_max":50
+    "gold_max":50,
+    "level": 1,
+    "experience": 0
   },
   "Goblin": {
-    "name": "Goblinn",
+    "name": "Goblin",
     "type": "enemy",
     "gold_min": 1,
-    "gold_max": 50
+    "gold_max": 50,
+    "min_level": 1,
+    "max_level": 100
   },
   "Orc": {
     "name": "Orc",
     "type": "enemy",
     "gold_min": 25,
-    "gold_max": 100
+    "gold_max": 100,
+    "level": 2,
+    "experience": 0
   },
   "Dragon": {
     "name": "Dragon",
     "type": "boss",
     "gold_min": 100,
-    "gold_max": 500
+    "gold_max": 500,
+    "level": 10,
+    "experience": 0
   },
   "NPC": {
     "name": "Knight",
     "type": "npc",
     "gold_min": 5,
-    "gold_max": 20
+    "gold_max": 20,
+    "level": 1,
+    "experience": 0
   }
 }

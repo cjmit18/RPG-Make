@@ -6,13 +6,12 @@ import copy
 import random
 from typing import Dict, Any, List, Optional
 from logs.logs import get_logger
-log = get_logger(__name__)
-
 from game_sys.core.damage_types import DamageType
-from game_sys.items.rarity import Rarity
-from game_sys.core.scaler import scale_damage_map
+from game_sys.core.rarity import Rarity
+from game_sys.core.scaler import scale_damage_map, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
 from game_sys.effects.base import Effect
 from game_sys.skills.base import Skill
+log = get_logger(__name__)
 
 # Load skill templates from JSON
 _THIS_DIR = os.path.dirname(__file__)
@@ -21,20 +20,11 @@ with open(_SKILLS_JSON_PATH, "r", encoding="utf-8") as f:
     _skills_list: List[Dict[str, Any]] = json.load(f)
 
 # Map skill_id → template dict
-_skill_defs: Dict[str, Dict[str, Any]] = {t["skill_id"]: t for t in _skills_list}
-
-# Grade-based multiplier modifiers
-_GRADE_MODIFIERS: Dict[int, float] = {
-    1: 1.0,
-    2: 1.1,
-    3: 1.25,
-    4: 1.5,
-    5: 2.0,
-    6: 2.5,
-    7: 3.0,
+_skill_defs: Dict[str, Dict[str, Any]] = {
+    t["skill_id"]: t for t in _skills_list
 }
 
-
+# Grade-based multiplier modifiers
 def create_skill(
     skill_id: str,
     level: Optional[int] = None,
@@ -89,7 +79,10 @@ def create_skill(
                 scaled_map[dt] = int(dmg * _GRADE_MODIFIERS.get(grade, 1.0))
 
             # Write back scaled damage to effect
-            eff_copy["damage"] = { dt.name: dmg for dt, dmg in scaled_map.items() }
+            eff_copy["damage"] = {
+                dt.name: dmg
+                for dt, dmg in scaled_map.items()
+            }
 
         # Instantiate the Effect
         effect_objs.append(Effect.from_dict(eff_copy))

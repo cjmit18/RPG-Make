@@ -3,7 +3,7 @@ class DamageType(Enum):
     NONE = auto()
     PHYSICAL = auto()
     FIRE = auto()
-    COLD = auto()
+    ICE = auto()
     LIGHTNING = auto()
     POISON = auto()
     ARCANE = auto()

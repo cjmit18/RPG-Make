@@ -7,8 +7,9 @@ from game_sys.items.factory import create_item
 from game_sys.combat.encounter import Encounter, CombatEngine
 from game_sys.core.damage_types import DamageType
 import random
-log = get_logger(__name__)
 setup_logging()
+log = get_logger(__name__)
+
 
 # ------------------------------------------------------------------------------
 # Load & Register All Skills (Must be done once at startup)
@@ -47,12 +48,9 @@ def learning_system_test():
 
     # 1) Create a Player at level 1 with no SP initially
     player = create_character(
-        "Player",
-        name="Mage",
-        level=10,
-        job_id="mage",
+        "wizard"
         )
-    log.info("Player created: %s", player.name)
+    log.info("Player created: %s", player)
 
     # 2) Show unspent SP (should be zero)
     log.info("Unspent SP before leveling: %d", player.learning.unspent_sp())
@@ -68,7 +66,7 @@ def learning_system_test():
     available = player.learning.available_to_learn()
     log.info(
             "Available skills to learn (level %d): %s",
-            player.levels.lvl, available
+            player.stats_mgr.levels.lvl, available
             )
 
     # 5) If "fireball" is available, learn it; otherwise learn another first
@@ -139,7 +137,7 @@ def inventory_system_test():
     log.info("=== Inventory System Test ===")
 
     # 1) Create a Player
-    hero = create_character("Player", level=10, job_id="knight")
+    hero = create_character("wizard", level=1)
     log.info("Hero created: %s", hero.name)
 
     # 2) Create items using the factory
@@ -149,14 +147,14 @@ def inventory_system_test():
     mana_potion = create_item("mana_potion")      # Another consumable
 
     # 3) Add items to inventory without auto-equip
-    hero.inventory.add_item(iron_sword, quantity=1, auto_equip=False)
+    # hero.inventory.add_item(iron_sword, quantity=1, auto_equip=True)
     hero.inventory.add_item(leather_armor, quantity=1, auto_equip=False)
     hero.inventory.add_item(health_potion, quantity=3)
     hero.inventory.add_item(mana_potion, quantity=2)
 
     log.info("Inventory after adding items (no auto-equip):")
     # 4) Manually equip sword and armor
-    hero.inventory.equip_item(iron_sword)
+    # hero.inventory.equip_item(iron_sword)
     hero.inventory.equip_item(leather_armor)
     log.info("Equipped iron_sword and leather_armor:")
 
@@ -193,8 +191,7 @@ def inventory_system_test():
                 )
 
     # 9) Display final inventory state
-    log.info("Final inventory state:")
-    log.info(hero)
+    log.info("Final inventory state:\n%s", hero)
 
 
 def combat_system_test():
@@ -207,18 +204,19 @@ def combat_system_test():
     player = create_character(
         "Player",
         name="Sir Lancelot",
-        level=1,
+        level=10,
         job_id="knight",
         grade=1,
-        rarity="common",
+        rarity="Common",
         )
-    log.info("Created player: %s (Level %d)", player.name, player.levels.lvl)
+    log.info("Created player: %s (Level %d)", player.name, player.stats_mgr.levels.lvl)
     # 2) Create two enemies: goblin and orc
     goblin = create_character(
         "goblin",
         name="Grim",
+        level=3,
         )
-    orc = create_character("Orc", job_id="orc", level=1)
+    orc = create_character("Orc", job_id="orc", level=10)
     enemies = [goblin, orc]
     log.info("Enemies: %s, %s", goblin.name, orc.name)
 
@@ -235,12 +233,12 @@ def combat_system_test():
     log.info("Combat result:\n%s", result)
 
     # 5) After combat, log player’s remaining health and status
-    log.info("Player post-combat stats: %s", goblin)
+    log.info("Player post-combat stats: %s", player)
 
 
 if __name__ == "__main__":
     # Run each test in sequence
     # view_character_test()
-    learning_system_test()
+     learning_system_test()
     # inventory_system_test()
     # combat_system_test()

@@ -11,6 +11,7 @@ from game_sys.core.rarity import Rarity
 from game_sys.core.scaler import scale_stat, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
 from game_sys.jobs.base import Job
 
+
 def load_templates() -> Dict[str, Any]:
     """
     Load all job templates from JSON files under game_sys/jobs/data/.
@@ -28,6 +29,8 @@ def load_templates() -> Dict[str, Any]:
                     or entry.get("name")
                 )
                 templates[jid] = entry
+    from game_sys.core.hooks import hook_dispatcher
+    hook_dispatcher.fire("jobs.loaded", jobs=templates)
     return templates
 
 

@@ -54,6 +54,23 @@
     "starting_skills": ["stealth"]
   },
   {
+    "job_id": "archmage",
+    "name": "Arch Mage",
+    "description": "An advanced mage with enhanced magical abilities and high mana.",
+    "base_stats": {
+      "attack": 3, 
+      "defense": 4, 
+      "speed": 6, 
+      "health": 8, 
+      "mana": 15, 
+      "stamina": 4,
+      "intellect": 10,
+      "magic_power": 12
+    },
+    "starting_items": ["mana_potion", "ruby_band", "staff"],
+    "starting_skills": ["fireball"]
+  },
+  {
     "job_id": "healer",
     "name": "Healer",
     "description": "A supportive class specializing in healing and buffs.",
@@ -73,12 +90,12 @@
     "name": "Rogue",
     "description": "A nimble combatant excelling in speed and critical strikes.",
     "base_stats": {
-      "attack": 4,
+      "attack": 5,
       "defense": 3, 
       "speed": 8, 
-      "health": 8, 
+      "health": 6, 
       "mana": 3, 
-      "stamina": 6, 
+      "stamina": 8, 
       "intellect": 2,
       "magic_power": 0
     },
@@ -147,6 +164,28 @@
       "PHYSICAL": 0.1,
       "MAGIC": 0.6
 
+    }
+  },
+  {
+    "job_id": "dragon",
+    "name": "Dragon",
+    "description": "A legendary beast with immense power and magical abilities.",
+    "base_stats": {
+      "attack": 10, 
+      "defense": 8, 
+      "speed": 4, 
+      "health": 20, 
+      "mana": 15, 
+      "stamina": 10,
+      "intellect": 7,
+      "magic_power": 12
+    },
+    "starting_items": [],
+    "weakness": {
+      "ICE": 1.5
+    },
+    "resistance": {
+      "FIRE": 0.5
     }
   }
 ]

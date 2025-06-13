@@ -30,6 +30,7 @@ def _roll_field(spec: Union[int, float, str, bool, Dict[str, Any], List[Any]],
         return _roll_field(rng.choice(spec), rng)
     return spec
 
+
 def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
     item_type = template.get('type')
     item_id = template.get('id', '<unknown>')
@@ -73,7 +74,7 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
             stat: float(pct) for stat, pct in
             template.get('percent_bonuses', {}).items()
             }
-        passive_effects = template.get('passive_Effects', []) or []
+        passive_effects = template.get('passive_effects', []) or []
 
         item = EquipableItem(
             id=item_id, name=name, description=description, price=price,
@@ -85,7 +86,7 @@ def _instantiate(template: Dict[str, Any], rng: random.Random) -> Item:
             },
             is_enchantable=bool(template.get('is_enchantable', False)),
             percent_bonuses=percent_bonuses,
-            passive_Effects=passive_effects,
+            passive_effects=passive_effects,
             IID=IID
         )
         item.rescale(level)
@@ -151,6 +152,8 @@ def create_item(
             templ_copy['rarity'] = str(rarity).lower()
     if level is not None:
         templ_copy['level'] = level
+    from game_sys.core.hooks import hook_dispatcher
+    hook_dispatcher.fire("item.created", item=templ_copy, seed=seed, rng=rng)
     return _instantiate(templ_copy, rng)
 
 

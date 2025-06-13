@@ -6,6 +6,8 @@ from typing import Dict, Any, List
 from game_sys.core.rarity import Rarity
 from logs.logs import get_logger
 log = get_logger(__name__)
+
+
 class Enchantment:
     """
     Represents a single enchantment template. JSON schema example:
@@ -55,7 +57,7 @@ class Enchantment:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Enchantment":
         """
-        Instantiate an Enchantment from a JSON‐style dict. Expects keys:
+        Instantiate an Enchantment from a JSON-style dict. Expects keys:
           - "enchant_id": str
           - "name": str
           - "description": str

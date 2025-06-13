@@ -38,6 +38,7 @@ class CombatEngine:
         self.rng = rng or random.Random()
         self.action_fn = action_fn
         self.max_turns = max_turns
+        self.turn = 0
 
     def _perform_actor_turn(
             self,
@@ -51,6 +52,12 @@ class CombatEngine:
         Return a result string if fight over.
         Otherwise return None.
         """
+        from game_sys.core.hooks import hook_dispatcher
+        hook_dispatcher.fire(
+            "combat.round_start",
+            engine=self,
+            round=self.turn
+            )
         # 1) Choose a random foe who is still alive
         living_foes = [f for f in foes if f.current_health > 0]
         if not living_foes:
@@ -68,7 +75,7 @@ class CombatEngine:
             # (a) Determine damage by looking at the
             # equipped weapon’s damage map,
             # and always add the actor's attack stat to each entry.
-            weapon = actor.inventory.equipment.get("weapon")
+            weapon = actor.inventory.equipped_items.get("weapon")
             if weapon and getattr(weapon, "damage_map", None):
                 # Copy the weapon's base damage map
                 base_map = dict(weapon.damage_map)
@@ -98,14 +105,14 @@ class CombatEngine:
             # (d) If the target died, award XP/loot and possibly end the fight
             if target.current_health <= 0:
                 # Award XP to entire living party (including `actor`)
-                xp_share = target.levels.experience
+                xp_share = target.stats_mgr.levels.experience
                 if xp_share > 0:
                     living_members = [m for m in self.party
                                       if m.current_health > 0]
                     if living_members:
                         share = xp_share // len(living_members)
                         for member in living_members:
-                            member.levels.add_experience(share)
+                            member.stats_mgr.levels.add_experience(share)
                             log.info(
                                 "%s receives %d XP from defeating %s.",
                                 member.name,
@@ -119,10 +126,17 @@ class CombatEngine:
                 # Check if all foes are now dead
                 if all(f.current_health <= 0 for f in foes):
                     if isinstance(actor, Enemy):
-                        return "Enemies win! (All party members defeated)"
+                        result = "Enemies win! (All party members defeated)"
                     else:
-                        return "Party wins! (All enemies defeated)"
+                        result = "Party wins! (All enemies defeated)"
 
+                    from game_sys.core.hooks import hook_dispatcher
+                    hook_dispatcher.fire(
+                        "combat.end",
+                        engine=self,
+                        result=result
+                        )
+                    return result
         # In future, extend this block to support other action types
         return None
 

@@ -11,4 +11,6 @@ def load_job_templates() -> Dict[str, Dict[str, Any]]:
     """
     with open(DATA_PATH, 'r', encoding='utf-8') as f:
         raw = json.load(f)
+    from game_sys.core.hooks import hook_dispatcher
+    hook_dispatcher.fire("data.loaded", module=__name__, data=raw)
     return {tpl['id']: tpl for tpl in raw}

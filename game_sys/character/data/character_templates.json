@@ -1,11 +1,21 @@
 {
+  "Wizard": {
+    "name": "Bellatrix",
+    "type": "player",
+    "gold_min": 0,
+    "gold_max": 0,
+    "level": 100,
+    "experience": 0,
+    "job_id": "archmage"
+  },
   "Player": {
     "name": "Hero",
     "type": "player",
     "gold_min": 1,
     "gold_max": 5,
     "level": 1,
-    "experience": 0
+    "experience": 0,
+    "job_id": "commoner"
   },
   "Enemy": {
     "name": "Generic Enemy",
@@ -13,7 +23,8 @@
     "gold_min": 10,
     "gold_max":50,
     "level": 1,
-    "experience": 0
+    "experience": 0,
+    "job_id": "commoner"
   },
   "Goblin": {
     "name": "Goblin",
@@ -21,7 +32,10 @@
     "gold_min": 1,
     "gold_max": 50,
     "min_level": 1,
-    "max_level": 100
+    "max_level": 20,
+    "level": 1,
+    "experience": 0,
+    "job_id": "Goblin"
   },
   "Orc": {
     "name": "Orc",
@@ -29,7 +43,8 @@
     "gold_min": 25,
     "gold_max": 100,
     "level": 2,
-    "experience": 0
+    "experience": 0,
+    "job_id": "Orc"
   },
   "Dragon": {
     "name": "Dragon",
@@ -37,7 +52,8 @@
     "gold_min": 100,
     "gold_max": 500,
     "level": 10,
-    "experience": 0
+    "experience": 0,
+    "job_id": "Dragon"
   },
   "NPC": {
     "name": "Knight",
@@ -45,6 +61,7 @@
     "gold_min": 5,
     "gold_max": 20,
     "level": 1,
-    "experience": 0
+    "experience": 0,
+    "job_id": "Knight"
   }
 }

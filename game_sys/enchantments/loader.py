@@ -17,4 +17,7 @@ def load_templates() -> Dict[str, Any]:
             entries = json.load(f)
             for entry in entries:
                 templates[entry["id"]] = entry
+    from game_sys.core.hooks import hook_dispatcher
+    hook_dispatcher.fire("data.loaded", module=__name__, data=templates)
+
     return templates

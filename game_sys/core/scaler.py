@@ -25,6 +25,7 @@ _GRADE_STATS_MULTIPLIER: Dict[int, float] = {
     7: 5.00,
 }
 
+
 def scale_stat(
     base_range: Union[int, Tuple[int, int]],
     level: int,
@@ -60,6 +61,8 @@ def scale_stat(
     rarity_mult = _RARITY_STATS_MULTIPLIER.get(rarity, 1.0)
 
     return int(round(raw * level_mult * grade_mult * rarity_mult))
+
+
 def scale_damage_map(
     base_damage_map: Dict[str, int],
     item_level: int,
@@ -72,5 +75,5 @@ def scale_damage_map(
         grade_mult = _GRADE_STATS_MULTIPLIER.get(grade, 1.0)
         rarity_mult = _RARITY_STATS_MULTIPLIER.get(rarity, 1.0)
         final_amt = int(round(amt * level_mult * grade_mult * rarity_mult))
-        scaled[dtype_str] = final_amt 
+        scaled[dtype_str] = final_amt
     return scaled

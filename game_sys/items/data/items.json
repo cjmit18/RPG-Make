@@ -12,7 +12,7 @@
     "effects": [
       {
         "type": "Heal",
-        "amount": { "min": 25, "max": 50 }
+        "amount": { "min": 25, "max": 50}
       }
     ]
   },
@@ -81,13 +81,13 @@
     "is_enchantable": false,
     "slot": "weapon",
     "base_bonus_ranges": {
-      "attack": { "min": 3, "max": 7 }
+      "attack": { "min": 2, "max": 20 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "steel_sword",
@@ -107,8 +107,8 @@
     "raw_damage_map": {
       "fire": { "min": 1, "max": 10 }
     },
-    "percent_bonuses": {"attack": 10.0},
-    "passive_Effects": []
+    "percent_bonuses": {"attack": 2.0},
+    "passive_effects": []
   },
   {
     "id": "dagger",
@@ -123,14 +123,14 @@
     "slot": "weapon",
     "offhand": true,
     "base_bonus_ranges": {
-      "attack": { "min": 2, "max": 2 },
-      "speed": { "min": 3, "max": 3 }
+      "attack": { "min": 1, "max": 5 },
+      "speed": { "min": 1, "max": 3 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "knife",
@@ -152,7 +152,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "bow",
@@ -173,7 +173,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "spear",
@@ -194,7 +194,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "staff",
@@ -215,7 +215,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {"intellect": 0.5},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "wooden_sword",
@@ -235,7 +235,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "wooden_shield",
@@ -247,7 +247,7 @@
     "grade": 1,
     "rarity": "COMMON",
     "is_enchantable": false,
-    "slot": "shield",
+    "slot": "offhand",
     "base_bonus_ranges": {
       "defense": { "min": 2, "max": 2 }
     },
@@ -255,7 +255,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "shield",
@@ -267,7 +267,7 @@
     "grade": 1,
     "rarity": "COMMON",
     "is_enchantable": false,
-    "slot": "shield",
+    "slot": "offhand",
     "base_bonus_ranges": {
       "defense": { "min": 1, "max": 1 }
     },
@@ -275,7 +275,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "plate_armor",
@@ -289,14 +289,14 @@
     "is_enchantable": false,
     "slot": "armor",
     "base_bonus_ranges": {
-      "defense": { "min": 5, "max": 10 },
-      "stamina": { "min": 3, "max": 3 }
+      "defense": { "min": 15, "max": 30 },
+      "stamina": { "min": 5, "max": 15 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
-    "percent_bonuses": {"defense": 5.0},
-    "passive_Effects": []
+    "percent_bonuses": {"defense": 10.0},
+    "passive_effects": []
   },
   {
     "id": "knights_armor",
@@ -315,7 +315,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "mage_robe",
@@ -334,7 +334,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "leather_armor",
@@ -352,7 +352,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "chainmail_armor",
@@ -371,7 +371,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "tattered_robe",
@@ -390,7 +390,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "iron_helmet",
@@ -408,7 +408,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "leather_boots",
@@ -426,7 +426,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "ruby_band",
@@ -440,11 +440,11 @@
     "is_enchantable": false,
     "slot": "ring",
     "base_bonus_ranges": {
-      "attack": { "min": 2, "max": 2 }
+      "health": { "min": 5, "max": 10 }
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "emerald_loop",
@@ -462,7 +462,7 @@
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "goblin_dagger",
@@ -485,7 +485,7 @@
     },
     "percent_bonuses": {
     },
-    "passive_Effects": [
+    "passive_effects": [
       {
         
       }
@@ -510,7 +510,7 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "orc_axe",
@@ -531,7 +531,7 @@
       "physical": { "min": 1, "max": 10 }
     },
     "percent_bonuses": {"attack": 2.0},
-    "passive_Effects": []
+    "passive_effects": []
   },
   {
     "id": "orc_shield",
@@ -543,7 +543,7 @@
     "grade": 2,
     "rarity": "RARE",
     "is_enchantable": false,
-    "slot": "shield",
+    "slot": "offhand",
     "base_bonus_ranges": {
       "defense": { "min": 4, "max": 4 }
     },
@@ -551,6 +551,6 @@
       "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {},
-    "passive_Effects": []
+    "passive_effects": []
   }
 ]

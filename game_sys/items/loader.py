@@ -28,6 +28,9 @@ def load_templates() -> List[Dict[str, Any]]:
         parsed: Union[Dict[str, Any], List[Any]] = json.loads(raw)
     except json.JSONDecodeError:
         return []
+    
+    from game_sys.core.hooks import hook_dispatcher
+    hook_dispatcher.fire("data.loaded", module=__name__, data=parsed)
 
     if isinstance(parsed, list):
         # Only keep dict entries
@@ -40,6 +43,6 @@ def load_templates() -> List[Dict[str, Any]]:
             if isinstance(entry, dict):
                 items.append(entry)
         return items
-
+    
     # Unexpected top-level type
     return []

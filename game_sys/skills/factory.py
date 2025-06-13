@@ -24,6 +24,7 @@ _skill_defs: Dict[str, Dict[str, Any]] = {
     t["skill_id"]: t for t in _skills_list
 }
 
+
 # Grade-based multiplier modifiers
 def create_skill(
     skill_id: str,

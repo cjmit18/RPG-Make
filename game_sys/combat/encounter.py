@@ -48,4 +48,10 @@ class Encounter:
         )
 
     def start(self) -> str:
+        """
+        Start the combat encounter. This method is a thin wrapper around
+        CombatEngine's run() method. It fires a hook before starting the combat.
+        """
+        from game_sys.core.hooks import hook_dispatcher
+        hook_dispatcher.fire("combat.start", engine=self)
         return self.engine.run()

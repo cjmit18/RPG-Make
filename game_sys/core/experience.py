@@ -91,7 +91,12 @@ class Levels:
                 self.thing.rescale(self.lvl)
             except AttributeError:
                 pass
-
+        from game_sys.core.hooks import hook_dispatcher
+        hook_dispatcher.fire(
+            "character.level_up",
+            character=self.thing,
+            new_level=self.thing.levels.lvl
+            )
         log.info(f"{self.thing.name} reached level {self.lvl}!")
 
     def change_level(self, new_level: int) -> None:

@@ -8,7 +8,7 @@ from typing import Dict, Any, List, Optional
 from logs.logs import get_logger
 from game_sys.core.damage_types import DamageType
 from game_sys.core.rarity import Rarity
-from game_sys.core.scaler import scale_damage_map, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
+from game_sys.managers.scaling_manager import scale_damage_map, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
 from game_sys.effects.base import Effect
 from game_sys.skills.base import Skill
 log = get_logger(__name__)

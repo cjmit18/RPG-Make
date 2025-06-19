@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from game_sys.character.actor import Actor
 from game_sys.core.stats import Stats
 from game_sys.skills.learning import LearningSystem, SkillRegistry
-from game_sys.core.scaler import scale_stat
+from game_sys.managers.scaling_manager import scale_stat
 from game_sys.core.rarity import Rarity
 from game_sys.core.hooks import hook_dispatcher
 
@@ -460,7 +460,6 @@ def create_character(
 
     else:
         data = {**_CHAR_TEMPLATES.get(key, {}), **overrides}
-        data["type"] = "character"
         data["level"] = int(data.get("level", 1))
         data["experience"] = int(data.get("experience", 0))
 

@@ -97,19 +97,32 @@
     "price": 200,
     "level": 1,
     "grade": 2,
-    "rarity": "UNCOMMON",
-    "is_enchantable": false,
+    "grade_min": 1,
+    "grade_max": 2,
+    "rarity": "COMMON",
+    "is_enchantable": true,
     "slot": "weapon",
     "base_bonus_ranges": {
       "attack": { "min": 5, "max": 15 },
       "speed": { "min": 2, "max": 10 }
     },
     "raw_damage_map": {
-      "fire": { "min": 1, "max": 10 }
+      "physical": { "min": 1, "max": 10 }
     },
     "percent_bonuses": {"attack": 2.0},
-    "passive_effects": []
-  },
+    "passive_effects": [],
+    "enchantment_pool": [
+      "flamebrand"
+      ],
+      "min_enchantments": 1,
+      "max_enchantments": 2,
+      "enchantment_requirements": {
+        "min_item_level": 1,
+        "min_item_grade": 2,
+        "min_item_rarity": "UNCOMMON",
+        "slot_type": ["weapon", "offhand"]
+      }
+    },
   {
     "id": "dagger",
     "type": "equipable",
@@ -289,13 +302,13 @@
     "is_enchantable": false,
     "slot": "armor",
     "base_bonus_ranges": {
-      "defense": { "min": 15, "max": 30 },
-      "stamina": { "min": 5, "max": 15 }
+      "defense": { "min": 5, "max": 10 },
+      "stamina": { "min": 5, "max": 10 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
     },
-    "percent_bonuses": {"defense": 10.0},
+    "percent_bonuses": {"defense": 5.0},
     "passive_effects": []
   },
   {

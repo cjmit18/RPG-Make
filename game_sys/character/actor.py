@@ -290,9 +290,13 @@ class Actor:
         """Handler for when an item is equipped: adds its bonuses to stats."""
         for stat_name, amount in item.bonuses.items():
             self.stats_mgr.stats.add_modifier(item.id, stat_name, amount)
+        for ench in item.enchantments:
+            ench.apply(self, item)
         hook_dispatcher.fire("actor.stats_updated", actor=self)
 
     def _on_item_unequipped(self, inventory: Inventory, slot: str, item: EquipableItem) -> None:
         """Handler for when an item is unequipped: removes its modifiers from stats."""
         self.stats_mgr.stats.remove_modifier(item.id)
+        for ench in item.enchantments:
+            ench.remove(self, item)
         hook_dispatcher.fire("actor.stats_updated", actor=self)

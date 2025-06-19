@@ -2,7 +2,11 @@
 
 """
 Combat capabilities: damage calculation and loot handling.
-Refactored to include defender's defense stat in every hit, not only when defending.
+Refactored to include:
+- total_damage_map for enchantment + item synergy,
+- resistance multipliers (actor & gear),
+- CRITs and variance scaling,
+- post-resist hook flow.
 """
 
 import random
@@ -12,24 +16,13 @@ from game_sys.core.damage_types import DamageType
 from game_sys.combat.loader import DROP_TABLES
 from game_sys.items.factory import create_item
 from game_sys.core.hooks import hook_dispatcher
+from game_sys.core.rarity import Rarity
+from game_sys.items.item_base import EquipableItem
 
 log = get_logger(__name__)
 
-
 class CombatCapabilities:
-    """
-    Handles 1-on-1 combat resolution and looting:
-      - calculate_damage(attacker, defender, damage_map, ...)
-      - roll_loot(defeated)
-      - transfer_loot(winner, defeated)
-    """
-
-    def __init__(
-        self,
-        character: Any,
-        enemy: Any,
-        rng: Optional[random.Random] = None
-    ) -> None:
+    def __init__(self, character: Any, enemy: Any, rng: Optional[random.Random] = None) -> None:
         self.character = character
         self.enemy = enemy
         self.rng = rng or random.Random()
@@ -38,97 +31,72 @@ class CombatCapabilities:
         self,
         attacker: Any,
         defender: Any,
-        damage_map: Dict[DamageType, float],
-        stat_name: Optional[str] = "attack",
-        multiplier: float = 1.0,
-        crit_chance: float = 0.10,
-        variance: float = 0.10,
+        damage_map: Optional[Dict[DamageType, float]],
+        stat_name: Optional[str],
+        multiplier: float = 1.0, # Multiplier for stat scaling
+        crit_chance: float = 0.10, # 10% chance of critical hit
+        variance: float = 0.10, # 10% variance in damage output
     ) -> str:
-        """
-        Compute and apply damage for each damage type in damage_map.
-        Now includes defender.defense stat as a flat reduction before
-        resistance multipliers and defending flag. Floors damage to
-        a minimum of 10% of raw roll to avoid zeroing out.
-        """
         parts: List[str] = []
         crit = False
-
+        resist_mult: float = 1.0
+        # Correctly resolve equipped weapon object
+        if damage_map and hasattr(attacker, "inventory"):
+            weapon = attacker.inventory.get_primary_weapon()
+        if isinstance(weapon, EquipableItem):
+            damage_map = weapon.total_damage_map()
+        # Defensive fallback if map is missing or zeroed
+        if not damage_map or sum(damage_map.values()) <= 0:
+            log.warning("No elemental damage found; falling back to physical for %s", attacker.name)
+            fallback_stat = getattr(attacker, stat_name, 1) if stat_name else 1
+            damage_map = {DamageType.FIRE: fallback_stat}
         for dt, base in damage_map.items():
-            # Base roll including attacker's stat bonus
             roll = base
             if stat_name:
                 roll += getattr(attacker, stat_name, 0) * multiplier
 
-            # Apply variance
             if variance > 0:
                 roll *= self.rng.uniform(1 - variance, 1 + variance)
 
-            # Critical hit check
             if self.rng.random() < crit_chance:
                 roll *= 2
                 crit = True
 
-            raw_damage = int(round(roll))
-
-            # Incorporate defender's defense stat (flat reduction)
+            raw = int(round(roll))
             def_stat = getattr(defender, 'defense', 0)
-            # Ensure minimum hit (10% floor)
-            floor = max(int(round(raw_damage * 0.1)), 1)
-            adjusted_raw = max(raw_damage - def_stat, floor)
+            floor = max(int(round(raw * 0.1)), 1)
+            reduced = max(raw - def_stat, floor)
 
-            # Resistance × Weakness multiplier
-            mult = (
-                defender._resistance_multiplier(dt)
-                if hasattr(defender, '_resistance_multiplier')
-                else 1.0
-            )
-            dmg = int(round(adjusted_raw * mult))
+            resist_mult = 1.0
+            if hasattr(defender, '_resistance_multiplier'):
+                resist_mult = defender._resistance_multiplier(dt)
 
-            # Defending halves damage
+            dmg = int(round(reduced * resist_mult))
+
             if getattr(defender, 'defending', False):
                 dmg //= 2
                 defender.defending = False
 
-            # Pre-damage hook
-            hook_dispatcher.fire(
-                "combat.before_damage",
-                attacker=attacker,
-                defender=defender,
-                amount=dmg,
-                damage_type=dt
-            )
+            log.info("%s hits %s for %d %s damage.", attacker.name, defender.name, dmg, dt.name.lower())
 
-            # Apply damage
+            hook_dispatcher.fire("combat.before_damage", attacker=attacker, defender=defender, amount=dmg, damage_type=dt)
             defender.take_damage(dmg, damage_type=dt)
-
-            # Post-damage hook
-            hook_dispatcher.fire(
-                "combat.after_damage",
-                attacker=attacker,
-                defender=defender,
-                amount=dmg,
-                damage_type=dt
-            )
+            hook_dispatcher.fire("combat.after_damage", attacker=attacker, defender=defender, amount=dmg, damage_type=dt)
 
             parts.append(f"{dmg} {dt.name.lower()}")
 
-        # Build summary
         summary = f"{attacker.name} deals {' + '.join(parts)} to {defender.name}"
         if crit:
             summary += " (CRITICAL!)"
-        if mult:
-            summary += f" (after resistance/weakness ×{mult:.2f})"
-        if defender.current_health == 0:
+        if resist_mult != 1.0:
+            summary += f" (after resistance ×{resist_mult:.2f})"
+        if getattr(defender, 'current_health', 1) <= 0:
             summary += " and defeats them!"
 
         log.info(summary)
         return summary
 
     def roll_loot(self, defeated: Any) -> List[Any]:
-        """
-        Roll loot based on the defeated actor's type and level.
-        Returns a list of items that were dropped.
-        """
         hook_dispatcher.fire("combat.loot_roll", enemy=defeated)
         items: List[Any] = []
         key = (
@@ -140,13 +108,8 @@ class CombatCapabilities:
         lvl = getattr(defeated, "level", 1)
         grade = getattr(defeated, "grade", 1)
 
-        # Find matching tier
         chosen = next(
-            (
-                tier for tier in tiers
-                if (tier["min_level"] <= lvl <= tier["max_level"]
-                    and tier.get("min_grade", 0) <= grade <= tier.get("max_grade", grade))
-            ),
+            (tier for tier in tiers if (tier["min_level"] <= lvl <= tier["max_level"] and tier.get("min_grade", 0) <= grade <= tier.get("max_grade", grade))),
             None
         )
         if not chosen:
@@ -158,7 +121,6 @@ class CombatCapabilities:
                 rar_weights = drop.get("rarity_weights", {"common": 1.0})
                 names, weights = zip(*rar_weights.items())
                 rar_name = self.rng.choices(names, weights)[0]
-                from game_sys.core.rarity import Rarity
                 rarity_enum = Rarity[rar_name.upper()]
 
                 for _ in range(qty):
@@ -174,20 +136,14 @@ class CombatCapabilities:
         return items
 
     def transfer_loot(self, winner: Any, defeated: Any) -> None:
-        """
-        Transfer loot from defeated actor to the winner,
-        including item drops and gold.
-        """
-        # Items
         looted: List[Any] = []
         for itm in self.roll_loot(defeated):
             winner.inventory.add_item(itm)
             looted.append(itm)
-            log.info("%s looted 1x %s from %s.",
-                     winner.name, itm.name, defeated.name)
+            log.info("%s looted 1x %s from %s.", winner.name, itm.name, defeated.name)
+
         hook_dispatcher.fire("combat.loot_given", winner=winner, items=looted)
 
-        # Gold
         gold_amt = 0
         if hasattr(defeated, "gold_min") and hasattr(defeated, "gold_max"):
             gm, gx = defeated.gold_min, defeated.gold_max
@@ -198,7 +154,6 @@ class CombatCapabilities:
         if gold_amt > 0:
             winner.gold += gold_amt
             defeated.gold = 0
-            log.info("%s looted %d gold from %s.",
-                     winner.name, gold_amt, defeated.name)
+            log.info("%s looted %d gold from %s.", winner.name, gold_amt, defeated.name)
         else:
             log.info("%s had no gold to drop.", defeated.name)

@@ -43,7 +43,7 @@ class StatsManager:
         Returns:
             Stats: The recalculated stats for the actor.
         """
-        from game_sys.core.scaler import scale_stat
+        from game_sys.managers.scaling_manager import scale_stat
         from game_sys.core.rarity import Rarity
 
         stats_data: Dict[str, int] = {}

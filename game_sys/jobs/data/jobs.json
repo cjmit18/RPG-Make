@@ -24,13 +24,13 @@
     "name": "Knight",
     "description": "A stalwart defender with high resilience and moderate offense.",
     "base_stats": {
-      "attack": 5, 
-      "defense": 7, 
+      "attack": 3, 
+      "defense": 5, 
       "speed": 3, 
-      "health": 10, 
-      "mana": 2, 
-      "stamina": 5, 
-      "intellect": 1,
+      "health": 5, 
+      "mana": 0, 
+      "stamina": 4, 
+      "intellect": 0,
       "magic_power": 0
     },
     "starting_items": ["iron_sword", "leather_armor", "ruby_band"],
@@ -107,16 +107,16 @@
     "name": "Goblin",
     "description": "A cunning creature with quick reflexes and a knack for mischief.",
     "base_stats": {
-      "attack": 3, 
-      "defense": 2, 
-      "speed": 6, 
-      "health": 6, 
-      "stamina": 4,
+      "attack": 2, 
+      "defense": 1, 
+      "speed": 2, 
+      "health": 3, 
+      "stamina": 2,
       "mana": 0
     },
     "starting_items": ["goblin_dagger"],
     "weakness": {
-      "PHYSICAL": 1.5
+      "FIRE": 1.5
     },
     "resistance": {
     }

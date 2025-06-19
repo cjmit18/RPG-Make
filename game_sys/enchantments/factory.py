@@ -1,102 +1,71 @@
-# File: game_sys/enchantments/factory.py
+# game_sys/enchantments/factory.py
 
 import random
-import copy
-from typing import Dict, Any, Optional, List
-
-from .loader import load_templates
-from game_sys.enchantments.base import Enchantment
-from game_sys.core.scaler import scale_stat, scale_damage_map, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
+from pathlib import Path
+from typing import Optional, Dict, Any
+from game_sys.enchantments.base import BasicEnchantment
 from game_sys.core.rarity import Rarity
 from game_sys.core.damage_types import DamageType
+from game_sys.managers.scaling_manager import scale_stat
 
-# Grade modifiers for scaling stats and damage (example values, adjust as needed)
-# Load all enchantment templates at import
-_TEMPLATES: Dict[str, Any] = load_templates()
-
-
-def _roll_range(spec: Any, rng: random.Random) -> int:
-    """
-    Given a spec dict with 'min'/'max', roll an integer between them.
-    """
-    lo = int(spec.get("min", 0))
-    hi = int(spec.get("max", lo))
-    return rng.randint(lo, hi) if hi >= lo else lo
-
-
-def _instantiate(template: Dict[str, Any], rng: random.Random) -> Enchantment:
-    """
-    Build an Enchantment from a JSON template dict, applying level/grade/rarity scaling.
-    """
-    ench_id = template.get("id")
-    name = template.get("name", "")
-    description = template.get("description", "")
-    level = int(template.get("level", 1))
-    grade = int(template.get("grade", 1))
-    rarity = Rarity[template.get("rarity", "COMMON").upper()]
-
-    # 1) Scale stat bonuses
-    scaled_stats: Dict[str, int] = {}
-    for stat, spec in template.get("stat_bonuses", {}).items():
-        rolled = _roll_range(spec, rng)
-        scaled = scale_stat(rolled, level, grade=grade, rarity=rarity)
-        final = int(scaled * _GRADE_MODIFIERS.get(grade, 1.0))
-        scaled_stats[stat] = final
-
-    # 2) Scale damage modifiers
-    raw_damage_map: Dict[DamageType, int] = {}
-    for dt_str, spec in template.get("damage_modifiers", {}).items():
-        rolled = _roll_range(spec, rng)
-        raw_damage_map[DamageType[dt_str.upper()]] = rolled
-
-    scaled_damage_map = scale_damage_map(
-        raw_damage_map, level, grade=grade, rarity=rarity
-    )
-    for dt in scaled_damage_map:
-        scaled_damage_map[dt] = int(
-            scaled_damage_map[dt] * _GRADE_MODIFIERS.get(grade, 1.0)
-        )
-
-    # 3) Instantiate Enchantment object
-    return Enchantment(
-        id=ench_id,
-        name=name,
-        description=description,
-        level=level,
-        grade=grade,
-        rarity=rarity,
-        stat_bonuses=scaled_stats,
-        damage_modifiers={dt.name: dmg for dt, dmg in scaled_damage_map.items()},
-    )
+# Load raw enchantment templates at import
+_TEMPLATES: Dict[str, Dict[str, Any]] = BasicEnchantment.load_all(Path(__file__).parent)
 
 
 def create_enchantment(
     enchant_id: str,
     level: Optional[int] = None,
-    grade: int = 1,
-    rarity: Rarity = Rarity.COMMON,
+    grade: Optional[int] = None,
+    rarity: Optional[Rarity] = None,
     seed: Optional[int] = None,
     rng: Optional[random.Random] = None
-) -> Enchantment:
+) -> BasicEnchantment:
     """
-    Public factory: returns a scaled, randomized Enchantment instance by ID.
+    Create a BasicEnchantment scaled by level, grade, and rarity.
+    Uses fallback to JSON template values if level/grade/rarity is not passed.
     """
     if rng is None:
         rng = random.Random(seed) if seed is not None else random.Random()
 
     templ = _TEMPLATES.get(enchant_id)
     if templ is None:
-        raise KeyError(f"No enchantment template for id={enchant_id!r}")
+        raise KeyError(f"No enchantment template for id='{enchant_id}'")
 
-    templ_copy = copy.deepcopy(templ)
-    if level is not None:
-        templ_copy["level"] = level
-    templ_copy["grade"] = grade
-    templ_copy["rarity"] = rarity.name
+    # Resolve level
+    lvl = int(level) if level is not None else int(templ.get("level", 1))
+    # Resolve grade
+    grd = int(grade) if grade is not None else int(templ.get("grade", 1))
+    # Resolve rarity
+    rar_str = (
+        rarity.name if isinstance(rarity, Rarity)
+        else str(rarity or templ.get("rarity", "COMMON"))
+    ).upper()
+    rar = Rarity[rar_str] if rar_str in Rarity.__members__ else Rarity.COMMON
 
-    return _instantiate(templ_copy, rng)
+    # Roll stat bonuses using scale_stat
+    stat_bonuses: Dict[str, int] = {}
+    for stat, spec in templ.get("stat_bonuses", {}).items():
+        base_range = (spec.get("min", 0), spec.get("max", 0))
+        stat_bonuses[stat] = max(1, scale_stat(base_range, lvl, grd, rar))
 
+    # Roll damage modifiers using scale_stat
+    dmg_mods: Dict[DamageType, int] = {}
+    for dt_str, spec in templ.get("damage_modifiers", {}).items():
+        try:
+            dt = DamageType[dt_str.upper()]
+            base_range = (spec.get("min", 0), spec.get("max", 0))
+            dmg_mods[dt] = max(0, scale_stat(base_range, lvl, grd, rar))
+        except KeyError:
+            continue
 
-def list_all_ids() -> List[str]:
-    """Return all defined enchantment IDs."""
-    return list(_TEMPLATES.keys())
+    return BasicEnchantment(
+        enchant_id=enchant_id,
+        name=templ.get("name", enchant_id),
+        description=templ.get("description", ""),
+        level=lvl,
+        grade=grd,
+        rarity=rar,
+        applicable_slots=templ.get("applicable_slots", []),
+        stat_bonuses=stat_bonuses,
+        damage_modifiers=dmg_mods,
+    )

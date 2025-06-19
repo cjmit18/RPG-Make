@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 
 from game_sys.items.factory import create_item
 from game_sys.core.rarity import Rarity
-from game_sys.core.scaler import scale_stat, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
+from game_sys.managers.scaling_manager import scale_stat, _GRADE_STATS_MULTIPLIER as _GRADE_MODIFIERS
 from game_sys.jobs.base import Job
 
 

@@ -190,3 +190,14 @@ class Inventory:
         else:
             lines.append("Equipped items: (none)")
         return "\n".join(lines)
+
+    def get_equipped_item(self, slot: str) -> Optional[Item]:
+        return self.equipped_items.get(slot)
+    
+    def get_primary_weapon(self) -> Optional[EquipableItem]:
+        """Returns equipped weapon from 'weapon' or 'offhand' slot, if either is valid."""
+        for slot in ("weapon", "offhand"):
+            item = self.get_equipped_item(slot)
+            if isinstance(item, EquipableItem):
+                return item
+        return None

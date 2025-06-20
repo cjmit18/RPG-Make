@@ -81,7 +81,7 @@
     "is_enchantable": false,
     "slot": "weapon",
     "base_bonus_ranges": {
-      "attack": { "min": 2, "max": 20 }
+      "attack": { "min": 2, "max": 4 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
@@ -95,22 +95,28 @@
     "name": "Steel Sword",
     "description": "A sturdy sword made of steel.",
     "price": 200,
-    "level": 1,
+    "level": 5,
     "grade": 2,
     "grade_min": 1,
     "grade_max": 2,
-    "rarity": "COMMON",
+    "rarity": "UNCOMMON",
     "is_enchantable": true,
     "slot": "weapon",
     "base_bonus_ranges": {
-      "attack": { "min": 5, "max": 15 },
+      "attack": { "min": 5, "max": 10 },
       "speed": { "min": 2, "max": 10 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 10 }
     },
     "percent_bonuses": {"attack": 2.0},
-    "passive_effects": [],
+    "passive_effects": [
+      {
+        "id": "Life Steal",
+        "type": "LifeStealPassive",
+        "percent": 50.0
+  }
+    ],
     "enchantment_pool": [
       "flamebrand"
       ],
@@ -306,10 +312,12 @@
       "stamina": { "min": 5, "max": 10 }
     },
     "raw_damage_map": {
-      "physical": { "min": 1, "max": 3 }
     },
     "percent_bonuses": {"defense": 5.0},
-    "passive_effects": []
+    "passive_effects": [],
+    "resistances": {"physical": 0.30
+
+    }
   },
   {
     "id": "knights_armor",
@@ -361,7 +369,7 @@
     "is_enchantable": false,
     "slot": "armor",
     "base_bonus_ranges": {
-      "defense": { "min": 2, "max": 2 }
+      "defense": { "min": 2, "max": 5}
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
@@ -398,8 +406,7 @@
     "is_enchantable": false,
     "slot": "armor",
     "base_bonus_ranges": {
-      "defense": { "min": 1, "max": 1 },
-      "mana": { "min": 2, "max": 2 }
+      "defense": { "min": 1, "max": 2 }
     },
     "raw_damage_map": {},
     "percent_bonuses": {},
@@ -490,8 +497,8 @@
     "slot": "weapon",
     "offhand": true,
     "base_bonus_ranges": {
-      "attack": { "min": 2, "max": 5 },
-      "speed": { "min": 2, "max": 2 }
+      "attack": { "min": 1, "max": 3 },
+      "speed": { "min": 0, "max": 2 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }
@@ -499,9 +506,6 @@
     "percent_bonuses": {
     },
     "passive_effects": [
-      {
-        
-      }
     ]
   },
   {
@@ -510,9 +514,9 @@
     "name": "Goblin Spear",
     "description": "A crude spear used by goblins.",
     "price": 90,
-    "level": 2,
+    "level": 1,
     "grade": 1,
-    "rarity": "UNCOMMON",
+    "rarity": "COMMON",
     "is_enchantable": false,
     "slot": "weapon",
     "base_bonus_ranges": {
@@ -533,15 +537,15 @@
     "price": 150,
     "level": 3,
     "grade": 2,
-    "rarity": "RARE",
+    "rarity": "UNCOMMON",
     "is_enchantable": false,
     "slot": "weapon",
     "base_bonus_ranges": {
-      "attack": { "min": 5, "max": 10 },
-      "stamina": { "min": 2, "max": 2 }
+      "attack": { "min": 2, "max": 5 },
+      "stamina": { "min": 1, "max": 5 }
     },
     "raw_damage_map": {
-      "physical": { "min": 1, "max": 10 }
+      "physical": { "min": 1, "max": 5 }
     },
     "percent_bonuses": {"attack": 2.0},
     "passive_effects": []
@@ -558,7 +562,7 @@
     "is_enchantable": false,
     "slot": "offhand",
     "base_bonus_ranges": {
-      "defense": { "min": 4, "max": 4 }
+      "defense": { "min": 2, "max": 5 }
     },
     "raw_damage_map": {
       "physical": { "min": 1, "max": 3 }

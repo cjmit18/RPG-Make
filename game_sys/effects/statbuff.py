@@ -7,7 +7,7 @@ Applies a temporary buff to a target’s stat for a duration.
 from typing import Any, Dict
 from game_sys.effects.base import Effect
 from game_sys.effects.status import StatusEffect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 
 class TemporaryStatBuff(Effect):

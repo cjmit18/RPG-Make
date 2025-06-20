@@ -6,7 +6,7 @@ Allows opening locked chests/doors.
 
 from typing import Any, Dict
 from game_sys.effects.base import Effect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 class UnlockEffect(Effect):
     def __init__(self, target_type: str) -> None:

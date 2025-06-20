@@ -6,7 +6,7 @@ Buffs a character’s weapon damage by a percentage.
 
 from typing import Any, Dict
 from game_sys.effects.base import Effect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 class ModifyWeaponDamageEffect(Effect):
     def __init__(self, weapon_type: str, percent_bonus: float) -> None:

@@ -25,16 +25,19 @@
     "description": "A stalwart defender with high resilience and moderate offense.",
     "base_stats": {
       "attack": 3, 
-      "defense": 5, 
-      "speed": 3, 
-      "health": 5, 
+      "defense": 10, 
+      "speed": 4, 
+      "health": 8, 
       "mana": 0, 
-      "stamina": 4, 
+      "stamina": 3, 
       "intellect": 0,
       "magic_power": 0
     },
-    "starting_items": ["iron_sword", "leather_armor", "ruby_band"],
-    "starting_skills": ["shield_block", "sword_mastery"]
+    "starting_items": ["iron_sword"],
+    "starting_skills": [],
+    "weakness": {
+    },
+    "resistance": {}
   },
   {
     "job_id": "mage",
@@ -65,7 +68,7 @@
       "mana": 15, 
       "stamina": 4,
       "intellect": 10,
-      "magic_power": 12
+      "magic_power": 0
     },
     "starting_items": ["mana_potion", "ruby_band", "staff"],
     "starting_skills": ["fireball"]
@@ -107,12 +110,11 @@
     "name": "Goblin",
     "description": "A cunning creature with quick reflexes and a knack for mischief.",
     "base_stats": {
-      "attack": 2, 
-      "defense": 1, 
+      "attack": 1, 
+      "defense": 2, 
       "speed": 2, 
       "health": 3, 
-      "stamina": 2,
-      "mana": 0
+      "stamina": 1
     },
     "starting_items": ["goblin_dagger"],
     "weakness": {
@@ -126,20 +128,19 @@
     "name": "Orc",
     "description": "A brutish warrior with immense strength and resilience.",
     "base_stats": {
-      "attack": 6, 
-      "defense": 5, 
-      "speed": 2, 
-      "health": 12,
+      "attack": 3, 
+      "defense": 3, 
+      "speed": 3, 
+      "health": 4,
       "mana": 0, 
-      "stamina": 8,
-      "intellect": 1
+      "stamina": 3,
+      "intellect": 0
     },
-    "starting_items": ["orc_axe", "orc_shield", "leather_armor"],
+    "starting_items": ["orc_axe", "orc_shield", "tattered_robe"],
     "weakness": {
       "FIRE": 1.5
     },
     "resistance": {
-      "PHYSICAL": 0.8
     }
   },
   {
@@ -150,7 +151,7 @@
       "attack": 0, 
       "defense": 0, 
       "speed": 0, 
-      "health": 100, 
+      "health": 1000, 
       "mana": 0, 
       "stamina": 0, 
       "intellect": 0,

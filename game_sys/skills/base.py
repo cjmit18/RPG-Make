@@ -79,7 +79,7 @@ class Skill:
 
         # (C) Set cooldown
         self._current_cooldown = self.cooldown
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("skill.after_use", actor=caster, skill=self, result="\n".join(log_parts))
         # (D) Combine all logs into one response string
         
@@ -92,6 +92,6 @@ class Skill:
         """
         if self._current_cooldown > 0:
             self._current_cooldown -= 1
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("skill.tick_cooldown", skill=self, remaining_cooldown=self._current_cooldown)
         

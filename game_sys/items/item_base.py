@@ -1,7 +1,14 @@
 from typing import Dict, List, Optional, Union, Any
+from logs.logs import get_logger
 from game_sys.core.rarity import Rarity
 from game_sys.core.damage_types import DamageType
 from game_sys.enchantments.base import BasicEnchantment
+from game_sys.hooks.hooks import hook_dispatcher
+from game_sys.effects.base import Effect
+from typing import Dict, Any, List, Optional, Union, TYPE_CHECKING
+if TYPE_CHECKING:
+    from game_sys.character.actor import Actor
+log = get_logger(__name__)
 
 class Item:
     def __init__(
@@ -13,7 +20,7 @@ class Item:
         level: int,
         grade: int = 1,
         rarity: Union[Rarity, str] = Rarity.COMMON,
-    ):
+    ) -> None:
         self.id = id
         self.name = name
         self.description = description
@@ -22,9 +29,12 @@ class Item:
         self.grade = grade
         self.rarity = rarity if isinstance(rarity, Rarity) else Rarity[rarity.upper()]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} (Level {self.level})"
 
+    def apply(self, user: 'Actor', target: Optional['Actor'] = None) -> Any:
+        log.debug(f"No direct effect for item {self.id}")
+        return None
 
 class EquipableItem(Item):
     def __init__(
@@ -40,10 +50,10 @@ class EquipableItem(Item):
         base_bonus_ranges: Optional[Dict[str, Dict[str, int]]] = None,
         damage_map: Optional[Dict[str, Dict[str, int]]] = None,
         percent_bonuses: Optional[Dict[str, float]] = None,
-        passive_effects: Optional[List[str]] = None,
+        passive_effects: Optional[List[Union[str, Dict[str, Any]]]] = None,
         enchantments: Optional[List[BasicEnchantment]] = None,
         resistances: Optional[Dict[DamageType, float]] = None,
-    ):
+    ) -> None:
         super().__init__(id, name, description, price, level, grade, rarity)
         self.slot = slot
         self.base_bonus_ranges = base_bonus_ranges or {}
@@ -56,34 +66,33 @@ class EquipableItem(Item):
 
     def _calculate_bonus_totals(self) -> Dict[str, int]:
         totals: Dict[str, int] = {}
-        for stat, range_dict in self.base_bonus_ranges.items():
-            amt = int(range_dict.get("min", 0))
-            totals[stat] = totals.get(stat, 0) + amt
-
+        for stat, rng in self.base_bonus_ranges.items():
+            totals[stat] = totals.get(stat, 0) + int(rng.get("min", 0))
         for ench in self.enchantments:
-            for stat, value in ench.stat_bonuses.items():
-                totals[stat] = totals.get(stat, 0) + value
-
+            for stat, val in ench.stat_bonuses.items():
+                totals[stat] = totals.get(stat, 0) + val
         return totals
 
     def total_damage_map(self) -> Dict[DamageType, int]:
         final: Dict[DamageType, int] = {}
-        for dt_name, dmg_dict in self.damage_map.items():
+        for dt_name, dmg in self.damage_map.items():
             try:
                 dt = DamageType[dt_name.upper()]
-                avg = int((dmg_dict.get("min", 0) + dmg_dict.get("max", 0)) / 2)
+                avg = int((dmg.get("min", 0) + dmg.get("max", 0)) / 2)
                 if avg > 0:
-                    final[dt] = avg
+                    final[dt] = final.get(dt, 0) + avg
             except KeyError:
                 continue
-
         for ench in self.enchantments:
             for dt, val in ench.damage_modifiers.items():
                 final[dt] = final.get(dt, 0) + val
-
         return final
 
-    def __str__(self):
+    def apply(self, user: 'Actor', target: Optional['Actor'] = None) -> None:
+        log.debug(f"Equipable item {self.id} used; equipping logic handled elsewhere")
+        return None
+
+    def __str__(self) -> str:
         lines = [
             f"| Item: {self.name} (ID: {self.id})",
             f"| Level: {self.level} | Price: {self.price}",
@@ -107,6 +116,15 @@ class EquipableItem(Item):
             for ench in self.enchantments:
                 lines.append(str(ench))
 
+        if self.passive_effects:
+            pe_list: List[str] = []
+            for pe in self.passive_effects:
+                if isinstance(pe, dict):
+                    pe_list.append(pe.get("id", str(pe)))
+                else:
+                    pe_list.append(str(pe))
+            lines.append("| Passive Effects: " + ", ".join(pe_list))
+
         return "\n".join(lines)
 
 
@@ -122,10 +140,24 @@ class ConsumableItem(Item):
         amount: int = 1,
         grade: int = 1,
         rarity: Union[Rarity, str] = Rarity.COMMON,
-    ):
+    ) -> None:
         super().__init__(id, name, description, price, level, grade, rarity)
         self.effects_data = effects_data
         self.amount = amount
 
-    def __str__(self):
-        return f"{self.name} x{self.amount} (Restores effects: {len(self.effects_data)})"
+    def __str__(self) -> str:
+        return f"{self.name} x{self.amount} (Effects: {len(self.effects_data)})"
+
+    def apply(self, user: 'Actor', target: Optional['Actor'] = None) -> List[Any]:
+        results: List[Any] = []
+        for eff_data in self.effects_data:
+            effect_obj = Effect.from_dict(eff_data)
+            actual_target = target or user
+            hook_dispatcher.fire("effect.before_apply", effect=eff_data, caster=user, target=actual_target)
+            res = effect_obj.apply(user, actual_target)
+            hook_dispatcher.fire("effect.after_apply", effect=eff_data, caster=user, target=actual_target, result=res)
+            results.append(res)
+        self.amount -= 1
+        if self.amount <= 0:
+            hook_dispatcher.fire("item.consumed", item=self, user=user)
+        return results

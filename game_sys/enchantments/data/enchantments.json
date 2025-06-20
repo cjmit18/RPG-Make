@@ -4,11 +4,11 @@
     "name": "Flame Brand",
     "description": "Adds extra Fire damage to this weapon.",
     "level": 1,
-    "grade": 1,
-    "rarity": "COMMON",
+    "grade": 2,
+    "rarity": "UNCOMMON",
     "applicable_slots": ["weapon", "offhand"],
     "damage_modifiers": {
-    "FIRE": { "min": 1, "max": 10 }
+    "FIRE": { "min": 1, "max": 10}
     },
     "stat_bonuses": {}
   },

@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from game_sys.core.rarity import Rarity
 from game_sys.core.damage_types import DamageType
 from logs.logs import get_logger
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 log = get_logger(__name__)
 
@@ -91,7 +91,6 @@ class BasicEnchantment(Enchantment):
                 bonus = self.damage_modifiers[damage_type]
                 defender.take_damage(bonus, damage_type)
 
-        hook_dispatcher.register("combat.before_damage", _on_before_damage)
         self._hook_refs.append(("combat.before_damage", _on_before_damage))
 
     def remove(self, actor: Any, item: Any) -> None:

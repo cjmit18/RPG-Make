@@ -29,7 +29,7 @@ def load_templates() -> List[Dict[str, Any]]:
     except json.JSONDecodeError:
         return []
     
-    from game_sys.core.hooks import hook_dispatcher
+    from game_sys.hooks.hooks import hook_dispatcher
     hook_dispatcher.fire("data.loaded", module=__name__, data=parsed)
 
     if isinstance(parsed, list):

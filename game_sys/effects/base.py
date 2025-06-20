@@ -78,5 +78,8 @@ class Effect(ABC):
         if mrt in ("unlock",):
             from game_sys.effects.unlock import UnlockEffect
             return UnlockEffect.from_dict(data)
+        if mrt in ("lifestealpassive",):
+            from game_sys.effects.passives.lifesteal import LifeStealPassive
+            return LifeStealPassive.from_dict(data)
 
         raise ValueError(f"Unknown Effect type: {et}")

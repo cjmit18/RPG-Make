@@ -111,7 +111,7 @@ class SkillRecord:
             data = json.loads(raw_text)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in skill file {path}: {e}") from e
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("data.loaded", module=__name__, data=data)
         records: List[SkillRecord] = []
         for entry in data:
@@ -257,7 +257,7 @@ class LearningSystem:
         self.instantiated_skills[skill_id] = rec.build_skill_instance(
             self.owner
         )
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("skill.learned", actor=self.owner, skill=skill_id)
 
     def unlearn(self, skill_id: str) -> None:
@@ -267,7 +267,7 @@ class LearningSystem:
         self.available_sp += rec.sp_cost
         self.known_skills.remove(skill_id)
         del self.instantiated_skills[skill_id]
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("skill.unlearned", actor=self.owner, skill=skill_id)
 
     def get_known_skills(self) -> List[str]:
@@ -298,5 +298,5 @@ class LearningSystem:
                 skill.tick_cooldown()
             except AttributeError:
                 pass
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire("skill.cooldown_tick", actor=self.owner)

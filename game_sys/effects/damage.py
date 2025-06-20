@@ -10,7 +10,7 @@ from typing import Any, Dict, Optional, Union
 from game_sys.core.damage_types import DamageType
 from game_sys.effects.base import Effect
 from logs.logs import get_logger
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 log = get_logger(__name__)
 
@@ -66,26 +66,33 @@ class DamageEffect(Effect):
         crit = False
 
         for dt, base in self._base_damage_map.items():
+            # scale by level
             amt = int(round(base * (1 + getattr(caster, "level", 1) * 0.02)))
+
+            # add stat-based bonus
             if self.stat_name:
                 bonus = int(round(getattr(caster, self.stat_name, 0) * self.multiplier))
                 amt += bonus
 
+            # apply variance
             if self.variance > 0:
                 amt = int(round(amt * rng.uniform(1 - self.variance, 1 + self.variance)))
+
+            # check for critical
             if rng.random() < self.crit_chance:
                 amt *= 2
                 crit = True
 
-            before = target.current_health
+            before_hp = target.current_health
             target.take_damage(amt, damage_type=dt)
-            lost = before - target.current_health
+            lost = before_hp - target.current_health
             if lost > 0:
-                summary.append(f"{lost} {dt.name.lower()}")
+                # now show e.g. "76 (FIRE)"
+                summary.append(f"{lost} ({dt.name})")
 
         result = (
-            f"{caster.name} deals {' + '.join(summary)} to {target.name}"
-            + (" (CRITICAL!)" if crit else "")
+            f"{caster.name} deals {' + '.join(summary)} damage to {target.name}"
+            + (" (CRITICAL HIT!)" if crit else "")
             + (" and defeats them!" if target.current_health == 0 else "")
         )
 

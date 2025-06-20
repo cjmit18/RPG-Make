@@ -2,7 +2,8 @@
 
 """
 Inventory module: manages an actor's collection of items, equipment, and consumables.
-Enhanced to support dual-wielding and proper offhand unequip logic.
+Enhanced to support dual-wielding and proper offhand unequip logic, and dispatch
+passive-effect hooks on equip/unequip.
 """
 
 from __future__ import annotations
@@ -10,7 +11,7 @@ from typing import Any, Dict, List, Optional, Union
 from logs.logs import get_logger
 from game_sys.items.item_base import Item, EquipableItem, ConsumableItem
 from game_sys.items.factory import create_item, _TEMPLATES
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 from game_sys.core.equipment_slot import EquipmentSlot
 
 log = get_logger(__name__)
@@ -77,78 +78,52 @@ class Inventory:
         entry = self._items.get(item_id)
         return entry['item'] if entry else None
 
-    def equip_item(self, item_ref: Union[str, EquipableItem]) -> None:
-        # Resolve item_obj
-        if isinstance(item_ref, str):
-            entry = self._items.get(item_ref)
-            if not entry:
-                log.warning("No item '%s' to equip.", item_ref)
-                return
-            item_obj = entry['item']
-        else:
-            item_obj = item_ref
-            if item_obj.id not in self._items:
-                log.warning("Item '%s' not in inventory.", item_obj.id)
-                return
+    def equip_item(self, item: Union[str, EquipableItem]) -> None:
+        item_obj = item if isinstance(item, EquipableItem) else create_item(item)
+        # remove from inventory
+        self.remove_item(item_obj.id, 1)
 
-        if not isinstance(item_obj, EquipableItem):
-            log.warning("Item '%s' is not equipable.", item_obj.id)
-            return
+        # unequip old in this slot
+        old = self.equipped_items.get(item_obj.slot)
+        if old:
+            for eff_data in old.passive_effects:
+                hook_dispatcher.fire(
+                    "item.passive.unequip",
+                    item=old,
+                    user=self.owner,
+                    effect_data=eff_data
+                )
 
-        # Determine offhand capability (fallback to template if attribute missing)
-        try:
-            can_offhand = item_obj.offhand
-        except AttributeError:
-            can_offhand = _TEMPLATES.get(item_obj.id, {}).get('offhand', False)
+        # equip new
+        self.equipped_items[item_obj.slot] = item_obj
+        log.info(f"{self.owner.name} equipped '{item_obj.name}' into slot '{item_obj.slot}'.")
 
-        # Choose slot key based on item.slot
-        base_slot = item_obj.slot.lower()
-        # Determine equip slot
-        if base_slot == EquipmentSlot.WEAPON.name.lower():
-            if can_offhand:
-                # One-handed: primary if free, else offhand if free, else primary
-                if 'weapon' not in self.equipped_items:
-                    equip_slot = 'weapon'
-                elif 'offhand' not in self.equipped_items:
-                    equip_slot = 'offhand'
-                else:
-                    equip_slot = 'weapon'
-            else:
-                # Two-handed: clear offhand then equip primary
-                if 'offhand' in self.equipped_items:
-                    self.unequip_item('offhand')
-                equip_slot = 'weapon'
-        else:
-            # Non-weapon slots equip directly
-            equip_slot = base_slot
-
-        # Perform equip
-        prev = self.equipped_items.get(equip_slot)
-        if prev is item_obj:
-            return
-        if prev is not None:
-            self.unequip_item(equip_slot)
-
-        self.equipped_items[equip_slot] = item_obj
-        log.info(
-            "%s equipped '%s' into slot '%s'.",
-            self.owner.name, item_obj.name, equip_slot
-        )
-        hook_dispatcher.fire(
-            "inventory.equip", inventory=self, slot=equip_slot, item=item_obj
-        )
+        # register its passive effects: pass full data dict
+        if item is not None:
+            if isinstance(item_obj, EquipableItem):
+                for eff_data in item_obj.passive_effects:
+                    hook_dispatcher.fire(
+                        "item.passive.equip",
+                        item=item_obj,
+                        user=self.owner,
+                        effect_data=eff_data
+                    )
 
     def unequip_item(self, slot: str) -> None:
-        item = self.equipped_items.pop(slot, None)
-        if not item:
+        item_obj = self.equipped_items.pop(slot, None)
+        if not item_obj:
             return
-        log.info(
-            "%s unequipped '%s' from slot '%s'.",
-            self.owner.name, item.name, slot
-        )
-        hook_dispatcher.fire(
-            "inventory.unequip", inventory=self, slot=slot, item=item
-        )
+        log.info(f"{self.owner.name} unequipped '{item_obj.name}' from slot '{slot}'.")
+        # unregister passive effects
+        for eff_data in item_obj.passive_effects:
+            hook_dispatcher.fire(
+                "item.passive.unequip",
+                item=item_obj,
+                user=self.owner,
+                effect_data=eff_data
+            )
+        # return to inventory
+        self.add_item(item_obj, 1)
 
     def use_item(self, item_ref: Union[str, Item]) -> bool:
         if isinstance(item_ref, str):
@@ -193,7 +168,7 @@ class Inventory:
 
     def get_equipped_item(self, slot: str) -> Optional[Item]:
         return self.equipped_items.get(slot)
-    
+
     def get_primary_weapon(self) -> Optional[EquipableItem]:
         """Returns equipped weapon from 'weapon' or 'offhand' slot, if either is valid."""
         for slot in ("weapon", "offhand"):

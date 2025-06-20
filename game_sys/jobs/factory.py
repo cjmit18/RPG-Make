@@ -29,7 +29,7 @@ def load_templates() -> Dict[str, Any]:
                     or entry.get("name")
                 )
                 templates[jid] = entry
-    from game_sys.core.hooks import hook_dispatcher
+    from game_sys.hooks.hooks import hook_dispatcher
     hook_dispatcher.fire("jobs.loaded", jobs=templates)
     return templates
 

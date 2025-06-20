@@ -8,7 +8,7 @@ Wraps into a StatusEffect so Actor.take_damage sees it.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from game_sys.effects.status import StatusEffect, Effect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 if TYPE_CHECKING:
     from game_sys.character.actor import Actor

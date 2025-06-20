@@ -6,7 +6,7 @@ level-ups, and stat calculations.
 from typing import Any, Dict
 from game_sys.core.experience import Levels
 from game_sys.core.stats import Stats
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 
 class StatsManager:

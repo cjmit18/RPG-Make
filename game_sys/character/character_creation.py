@@ -9,7 +9,7 @@ from game_sys.core.stats import Stats
 from game_sys.skills.learning import LearningSystem, SkillRegistry
 from game_sys.managers.scaling_manager import scale_stat
 from game_sys.core.rarity import Rarity
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 # Paths to JSON templates
 _CHAR_TEMPLATES_PATH = (
@@ -194,7 +194,7 @@ class Character(Actor):
             self.update_stats()
         except Exception:
             pass
-        from game_sys.core.hooks import hook_dispatcher
+        from game_sys.hooks.hooks import hook_dispatcher
         hook_dispatcher.fire(
             "character.job_changed",
             character=self,
@@ -522,6 +522,6 @@ def create_character(
                 )
         if isinstance(template, Player):
             template.learning.available_sp = 0
-    from game_sys.core.hooks import hook_dispatcher
+    from game_sys.hooks.hooks import hook_dispatcher
     hook_dispatcher.fire("character.created", character=template)
     return template

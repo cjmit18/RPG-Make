@@ -8,7 +8,7 @@ either a fixed amount or a random range.
 import random
 from typing import Any, Dict
 from game_sys.effects.base import Effect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 
 class HealEffect(Effect):

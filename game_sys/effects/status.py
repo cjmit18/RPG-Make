@@ -10,7 +10,7 @@ for a fixed duration (in turns), with ticking and expiration.
 from __future__ import annotations
 from typing import Dict, Any, TYPE_CHECKING
 from game_sys.effects.base import Effect
-from game_sys.core.hooks import hook_dispatcher
+from game_sys.hooks.hooks import hook_dispatcher
 
 if TYPE_CHECKING:
     from game_sys.character.actor import Actor

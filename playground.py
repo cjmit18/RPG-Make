@@ -6,6 +6,7 @@ from game_sys.skills.learning import SkillRegistry
 from game_sys.items.factory import create_item
 from game_sys.combat.encounter import Encounter, CombatEngine
 from game_sys.core.damage_types import DamageType
+from game_sys.enchantments.factory import create_enchantment
 import random
 setup_logging()
 log = get_logger(__name__)
@@ -24,17 +25,17 @@ def view_character_test():
     """
     Demonstrate character creation and basic stats display.
     """
-    person = create_character("Player", name="Hero", level=1)
+    person = create_character("wizard", name="Hero", level=1)
     # Create a level-1 Knight named Aria
     character = create_character(
         "Goblin",
-        name="Aria",
+        name="goblin",
         job_id="goblin"
     )
     log.info("=== Character View Test ===")
     health = create_item("health_potion", level=10, grade=5, rarity="rare")
     person.inventory.add_item(health, quantity=1)
-    log.info(character)  # Should show 20 SP available
+    log.info(person)  # Should show 20 SP available
     # log.info(character)  # __str__ will show name, level, stats,
     # inventory, etc.
 
@@ -50,7 +51,7 @@ def learning_system_test():
     player = create_character(
         "wizard"
         )
-    log.info("Player created: %s", player)
+    log.info("Player created: %s", player.name)
 
     # 2) Show unspent SP (should be zero)
     log.info("Unspent SP before leveling: %d", player.learning.unspent_sp())
@@ -204,19 +205,19 @@ def combat_system_test():
     player = create_character(
         "Player",
         name="Sir Lancelot",
-        level=10,
+        level= 100,
         job_id="knight",
-        grade=1,
-        rarity="Common",
+        grade=7,
+        rarity="DIVINE",
         )
     log.info("Created player: %s (Level %d)", player.name, player.stats_mgr.levels.lvl)
     # 2) Create two enemies: goblin and orc
     goblin = create_character(
         "goblin",
         name="Grim",
-        level=3,
+        level=50,
         )
-    orc = create_character("Orc", job_id="orc", level=10)
+    orc = create_character("Orc", job_id="orc", level=50, name="Grom")
     enemies = [goblin, orc]
     log.info("Enemies: %s, %s", goblin.name, orc.name)
 
@@ -226,19 +227,17 @@ def combat_system_test():
     player.inventory.add_item(sword, quantity=1, auto_equip=True)
     player.inventory.add_item(armor, quantity=1, auto_equip=True)
     log.info("Player equipped for combat.")
-
     # 4) Start the encounter
     encounter = Encounter(player, enemies)
     result = encounter.start()
     log.info("Combat result:\n%s", result)
 
     # 5) After combat, log player’s remaining health and status
-    log.info("Player post-combat stats: %s", player)
-
+    log.info(sword)
 
 if __name__ == "__main__":
     # Run each test in sequence
     # view_character_test()
-     learning_system_test()
+    # learning_system_test()
     # inventory_system_test()
     # combat_system_test()

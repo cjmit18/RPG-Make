@@ -110,11 +110,11 @@
       "physical": { "min": 1, "max": 10 }
     },
     "percent_bonuses": {"attack": 2.0},
-    "passive_effects": [
+    "enchantments": [
       {
         "id": "Life Steal",
         "type": "LifeStealPassive",
-        "percent": 50.0
+        "percent": 0.05
   }
     ],
     "enchantment_pool": [
@@ -124,7 +124,7 @@
       "max_enchantments": 2,
       "enchantment_requirements": {
         "min_item_level": 1,
-        "min_item_grade": 2,
+        "min_item_grade": 1,
         "min_item_rarity": "UNCOMMON",
         "slot_type": ["weapon", "offhand"]
       }

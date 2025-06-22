@@ -240,4 +240,4 @@ if __name__ == "__main__":
     # view_character_test()
     # learning_system_test()
     # inventory_system_test()
-    # combat_system_test()
+     combat_system_test()

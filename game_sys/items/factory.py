@@ -106,7 +106,31 @@ def _instantiate(
 
         percent_bonuses = {stat: float(pct) for stat, pct in templ.get("percent_bonuses", {}).items()}
         passive_effects = templ.get("passive_effects", []) or []
-        enchantments = [ BasicEnchantment.from_dict(e) for e in templ.get("enchantments", []) ]
+        percent_bonuses = {stat: float(pct) for stat, pct in templ.get("percent_bonuses", {}).items()}
+        passive_effects = templ.get("passive_effects", []) or []
+
+        # — NEW: roll enchantments from the pool —
+        from game_sys.enchantments.factory import create_enchantment
+        pool = templ.get("enchantment_pool", [])
+        min_e = templ.get("min_enchantments", 0)
+        max_e = templ.get("max_enchantments", 0)
+        enchantments: List[BasicEnchantment] = []
+        if templ.get("is_enchantable", False) and pool:
+            # roll desired count…
+            desired = rng.randint(min_e, max_e)
+            # clamp between 0 and len(pool)
+            count = max(0, min(desired, len(pool)))
+            # sample without error
+            for eid in rng.sample(pool, count):
+                enchantments.append(
+                    create_enchantment(
+                        enchant_id=eid,
+                        level=level,
+                        grade=grade,
+                        rarity=rarity,
+                        rng=rng
+                    )
+                )
 
         return EquipableItem(
             id=item_id,
@@ -114,11 +138,11 @@ def _instantiate(
             description=desc,
             price=price,
             level=level,
-            slot=templ.get("slot",""),
+            slot=templ.get("slot", ""),
             grade=grade,
             rarity=rarity,
             base_bonus_ranges=base_bonus_ranges,
-            damage_map={ dt.name: {"min": amt, "max": amt} for dt, amt in dmg_map.items() },
+            damage_map={dt.name: {"min": amt, "max": amt} for dt, amt in dmg_map.items()},
             percent_bonuses=percent_bonuses,
             passive_effects=passive_effects,
             enchantments=enchantments,

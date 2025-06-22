@@ -1,5 +1,3 @@
-# game_sys/enchantments/base.py
-
 import json
 from pathlib import Path
 from typing import Any, Dict, List
@@ -72,6 +70,47 @@ class Enchantment(ABC):
             except Exception as e:
                 log.warning(f"Failed to load enchantment file {json_file}: {e}")
         return templates
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Enchantment":
+        """
+        Create an Enchantment (or subclass) instance from a dict.
+        Expected keys: id, name, description, level, grade, rarity,
+                       applicable_slots, stat_bonuses, damage_modifiers
+        """
+        enchant_id = data.get("id")
+        name = data.get("name", enchant_id)
+        description = data.get("description", "")
+        level = int(data.get("level", 1))
+        grade = int(data.get("grade", 1))
+        # Rarity parsing
+        raw_rarity = data.get("rarity", "COMMON")
+        rarity = raw_rarity if isinstance(raw_rarity, Rarity) else Rarity[raw_rarity.upper()]
+        
+        applicable_slots = data.get("applicable_slots", []) or []
+        stat_bonuses = data.get("stat_bonuses", {}) or {}
+        
+        # Damage modifiers mapping
+        dmg_mods = data.get("damage_modifiers", {}) or {}
+        damage_modifiers: Dict[DamageType, int] = {}
+        for dt_str, amt in dmg_mods.items():
+            try:
+                dt_enum = DamageType[dt_str.upper()]
+                damage_modifiers[dt_enum] = int(amt)
+            except KeyError:
+                log.warning(f"Unknown damage type '{dt_str}' for enchant '{enchant_id}'")
+
+        return cls(
+            enchant_id=enchant_id,
+            name=name,
+            description=description,
+            level=level,
+            grade=grade,
+            rarity=rarity,
+            applicable_slots=applicable_slots,
+            stat_bonuses=stat_bonuses,
+            damage_modifiers=damage_modifiers,
+        )
 
 
 class BasicEnchantment(Enchantment):

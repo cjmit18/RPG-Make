@@ -54,3 +54,9 @@ async def demo():
 
 if __name__ == '__main__':
     asyncio.run(demo())
+if __name__ == "__main__":
+    # Run each test in sequence
+    # view_character_test()
+    # learning_system_test()
+    # inventory_system_test()
+     combat_system_test()

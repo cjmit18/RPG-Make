@@ -8354,3 +8354,1632 @@ Equipped items:
     - armor: Tattered Robe (ID=tattered_robe)
     - weapon: Staff (ID=staff)
     - ring: Ruby Band (ID=ruby_band)
+2025-06-21 22:40:56 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:40:56 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:40:56 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=252, MP=0, ST=189.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:40:56 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:31 | Registered passive 'Life Steal' for Sir Lancelot from Steel Sword
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 22:40:56 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 252 physical damage
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:192 | Sir Lancelot heals 0 HP; now 4840/4840.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:121 | Sir Lancelot healed 0 HP
+2025-06-21 22:40:56 [    INFO] game_sys.effects.passives.lifesteal:38 | Sir Lancelot heals for 126 HP from lifesteal.
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 300 physical
+  [HP: 0/252] Defeated!
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 9836 XP from defeating Grom.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 1071 gold from Grom.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 1071
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:139 | Grim — HP: 135/135, MP: 0, ST: 45, Gold: 342
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage (CRITICAL!)
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:192 | Sir Lancelot heals 1 HP; now 4840/4840.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:121 | Sir Lancelot healed 1 HP
+2025-06-21 22:40:56 [    INFO] game_sys.effects.passives.lifesteal:38 | Sir Lancelot heals for 68 HP from lifesteal.
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 1043 physical (CRITICAL!)
+  [HP: 0/135] Defeated!
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 447 XP from defeating Grim.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:40:56 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:40:56 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:40:56 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 40 gold from Grim.
+2025-06-21 22:40:56 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 1111
+2025-06-21 22:40:56 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 22:40:56 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 13, speed: 13
+| Damage: PHYSICAL: 8
+| Passive Effects: Life Steal
+2025-06-21 22:42:36 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:42:36 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:42:36 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=288, MP=0, ST=216.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:42:36 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 22:42:36 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 260 physical damage
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 260 physical
+  [HP: 28/288]
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 0
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Grom hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Grom hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Grom — HP: 28/288, MP: 0, ST: 216, Gold: 4697
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70) (CRITICAL!)
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70) (CRITICAL!)
+  [HP: 4838/4840]
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Grim — HP: 135/135, MP: 0, ST: 45, Gold: 949
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage (CRITICAL!)
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 1175 physical (CRITICAL!)
+  [HP: 0/135] Defeated!
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 3117 XP from defeating Grim.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 641 gold from Grim.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4838/4840, MP: 0, ST: 1815, Gold: 641
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Grom hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Grom hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4837/4840]
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Grom — HP: 28/288, MP: 0, ST: 216, Gold: 4697
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 3 ---
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 28 physical damage (CRITICAL!)
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 447 physical (CRITICAL!)
+  [HP: 0/288] Defeated!
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 23023 XP from defeating Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Orc Axe
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Orc Axe from Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 22:42:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 2655 gold from Grom.
+2025-06-21 22:42:36 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4837/4840, MP: 0, ST: 1815, Gold: 3296
+2025-06-21 22:42:36 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 22:42:36 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 19, speed: 15
+| Damage: PHYSICAL: 9
+2025-06-21 22:43:16 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:43:16 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:43:16 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=144, MP=0, ST=108.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:43:16 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 22:43:16 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 144 physical damage
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 479 physical
+  [HP: 0/144] Defeated!
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1065 XP from defeating Grom.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 1 gold from Grom.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 1
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:139 | Grim — HP: 162/162, MP: 0, ST: 54, Gold: 2360
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 162 physical damage
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 452 physical
+  [HP: 0/162] Defeated!
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 3005 XP from defeating Grim.
+2025-06-21 22:43:16 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 22:43:16 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 22:43:16 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 2018 gold from Grim.
+2025-06-21 22:43:16 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 2019
+2025-06-21 22:43:16 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 22:43:16 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 13, speed: 9
+| Damage: PHYSICAL: 2
+2025-06-21 22:51:38 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:51:38 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:51:38 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=216, MP=0, ST=162.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:51:38 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 22:51:38 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 523 physical
+  [HP: 0/135] Defeated!
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1209 XP from defeating Grim.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 408 gold from Grim.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 408
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:81 | Grom hits Sir Lancelot for 1 physical damage (resist×0.70) (CRITICAL!)
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:116 | Grom hits Sir Lancelot:
+  → 1 physical (resist×0.70) (CRITICAL!)
+  [HP: 4839/4840]
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:139 | Grom — HP: 216/216, MP: 0, ST: 162, Gold: 11796
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 216 physical damage
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 332 physical
+  [HP: 0/216] Defeated!
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 5808 XP from defeating Grom.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 22:51:38 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 22:51:38 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 22:51:38 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 8463 gold from Grom.
+2025-06-21 22:51:38 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 8871
+2025-06-21 22:51:38 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 22:51:38 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 19, speed: 13
+| Damage: PHYSICAL: 12
+2025-06-21 22:58:17 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:58:17 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:58:17 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:17 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=216, MP=0, ST=162.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:58:17 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:58:17 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:58:17 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:58:28 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:58:28 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:58:28 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:58:28 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=288, MP=0, ST=216.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:58:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:58:28 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:58:28 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 22:59:08 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 22:59:08 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 22:59:08 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=189, MP=0, ST=63.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 22:59:08 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=252, MP=0, ST=189.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 22:59:08 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 22:59:08 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 22:59:08 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:00:25 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:00:25 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:00:25 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:25 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=252, MP=0, ST=189.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:00:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:00:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:00:25 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:00:35 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:00:35 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:00:35 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=252, MP=0, ST=189.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:00:35 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 23:00:35 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 252 physical damage
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 257 physical
+  → 423 fire (weakness×1.50)
+  [HP: 0/252] Defeated!
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 9154 XP from defeating Grom.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 10043 gold from Grom.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 10043
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:139 | Grim — HP: 135/135, MP: 0, ST: 45, Gold: 973
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage (CRITICAL!)
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 1164 physical (CRITICAL!)
+  → 578 fire
+  [HP: 0/135] Defeated!
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 528 XP from defeating Grim.
+2025-06-21 23:00:35 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 23:00:35 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 23:00:35 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 670 gold from Grim.
+2025-06-21 23:00:35 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 10713
+2025-06-21 23:00:35 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 23:00:35 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 15, speed: 17
+| Damage: PHYSICAL: 2, FIRE: 12
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 2 | Grade: 1| Rarity: UNCOMMON)
+2025-06-21 23:01:14 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:01:14 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:01:14 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:01:14 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=180, MP=0, ST=135.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:01:14 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:01:14 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:01:14 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:04:15 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:04:15 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:04:15 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=288, MP=0, ST=216.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:04:15 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 23:04:15 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 250 physical damage
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 38 fire damage (weakness×1.50)
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 250 physical
+  → 392 fire (weakness×1.50)
+  [HP: 0/288] Defeated!
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 10881 XP from defeating Grom.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 47800 gold from Grom.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 47800
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:139 | Grim — HP: 135/135, MP: 0, ST: 45, Gold: 2530
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 517 physical
+  → 545 fire
+  [HP: 0/135] Defeated!
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 3930 XP from defeating Grim.
+2025-06-21 23:04:15 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 23:04:15 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 23:04:15 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 2316 gold from Grim.
+2025-06-21 23:04:15 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 50116
+2025-06-21 23:04:15 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 23:04:15 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 17, speed: 6
+| Damage: PHYSICAL: 6, FIRE: 9
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 5 | Grade: 2| Rarity: UNCOMMON)
+2025-06-21 23:05:03 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:05:03 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:05:03 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=189, MP=0, ST=63.
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:03 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=288, MP=0, ST=216.
+2025-06-21 23:05:03 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:05:25 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:05:25 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:05:25 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=108, MP=0, ST=36.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=216, MP=0, ST=162.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:05:25 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 23:05:25 [   ERROR] game_sys.hooks.hooks_setup:33 | Failed to register passive LifeSteal for Sir Lancelot: 'str' object has no attribute 'get'
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 23:05:25 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 108 physical damage (CRITICAL!)
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 1274 physical (CRITICAL!)
+  → 648 fire
+  [HP: 0/108] Defeated!
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 438 XP from defeating Grim.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 408 gold from Grim.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 408
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:81 | Grom hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:116 | Grom hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:139 | Grom — HP: 216/216, MP: 0, ST: 162, Gold: 20168
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 216 physical damage
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 318 physical
+  → 484 fire (weakness×1.50)
+  [HP: 0/216] Defeated!
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 6032 XP from defeating Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Orc Axe
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Orc Axe from Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:25 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 11351 gold from Grom.
+2025-06-21 23:05:25 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 11759
+2025-06-21 23:05:25 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 23:05:25 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 13, speed: 4
+| Damage: PHYSICAL: 5, FIRE: 14
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 4 | Grade: 1| Rarity: UNCOMMON)
+| Passive Effects: LifeSteal
+2025-06-21 23:05:45 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:05:45 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:05:45 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=135, MP=0, ST=45.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=144, MP=0, ST=108.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:05:45 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 23:05:45 [   ERROR] game_sys.hooks.hooks_setup:33 | Failed to register passive LifeSteal for Sir Lancelot: 'str' object has no attribute 'get'
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 23:05:45 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 144 physical damage (CRITICAL!)
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 963 physical (CRITICAL!)
+  → 768 fire (weakness×1.50)
+  [HP: 0/144] Defeated!
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1181 XP from defeating Grom.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 347 gold from Grom.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 347
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:139 | Grim — HP: 135/135, MP: 0, ST: 45, Gold: 1086
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 135 physical damage
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 548 physical
+  → 538 fire
+  [HP: 0/135] Defeated!
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1358 XP from defeating Grim.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 23:05:45 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-21 23:05:45 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-21 23:05:45 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 797 gold from Grim.
+2025-06-21 23:05:45 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 1144
+2025-06-21 23:05:45 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 23:05:45 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 19, speed: 11
+| Damage: PHYSICAL: 8, FIRE: 4
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 1 | Grade: 2| Rarity: UNCOMMON)
+| Passive Effects: LifeSteal
+2025-06-21 23:08:10 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-21 23:08:10 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-21 23:08:10 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=180, MP=0, ST=135.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-21 23:08:10 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:31 | Registered passive 'Life Steal' for Sir Lancelot from Steel Sword
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-21 23:08:10 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 180 physical damage
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:192 | Sir Lancelot heals 0 HP; now 4840/4840.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:121 | Sir Lancelot healed 0 HP
+2025-06-21 23:08:10 [    INFO] game_sys.effects.passives.lifesteal:38 | Sir Lancelot heals for 1 HP from lifesteal.
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 379 physical
+  → 531 fire (weakness×1.50)
+  [HP: 0/180] Defeated!
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1971 XP from defeating Grom.
+2025-06-21 23:08:10 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 393 gold from Grom.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 393
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:139 | Grim — HP: 162/162, MP: 0, ST: 54, Gold: 261
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 162 physical damage
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:192 | Sir Lancelot heals 1 HP; now 4840/4840.
+2025-06-21 23:08:10 [    INFO] game_sys.hooks.hooks_setup:121 | Sir Lancelot healed 1 HP
+2025-06-21 23:08:10 [    INFO] game_sys.effects.passives.lifesteal:38 | Sir Lancelot heals for 1 HP from lifesteal.
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 526 physical
+  → 471 fire
+  [HP: 0/162] Defeated!
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 7361 XP from defeating Grim.
+2025-06-21 23:08:10 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 14 gold from Grim.
+2025-06-21 23:08:10 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 407
+2025-06-21 23:08:10 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-21 23:08:10 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 9, speed: 17
+| Damage: PHYSICAL: 3, FIRE: 10
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 5 | Grade: 1| Rarity: UNCOMMON)
+| Passive Effects: Life Steal
+2025-06-22 00:23:28 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-22 00:23:28 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-22 00:23:28 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:28 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-22 00:23:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-22 00:23:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-22 00:23:28 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-22 00:23:28 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-22 00:23:28 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-22 00:23:29 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=189, MP=0, ST=63.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=144, MP=0, ST=108.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:29 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-22 00:23:29 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 144 physical damage (CRITICAL!)
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50) (CRITICAL!)
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 1063 physical (CRITICAL!)
+  → 1422 fire (weakness×1.50) (CRITICAL!)
+  [HP: 0/144] Defeated!
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 657 XP from defeating Grom.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Orc Axe
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Orc Axe from Grom.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 1040 gold from Grom.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 1040
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:139 | Grim — HP: 189/189, MP: 0, ST: 63, Gold: 315
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 189 physical damage
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 423 physical
+  → 428 fire
+  [HP: 0/189] Defeated!
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 3934 XP from defeating Grim.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-22 00:23:29 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:29 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grim.
+2025-06-22 00:23:29 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 252 gold from Grim.
+2025-06-22 00:23:29 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 1292
+2025-06-22 00:23:29 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-22 00:23:29 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 19, speed: 13
+| Damage: PHYSICAL: 5, FIRE: 3
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 1 | Grade: 2| Rarity: UNCOMMON)
+2025-06-22 00:23:33 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-22 00:23:33 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-22 00:23:33 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=108, MP=0, ST=36.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=144, MP=0, ST=108.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:33 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-22 00:23:33 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 144 physical damage
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 523 physical
+  → 730 fire (weakness×1.50)
+  [HP: 0/144] Defeated!
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 3691 XP from defeating Grom.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 271 gold from Grom.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 271
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:139 | Grim — HP: 108/108, MP: 0, ST: 36, Gold: 1462
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 108 physical damage (CRITICAL!)
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 1254 physical (CRITICAL!)
+  → 695 fire
+  [HP: 0/108] Defeated!
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 694 XP from defeating Grim.
+2025-06-22 00:23:33 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-22 00:23:33 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-22 00:23:33 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 217 gold from Grim.
+2025-06-22 00:23:33 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 488
+2025-06-22 00:23:33 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-22 00:23:33 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 9, speed: 11
+| Damage: PHYSICAL: 16, FIRE: 6
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 5 | Grade: 1| Rarity: UNCOMMON)
+2025-06-22 00:23:34 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-22 00:23:34 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-22 00:23:34 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=216, MP=0, ST=72.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=144, MP=0, ST=108.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:34 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-22 00:23:34 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 216 physical damage
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 340 physical
+  → 357 fire
+  [HP: 0/216] Defeated!
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 16825 XP from defeating Grim.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 5251 gold from Grim.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 5251
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:81 | Grom hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:116 | Grom hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:139 | Grom — HP: 144/144, MP: 0, ST: 108, Gold: 4529
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 144 physical damage
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 441 physical
+  → 726 fire (weakness×1.50)
+  [HP: 0/144] Defeated!
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 443 XP from defeating Grom.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-22 00:23:34 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:34 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-22 00:23:34 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 3092 gold from Grom.
+2025-06-22 00:23:34 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 8343
+2025-06-22 00:23:34 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-22 00:23:34 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 19, speed: 6
+| Damage: PHYSICAL: 6, FIRE: 16
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 4 | Grade: 2| Rarity: UNCOMMON)
+2025-06-22 00:23:36 [    INFO] __main__:21 | Skills loaded into registry: ['stealth', 'fireball', 'ice_spear', 'backstab']
+2025-06-22 00:23:36 [    INFO] __main__:202 | === Combat System Test ===
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=605, MP=0, ST=605.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Tattered Robe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× tattered_robe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Knife (ID=knife) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Knife
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x knife from Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× knife
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Knife' into slot 'weapon'.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Sir Lancelot fully restored: HP=4840, MP=0, ST=1815.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Iron Sword (ID=iron_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Iron Sword
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x iron_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× iron_sword
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Iron Sword' into slot 'weapon'.
+2025-06-22 00:23:36 [    INFO] __main__:213 | Created player: Sir Lancelot (Level 100)
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Grim fully restored: HP=162, MP=0, ST=54.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Grim's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grim gained 1× Goblin Dagger
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x goblin_dagger from Grim's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grim lost 1× goblin_dagger
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Grim equipped 'Goblin Dagger' into slot 'weapon'.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=0, MP=0, ST=0.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:206 | Grom fully restored: HP=180, MP=0, ST=135.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Axe (ID=orc_axe) to Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Axe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_axe from Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_axe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Axe' into slot 'weapon'.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Orc Shield (ID=orc_shield) to Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Orc Shield
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x orc_shield from Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× orc_shield
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Orc Shield' into slot 'offhand'.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Tattered Robe (ID=tattered_robe) to Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Grom gained 1× Tattered Robe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x tattered_robe from Grom's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Grom lost 1× tattered_robe
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Grom equipped 'Tattered Robe' into slot 'armor'.
+2025-06-22 00:23:36 [    INFO] __main__:222 | Enemies: Grim, Grom
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Steel Sword (ID=steel_sword) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Steel Sword
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x steel_sword from Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× steel_sword
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Steel Sword' into slot 'weapon'.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Plate Armor (ID=plate_armor) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Plate Armor
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:69 | Removed 1x plate_armor from Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:66 | Inventory: Sir Lancelot lost 1× plate_armor
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:99 | Sir Lancelot equipped 'Plate Armor' into slot 'armor'.
+2025-06-22 00:23:36 [    INFO] __main__:229 | Player equipped for combat.
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 1 ---
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 180 physical damage
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grom for 0 fire damage (weakness×1.50)
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grom:
+  → 360 physical
+  → 636 fire (weakness×1.50)
+  [HP: 0/180] Defeated!
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1194 XP from defeating Grom.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Health Potion (ID=health_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Health Potion
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Health Potion from Grom.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Mana Potion (ID=mana_potion) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Mana Potion
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Mana Potion from Grom.
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 524 gold from Grom.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4840/4840, MP: 0, ST: 1815, Gold: 524
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:81 | Grim hits Sir Lancelot for 1 physical damage (resist×0.70)
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:116 | Grim hits Sir Lancelot:
+  → 1 physical (resist×0.70)
+  [HP: 4839/4840]
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:139 | Grim — HP: 162/162, MP: 0, ST: 54, Gold: 2998
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat_engine:88 | --- Turn 2 ---
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 162 physical damage
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:81 | Sir Lancelot hits Grim for 0 fire damage
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:116 | Sir Lancelot hits Grim:
+  → 461 physical
+  → 494 fire
+  [HP: 0/162] Defeated!
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat_engine:72 | Sir Lancelot receives 1583 XP from defeating Grim.
+2025-06-22 00:23:36 [    INFO] game_sys.inventory.inventory:49 | Added 1x Goblin Dagger (ID=goblin_dagger) to Sir Lancelot's inventory.
+2025-06-22 00:23:36 [    INFO] game_sys.hooks.hooks_setup:59 | Inventory: Sir Lancelot gained 1× Goblin Dagger
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:122 | Sir Lancelot looted 1x Goblin Dagger from Grim.
+2025-06-22 00:23:36 [    INFO] game_sys.combat.combat:127 | Sir Lancelot looted 1997 gold from Grim.
+2025-06-22 00:23:36 [    INFO] game_sys.character.actor:139 | Sir Lancelot — HP: 4839/4840, MP: 0, ST: 1815, Gold: 2521
+2025-06-22 00:23:36 [    INFO] __main__:233 | Combat result:
+Party wins! (All enemies defeated)
+2025-06-22 00:23:36 [    INFO] __main__:236 | | Item: Steel Sword (ID: steel_sword)
+| Level: 5 | Price: 375
+| Description: A sturdy sword made of steel.
+| Slot: weapon | Grade: 2 | Rarity: UNCOMMON
+| Bonuses: attack: 11, speed: 17
+| Damage: PHYSICAL: 11, FIRE: 10
+| Enchantments:
+
+Enchantment ID: flamebrand | Name: Flame Brand
+ Level: 2 | Grade: 1| Rarity: UNCOMMON)

@@ -1,5 +1,11 @@
-from enum import Enum, auto
+# game_sys/core/damage_types.py
+"""
+Module: game_sys.core.damage_types
 
+Defines the DamageType enum for use in damage calculations, resistances,
+weaknesses, and effect matching throughout the engine.
+"""
+from enum import Enum, auto
 
 class DamageType(Enum):
     NONE = auto()
@@ -12,14 +18,6 @@ class DamageType(Enum):
     HOLY = auto()
     DARK = auto()
     MAGIC = auto()
-    # Add more damage types as needed
 
-    @classmethod
-    def get_all_types(cls):
-        return [member for member in cls]
-    
     def __str__(self):
-        return self.name.lower()
-    
-    def __repr__(self):
-        return f"Damage Type: {self.name.upper()}"
+        return self.name

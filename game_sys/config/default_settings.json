@@ -1,0 +1,115 @@
+{
+  "toggles": {
+    "effects": true,
+    "hooks": true,
+    "input_manager": false,
+    "collision_manager": false,
+    "time_manager": true,
+    "action_queue": false,
+    "resource_manager": true,
+    "mod_loader": false,
+    "inventory": true,
+    "items": true,
+    "enchantments": true,
+    "skills": true,
+    "progression": true,
+    "ai": false,
+    "questing": false,
+    "dialogue": false,
+    "scripting": false,
+    "save_load": true,
+    "rendering": true,
+    "combat_modes": true,
+    "audio": true,
+    "ui": true,
+    "physics": false,
+    "particles": false,
+    "postfx": false,
+    "localization": true,
+    "networking": false,
+    "debug": true
+  },
+  "modules": {
+    "combat":    { "enabled": true, "modes": ["turn","2d","3d"], "active_mode": "turn" },
+    "rendering": { "enabled": true, "backend": "pygame" },
+    "audio":     { "enabled": true, "volume": { "music": 0.8, "sfx": 0.8 } },
+    "ui":        { "enabled": true }
+  },
+  "constants": {
+    "combat": {
+      "defense_pivot":       100.0,
+      "defense_alpha":        1.2,
+      "flat_defense_factor":  0.1,
+      "min_damage_percent":   0.1,
+      "crit_chance_default":  0.10,
+      "variance_default":     0.10
+    },
+    "derived_stats": {
+      "dodge_chance":        0.01,
+      "block_chance":        0.01,
+      "magic_damage":        0.1,
+      "magic_resistance":    0.1,
+      "physical_damage":     0.05,
+      "damage_reduction":    0.05,
+      "mana_regeneration":   0.02,
+      "health_regeneration": 0.005,
+      "stamina_regeneration":0.005
+    },
+    "stats_defaults": {
+      "attack":    1.0,
+      "defense":   1.0,
+      "speed":     1.0,
+      "health":    100.0,
+      "mana":      50.0,
+      "stamina":   50.0,
+      "intellect": 1.0
+    },
+    "leveling": {
+      "max_level":   100,
+      "xp_base":     100,
+      "xp_exponent": 1.0
+    },
+    "rendering":   { "fps": 60, "window": { "width": 800, "height": 600 } },
+    "inventory":   { "max_size": 20 },
+    "progression": { "max_level": 100 }
+  },
+  "defaults": {
+    "grades": ["ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN"],
+    "ranks":  ["COMMON","UNCOMMON","RARE","EPIC","LEGENDARY","MYTHIC","DIVINE"],
+    "difficulty": {
+      "easy":      { "enemy_multiplier": 0.75, "loot_multiplier": 1.25 },
+      "normal":    { "enemy_multiplier": 1.0,  "loot_multiplier": 1.0  },
+      "hard":      { "enemy_multiplier": 1.25, "loot_multiplier": 0.75 },
+      "nightmare": { "enemy_multiplier": 1.5,  "loot_multiplier": 0.5  }
+    },
+    "damage_types": ["NONE","PHYSICAL","FIRE","ICE","LIGHTNING","POISON","ARCANE","HOLY","DARK","MAGIC"]
+  },
+  "randomness": {
+    "seed": null,
+    "rarity_weights": {
+      "common":    0.60,
+      "uncommon":  0.20,
+      "rare":      0.10,
+      "epic":      0.05,
+      "legendary": 0.03,
+      "mythic":    0.015,
+      "divine":    0.005
+    },
+    "grade_weights": {
+      "ONE":   0.40,
+      "TWO":   0.25,
+      "THREE": 0.15,
+      "FOUR":  0.10,
+      "FIVE":  0.06,
+      "SIX":   0.03,
+      "SEVEN": 0.01
+    }
+  },
+  "logging": {
+    "level":  "INFO",
+    "format": "%(asctime)s | %(name)s | %(levelname)s | %(message)s"
+  },
+  "paths": {
+    "data_dir": "game_sys/character/data"
+  }
+}

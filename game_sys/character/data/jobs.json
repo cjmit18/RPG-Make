@@ -1,0 +1,11 @@
+{
+  "commoner": {
+    "stat_bonus_ids": ["stat_bonus_commoner"]
+  },
+  "warrior": {
+    "stat_bonus_ids": ["stat_bonus_warrior"]
+  },
+  "mage": {
+    "stat_bonus_ids": ["stat_bonus_mage"]
+  }
+}

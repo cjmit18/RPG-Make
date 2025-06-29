@@ -1,24 +1,21 @@
 # game_sys/skills/learning_system.py
-"""
-Module: game_sys.skills.learning_system
 
-Manages skill acquisition and progression for Player actors.
-"""
 from typing import Any, Dict, List, Optional
 from game_sys.hooks.hooks_setup import emit
 
-# Define new events (add these constants to your hooks_setup if you wish)
+# Events you can hook into
 ON_SKILL_LEARNED  = 'skill_learned'
 ON_SKILL_UPGRADED = 'skill_upgraded'
 
 class LearningSystem:
     """
-    Tracks which skills a player has learned, their levels,
+    Tracks which skills an actor has learned, their levels,
     and provides methods to learn or upgrade them.
     """
+
     def __init__(self, actor: Any):
         self.actor = actor
-        # skill_id -> current skill level
+        # skill_id -> current level
         self.learned_skills: Dict[str, int] = {}
 
     def learn(self, skill_id: str) -> bool:

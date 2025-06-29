@@ -36,19 +36,19 @@ class StatusEffectManager:
         for actor in list(self.actors):
             to_remove = []
             for eid, (eff, remaining) in actor.active_statuses.items():
-                remaining -= dt
-                if remaining <= 0:
+                # call on_tick first to include the final tick
+                on_tick = getattr(eff, 'on_tick', None)
+                if on_tick:
+                    if asyncio.iscoroutinefunction(on_tick):
+                        asyncio.create_task(on_tick(actor, dt))
+                    else:
+                        on_tick(actor, dt)
+                # decrease remaining duration
+                new_remaining = remaining - dt
+                if new_remaining <= 0:
                     to_remove.append(eid)
                 else:
-                    # update remaining
-                    actor.active_statuses[eid] = (eff, remaining)
-                    # call on_tick if defined
-                    on_tick = getattr(eff, 'on_tick', None)
-                    if on_tick:
-                        if asyncio.iscoroutinefunction(on_tick):
-                            asyncio.create_task(on_tick(actor, dt))
-                        else:
-                            on_tick(actor, dt)
+                    actor.active_statuses[eid] = (eff, new_remaining)
 
             # expire finished statuses
             for eid in to_remove:

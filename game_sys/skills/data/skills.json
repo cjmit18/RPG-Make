@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "cleave": {
+      "name": "Cleave",
+      "stamina_cost": 10,
+      "cooldown": 1.5,
+      "base_power": 15,
+      "damage_type": "PHYSICAL",
+      "effects": [
+        { "type": "flat", "params": { "amount": 5 } }
+      ]
+    },
+    "pierce": {
+      "name": "Pierce",
+      "stamina_cost": 8,
+      "cooldown": 1.0,
+      "base_power": 12,
+      "damage_type": "PHYSICAL",
+      "effects": [
+        { "type": "percent", "params": { "multiplier": 1.2 } }
+      ]
+    }
+  }
+}

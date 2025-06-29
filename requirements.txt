@@ -1,0 +1,12 @@
+# requirements.txt
+
+# ─────────────── Runtime dependencies ───────────────
+aiofiles>=24.1.0
+jsonschema>=4.17.3
+
+# ───────────── Development dependencies ─────────────
+pytest>=6.0
+pytest-cov
+flake8
+mypy
+bump2version>=1.0.1

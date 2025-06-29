@@ -9,10 +9,10 @@ from typing import Type, Dict
 from game_sys.config.feature_flags import FeatureFlags
 from game_sys.effects.base import Effect, NullEffect
 from game_sys.effects.damage_mod import FlatDamageMod, PercentDamageMod, ElementalDamageMod
-from game_sys.effects.stat_bonus import StatBonusEffect
-from game_sys.effects.extensions import HealEffect, BuffEffect, DebuffEffect, StatusEffect
+from game_sys.effects.extensions import HealEffect, BuffEffect, DebuffEffect, StatusEffect, InstantRestoreEffect, StatBonusEffect
 
 flags = FeatureFlags()
+
 
 class EffectRegistry:
     """
@@ -44,6 +44,8 @@ class EffectRegistry:
             return NullEffect()
 
 # Register built-in damage mods
+
+
 EffectRegistry.register('flat',      FlatDamageMod)
 EffectRegistry.register('percent',   PercentDamageMod)
 EffectRegistry.register('elemental', ElementalDamageMod)
@@ -54,3 +56,4 @@ EffectRegistry.register('heal',   HealEffect)
 EffectRegistry.register('buff',   BuffEffect)
 EffectRegistry.register('debuff', DebuffEffect)
 EffectRegistry.register('status', StatusEffect)
+EffectRegistry.register('instant', InstantRestoreEffect)

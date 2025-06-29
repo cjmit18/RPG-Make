@@ -1,25 +1,10 @@
 # game_sys/skills/skill_loader.py
-"""
-Module: game_sys.skills.skill_loader
 
-Loads skill definitions and returns a minimal Skill stub.
-Stubbed to return the raw JSON dict or an empty dict.
-"""
-
-import json
-from pathlib import Path
-from typing import Any, Dict
+from game_sys.skills.factory import SkillFactory
 
 
-def load_skill(skill_id: str) -> Dict[str, Any]:
+def load_skill(skill_id: str):
     """
-    Attempt to load <skill_id>.json from the same folder;
-    returns the parsed dict or an empty dict if missing.
+    Public API to get a Skill instance by ID.
     """
-    path = Path(__file__).parent / f"{skill_id}.json"
-    if path.exists():
-        try:
-            return json.loads(path.read_text())
-        except Exception:
-            pass
-    return {}
+    return SkillFactory.create(skill_id)

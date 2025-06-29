@@ -5,9 +5,10 @@ Module: game_sys.engine
 The core Engine class ties together all major subsystems.
 """
 import asyncio
+
 from game_sys.config.config_manager import ConfigManager
 from game_sys.config.watcher import ConfigWatcher
-from game_sys.hooks.hooks_setup import emit
+from game_sys.hooks.hooks_setup import emit, on, ON_CHARACTER_CREATED
 from game_sys.managers.time_manager import time_manager
 from game_sys.managers.factories import (
     get_input_manager,
@@ -15,6 +16,8 @@ from game_sys.managers.factories import (
     get_resource_manager,
     get_mod_loader
 )
+from game_sys.effects.status_manager import status_manager
+
 
 class Engine:
     """
@@ -28,20 +31,31 @@ class Engine:
         self.config_watcher = ConfigWatcher(path=self.config.get('paths.data_dir', 'config'))
 
         # Core subsystems via factories
-        self.input = get_input_manager()
-        self.collision = get_collision_manager()
-        self.resource = get_resource_manager()
+        self.input      = get_input_manager()
+        self.collision  = get_collision_manager()
+        self.resource   = get_resource_manager()
         self.mod_loader = get_mod_loader()
 
-        # Actors managed by this engine
-        self.actors = []
+        # Actors explicitly managed by the engine (for ready-action processing)
+        self.actors: list = []
 
         # Target frame rate
         self.fps = fps
         self._running = False
 
+        # --- Loose‐coupling auto‐registration for character creation ---
+        def _auto_register(actor, **_):
+            # 1) drive regen & action‐queue ticking
+            time_manager.register(actor)
+            time_manager.register(actor.action_queue)
+            # 2) drive DoTs, buffs & debuffs
+            status_manager.register_actor(actor)
+
+        # any time a character is created, hook it into time & status systems
+        on(ON_CHARACTER_CREATED, _auto_register)
+
     def register_actor(self, actor):
-        """Add an Actor instance to be managed by the engine."""
+        """Add an Actor for ready‐action dispatch (emit events)."""
         if actor not in self.actors:
             self.actors.append(actor)
 
@@ -52,20 +66,18 @@ class Engine:
 
     def start(self):
         """Initialize and start all subsystems."""
-        # Start watching config for hot-reload
+        # Start hot‐reload for config
         self.config_watcher.start()
-
-        # Load user-defined mods
+        # Load user mods
         self.mod_loader.load_mods()
-
-        # Start the async time manager (status ticks, action queue ticks)
-        time_manager.start(interval=1/self.fps)
-
+        # Start the async time manager (handles ticks)
+        time_manager.start(interval=1 / self.fps)
         self._running = True
 
     async def game_loop(self):
         """
-        Main asynchronous game loop. Polls input, processes actions, and ticks subsystems.
+        Main asynchronous game loop. Polls input, processes ready actions,
+        and sleeps to maintain frame rate.
         """
         interval = 1 / self.fps
         try:
@@ -74,16 +86,15 @@ class Engine:
                 if hasattr(self.input, 'update'):
                     self.input.update()
 
-                # 2) Collision checks (custom per game)
-                # e.g., self.collision.query(...)
+                # 2) Collision checks (game‐specific)
+                # e.g. self.collision.query(...)
 
-                # 3) Process ready actions for actors
+                # 3) Process ready actions and emit their events
                 for actor in list(self.actors):
-                    ready = actor.consume_ready_actions()
-                    for action_name, params in ready:
+                    for action_name, params in actor.consume_ready_actions():
                         emit(action_name, actor=actor, **params)
 
-                # 4) Wait until next frame
+                # 4) Frame pacing
                 await asyncio.sleep(interval)
         except asyncio.CancelledError:
             pass
@@ -95,7 +106,7 @@ class Engine:
         time_manager.stop()
 
     def run(self):
-        """Synchronous entry point: starts subsystems and runs the async loop."""
+        """Entry point: start subsystems, run loop, and clean up."""
         self.start()
         try:
             asyncio.run(self.game_loop())
@@ -104,7 +115,9 @@ class Engine:
         finally:
             self.stop()
 
+
 def start_engine(fps: int = 60):
     engine = Engine(fps=fps)
     engine.run()
     return engine
+

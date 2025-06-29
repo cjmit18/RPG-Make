@@ -1,0 +1,28 @@
+{
+  "spells": {
+    "fireball": {
+      "name": "Fireball",
+      "mana_cost": 20,
+      "cast_time": 1.5,
+      "cooldown": 3.0,
+      "base_power": 10,
+      "damage_type": "FIRE",
+      "effects": [
+        { "type": "status", "params": { "name": "burn", "duration": 5, "tick_damage": 1 } }
+      ]
+    },
+    "ice_shard": {
+      "name": "Ice Shard",
+      "mana_cost": 15,
+      "cast_time": 1.0,
+      "cooldown": 2.5,
+      "base_power": 20,
+      "damage_type": "ICE",
+      "effects": [
+        { "type": "debuff", "params": { "stat": "speed", "amount":  -0.2, "duration": 3 } }
+      ],
+      "effect_ids": []
+      
+    }
+  }
+}

@@ -20,7 +20,7 @@ class JobManager:
         """
         Give this actor the specified job.
         - Records the job_id on the actor
-        - Applies any associated stat‐bonus effect(s)
+        - Applies any associated stat-bonus effect(s)
         - Emits ON_JOB_ASSIGNED for downstream systems
         """
         actor.job_id = job_id

@@ -1,0 +1,47 @@
+{
+  "items": {
+    "potion_health": {
+      "type": "consumable",
+      "name": "Health Potion",
+      "description": "Restores 50 HP on use.",
+      "effects": [
+        {
+          "type": "heal",
+          "params": {
+            "amount": 50
+          }
+        }
+      ]
+    },
+    "iron_sword": {
+      "type": "weapon",
+      "name": "Iron Sword",
+      "description": "A sturdy iron sword.",
+      "base_damage": 10,
+      "damage_type": "PHYSICAL",
+      "effect_ids": ["flat_5"]
+    },
+    "leather_armor": {
+      "type": "armor",
+      "name": "Leather Armor",
+      "description": "Lightweight body armor.",
+      "defense": 5,
+      "effect_ids": []
+    },
+    "fire_enchant": {
+      "type": "enchantment",
+      "name": "Flame Enchantment",
+      "description": "Adds fire damage on hit.",
+      "effects": [
+        {
+          "type": "elemental",
+          "params": {
+            "element": "FIRE",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "damage_type": "FIRE"
+    }
+  }
+}

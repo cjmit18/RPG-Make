@@ -28,6 +28,30 @@ class HealEffect(Effect):
         return f"{target.name} healed for {self.amount} HP"
 
 
+class InstantRestoreEffect(Effect):
+    """
+    Instantly restores a flat amount of selected resource (e.g., mana, stamina).
+    Params:
+        resource (str): Name of the resource to restore.
+        amount (float): Flat amount to restore.
+    """
+    def __init__(self, resource: str, amount: float):
+        super().__init__(id=f"restore_{resource}_{amount}")
+        self.resource = resource
+        self.amount = amount
+
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        # support resources named by 'health', 'mana', etc. mapping to current_<resource> and max_<resource>
+        resource_attr = f"current_{self.resource}"
+        max_attr = f"max_{self.resource}"
+        if hasattr(target, resource_attr) and hasattr(target, max_attr):
+            current_value = getattr(target, resource_attr)
+            max_value = getattr(target, max_attr)
+            setattr(target, resource_attr, min(max_value, current_value + self.amount))
+            return f"{target.name} restored {self.amount} {self.resource}"
+        return f"{target.name} has no resource '{self.resource}' to restore"
+
+
 class BuffEffect(Effect):
     """
     Temporarily buffs a stat on the target.
@@ -98,3 +122,13 @@ class StatusEffect(Effect):
     def on_tick(self, actor: Any, dt: float):
         if self.tick_damage:
             actor.take_damage(self.tick_damage * dt)
+
+
+class StatBonusEffect(Effect):
+    def __init__(self, stat: str = "", amount: float = 0.0):
+        super().__init__(id=f"stat_bonus_{stat}_{amount}")
+        self.stat = stat
+        self.amount = amount
+
+    def modify_stat(self, base_stat: float, actor: Any) -> float:
+        return base_stat + self.amount

@@ -1,0 +1,10 @@
+{
+  "combos": {
+    "flame_combo": {
+      "sequence": ["fireball","ignite"],
+      "effects": [
+        { "type":"buff","params":{ "stat":"intellect","amount":5,"duration":10 } }
+      ]
+    }
+  }
+}

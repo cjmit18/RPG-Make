@@ -10448,3 +10448,11 @@ AttributeError: 'SimpleGameDemo' object has no attribute 'reset_stat_points'
 2025-07-04 06:48:42 [    INFO] simple_demo:331 | A Ancient Dragon appears!
 2025-07-04 06:48:42 [    INFO] simple_demo:150 | Demo initialized
 2025-07-04 06:48:42 [    INFO] simple_demo:1115 | Starting demo
+2025-07-04 06:50:13 [    INFO] simple_demo:331 | No skills available to learn!
+2025-07-04 06:50:21 [    INFO] simple_demo:331 | Learned spell: ice_shard!
+2025-07-04 06:50:25 [    INFO] simple_demo:331 | Learned spell: ice_shard!
+2025-07-04 06:53:54 [    INFO] simple_demo:331 | Enchanting interface refreshed
+2025-07-04 06:54:00 [    INFO] game_sys.items:53 | Successfully created item 'iron_sword'
+2025-07-04 06:54:00 [    INFO] game_sys.inventory:31 | Added Iron Sword to Valiant Hero's inventory
+2025-07-04 06:54:00 [    INFO] simple_demo:331 | Created and added Iron Sword to inventory!
+2025-07-04 06:54:01 [    INFO] simple_demo:331 | Enchanting interface refreshed

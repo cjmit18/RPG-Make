@@ -2,6 +2,7 @@
 
 from typing import Any
 from game_sys.effects.base import Effect
+from game_sys.logging import effects_logger
 
 class FlatDamageMod(Effect):
     """
@@ -10,13 +11,23 @@ class FlatDamageMod(Effect):
     def __init__(self, amount: float = 0.0):
         super().__init__(id=f"flat_{amount}")
         self.amount = amount
+        effects_logger.debug(f"Created FlatDamageMod with amount: {amount}")
 
     def modify_damage(self, damage: float, attacker: Any, defender: Any) -> float:
-        return damage + self.amount
+        new_damage = damage + self.amount
+        effects_logger.debug(
+            f"FlatDamageMod: {damage} -> {new_damage} (added {self.amount})"
+        )
+        return new_damage
 
-    def apply(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
-        # No direct “on-apply” behavior; this is used in the damage pipeline.
+    def apply(self, caster: Any = None, target: Any = None, 
+              combat_engine: Any = None) -> str:
+        # No direct "on-apply" behavior; this is used in the damage pipeline.
+        effects_logger.debug(
+            f"Applied FlatDamageMod to {target.name if target else 'unknown'}"
+        )
         return ""
+
 
 class PercentDamageMod(Effect):
     """
@@ -25,11 +36,20 @@ class PercentDamageMod(Effect):
     def __init__(self, multiplier: float = 1.0):
         super().__init__(id=f"percent_{multiplier}")
         self.multiplier = multiplier
+        effects_logger.debug(f"Created PercentDamageMod with multiplier: {multiplier}")
 
     def modify_damage(self, damage: float, attacker: Any, defender: Any) -> float:
-        return damage * self.multiplier
+        new_damage = damage * self.multiplier
+        effects_logger.debug(
+            f"PercentDamageMod: {damage} -> {new_damage} (multiplier: {self.multiplier})"
+        )
+        return new_damage
 
-    def apply(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
+    def apply(self, caster: Any = None, target: Any = None, 
+              combat_engine: Any = None) -> str:
+        effects_logger.debug(
+            f"Applied PercentDamageMod to {target.name if target else 'unknown'}"
+        )
         return ""
 
 class ElementalDamageMod(Effect):
@@ -40,10 +60,22 @@ class ElementalDamageMod(Effect):
         super().__init__(id=f"elemental_{element}_{multiplier}")
         self.element = element
         self.multiplier = multiplier
+        effects_logger.debug(
+            f"Created ElementalDamageMod: {element} with multiplier: {multiplier}"
+        )
 
     def modify_damage(self, damage: float, attacker: Any, defender: Any) -> float:
         # Elemental resistances/weaknesses are handled later in ScalingManager
-        return damage * self.multiplier
+        new_damage = damage * self.multiplier
+        effects_logger.debug(
+            f"ElementalDamageMod({self.element}): {damage} -> {new_damage}"
+        )
+        return new_damage
 
-    def apply(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
+    def apply(self, caster: Any = None, target: Any = None, 
+              combat_engine: Any = None) -> str:
+        effects_logger.debug(
+            f"Applied ElementalDamageMod({self.element}) to "
+            f"{target.name if target else 'unknown'}"
+        )
         return ""

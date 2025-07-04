@@ -26,19 +26,56 @@ class Skill:
         cooldown: float,
         base_power: float,
         damage_type: str,
-        effect_defs: List[Dict]
+        effect_defs: List[Dict],
+        level_requirement: int = 1,
+        stat_requirements: Dict[str, int] = None
     ):
         self.id = skill_id
         self.name = name
         self.stamina_cost = stamina_cost
         self.cooldown = cooldown
         self.base_power = base_power
+        self.level_requirement = level_requirement
+        self.stat_requirements = stat_requirements or {}
+        
         try:
             self.damage_type = DamageType[damage_type.upper()]
         except KeyError:
             self.damage_type = DamageType.PHYSICAL
         # instantiate effects
         self.effects = [EffectFactory.create(d) for d in effect_defs]
+
+    def can_be_learned_by(self, actor) -> bool:
+        """Check if the actor meets the requirements to learn this skill."""
+        # Check level requirement
+        if hasattr(actor, 'level') and actor.level < self.level_requirement:
+            return False
+            
+        # Check stat requirements
+        if hasattr(actor, 'base_stats') and self.stat_requirements:
+            for stat, required_value in self.stat_requirements.items():
+                current_value = actor.base_stats.get(stat, 0)
+                if current_value < required_value:
+                    return False
+                    
+        return True
+    
+    def get_requirement_text(self) -> str:
+        """Get a text description of the skill's requirements."""
+        requirements = []
+        
+        if self.level_requirement > 1:
+            requirements.append(f"Level {self.level_requirement}")
+            
+        if self.stat_requirements:
+            for stat, value in self.stat_requirements.items():
+                stat_name = stat.replace('_', ' ').title()
+                requirements.append(f"{stat_name} {value}")
+                
+        if requirements:
+            return f"Requires: {', '.join(requirements)}"
+        else:
+            return "No requirements"
 
     def execute(self, caster: Any, target: Any) -> float:
         """

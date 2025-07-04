@@ -5,8 +5,12 @@
       "mana_cost": 20,
       "cast_time": 1.5,
       "cooldown": 3.0,
-      "base_power": 10,
+      "base_power": 50,
       "damage_type": "FIRE",
+      "level_requirement": 2,
+      "stat_requirements": {
+        "intelligence": 12
+      },
       "effects": [
         { "type": "status", "params": { "name": "burn", "duration": 5, "tick_damage": 1 } }
       ]
@@ -18,11 +22,45 @@
       "cooldown": 2.5,
       "base_power": 20,
       "damage_type": "ICE",
+      "level_requirement": 1,
+      "stat_requirements": {
+        "intelligence": 10
+      },
       "effects": [
         { "type": "debuff", "params": { "stat": "speed", "amount":  -0.2, "duration": 3 } }
       ],
       "effect_ids": []
-      
+    },
+    "lightning_bolt": {
+      "name": "Lightning Bolt",
+      "mana_cost": 25,
+      "cast_time": 0.8,
+      "cooldown": 4.0,
+      "base_power": 35,
+      "damage_type": "LIGHTNING",
+      "level_requirement": 4,
+      "stat_requirements": {
+        "intelligence": 15,
+        "wisdom": 12
+      },
+      "effects": [
+        { "type": "status", "params": { "name": "stun", "duration": 2 } }
+      ]
+    },
+    "heal": {
+      "name": "Heal",
+      "mana_cost": 12,
+      "cast_time": 2.0,
+      "cooldown": 1.0,
+      "base_power": 30,
+      "damage_type": "HEALING",
+      "level_requirement": 1,
+      "stat_requirements": {
+        "wisdom": 10
+      },
+      "effects": [
+        { "type": "heal", "params": { "amount": 30 } }
+      ]
     }
   }
 }

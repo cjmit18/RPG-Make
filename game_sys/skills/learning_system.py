@@ -49,6 +49,48 @@ class LearningSystem:
 
     def list_skills(self) -> List[str]:
         """
-        Return a list of all learned skill IDs.
+        Return a list of all skill IDs this actor has learned.
         """
         return list(self.learned_skills.keys())
+    
+    def can_learn_skill(self, skill_id: str) -> bool:
+        """
+        Check if the actor can learn a new skill based on level and stats.
+        """
+        # Check if already learned
+        if skill_id in self.learned_skills:
+            return False
+            
+        # Check level and stat requirements
+        try:
+            from game_sys.character.leveling_manager import leveling_manager
+            return leveling_manager.check_skill_requirements(self.actor, skill_id)
+        except ImportError:
+            # If leveling manager not available, allow all skills
+            return True
+    
+    def get_available_skills(self) -> List[str]:
+        """
+        Get all skills that can be learned at the current level.
+        """
+        try:
+            from game_sys.character.leveling_manager import leveling_manager
+            available = leveling_manager.get_available_skills_for_level(self.actor)
+            
+            # Filter out already learned skills
+            return [skill_id for skill_id in available 
+                   if skill_id not in self.learned_skills]
+        except ImportError:
+            # If leveling manager not available, return default list
+            default_skills = ['cleave', 'pierce', 'whirlwind', 'berserker_rage']
+            return [skill_id for skill_id in default_skills 
+                   if skill_id not in self.learned_skills]
+    
+    def learn_if_allowed(self, skill_id: str) -> bool:
+        """
+        Learn a skill only if requirements are met.
+        Returns True if successfully learned.
+        """
+        if self.can_learn_skill(skill_id):
+            return self.learn(skill_id)
+        return False

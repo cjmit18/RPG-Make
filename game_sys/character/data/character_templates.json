@@ -9,13 +9,53 @@
       "health": 100,
       "mana": 50,
       "stamina": 50,
-      "intellect": 5
+      "magic_power": 5
     },
     "gold": { "min": 10, "max": 20 },
     "level": { "start": 1, "start_xp": 0 },
     "weakness": {},
     "resistance": {},
     "job_id": "commoner",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "mage": {
+    "type": "player",
+    "display_name": "Arcane Mage",
+    "base_stats": {
+      "attack": 5,
+      "defense": 3,
+      "speed": 4,
+      "health": 80,
+      "mana": 100,
+      "stamina": 40,
+      "magic_power": 10
+    },
+    "gold": { "min": 15, "max": 30 },
+    "level": { "start": 1, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "mage",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "warrior": {
+    "type": "player",
+    "display_name": "Strong Warrior",
+    "base_stats": {
+      "attack": 12,
+      "defense": 8,
+      "speed": 3,
+      "health": 120,
+      "mana": 30,
+      "stamina": 80,
+      "magic_power": 2
+    },
+    "gold": { "min": 5, "max": 15 },
+    "level": { "start": 1, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "warrior",
     "starting_items": [],
     "starting_skills": []
   },
@@ -29,7 +69,7 @@
       "health": 30,
       "mana": 0,
       "stamina": 20,
-      "intellect": 1
+      "magic_power": 1
     },
     "gold": { "min": 1, "max": 5 },
     "level": { "start": 1, "start_xp": 0 },
@@ -38,5 +78,106 @@
     "job_id": "",
     "starting_items": [],
     "starting_skills": []
+  },
+  "orc": {
+    "type": "enemy",
+    "display_name": "Mountain Orc",
+    "base_stats": {
+      "attack": 8,
+      "defense": 6,
+      "speed": 3,
+      "health": 50,
+      "mana": 0,
+      "stamina": 30,
+      "magic_power": 2
+    },
+    "gold": { "min": 5, "max": 10 },
+    "level": { "start": 2, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "orc",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "dragon": {
+    "type": "enemy",
+    "display_name": "Ancient Dragon",
+    "base_stats": {
+      "attack": 20,
+      "defense": 15,
+      "speed": 10,
+      "health": 200,
+      "mana": 100,
+      "stamina": 80,
+      "magic_power": 10
+    },
+    "gold": { "min": 50, "max": 100 },
+    "level": { "start": 5, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "dragon",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "skeleton": {
+    "type": "enemy",
+    "display_name": "Undead Skeleton",
+    "base_stats": {
+      "attack": 4,
+      "defense": 2,
+      "speed": 3,
+      "health": 25,
+      "mana": 0,
+      "stamina": 15,
+      "magic_power": 1
+    },
+    "gold": { "min": 2, "max": 6 },
+    "level": { "start": 1, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "wolf": {
+    "type": "enemy",
+    "display_name": "Shadow Wolf",
+    "base_stats": {
+      "attack": 6,
+      "defense": 4,
+      "speed": 6,
+      "health": 35,
+      "mana": 0,
+      "stamina": 25,
+      "magic_power": 2
+    },
+    "gold": { "min": 3, "max": 8 },
+    "level": { "start": 1, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "",
+    "starting_items": [],
+    "starting_skills": []
+  },
+  "rogue": {
+    "type": "player",
+    "display_name": "Swift Rogue",
+    "base_stats": {
+      "attack": 8,
+      "defense": 5,
+      "speed": 8,
+      "health": 90,
+      "mana": 40,
+      "stamina": 70,
+      "magic_power": 3
+    },
+    "gold": { "min": 8, "max": 25 },
+    "level": { "start": 1, "start_xp": 0 },
+    "weakness": {},
+    "resistance": {},
+    "job_id": "rogue",
+    "starting_items": [],
+    "starting_skills": []
   }
+  
 }

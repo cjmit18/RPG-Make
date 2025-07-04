@@ -11,7 +11,7 @@ from game_sys.config.feature_flags import FeatureFlags
 # Real implementations
 from game_sys.managers.input_manager import InputManager
 from game_sys.managers.collision_manager import CollisionManager
-from game_sys.managers.action_queue import ActionQueue
+from game_sys.managers.action_queue import get_action_queue as _get_action_queue
 from game_sys.managers.resource_manager import ResourceManager
 from game_sys.managers.mod_loader import ModLoader
 from game_sys.inventory.inventory_manager import InventoryManager
@@ -24,6 +24,7 @@ class NullInputManager:
 class NullCollisionManager:
     def query(self, shape, layer=None): return []
     def raycast(self, origin, direction, distance): return None
+    def tick(self, dt: float): pass  # No-op tick for TimeManager registration
 
 class NullActionQueue:
     def register_actor(self, actor): pass
@@ -36,10 +37,12 @@ class NullActionQueue:
 class NullResourceManager:
     def load(self, path): return None
     def preload(self, paths): pass
+    def tick(self, dt: float): pass  # No-op tick for TimeManager registration
 
 class NullModLoader:
     def load_mods(self, directory): return []
     def get_override(self, key): return None
+    def tick(self, dt: float): pass  # No-op tick for TimeManager registration
 
 class NullInventoryManager:
     def __init__(self, actor): pass
@@ -58,7 +61,9 @@ def get_collision_manager():
     return CollisionManager() if flags.is_enabled('collision_manager') else NullCollisionManager()
 
 def get_action_queue():
-    return ActionQueue() if flags.is_enabled('action_queue') else NullActionQueue()
+    if flags.is_enabled('action_queue'):
+        return _get_action_queue()
+    return NullActionQueue()
 
 def get_resource_manager():
     return ResourceManager() if flags.is_enabled('resource_manager') else NullResourceManager()

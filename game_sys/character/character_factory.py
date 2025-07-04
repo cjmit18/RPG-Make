@@ -1,91 +1,112 @@
 # game_sys/character/character_factory.py
-"""
-Module: game_sys.character.character_factory
 
-Provides factory functions to create Actor subclasses from JSON templates,
-assigning base stats, progression, grade/rarity, gold, levels,
-weaknesses/resistances, jobs, items, skills, and emitting creation events.
-"""
 import json
 import random
 from pathlib import Path
-from typing import Type
+from typing import Any, Dict
 from game_sys.config.config_manager import ConfigManager
-from game_sys.hooks.hooks_setup import emit, ON_CHARACTER_CREATED, ON_DATA_LOADED
-from game_sys.character.actor import Player, NPC, Enemy, Actor
-from game_sys.items.item_loader import load_item
-from game_sys.skills.skill_loader import load_skill
+from game_sys.character.actor import Actor, Player, NPC, Enemy
 from game_sys.character.job_manager import JobManager
-from game_sys.core.damage_types import DamageType
+from game_sys.skills.passive_manager import PassiveManager
+from game_sys.logging import character_logger
 
-# Load templates once
-def _load_json(path: Path):
-    try:
-        return json.loads(path.read_text())
-    except FileNotFoundError:
-        return {}
-
-CFG = ConfigManager()
-BASE_DIR = Path(__file__).parent / 'data'
-_CHAR_TEMPLATES = _load_json(BASE_DIR / 'character_templates.json')
-_JOB_TEMPLATES = _load_json(BASE_DIR.parent / 'jobs.json')
+def create_character(template_id: str, **overrides) -> Actor:
+    character_logger.info(f"Creating character from template: {template_id}")
+    return CharacterFactory.create(template_id, **overrides)
 
 class CharacterFactory:
-    """Factory for creating characters from templates."""
-    @staticmethod
-    def create(template_id: str, **overrides) -> Actor:
-        data = {**_CHAR_TEMPLATES.get(template_id, {}), **overrides}
-        cls_map = {'player': Player, 'npc': NPC, 'enemy': Enemy}
-        cls: Type[Actor] = cls_map.get(data.get('type','').lower(), Player)
-        actor = cls(name=data.get('display_name', template_id), base_stats=data.get('base_stats', {}))
+    """
+    Loads character templates from JSON and instantiates Actor subclasses,
+    assigning job, grade (numeric), rarity, and initializing stats.
+    Also registers any passive abilities defined in the template.
+    """
+    _templates: Dict[str, Dict] = {}
 
-        # Grade & Rarity
-        grades = CFG.get('defaults.grades', [])
-        grade_weights = CFG.get('randomness.grade_weights', {})
-        gw = [grade_weights.get(g, 1.0) for g in grades]
-        actor.grade = random.choices(grades, gw, k=1)[0]
+    @classmethod
+    def _load_templates(cls):
+        path = Path(__file__).parent / 'data' / 'character_templates.json'
+        cls._templates = json.loads(path.read_text())
+        character_logger.debug(f"Loaded {len(cls._templates)} character templates")
 
-        ranks = CFG.get('defaults.ranks', [])
-        rarity_weights = CFG.get('randomness.rarity_weights', {})
-        rw = [rarity_weights.get(r.lower(), 1.0) for r in ranks]
-        actor.rarity = random.choices(ranks, rw, k=1)[0]
+    @classmethod
+    def create(cls, template_id: str, **overrides) -> Actor:
+        # Load if not already
+        if not cls._templates:
+            character_logger.debug("Templates not loaded, loading now")
+            cls._load_templates()
 
-        # Gold
-        gcfg = data.get('gold', {})
-        actor.gold = random.randint(gcfg.get('min',0), gcfg.get('max',0))
+        data = cls._templates.get(template_id.lower())
+        if not data:
+            character_logger.warning(f"Template '{template_id}' not found, creating blank actor")
+            # Fallback blank actor
+            return Actor(name=template_id, base_stats={}, **overrides)
 
-        # Level & XP
-        lvl = data.get('level',{})
-        actor.level = lvl.get('start',1)
-        actor.xp = lvl.get('start',0)
+        # 1) Choose the correct Actor subclass
+        ctype = data.get('type', 'player').lower()
+        character_logger.debug(f"Creating {ctype} from template: {template_id}")
+        
+        if ctype == 'enemy':
+            actor = Enemy(
+                name=data.get('display_name', template_id),
+                base_stats=data.get('base_stats', {}),
+                **overrides
+            )
+            character_logger.info(f"Created enemy: {actor.name}")
+        elif ctype == 'npc':
+            actor = NPC(
+                name=data.get('display_name', template_id),
+                base_stats=data.get('base_stats', {}),
+                **overrides
+            )
+            character_logger.info(f"Created NPC: {actor.name}")
+        else:
+            actor = Player(
+                name=data.get('display_name', template_id),
+                base_stats=data.get('base_stats', {}),
+                **overrides
+            )
+            character_logger.info(f"Created player: {actor.name}")
 
-        # Weakness/Resistance
-        for k, v in data.get('weakness', {}).items():
-            try: actor.weaknesses[DamageType[k.upper()]] = v
-            except: pass
-        for k, v in data.get('resistance', {}).items():
-            try: actor.resistances[DamageType[k.upper()]] = v
-            except: pass
+        cfg = ConfigManager()
 
-        # Job
-        JobManager.assign(actor, data.get('job_id',''))
+        # 2) Assign job and apply its stat modifiers
+        job_id = data.get('job_id', data.get('job', 'commoner'))
+        JobManager.assign(actor, job_id)
+        character_logger.debug(f"Assigned job '{job_id}' to {actor.name}")
 
-        # Stats & Pools
-        actor.update_stats(); actor.restore_all()
+        # 3) Determine grade (numeric) from the configured grade‐names/weights
+        grades = cfg.get('defaults.grades', [])
+        grade_weights = [
+            cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
+            for g in grades
+        ]
+        grade_name = random.choices(grades, grade_weights, k=1)[0]
+        actor.grade_name = grade_name
+        actor.grade = grades.index(grade_name) + 1
+        character_logger.debug(f"Assigned grade {actor.grade} ({grade_name}) to {actor.name}")
 
-        # Items
-        for iid in data.get('starting_items',[]):
-            itm = load_item(iid)
-            if hasattr(itm,'base_damage'): actor.weapon=itm
-            else: actor.inventory.add_item(itm)
+        # 4) Determine rarity (string) from the configured rarities/weights
+        rarities = list(cfg.get('randomness.rarity_weights', {}).keys())
+        rarity_weights = list(cfg.get('randomness.rarity_weights', {}).values())
+        actor.rarity = random.choices(rarities, rarity_weights, k=1)[0]
+        character_logger.debug(f"Assigned rarity '{actor.rarity}' to {actor.name}")
 
-        # Skills
-        for sid in data.get('starting_skills',[]): actor.skill_effect_ids.append(sid)
+        # 5) Register passives (if any) so they hook into events immediately
+        actor.passive_ids = data.get('passives', [])
+        if actor.passive_ids:
+            PassiveManager.register_actor(actor)
+            character_logger.debug(
+                f"Registered {len(actor.passive_ids)} passives for {actor.name}"
+            )
+            
+            # Trigger spawn event for passives
+            from game_sys.hooks.hooks_setup import emit, ON_CHARACTER_CREATED
+            emit(ON_CHARACTER_CREATED, actor=actor)
+            character_logger.debug(f"Emitted character created event for {actor.name}")
 
-        emit(ON_CHARACTER_CREATED, actor=actor)
-        emit(ON_DATA_LOADED, actor=actor, template=template_id)
+        # 6) Finalize stats & pools
+        actor.update_stats()
+        actor.restore_all()
+        character_logger.debug(f"Finalized stats for {actor.name}")
+
         return actor
-
-# Convenience function
-def create_character(template_id: str, **overrides) -> Actor:
-    return CharacterFactory.create(template_id, **overrides)

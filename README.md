@@ -1,7 +1,15 @@
 # Game Sys
 
-A Python-based RPG engine providing character creation, combat, items, and job systems.  
-This repository contains both the `game_sys/` package (core engine) and a `playground.py` demo for testing.
+A Python-b- **Character Creation** via JSON templates (Warrior, Mage, etc.)  
+- **Scaling Stats & Leveling** based on "job" classes  
+- **Inventory & Items** (Equipable, Consumable, etc.)  
+- **Combat System** (damage, crits, RNG abstractions, encounter loops)  
+- **Job System** (loadable from JSON, factories, base stats)  
+- **Save/Load** supports serializing characters (including inventory) to/from JSON.
+- **UI System** with widgets, layouts, themes, and animations
+- **Rendering System** for game visuals
+- **Logging System** integrated throughout all componentsPG engine providing character creation, combat, items, and job systems.  
+This repository contains both the `game_sys/` package (core engine) and a `final_game_demo.py` for demonstration.
 
 ---
 
@@ -14,8 +22,9 @@ This repository contains both the `game_sys/` package (core engine) and a `playg
    3. [Directory Layout](#directory-layout)  
    4. [Usage](#usage)  
 3. [Testing](#testing)  
-4. [Contributing](#contributing)  
-5. [License](#license)
+4. [UI System](#ui-system)
+5. [Contributing](#contributing)  
+6. [License](#license)
 
 ---
 
@@ -146,6 +155,45 @@ This repository contains both the `game_sys/` package (core engine) and a `playg
         pytest --maxfail=1 --disable-warnings -q
     For a coverage report (requires pytest-cov in requirements.txt):
         pytest --cov=game_sys
+
+## UI System
+
+The game includes a comprehensive UI system built on top of Tkinter, with the following components:
+
+### UI Architecture
+
+- **UI Manager** - Central coordination of all UI elements
+- **Base Widget** - Foundation for all UI components
+- **Layout System** - Flexible layouts including BoxLayout and GridLayout
+- **Theme System** - Customizable visual styling
+- **Animation System** - Smooth transitions and effects
+- **Game Widgets** - Specialized widgets for game functionality
+
+### Rendering
+
+The rendering system provides a flexible pipeline for drawing game visuals:
+
+- **Renderer** - Abstract interface for drawing operations
+- **TkRenderer** - Tkinter Canvas-based implementation
+- **RenderPipeline** - Processing and optimization of render commands
+- **Particle System** - Visual effects for game actions
+
+### Logging Integration
+
+All UI components are integrated with the logging system:
+
+- **Console Output** - Real-time feedback during development
+- **File Logging** - Both text and JSON formats for analysis
+- **UI Events** - Tracking of user interactions
+- **Performance Metrics** - FPS and rendering statistics
+
+### Demo Application
+
+Run the unified demo to see all systems in action:
+
+```bash
+python unified_game_demo.py
+```
 
 ### Contributing
     Fork the repository.

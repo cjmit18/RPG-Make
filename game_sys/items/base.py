@@ -17,6 +17,11 @@ class Item(ABC):
         self.id = item_id
         self.name = name
         self.description = description
+        
+        # Level and stat requirements
+        self.level_requirement = attrs.get('level_requirement', 1)
+        self.stat_requirements = attrs.get('stat_requirements', {})
+        
         # any extra attributes (e.g. stats) get attached
         for k, v in attrs.items():
             setattr(self, k, v)
@@ -29,6 +34,38 @@ class Item(ABC):
         - For equipment, this might equip the item.
         """
         ...
+    
+    def can_be_used_by(self, actor) -> bool:
+        """Check if the actor meets the requirements to use this item."""
+        # Check level requirement
+        if hasattr(actor, 'level') and actor.level < self.level_requirement:
+            return False
+            
+        # Check stat requirements
+        if hasattr(actor, 'base_stats') and self.stat_requirements:
+            for stat, required_value in self.stat_requirements.items():
+                current_value = actor.base_stats.get(stat, 0)
+                if current_value < required_value:
+                    return False
+                    
+        return True
+    
+    def get_requirement_text(self) -> str:
+        """Get a text description of the item's requirements."""
+        requirements = []
+        
+        if self.level_requirement > 1:
+            requirements.append(f"Level {self.level_requirement}")
+            
+        if self.stat_requirements:
+            for stat, value in self.stat_requirements.items():
+                stat_name = stat.replace('_', ' ').title()
+                requirements.append(f"{stat_name} {value}")
+                
+        if requirements:
+            return f"Requires: {', '.join(requirements)}"
+        else:
+            return "No requirements"
 
 
 class NullItem(Item):

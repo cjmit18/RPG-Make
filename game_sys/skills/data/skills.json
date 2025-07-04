@@ -6,6 +6,10 @@
       "cooldown": 1.5,
       "base_power": 15,
       "damage_type": "PHYSICAL",
+      "level_requirement": 3,
+      "stat_requirements": {
+        "strength": 15
+      },
       "effects": [
         { "type": "flat", "params": { "amount": 5 } }
       ]
@@ -16,8 +20,28 @@
       "cooldown": 1.0,
       "base_power": 12,
       "damage_type": "PHYSICAL",
+      "level_requirement": 2,
+      "stat_requirements": {
+        "dexterity": 12
+      },
       "effects": [
         { "type": "percent", "params": { "multiplier": 1.2 } }
+      ]
+    },
+    "whirlwind": {
+      "name": "Whirlwind",
+      "stamina_cost": 20,
+      "cooldown": 3.0,
+      "base_power": 25,
+      "damage_type": "PHYSICAL",
+      "level_requirement": 5,
+      "stat_requirements": {
+        "strength": 20,
+        "dexterity": 15
+      },
+      "effects": [
+        { "type": "flat", "params": { "amount": 10 } },
+        { "type": "percent", "params": { "multiplier": 1.5 } }
       ]
     }
   }

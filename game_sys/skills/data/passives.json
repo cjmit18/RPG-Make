@@ -1,0 +1,76 @@
+{
+  "passives": {
+    "battle_meditation": {
+      "name": "Battle Meditation",
+      "description": "Gain +5 defense on each level up, and lose 2 mana per second while alive.",
+      "triggers": [
+        {
+          "event": "on_level_up",
+          "effects": [
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "defense", "amount": 5, "duration": 0 }
+            }
+          ]
+        },
+        {
+          "event": "on_spawn",
+          "effects": [
+            {
+              "type": "resource_drain",
+              "params": { "resource": "mana", "rate": 1.0, "duration": 9999 }
+            }
+          ]
+        }
+      ]
+    },
+    "berserker_rage": {
+      "name": "Berserker Rage",
+      "description": "Gain +3 attack on each level up, but drain 1 health per second.",
+      "triggers": [
+        {
+          "event": "on_level_up",
+          "effects": [
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "attack", "amount": 3, "duration": 0 }
+            }
+          ]
+        },
+        {
+          "event": "on_spawn",
+          "effects": [
+            {
+              "type": "resource_drain",
+              "params": { "resource": "health", "rate": 1, "duration": 9999 }
+            }
+          ]
+        }
+      ]
+    },
+    "endless_sprint": {
+      "name": "Endless Sprint", 
+      "description": "Gain +2 speed on each level up, but drain 3 stamina per second.",
+      "triggers": [
+        {
+          "event": "on_level_up",
+          "effects": [
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "speed", "amount": 2, "duration": 0 }
+            }
+          ]
+        },
+        {
+          "event": "on_spawn",
+          "effects": [
+            {
+              "type": "resource_drain",
+              "params": { "resource": "stamina", "rate": 3, "duration": 9999 }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

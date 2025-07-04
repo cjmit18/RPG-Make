@@ -1,11 +1,133 @@
 {
-  "commoner": {
-    "stat_bonus_ids": ["stat_bonus_commoner"]
-  },
-  "warrior": {
-    "stat_bonus_ids": ["stat_bonus_warrior"]
-  },
-  "mage": {
-    "stat_bonus_ids": ["stat_bonus_mage"]
+  "jobs": {
+    "commoner": {
+      "name": "Commoner",
+      "base_stat_mods": {
+        "strength": 0,
+        "dexterity": 0,
+        "vitality": 0,
+        "intelligence": 0,
+        "wisdom": 0,
+        "constitution": 0,
+        "luck": 0
+      },
+      "skill_list": [],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "basic_clothes", "quantity": 1},
+        {"item_id": "wooden_stick", "quantity": 1}
+      ]
+    },
+    "warrior": {
+      "name": "Warrior",
+      "base_stat_mods": {
+        "attack": 5,
+        "defense": 3,
+        "strength": 5,
+        "vitality": 3,
+        "constitution": 2
+      },
+      "skill_list": ["cleave", "pierce"],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "iron_sword", "quantity": 1},
+        {"item_id": "leather_armor", "quantity": 1},
+        {"item_id": "wooden_shield", "quantity": 1}
+      ]
+    },
+    "mage": {
+      "name": "Mage",
+      "base_stat_mods": {
+        "magic_power": 5,
+        "mana": 20,
+        "max_targets": 1,
+        "intelligence": 5,
+        "wisdom": 3,
+        "luck": 2
+      },
+      "skill_list": [],
+      "spell_list": ["fireball", "ice_shard"],
+      "starting_items": [
+        {"item_id": "apprentice_staff", "quantity": 1},
+        {"item_id": "mage_robes", "quantity": 1},
+        {"item_id": "spell_focus", "quantity": 1},
+        {"item_id": "potion_health", "quantity": 3}
+      ]
+    },
+    "archmage": {
+      "name": "Archmage",
+      "base_stat_mods": {
+        "magic_power": 10,
+        "mana": 50,
+        "max_targets": 3,
+        "intelligence": 8,
+        "wisdom": 6,
+        "luck": 4
+      },
+      "skill_list": [],
+      "spell_list": ["fireball", "ice_shard", "ignite"],
+      "starting_items": [
+        {"item_id": "arcane_staff", "quantity": 1},
+        {"item_id": "archmage_robes", "quantity": 1},
+        {"item_id": "iron_dagger", "quantity": 1},
+        {"item_id": "spell_focus", "quantity": 1},
+        {"item_id": "potion_health", "quantity": 5}
+      ]
+    },
+    "rogue": {
+      "name": "Rogue",
+      "base_stat_mods": {
+        "attack": 3,
+        "speed": 4,
+        "dexterity": 5,
+        "luck": 3,
+        "constitution": 1
+      },
+      "skill_list": ["sneak_attack", "dodge"],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "iron_dagger", "quantity": 1},
+        {"item_id": "leather_armor", "quantity": 1},
+        {"item_id": "potion_health", "quantity": 2}
+      ]
+    },
+    "orc": {
+      "name": "Orc Warrior",
+      "base_stat_mods": {
+        "attack": 3,
+        "defense": 2,
+        "stamina": 5,
+        "strength": 4,
+        "constitution": 3,
+        "vitality": 2
+      },
+      "skill_list": [],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "orc_axe", "quantity": 1},
+        {"item_id": "orc_leather_armor", "quantity": 1},
+        {"item_id": "orc_shield", "quantity": 1}
+      ]
+    },
+    "dragon": {
+      "name": "Dragon",
+      "base_stat_mods": {
+        "attack": 10,
+        "defense": 8,
+        "health": 100,
+        "mana": 50,
+        "strength": 12,
+        "constitution": 10,
+        "vitality": 8,
+        "intelligence": 6,
+        "wisdom": 5
+      },
+      "skill_list": ["fire_breath", "tail_sweep"],
+      "spell_list": ["dragon_roar"],
+      "starting_items": [
+        {"item_id": "dragon_scale_armor", "quantity": 1},
+        {"item_id": "dragon_claw", "quantity": 1}
+      ]
+    }
   }
 }

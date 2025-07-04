@@ -1,0 +1,582 @@
+# game_sys/character/leveling_manager.py
+"""
+Module: game_sys.character.leveling_manager
+
+Manages character leveling, experience gain, and stat point allocation.
+Provides a framework for players to allocate stat points on level up.
+Integrates with skills, spells, enchantments and items for level requirements.
+"""
+
+from typing import Dict, List, Optional, Set
+from game_sys.config.config_manager import ConfigManager
+from game_sys.logging import character_logger
+
+
+class LevelingManager:
+    def gain_experience(self, actor, amount):
+        """Add experience to the actor and handle level up if needed."""
+        if not hasattr(actor, 'experience'):
+            actor.experience = 0
+        if not hasattr(actor, 'level'):
+            actor.level = 1
+        if not hasattr(actor, 'spent_stat_points'):
+            actor.spent_stat_points = 0
+
+        actor.experience += amount
+        leveled_up = False
+        while True:
+            xp_needed = self._xp_for_next_level(actor.level)
+            if actor.experience >= xp_needed:
+                actor.experience -= xp_needed
+                actor.level += 1
+                leveled_up = True
+                # Optionally, reset health/mana/stamina on level up
+                if hasattr(actor, 'max_health'):
+                    actor.current_health = actor.max_health
+                if hasattr(actor, 'max_mana'):
+                    actor.current_mana = actor.max_mana
+                if hasattr(actor, 'max_stamina'):
+                    actor.current_stamina = actor.max_stamina
+            else:
+                break
+        return leveled_up
+
+    def _xp_for_next_level(self, level):
+        # Simple XP curve: 100 * level
+        return 100 * level
+
+    def reset_stat_points(self, actor):
+        """Reset all allocated stat points for the actor."""
+        if not hasattr(actor, 'base_stats'):
+            return
+        if not hasattr(actor, 'spent_stat_points'):
+            actor.spent_stat_points = 0
+        # Reset stats to base (10) and refund spent points
+        base = 10
+        refunded = 0
+        for stat in self.allocatable_stats:
+            val = actor.base_stats.get(stat, base)
+            if val > base:
+                refunded += (val - base)
+                actor.base_stats[stat] = base
+        actor.spent_stat_points = max(0, actor.spent_stat_points - refunded)
+        if hasattr(actor, 'update_stats'):
+            actor.update_stats()
+
+    def level_up(self, actor):
+        """Force the actor to level up by one level."""
+        if not hasattr(actor, 'level'):
+            actor.level = 1
+        actor.level += 1
+        # Optionally, refill health/mana/stamina
+        if hasattr(actor, 'max_health'):
+            actor.current_health = actor.max_health
+        if hasattr(actor, 'max_mana'):
+            actor.current_mana = actor.max_mana
+        if hasattr(actor, 'max_stamina'):
+            actor.current_stamina = actor.max_stamina
+    """
+    Manages leveling and stat point allocation for characters.
+    """
+    
+    def __init__(self):
+        self.cfg = ConfigManager()
+        
+        # Traditional RPG stats that can be improved with stat points
+        self.allocatable_stats = [
+            'strength',
+            'dexterity',
+            'vitality',
+            'intelligence',
+            'wisdom',
+            'constitution',
+            'luck'
+        ]
+        
+        # Stats per level up (can be configured)
+        self.stat_points_per_level = self.cfg.get(
+            'constants.leveling.stat_points_per_level', 5
+        )
+    
+    def get_allocatable_stats(self) -> List[str]:
+        """Get the list of stats that can be allocated with stat points."""
+        return self.allocatable_stats.copy()
+    
+    def calculate_stat_points_available(self, actor) -> int:
+        """
+        Calculate how many stat points an actor should have available.
+        This assumes they get stat_points_per_level points per level above 1.
+        """
+        if not hasattr(actor, 'level'):
+            return 0
+            
+        # Basic formula: (level - 1) * points_per_level
+        total_points = (actor.level - 1) * self.stat_points_per_level
+        
+        # Subtract points already spent (if we track this)
+        spent_points = getattr(actor, 'spent_stat_points', 0)
+        
+        return max(0, total_points - spent_points)
+    
+    def allocate_stat_point(self, actor, stat_name: str) -> bool:
+        """
+        Allocate one stat point to the specified stat.
+        Returns True if successful, False if not enough points or invalid stat.
+        """
+        if stat_name not in self.allocatable_stats:
+            character_logger.warning(
+                f"Cannot allocate point to {stat_name}: not allocatable"
+            )
+            return False
+            
+        available_points = self.calculate_stat_points_available(actor)
+        if available_points <= 0:
+            character_logger.warning(
+                "Cannot allocate point: no points available"
+            )
+            return False
+            
+        # Add the stat point
+        if not hasattr(actor, 'base_stats'):
+            actor.base_stats = {}
+            
+        current_value = actor.base_stats.get(stat_name, 0)
+        actor.base_stats[stat_name] = current_value + 1
+        
+        # Track spent points
+        if not hasattr(actor, 'spent_stat_points'):
+            actor.spent_stat_points = 0
+        actor.spent_stat_points += 1
+        
+        character_logger.info(f"Allocated 1 point to {stat_name} for {actor.name}")
+        
+        # Update derived stats
+        if hasattr(actor, 'update_stats'):
+            actor.update_stats()
+            
+        return True
+    
+    def get_stat_descriptions(self) -> Dict[str, str]:
+        """Get descriptions for each allocatable stat."""
+        return {
+            'strength': 'Increases physical damage and carrying capacity',
+            'dexterity': 'Improves accuracy, dodge chance, and critical hit rate',
+            'vitality': 'Increases health and health regeneration',
+            'intelligence': 'Boosts mana pool and spell damage',
+            'wisdom': 'Improves mana regeneration and spell resistance',
+            'constitution': 'Increases stamina and resistance to effects',
+            'luck': 'Improves critical hit chance and rare item find rate'
+        }
+    
+    def get_stat_impact(self, stat_name: str) -> Dict[str, float]:
+        """
+        Get the numerical impact of one point in a stat.
+        This can be used to show players what each stat point does.
+        """
+        impacts = {
+            'strength': {
+                'attack': 0.5,
+                'carrying_capacity': 5.0
+            },
+            'dexterity': {
+                'speed': 0.2,
+                'critical_chance': 0.01,
+                'dodge_chance': 0.01
+            },
+            'vitality': {
+                'health': 10.0,
+                'health_regen': 0.1
+            },
+            'intelligence': {
+                'mana': 5.0,
+                'spell_damage': 0.3
+            },
+            'wisdom': {
+                'mana_regen': 0.1,
+                'spell_resistance': 0.02
+            },
+            'constitution': {
+                'stamina': 3.0,
+                'status_resistance': 0.01
+            },
+            'luck': {
+                'critical_chance': 0.005,
+                'item_find': 0.01
+            }
+        }
+        
+        return impacts.get(stat_name, {})
+
+    def check_skill_requirements(self, actor, skill_id: str) -> bool:
+        """Check if actor meets level and stat requirements for a skill."""
+        try:
+            from game_sys.skills.factory import SkillFactory
+            
+            # Get skill level requirements
+            level_req = self.get_skill_level_requirement(skill_id)
+            if level_req and actor.level < level_req:
+                return False
+                
+            # Get stat requirements
+            stat_reqs = self.get_skill_stat_requirements(skill_id)
+            if stat_reqs and hasattr(actor, 'base_stats'):
+                for stat, required_value in stat_reqs.items():
+                    current_value = actor.base_stats.get(stat, 0)
+                    if current_value < required_value:
+                        return False
+                        
+            return True
+        except ImportError:
+            # Skills system not available
+            return True
+    
+    def check_spell_requirements(self, actor, spell_id: str) -> bool:
+        """Check if actor meets level and stat requirements for a spell."""
+        try:
+            from game_sys.magic.factory import SpellFactory
+            
+            # Get spell level requirements
+            level_req = self.get_spell_level_requirement(spell_id)
+            if level_req and actor.level < level_req:
+                return False
+                
+            # Get stat requirements (usually intelligence/wisdom)
+            stat_reqs = self.get_spell_stat_requirements(spell_id)
+            if stat_reqs and hasattr(actor, 'base_stats'):
+                for stat, required_value in stat_reqs.items():
+                    current_value = actor.base_stats.get(stat, 0)
+                    if current_value < required_value:
+                        return False
+                        
+            return True
+        except ImportError:
+            # Magic system not available
+            return True
+    
+    def check_item_requirements(self, actor, item_id: str) -> bool:
+        """Check if actor meets level and stat requirements for an item."""
+        try:
+            from game_sys.items.factory import ItemFactory
+            
+            # Get item level requirements
+            level_req = self.get_item_level_requirement(item_id)
+            if level_req and actor.level < level_req:
+                return False
+                
+            # Get stat requirements
+            stat_reqs = self.get_item_stat_requirements(item_id)
+            if stat_reqs and hasattr(actor, 'base_stats'):
+                for stat, required_value in stat_reqs.items():
+                    current_value = actor.base_stats.get(stat, 0)
+                    if current_value < required_value:
+                        return False
+                        
+            return True
+        except ImportError:
+            # Items system not available
+            return True
+    
+    def check_enchantment_requirements(self, actor, enchant_id: str) -> bool:
+        """Check if actor meets level and stat requirements for enchantment."""
+        try:
+            from game_sys.items.factory import ItemFactory
+            
+            # Get enchantment level requirements
+            level_req = self.get_enchantment_level_requirement(enchant_id)
+            if level_req and actor.level < level_req:
+                return False
+                
+            # Get stat requirements (usually for advanced enchantments)
+            stat_reqs = self.get_enchantment_stat_requirements(enchant_id)
+            if stat_reqs and hasattr(actor, 'base_stats'):
+                for stat, required_value in stat_reqs.items():
+                    current_value = actor.base_stats.get(stat, 0)
+                    if current_value < required_value:
+                        return False
+                        
+            return True
+        except ImportError:
+            # Items system not available
+            return True
+    
+    def get_skill_level_requirement(self, skill_id: str) -> Optional[int]:
+        """Get the minimum level required for a skill."""
+        # Default level requirements for skills
+        skill_level_reqs = {
+            'cleave': 3,
+            'pierce': 2,
+            'whirlwind': 5,
+            'berserker_rage': 8,
+            'master_strike': 10,
+            'double_strike': 4,
+            'shield_bash': 3,
+            'parry': 2,
+            'riposte': 6
+        }
+        return skill_level_reqs.get(skill_id)
+    
+    def get_spell_level_requirement(self, spell_id: str) -> Optional[int]:
+        """Get the minimum level required for a spell."""
+        # Default level requirements for spells
+        spell_level_reqs = {
+            'fireball': 2,
+            'ice_shard': 1,
+            'lightning_bolt': 4,
+            'heal': 1,
+            'greater_heal': 5,
+            'meteor': 15,
+            'blizzard': 12,
+            'teleport': 8,
+            'time_stop': 20
+        }
+        return spell_level_reqs.get(spell_id)
+    
+    def get_item_level_requirement(self, item_id: str) -> Optional[int]:
+        """Get the minimum level required for an item."""
+        # Default level requirements for items
+        item_level_reqs = {
+            'iron_sword': 3,
+            'steel_sword': 7,
+            'mithril_sword': 12,
+            'legendary_sword': 18,
+            'leather_armor': 2,
+            'chain_mail': 5,
+            'plate_armor': 10,
+            'dragon_armor': 15,
+            'mage_robes': 4,
+            'archmage_robes': 12,
+            'wooden_shield': 1,
+            'iron_shield': 4,
+            'tower_shield': 8
+        }
+        return item_level_reqs.get(item_id)
+    
+    def get_enchantment_level_requirement(self, enchant_id: str) -> Optional[int]:
+        """Get the minimum level required for an enchantment."""
+        # Default level requirements for enchantments
+        enchant_level_reqs = {
+            'fire_enchant': 3,
+            'ice_enchant': 3,
+            'lightning_enchant': 5,
+            'poison_enchant': 4,
+            'strength_enchant': 2,
+            'speed_enchant': 4,
+            'master_enchant': 15,
+            'legendary_enchant': 20
+        }
+        return enchant_level_reqs.get(enchant_id)
+    
+    def get_skill_stat_requirements(self, skill_id: str) -> Dict[str, int]:
+        """Get the stat requirements for a skill."""
+        # Default stat requirements for skills
+        skill_stat_reqs = {
+            'cleave': {'strength': 15},
+            'pierce': {'dexterity': 12},
+            'whirlwind': {'strength': 20, 'dexterity': 15},
+            'berserker_rage': {'strength': 25, 'constitution': 20},
+            'master_strike': {'strength': 30, 'dexterity': 25},
+            'shield_bash': {'strength': 12, 'constitution': 15},
+            'parry': {'dexterity': 15},
+            'riposte': {'dexterity': 18, 'intelligence': 12}
+        }
+        return skill_stat_reqs.get(skill_id, {})
+    
+    def get_spell_stat_requirements(self, spell_id: str) -> Dict[str, int]:
+        """Get the stat requirements for a spell."""
+        # Default stat requirements for spells
+        spell_stat_reqs = {
+            'fireball': {'intelligence': 12},
+            'ice_shard': {'intelligence': 10},
+            'lightning_bolt': {'intelligence': 15, 'wisdom': 12},
+            'heal': {'wisdom': 10},
+            'greater_heal': {'wisdom': 20, 'intelligence': 15},
+            'meteor': {'intelligence': 35, 'wisdom': 25},
+            'blizzard': {'intelligence': 30, 'wisdom': 20},
+            'teleport': {'intelligence': 20, 'wisdom': 18},
+            'time_stop': {'intelligence': 40, 'wisdom': 35}
+        }
+        return spell_stat_reqs.get(spell_id, {})
+    
+    def get_item_stat_requirements(self, item_id: str) -> Dict[str, int]:
+        """Get the stat requirements for an item."""
+        # Default stat requirements for items
+        item_stat_reqs = {
+            'iron_sword': {'strength': 12},
+            'steel_sword': {'strength': 18},
+            'mithril_sword': {'strength': 25, 'dexterity': 20},
+            'legendary_sword': {'strength': 35, 'dexterity': 30},
+            'chain_mail': {'strength': 15},
+            'plate_armor': {'strength': 22, 'constitution': 18},
+            'dragon_armor': {'strength': 30, 'constitution': 25},
+            'mage_robes': {'intelligence': 15, 'wisdom': 12},
+            'archmage_robes': {'intelligence': 30, 'wisdom': 25},
+            'tower_shield': {'strength': 20, 'constitution': 18}
+        }
+        return item_stat_reqs.get(item_id, {})
+    
+    def get_enchantment_stat_requirements(self, enchant_id: str) -> Dict[str, int]:
+        """Get the stat requirements for an enchantment."""
+        # Default stat requirements for enchantments
+        enchant_stat_reqs = {
+            'fire_enchant': {'intelligence': 12},
+            'ice_enchant': {'intelligence': 12},
+            'lightning_enchant': {'intelligence': 18, 'wisdom': 15},
+            'poison_enchant': {'intelligence': 15, 'dexterity': 12},
+            'strength_enchant': {'strength': 15},
+            'speed_enchant': {'dexterity': 18},
+            'master_enchant': {'intelligence': 30, 'wisdom': 25},
+            'legendary_enchant': {'intelligence': 40, 'wisdom': 35}
+        }
+        return enchant_stat_reqs.get(enchant_id, {})
+    
+    def get_available_skills_for_level(self, actor) -> List[str]:
+        """Get all skills that the actor can learn at their current level."""
+        available_skills = []
+        
+        # List of all skills to check
+        all_skills = [
+            'cleave', 'pierce', 'whirlwind', 'berserker_rage', 'master_strike',
+            'double_strike', 'shield_bash', 'parry', 'riposte'
+        ]
+        
+        for skill_id in all_skills:
+            if self.check_skill_requirements(actor, skill_id):
+                available_skills.append(skill_id)
+                
+        return available_skills
+    
+    def get_available_spells_for_level(self, actor) -> List[str]:
+        """Get all spells that the actor can learn at their current level."""
+        available_spells = []
+        
+        # List of all spells to check
+        all_spells = [
+            'fireball', 'ice_shard', 'lightning_bolt', 'heal', 'greater_heal',
+            'meteor', 'blizzard', 'teleport', 'time_stop'
+        ]
+        
+        for spell_id in all_spells:
+            if self.check_spell_requirements(actor, spell_id):
+                available_spells.append(spell_id)
+                
+        return available_spells
+    
+    def get_available_items_for_level(self, actor) -> List[str]:
+        """Get all items that the actor can use at their current level."""
+        available_items = []
+        
+        # List of all items to check
+        all_items = [
+            'iron_sword', 'steel_sword', 'mithril_sword', 'legendary_sword',
+            'leather_armor', 'chain_mail', 'plate_armor', 'dragon_armor',
+            'mage_robes', 'archmage_robes', 'wooden_shield', 'iron_shield',
+            'tower_shield'
+        ]
+        
+        for item_id in all_items:
+            if self.check_item_requirements(actor, item_id):
+                available_items.append(item_id)
+                
+        return available_items
+    
+    def get_available_enchantments_for_level(self, actor) -> List[str]:
+        """Get all enchantments that the actor can use at current level."""
+        available_enchants = []
+        
+        # List of all enchantments to check
+        all_enchants = [
+            'fire_enchant', 'ice_enchant', 'lightning_enchant',
+            'poison_enchant', 'strength_enchant', 'speed_enchant',
+            'master_enchant', 'legendary_enchant'
+        ]
+        
+        for enchant_id in all_enchants:
+            if self.check_enchantment_requirements(actor, enchant_id):
+                available_enchants.append(enchant_id)
+                
+        return available_enchants
+    
+    def get_progression_info(self, actor) -> Dict[str, any]:
+        """Get comprehensive progression information for the actor."""
+        return {
+            'level': actor.level,
+            'available_stat_points': self.calculate_stat_points_available(actor),
+            'available_skills': self.get_available_skills_for_level(actor),
+            'available_spells': self.get_available_spells_for_level(actor),
+            'available_items': self.get_available_items_for_level(actor),
+            'available_enchantments': self.get_available_enchantments_for_level(actor),
+            'next_level_unlocks': self.get_next_level_unlocks(actor)
+        }
+    
+    def get_next_level_unlocks(self, actor) -> Dict[str, List[str]]:
+        """Get what will be unlocked at the next level."""
+        next_level = actor.level + 1
+        unlocks = {
+            'skills': [],
+            'spells': [],
+            'items': [],
+            'enchantments': []
+        }
+        
+        # Temporarily increase level to check what becomes available
+        original_level = actor.level
+        actor.level = next_level
+        
+        try:
+            # Check skills
+            for skill_id in ['cleave', 'pierce', 'whirlwind', 'berserker_rage', 
+                           'master_strike', 'double_strike', 'shield_bash', 
+                           'parry', 'riposte']:
+                level_req = self.get_skill_level_requirement(skill_id)
+                if level_req == next_level:
+                    if self.check_skill_requirements(actor, skill_id):
+                        unlocks['skills'].append(skill_id)
+            
+            # Check spells
+            for spell_id in ['fireball', 'ice_shard', 'lightning_bolt', 'heal',
+                           'greater_heal', 'meteor', 'blizzard', 'teleport',
+                           'time_stop']:
+                level_req = self.get_spell_level_requirement(spell_id)
+                if level_req == next_level:
+                    if self.check_spell_requirements(actor, spell_id):
+                        unlocks['spells'].append(spell_id)
+            
+            # Check items
+            for item_id in ['iron_sword', 'steel_sword', 'mithril_sword',
+                          'legendary_sword', 'leather_armor', 'chain_mail',
+                          'plate_armor', 'dragon_armor', 'mage_robes',
+                          'archmage_robes', 'wooden_shield', 'iron_shield',
+                          'tower_shield']:
+                level_req = self.get_item_level_requirement(item_id)
+                if level_req == next_level:
+                    if self.check_item_requirements(actor, item_id):
+                        unlocks['items'].append(item_id)
+            
+            # Check enchantments
+            for enchant_id in ['fire_enchant', 'ice_enchant', 'lightning_enchant',
+                             'poison_enchant', 'strength_enchant', 'speed_enchant',
+                             'master_enchant', 'legendary_enchant']:
+                level_req = self.get_enchantment_level_requirement(enchant_id)
+                if level_req == next_level:
+                    if self.check_enchantment_requirements(actor, enchant_id):
+                        unlocks['enchantments'].append(enchant_id)
+                        
+        finally:
+            # Restore original level
+            actor.level = original_level
+            
+        return unlocks
+
+    def add_stat_points(self, actor, points):
+        """Add a specified number of stat points to the actor."""
+        if not hasattr(actor, 'spent_stat_points'):
+            actor.spent_stat_points = 0
+            
+        # We decrease spent_stat_points to effectively add available points
+        actor.spent_stat_points = max(0, actor.spent_stat_points - points)
+        character_logger.info(f"Added {points} stat points to {actor.name}")
+        return True
+
+
+# Global instance
+leveling_manager = LevelingManager()

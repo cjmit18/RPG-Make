@@ -69,6 +69,23 @@ class AsyncTimeManager:
         if self._task and not self._task.done():
             self._task.cancel()
 
+    def tick_sync(self, dt: float):
+        """
+        Synchronous tick for testing purposes.
+
+        This method allows direct testing without async context.
+        Use this only for testing and playground scenarios.
+
+        Args:
+            dt: Delta time in seconds
+        """
+        for tickable in list(self._tickables):
+            try:
+                tickable.tick(dt)
+            except Exception:
+                # Continue processing other tickables on error
+                continue
+
 # Global TimeManager instance
 from game_sys.effects.status_manager import status_manager
 

@@ -92,6 +92,10 @@ class DamagePacket:
         max_var = getattr(weapon, 'damage_variance_max', 1.2)
         combat_logger.debug(f"Damage variance: min={min_var}, max={max_var}")
         
+        # Get effect_ids from weapon
+        effect_ids = getattr(weapon, 'effect_ids', [])
+        combat_logger.debug(f"Weapon effect_ids: {effect_ids}")
+        
         return cls(
             base_damage=base_damage,
             damage_type=damage_type,
@@ -100,7 +104,8 @@ class DamagePacket:
             weapon=weapon,
             weapon_type=weapon_type,
             damage_variance=(min_var, max_var),
-            penetration=penetration
+            penetration=penetration,
+            effect_ids=effect_ids
         )
     
     @classmethod

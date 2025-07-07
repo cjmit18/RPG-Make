@@ -223,9 +223,40 @@ class StatBonusEffect(Effect):
             )
 
 
+class InstantManaEffect(Effect):
+    """
+    Instantly restores mana to the target.
+    """
+    def __init__(self, amount: float, **kwargs):
+        super().__init__(id=f"instant_mana_{amount}")
+        self.amount = amount
+        effects_logger.debug(f"Created InstantManaEffect with amount: {amount}")
+
+    @log_exception
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if not hasattr(target, 'current_mana') or not hasattr(target, 'max_mana'):
+            effects_logger.warning(
+                f"Cannot restore mana to target {target}, missing mana attributes"
+            )
+            return "Cannot restore mana to target"
+            
+        old_mana = target.current_mana
+        target.current_mana = min(
+            target.max_mana,
+            target.current_mana + self.amount
+        )
+        actual_restore = target.current_mana - old_mana
+        
+        effects_logger.info(
+            f"Restored mana to {target.name} for {actual_restore}/{self.amount} " 
+            f"({target.current_mana}/{target.max_mana})"
+        )
+        return f"Restored {actual_restore} mana"
+
+
 class ResourceDrainEffect(Effect):
     """
-    Drains a named resource (mana/stamina/health) at `rate` per second.
+    Drains a resource (health, mana, stamina) from the target.
     """
 
     def __init__(self, resource: str, rate: float, duration: float):
@@ -265,3 +296,63 @@ class ResourceDrainEffect(Effect):
                 f"Resource drain expired: {self.resource} on {actor.name}"
             )
             actor.active_statuses.pop(self.id, None)
+
+
+class EquipmentStatEffect(Effect):
+    """
+    Passive stat bonus from equipment. Always active when item is equipped.
+    """
+    def __init__(self, stat_name: str, amount: float, **kwargs):
+        super().__init__(id=f"equipment_{stat_name}_{amount}")
+        self.stat_name = stat_name
+        self.amount = amount
+        effects_logger.debug(
+            f"Created EquipmentStatEffect: {stat_name} +{amount}"
+        )
+
+    def modify_stat(self, current: float, actor: Any, stat_being_computed: str = None) -> float:
+        # Only modify the stat this effect is for
+        if stat_being_computed == self.stat_name:
+            return current + self.amount
+        return current
+
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        # Equipment effects don't need explicit application
+        return f"Equipment bonus: {self.stat_name} +{self.amount}"
+
+
+class RegenerationEffect(Effect):
+    """
+    Passive regeneration effect that continuously restores a resource.
+    """
+    def __init__(self, resource: str, amount: float, **kwargs):
+        super().__init__(id=f"regen_{resource}_{amount}")
+        self.resource = resource
+        self.amount = amount
+        effects_logger.debug(
+            f"Created RegenerationEffect: {resource} +{amount}/s"
+        )
+
+    def tick(self, actor: Any, dt: float) -> None:
+        """Apply regeneration each tick."""
+        attr = f"current_{self.resource}"
+        max_attr = f"max_{self.resource}"
+        
+        if hasattr(actor, attr) and hasattr(actor, max_attr):
+            current = getattr(actor, attr)
+            maximum = getattr(actor, max_attr)
+            
+            # Apply regeneration
+            new_value = min(maximum, current + self.amount * dt)
+            setattr(actor, attr, new_value)
+            
+            if new_value > current:
+                effects_logger.debug(
+                    f"Regenerated {new_value - current:.2f} {self.resource} "
+                    f"for {actor.name} ({new_value:.1f}/{maximum:.1f})"
+                )
+
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        """Apply this regeneration effect to the target."""
+        target.apply_status(self)
+        return f"Applied {self.resource} regeneration"

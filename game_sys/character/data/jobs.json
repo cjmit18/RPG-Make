@@ -104,7 +104,7 @@
       "skill_list": [],
       "spell_list": [],
       "starting_items": [
-        {"item_id": "orc_axe", "quantity": 1},
+        {"item_id": "orch_axe", "quantity": 1},
         {"item_id": "orc_leather_armor", "quantity": 1},
         {"item_id": "orc_shield", "quantity": 1}
       ]
@@ -128,6 +128,47 @@
         {"item_id": "dragon_scale_armor", "quantity": 1},
         {"item_id": "dragon_claw", "quantity": 1}
       ]
+    },
+    "goblin": {
+      "name": "Goblin",
+      "base_stat_mods": {
+        "attack": 1,
+        "speed": 2,
+        "dexterity": 3,
+        "luck": 1
+      },
+      "skill_list": ["sneak_attack"],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "dagger", "quantity": 1},
+        {"item_id": "leather_scrap", "quantity": 2}
+      ]
+    },
+    "skeleton": {
+      "name": "Skeleton",
+      "base_stat_mods": {
+        "attack": 2,
+        "defense": 1,
+        "constitution": -2,
+        "vitality": -3
+      },
+      "skill_list": [],
+      "spell_list": [],
+      "starting_items": [
+        {"item_id": "wooden_stick", "quantity": 1}
+      ]
+    },
+    "wolf": {
+      "name": "Wolf",
+      "base_stat_mods": {
+        "attack": 3,
+        "speed": 4,
+        "dexterity": 3,
+        "constitution": 2
+      },
+      "skill_list": ["bite", "howl"],
+      "spell_list": [],
+      "starting_items": []
     }
   }
 }

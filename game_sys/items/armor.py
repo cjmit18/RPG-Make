@@ -11,16 +11,18 @@ class Armor(Equipment):
     """
     Armor item.
     JSON attrs:
-      - defense: float
+      - stats: dict with defense and other stat bonuses
       - effect_ids: optional List[str] of damage‐taken modifiers
     """
-    def __init__(self, item_id: str, name: str, description: str,
-                 defense: float, effect_ids: list[str] = None, **attrs):
+    def __init__(self, item_id: str, name: str, description: str, **attrs):
         slot = attrs.pop('slot', 'body')  # Extract slot or default to body
+        stats = attrs.pop('stats', {})    # Extract stats
+        effect_ids = attrs.pop('effect_ids', [])  # Extract effect_ids
+        
         super().__init__(item_id, name, description,
                          slot=slot,
-                         stats={"defense": defense},
-                         effect_ids=effect_ids or [],
+                         stats=stats,
+                         effect_ids=effect_ids,
                          **attrs)
 
     def apply(self, user: Any, target: Any = None) -> None:
@@ -42,26 +44,24 @@ class Shield(Armor):
         item_id: str,
         name: str,
         description: str,
-        defense: float,
-        effect_ids: list[str] | None = None,
         dual_wield: bool = True,
         block_chance: float = 0.1,
         **attrs
     ):
+        # Extract stats and add block_chance
+        stats = attrs.pop('stats', {})
+        stats["block_chance"] = block_chance
+        
         super().__init__(
             item_id=item_id,
             name=name,
             description=description,
-            defense=defense,
-            effect_ids=effect_ids or [],
+            stats=stats,
             **attrs
         )
         self.slot = "offhand"  # Override slot to offhand
         self.dual_wield = dual_wield
         self.block_chance = block_chance
-        
-        # Add block_chance to stats so it gets merged into actor's base_stats
-        self.stats["block_chance"] = block_chance
 
     def apply(self, user: Any, target: Any = None) -> None:
         """Equip as offhand shield."""

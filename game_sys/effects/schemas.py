@@ -38,9 +38,66 @@ EFFECT_PARAMS: Dict[str, Dict[str, Type]] = {
         'resource': str,
         'amount':   float
     },
+    'instant_mana': {
+        'amount': float
+    },
     'resource_drain': {
         'resource': str,
         'rate':     float,
+        'duration': float
+    },
+    # Status effect types that use the status flag system
+    'burn': {
+        'duration': float,
+        'tick_damage': float
+    },
+    'poison': {
+        'duration': float,
+        'tick_damage': float
+    },
+    'stun': {
+        'duration': float
+    },
+    'fear': {
+        'duration': float
+    },
+    'slow': {
+        'duration': float,
+        'intensity': float
+    },
+    'freeze': {
+        'duration': float
+    },
+    'haste': {
+        'duration': float,
+        'intensity': float
+    },
+    'regeneration': {
+        'duration': float,
+        'tick_heal': float
+    },
+    'silence': {
+        'duration': float
+    },
+    'weaken': {
+        'duration': float,
+        'intensity': float
+    },
+    'berserk': {
+        'duration': float,
+        'damage_multiplier': float
+    },
+    'protection': {
+        'duration': float,
+        'damage_reduction': float
+    },
+    'invisibility': {
+        'duration': float
+    },
+    'paralyze': {
+        'duration': float
+    },
+    'sleep': {
         'duration': float
     }
 }
@@ -98,4 +155,3 @@ def validate_effect_definition(defn: Dict[str, Any]) -> bool:
         f"Effect definition for {etype} validated successfully"
     )
     return True
-    # If we reach here, all params are valid

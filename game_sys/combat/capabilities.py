@@ -187,7 +187,7 @@ class CombatCapabilities:
         2. Apply damage variance using uniform()
         3. Check for critical hit using random() < 0.1
         4. Apply defending modifier (halve damage if defending)
-        5. Round and apply damage
+        5. Round and apply damage with damage type support
         """
         # Get base stats
         attacker_attack = attacker.get_stat('attack')
@@ -213,10 +213,11 @@ class CombatCapabilities:
         # Round damage
         final_damage = round(damage)
         
-        # Apply the damage using the current_health property
-        defender.current_health -= final_damage
-        if defender.current_health < 0:
-            defender.current_health = 0
+        # Get weapon damage type for resistance/weakness calculations
+        weapon_damage_type = self.get_weapon_damage_type()
+        
+        # Apply the damage using the enhanced take_damage method
+        defender.take_damage(final_damage, attacker, weapon_damage_type)
         
         # Format outcome description
         if is_critical:

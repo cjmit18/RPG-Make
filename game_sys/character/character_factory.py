@@ -7,6 +7,7 @@ from typing import Any, Dict
 from game_sys.config.config_manager import ConfigManager
 from game_sys.character.actor import Actor, Player, NPC, Enemy
 from game_sys.character.job_manager import JobManager
+from game_sys.character.resistance_manager import resistance_manager
 from game_sys.skills.passive_manager import PassiveManager
 from game_sys.logging import character_logger
 
@@ -63,6 +64,7 @@ class CharacterFactory:
             actor = Player(
                 name=data.get('display_name', template_id),
                 base_stats=data.get('base_stats', {}),
+                _skip_default_job=True,  # Skip default job since we'll assign one
                 **overrides
             )
             character_logger.info(f"Created player: {actor.name}")
@@ -74,39 +76,101 @@ class CharacterFactory:
         JobManager.assign(actor, job_id)
         character_logger.debug(f"Assigned job '{job_id}' to {actor.name}")
 
-        # 3) Determine grade (numeric) from the configured grade‐names/weights
-        grades = cfg.get('defaults.grades', [])
-        grade_weights = [
-            cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
-            for g in grades
-        ]
-        grade_name = random.choices(grades, grade_weights, k=1)[0]
-        actor.grade_name = grade_name
-        actor.grade = grades.index(grade_name) + 1
-        character_logger.debug(f"Assigned grade {actor.grade} ({grade_name}) to {actor.name}")
+        # 2.5) Set level if provided in overrides
+        if 'level' in overrides:
+            actor.level = overrides['level']
+            character_logger.debug(f"Set level to {actor.level} for {actor.name}")
 
-        # 4) Determine rarity (string) from the configured rarities/weights
-        rarities = list(cfg.get('randomness.rarity_weights', {}).keys())
-        rarity_weights = list(cfg.get('randomness.rarity_weights', {}).values())
-        actor.rarity = random.choices(rarities, rarity_weights, k=1)[0]
-        character_logger.debug(f"Assigned rarity '{actor.rarity}' to {actor.name}")
+        # 3) Determine grade (numeric) - use override if provided
+        if 'grade' in overrides:
+            actor.grade = overrides['grade']
+            # Try to find the corresponding grade name
+            grades = cfg.get('defaults.grades', [])
+            if grades and 0 < actor.grade <= len(grades):
+                actor.grade_name = grades[actor.grade - 1]
+            else:
+                actor.grade_name = f"GRADE_{actor.grade}"
+            character_logger.debug(f"Used override grade {actor.grade} for {actor.name}")
+        else:
+            # Generate random grade
+            grades = cfg.get('defaults.grades', [])
+            grade_weights = [
+                cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
+                for g in grades
+            ]
+            grade_name = random.choices(grades, grade_weights, k=1)[0]
+            actor.grade_name = grade_name
+            actor.grade = grades.index(grade_name) + 1
+            character_logger.debug(f"Assigned random grade {actor.grade} ({grade_name}) to {actor.name}")
 
-        # 5) Register passives (if any) so they hook into events immediately
+        # 4) Determine rarity (string) - use override if provided
+        if 'rarity' in overrides:
+            actor.rarity = overrides['rarity']
+            character_logger.debug(f"Used override rarity '{actor.rarity}' for {actor.name}")
+        else:
+            # Generate random rarity
+            rarities = list(cfg.get('randomness.rarity_weights', {}).keys())
+            rarity_weights = list(cfg.get('randomness.rarity_weights', {}).values())
+            actor.rarity = random.choices(rarities, rarity_weights, k=1)[0]
+            character_logger.debug(f"Assigned random rarity '{actor.rarity}' to {actor.name}")
+
+        # 5) Load weaknesses and resistances from template
+        from game_sys.core.damage_types import DamageType
+        
+        # Load weaknesses
+        weakness_data = data.get('weakness', {})
+        for damage_type_name, weakness_value in weakness_data.items():
+            try:
+                damage_type = DamageType[damage_type_name]
+                # Values in JSON are already in decimal format (0.25 = 25%)
+                actor.weaknesses[damage_type] = weakness_value
+                character_logger.debug(
+                    f"Added weakness to {damage_type_name}: "
+                    f"{weakness_value*100:.1f}%"
+                )
+            except KeyError:
+                character_logger.warning(
+                    f"Unknown damage type for weakness: {damage_type_name}"
+                )
+        
+        # Load resistances
+        resistance_data = data.get('resistance', {})
+        for damage_type_name, resistance_value in resistance_data.items():
+            try:
+                damage_type = DamageType[damage_type_name]
+                # Values in JSON are already in decimal format (0.4 = 40%)
+                actor.resistances[damage_type] = resistance_value
+                character_logger.debug(
+                    f"Added resistance to {damage_type_name}: "
+                    f"{resistance_value*100:.1f}%"
+                )
+            except KeyError:
+                character_logger.warning(
+                    f"Unknown damage type for resistance: {damage_type_name}"
+                )
+
+        # 6) Register passives (if any) so they hook into events immediately
         actor.passive_ids = data.get('passives', [])
         if actor.passive_ids:
             PassiveManager.register_actor(actor)
             character_logger.debug(
-                f"Registered {len(actor.passive_ids)} passives for {actor.name}"
+                f"Registered {len(actor.passive_ids)} passives for "
+                f"{actor.name}"
             )
             
             # Trigger spawn event for passives
             from game_sys.hooks.hooks_setup import emit, ON_CHARACTER_CREATED
             emit(ON_CHARACTER_CREATED, actor=actor)
-            character_logger.debug(f"Emitted character created event for {actor.name}")
+            character_logger.debug(
+                f"Emitted character created event for {actor.name}"
+            )
 
         # 6) Finalize stats & pools
         actor.update_stats()
         actor.restore_all()
         character_logger.debug(f"Finalized stats for {actor.name}")
+        
+        # 7) Apply elemental resistances and weaknesses from template
+        resistance_manager.apply_resistances_and_weaknesses(actor, template_id)
 
         return actor

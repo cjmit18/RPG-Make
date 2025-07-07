@@ -10,12 +10,31 @@ from game_sys.effects.extensions import (
     DebuffEffect,
     StatusEffect,
     StatBonusEffect,
-    ResourceDrainEffect
+    InstantManaEffect,
+    ResourceDrainEffect,
+    EquipmentStatEffect,
+    RegenerationEffect
 )
 from game_sys.effects.damage_mod import (
     FlatDamageMod,
     PercentDamageMod,
     ElementalDamageMod
+)
+from game_sys.effects.status_effects import (
+    BurnEffect,
+    PoisonEffect,
+    StunEffect,
+    FearEffect,
+    SlowEffect,
+    FreezeEffect,
+    HasteEffect,
+    SilenceEffect,
+    WeakenEffect,
+    BerserkEffect,
+    ProtectionEffect,
+    InvisibilityEffect,
+    ParalyzeEffect,
+    SleepEffect
 )
 
 _effect_map: Dict[str, Type[Effect]] = {
@@ -29,10 +48,29 @@ _effect_map: Dict[str, Type[Effect]] = {
     'buff':        BuffEffect,
     'debuff':      DebuffEffect,
     'status':      StatusEffect,
+    'instant_mana': InstantManaEffect,
 
     # passive-system effects
     'stat_bonus':     StatBonusEffect,
     'resource_drain': ResourceDrainEffect,
+    'equipment_stat': EquipmentStatEffect,
+    'regeneration':   RegenerationEffect,
+    
+    # Status flag effects
+    'burn':        BurnEffect,
+    'poison':      PoisonEffect,
+    'stun':        StunEffect,
+    'fear':        FearEffect,
+    'slow':        SlowEffect,
+    'freeze':      FreezeEffect,
+    'haste':       HasteEffect,
+    'silence':     SilenceEffect,
+    'weaken':      WeakenEffect,
+    'berserk':     BerserkEffect,
+    'protection':  ProtectionEffect,
+    'invisibility': InvisibilityEffect,
+    'paralyze':    ParalyzeEffect,
+    'sleep':       SleepEffect,
 }
 
 

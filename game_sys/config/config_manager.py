@@ -24,15 +24,20 @@ except ImportError:
 CONFIG_SCHEMA = {
     "type": "object",
     "properties": {
-        "toggles":    {"type": "object", "additionalProperties": {"type": "boolean"}},
-        "modules":    {"type": "object"},
-        "constants":  {"type": "object"},
-        "defaults":   {"type": "object"},
-        "randomness": {"type": "object"},
-        "logging":    {"type": "object"},
-        "paths":      {"type": "object"}
+        "toggles":      {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "modules":      {"type": "object"},
+        "constants":    {"type": "object"},
+        "defaults":     {"type": "object"},
+        "randomness":   {"type": "object"},
+        "logging":      {"type": "object"},
+        "paths":        {"type": "object"},
+        "leveling":     {"type": "object"},
+        "skills":       {"type": "object"},
+        "spells":       {"type": "object"},
+        "enchantments": {"type": "object"},
+        "ui":           {"type": "object"}
     },
-    "required": ["toggles","modules","constants","defaults","randomness","logging","paths"]
+    "required": ["toggles", "modules", "constants", "defaults", "randomness", "logging", "paths"]
 }
 
 
@@ -61,7 +66,11 @@ class ConfigManager:
         """
         base = Path(__file__).parent
         self.default_path = base / 'default_settings.json'
-        self.user_path = base / 'settings.json'
+        self.user_path = base / 'settings.json' or base / 'default_settings.json'
+        
+        # Added for backward compatibility with game_settings.json users
+        self.game_settings_path = base / 'game_settings.json'
+        
         self._data = {}
         self._data_lock = Lock()
         config_logger.debug(
@@ -116,7 +125,21 @@ class ConfigManager:
     @log_exception
     def _load_all(self):
         config_logger.info("Loading configuration files")
-        defaults = self._load_json(self.default_path)
+        
+        # Primary configuration source is default_settings.json
+        # If it doesn't exist, try to use game_settings.json for backward compatibility
+        if self.default_path.exists():
+            defaults = self._load_json(self.default_path)
+        elif self.game_settings_path.exists():
+            config_logger.warning(
+                f"default_settings.json not found, using game_settings.json instead"
+            )
+            defaults = self._load_json(self.game_settings_path)
+        else:
+            config_logger.error("No configuration file found!")
+            defaults = {}
+            
+        # Load user overrides (if any)
         overrides = self._load_json(self.user_path, optional=True)
         merged = self._deep_merge(defaults, overrides)
 
@@ -138,7 +161,21 @@ class ConfigManager:
     @log_exception
     async def _load_all_async(self):
         config_logger.info("Loading configuration files asynchronously")
-        defaults = await self._load_json_async(self.default_path)
+        
+        # Primary configuration source is default_settings.json
+        # If it doesn't exist, try to use game_settings.json for backward compatibility
+        if self.default_path.exists():
+            defaults = await self._load_json_async(self.default_path)
+        elif self.game_settings_path.exists():
+            config_logger.warning(
+                f"default_settings.json not found, using game_settings.json instead"
+            )
+            defaults = await self._load_json_async(self.game_settings_path)
+        else:
+            config_logger.error("No configuration file found!")
+            defaults = {}
+            
+        # Load user overrides (if any)
         overrides = await self._load_json_async(self.user_path, optional=True)
         merged = self._deep_merge(defaults, overrides)
 
@@ -215,3 +252,24 @@ class ConfigManager:
 
     async def reload_async(self):
         await self._load_all_async()
+
+    def get_section(self, section: str, default=None):
+        """
+        Get an entire configuration section.
+        
+        Args:
+            section: The top-level section name
+            default: Value to return if section not found
+            
+        Returns:
+            Dict containing the section or default value
+        """
+        config_logger.debug(f"Retrieving config section '{section}'")
+        with self._data_lock:
+            if section in self._data:
+                return self._data[section]
+            else:
+                config_logger.debug(
+                    f"Config section '{section}' not found, returning default"
+                )
+                return default

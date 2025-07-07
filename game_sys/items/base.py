@@ -2,7 +2,7 @@
 """
 Module: game_sys.items.base
 
-Defines the abstract Item interface and a NullItem fallback.
+Defines abstract Item interface and a NullItem fallback.
 """
 from abc import ABC, abstractmethod
 from typing import Any
@@ -72,11 +72,11 @@ class NullItem(Item):
     """
     No-op item used when an item_id isn’t registered.
     """
-    def __init__(self):
+    def __init__(self, item_id="null", name="Null Item", description="No effect"):
         super().__init__(
-            item_id="null",
-            name="Null Item",
-            description="No effect"
+            item_id=item_id,
+            name=name,
+            description=description
         )
 
     def apply(self, user: Any, target: Any = None) -> None:

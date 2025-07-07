@@ -1,0 +1,14 @@
+{
+  "damage_types": {
+    "NONE": {"name": "None", "color": "white"},
+    "PHYSICAL": {"name": "Physical", "color": "white"},
+    "FIRE": {"name": "Fire", "color": "red"},
+    "ICE": {"name": "Ice", "color": "cyan"},
+    "LIGHTNING": {"name": "Lightning", "color": "yellow"},
+    "POISON": {"name": "Poison", "color": "green"},
+    "ARCANE": {"name": "Arcane", "color": "magenta"},
+    "HOLY": {"name": "Holy", "color": "gold"},
+    "DARK": {"name": "Shadow", "color": "purple"},
+    "MAGIC": {"name": "Magic", "color": "blue"}
+  }
+}

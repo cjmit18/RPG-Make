@@ -43,7 +43,9 @@ class SpellFactory:
             damage_type=data.get("damage_type", "MAGIC"),
             effect_defs=data.get("effects", []),
             shape_def=data.get("shape"),
-            target_group=data.get("target_group", "target")
+            target_group=data.get("target_group", "target"),
+            level_requirement=data.get("level_requirement", 1),
+            stat_requirements=data.get("stat_requirements", {})
         )
         
         magic_logger.info(

@@ -132,6 +132,12 @@ class CombatEngine:
                 False, [], description="Attacker is not alive"
             )
             
+        # Check if attacker can perform actions due to status effects
+        if hasattr(attacker, 'status_flags') and not attacker.status_flags.can_attack():
+            return CombatOutcome(
+                False, [], description=f"{attacker.name} cannot attack due to status effects"
+            )
+        
         weapon = weapon or getattr(attacker, 'weapon', None)
         weapon_name = getattr(weapon, 'name', 'Unarmed')
         combat_logger.debug(f"Attacker {attacker.name} using {weapon_name}")
@@ -335,6 +341,8 @@ class CombatEngine:
         spell_state_value = getattr(attacker, '_spell_state', False)
         has_pending_spell = hasattr(attacker, 'pending_spell')
         pending_spell_value = getattr(attacker, 'pending_spell', None)
+        has_job_id = hasattr(attacker, 'job_id')
+        job_id_value = getattr(attacker, 'job_id', None)
         
         combat_logger.debug(
             f"{attacker.name} spell state: {has_spell_state}={spell_state_value}, "
@@ -441,20 +449,100 @@ class CombatEngine:
             final_dmg = base_dmg
             print(f"DEBUG: Normal hit, damage remains {final_dmg}")
 
-        print(f"DEBUG: Applying {final_dmg} damage to {defender.name}")
-        hp_left = defender.take_damage(final_dmg, attacker)
+        # Apply status flag damage modifiers
+        if hasattr(attacker, 'status_flags'):
+            outgoing_multiplier = attacker.status_flags.get_damage_multiplier(outgoing=True)
+            final_dmg *= outgoing_multiplier
+            print(f"DEBUG: Applied outgoing damage multiplier: {outgoing_multiplier}")
+        
+        if hasattr(defender, 'status_flags'):
+            incoming_multiplier = defender.status_flags.get_damage_multiplier(outgoing=False)
+            final_dmg *= incoming_multiplier
+            print(f"DEBUG: Applied incoming damage multiplier: {incoming_multiplier}")
+
+        # Determine damage type for resistance/weakness calculations
+        damage_type = None
+        if weapon and hasattr(weapon, 'damage_type'):
+            damage_type = weapon.damage_type
+        elif hasattr(attacker, 'pending_spell') and attacker.pending_spell:
+            # For spells, try to get damage type from spell data
+            try:
+                from game_sys.magic.spell_loader import load_spell
+                spell_data = load_spell(attacker.pending_spell)
+                if spell_data and hasattr(spell_data, 'damage_type'):
+                    spell_damage_type = spell_data.damage_type
+                    
+                    # Convert string to DamageType enum if necessary
+                    if isinstance(spell_damage_type, str):
+                        from game_sys.core.damage_type_utils import (
+                            get_damage_type_by_name
+                        )
+                        damage_type = get_damage_type_by_name(spell_damage_type)
+                    else:
+                        damage_type = spell_damage_type
+                elif 'fire' in str(attacker.pending_spell).lower():
+                    from game_sys.core.damage_type_utils import (
+                        get_damage_type_by_name
+                    )
+                    damage_type = get_damage_type_by_name("FIRE")
+                elif 'ice' in str(attacker.pending_spell).lower():
+                    from game_sys.core.damage_type_utils import (
+                        get_damage_type_by_name
+                    )
+                    damage_type = get_damage_type_by_name("ICE")
+                elif 'lightning' in str(attacker.pending_spell).lower():
+                    from game_sys.core.damage_type_utils import (
+                        get_damage_type_by_name
+                    )
+                    damage_type = get_damage_type_by_name("LIGHTNING")
+            except Exception as e:
+                print(f"DEBUG: Error getting spell damage type: {e}")
+        
+        debug_msg = (f"DEBUG: Applying {final_dmg} damage to {defender.name} "
+                     f"with damage type: {damage_type}")
+        print(debug_msg)
+        
+        hp_left = defender.take_damage(final_dmg, attacker, damage_type)
         print(f"DEBUG: {defender.name} has {hp_left} HP remaining")
         
         # Update the attack event with base and final damage
         attack_event.base_damage = base_dmg  # Pre-crit damage
         attack_event.final_damage = final_dmg  # Post-crit damage
         
-        # Create damage event with critical info included
-        out.add_event(CombatEvent(
+        # Create damage event with critical info and resistance/weakness data
+        event_metadata = {}
+        
+        # Add resistance/weakness info to metadata
+        if damage_type:
+            if (hasattr(defender, 'resistances') and
+                    damage_type in defender.resistances):
+                resistance_value = defender.resistances[damage_type]
+                event_metadata['resistance'] = {
+                    'type': damage_type.name,
+                    'value': resistance_value,
+                    'message': (f"{defender.name} resists "
+                                f"{resistance_value:.1%} of the "
+                                f"{damage_type.name.lower()} damage!")
+                }
+                
+            if (hasattr(defender, 'weaknesses') and
+                    damage_type in defender.weaknesses):
+                weakness_value = defender.weaknesses[damage_type]
+                event_metadata['weakness'] = {
+                    'type': damage_type.name,
+                    'value': weakness_value,
+                    'message': (f"{defender.name} is vulnerable to "
+                                f"{damage_type.name.lower()} "
+                                f"(+{weakness_value:.1%} damage)!")
+                }
+        
+        damage_event = CombatEvent(
             CombatEventType.DAMAGE_DEALT, attacker, defender,
             damage=final_dmg, was_critical=critical,
-            damage_type=getattr(weapon, "damage_type", None)
-        ))
+            damage_type=damage_type,
+            metadata=event_metadata
+        )
+        out.add_event(damage_event)
         
         # Note: CRITICAL_HIT event removed to avoid duplication
         # All critical info is included in DAMAGE_DEALT event

@@ -17,10 +17,20 @@ Thank you for your interest in contributing! Please follow these steps:
 
 ### Coding Guidelines
 
-    Use snake_case for functions and variables, PascalCase for classes.
+- Use snake_case for functions and variables, PascalCase for classes.
+- Add docstrings (PEP257) for all public methods.
+- Do not commit sensitive data (API keys, passwords, etc.).
+- Keep commits small and descriptively named.
 
-    Add docstrings (PEP257) for all public methods.
+### Testing UI Guidelines
 
-    Do not commit sensitive data (API keys, passwords, etc.).
+When working on testing UI components:
 
-    Keep commits small and descriptively named.
+1. Ensure all UI elements are clearly visible and properly sized
+2. Use tk.Button instead of ttk.Button for colored elements (PASS/FAIL buttons, etc.)
+3. Configure buttons with appropriate properties:
+   - bg/fg for colors
+   - relief=tk.RAISED for 3D effect
+   - Appropriate font and sizing
+4. Test the UI on different screen sizes and resolutions
+5. Use the `run_comprehensive_test_updated.bat` file to verify UI changes

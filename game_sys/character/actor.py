@@ -111,6 +111,10 @@ class Actor:
 
         # Status effects
         self.active_statuses: Dict[str, Tuple[Effect, float]] = {}
+        
+        # Status flags (new system)
+        from game_sys.character.status_flags import StatusFlagManager
+        self.status_flags = StatusFlagManager(self)
 
         # Systems
         self.inventory = get_inventory_manager(self)
@@ -287,25 +291,49 @@ class Actor:
         return actions
 
     @log_exception
-    def take_damage(self, amount: float, attacker: Any = None) -> float:
+    def take_damage(self, amount: float, attacker: Any = None, damage_type: Optional["DamageType"] = None) -> float:
         """
         Apply incoming damage, track metadata, clamp at zero,
         and emit death exactly once when crossing below zero.
         Shield blocking is now handled by the combat engine.
+        
+        Args:
+            amount: Base damage amount
+            attacker: The actor dealing damage
+            damage_type: Type of damage (for resistance/weakness calculations)
         """
         # If already dead, nothing to do
         if self.current_health <= 0:
             return 0.0
         
+        # Apply resistance/weakness modifiers
+        modified_damage = amount
+        if damage_type:
+            # Check for resistances
+            if damage_type in self.resistances:
+                resistance = self.resistances[damage_type]
+                modified_damage *= (1.0 - resistance)
+                character_logger.debug(
+                    f"{self.name} resists {damage_type.name} damage by {resistance:.1%}"
+                )
+            
+            # Check for weaknesses
+            elif damage_type in self.weaknesses:
+                weakness = self.weaknesses[damage_type]
+                modified_damage *= (1.0 + weakness)
+                character_logger.debug(
+                    f"{self.name} is weak to {damage_type.name} damage (+{weakness:.1%})"
+                )
+        
         self.last_hit_by = attacker
-        self.last_hit_damage = amount
+        self.last_hit_damage = modified_damage
 
         prev_hp = self.current_health
-        self.current_health = max(0.0, self.current_health - amount)
+        self.current_health = max(0.0, self.current_health - modified_damage)
 
         attacker_name = attacker.name if attacker else 'environment'
         character_logger.debug(
-            f"{self.name} takes {amount} damage from {attacker_name} "
+            f"{self.name} takes {modified_damage:.1f} damage from {attacker_name} "
             f"(HP: {_fmt(prev_hp)} → {_fmt(self.current_health)})"
         )
 
@@ -365,6 +393,10 @@ class Actor:
         """Called every frame by TimeManager to update regen and cooldowns."""
         self.regenerate(dt)
         
+        # Update status flags
+        if hasattr(self, 'status_flags'):
+            self.status_flags.update(dt)
+        
         # Update cooldowns
         for cd_map in (self.skill_cooldowns, self.spell_cooldowns):
             expired_cooldowns = []
@@ -423,6 +455,10 @@ class Actor:
     @log_exception
     def equip_weapon(self, weapon: Any):
         """Equip the given weapon on this actor."""
+        # Remove weapon from inventory if it's there
+        if hasattr(self, 'inventory') and weapon in self.inventory.items:
+            self.inventory.remove_item(weapon)
+            
         # Unequip current weapon first
         if self.weapon:
             self._unequip_weapon()
@@ -444,6 +480,9 @@ class Actor:
         # If it's a two-handed weapon, unequip offhand
         if hasattr(weapon, 'two_handed') and weapon.two_handed:
             self.unequip_offhand()
+        
+        # Update stats after equipping
+        self.update_stats()
 
     def _unequip_weapon(self):
         """Helper to unequip current weapon and remove its bonuses."""
@@ -467,6 +506,10 @@ class Actor:
         # Re-compute pools after unequipping
         self.update_stats()
         
+        # Add unequipped weapon back to inventory if it exists
+        if unequipped_weapon and hasattr(self, 'inventory'):
+            self.inventory.add_item(unequipped_weapon)
+        
         return unequipped_weapon
 
     @log_exception
@@ -480,9 +523,20 @@ class Actor:
             )
             return False
             
-        # Only allow items specifically designed for offhand use
-        if (hasattr(item, 'slot') and item.slot == 'offhand' and
-                hasattr(item, 'dual_wield') and item.dual_wield):
+        # Check if item can be equipped in offhand slot
+        slot_restriction = getattr(item, 'slot_restriction', None)
+        can_equip_offhand = (
+            (slot_restriction == "offhand_only") or
+            (slot_restriction == "either_hand") or
+            (hasattr(item, 'slot') and item.slot == 'offhand' and
+             hasattr(item, 'dual_wield') and item.dual_wield)
+        )
+        
+        if can_equip_offhand:
+            # Remove item from inventory if it's there
+            if hasattr(self, 'inventory') and item in self.inventory.items:
+                self.inventory.remove_item(item)
+                
             # Unequip current offhand first
             if self.offhand:
                 self._unequip_offhand()
@@ -501,6 +555,9 @@ class Actor:
             character_logger.info(
                 f"{self.name} equipped offhand item {item.id}."
             )
+            
+            # Update stats after equipping
+            self.update_stats()
             return True
         else:
             # Item is not suitable for offhand slot
@@ -532,6 +589,10 @@ class Actor:
         self.offhand = None
         # Re-compute pools after unequipping
         self.update_stats()
+        
+        # Add unequipped offhand back to inventory if it exists
+        if unequipped_offhand and hasattr(self, 'inventory'):
+            self.inventory.add_item(unequipped_offhand)
         
         return unequipped_offhand
 
@@ -574,10 +635,53 @@ class Actor:
             # Re-compute pools after unequipping
             self.update_stats()
             
+            # Add unequipped armor back to inventory if it exists
+            if equipped_item and hasattr(self, 'inventory'):
+                self.inventory.add_item(equipped_item)
+            
             return equipped_item
         else:
             character_logger.debug(f"{self.name} has no {slot} armor equipped")
             return None
+
+    @log_exception
+    def equip_armor(self, armor: Any):
+        """Equip armor to the appropriate slot."""
+        if not hasattr(armor, 'slot'):
+            character_logger.warning(f"Armor {armor.id} has no slot attribute")
+            return False
+            
+        slot = armor.slot
+        if slot not in ["body", "helmet", "legs", "feet"]:
+            character_logger.warning(f"Invalid armor slot: {slot}")
+            return False
+            
+        # Remove armor from inventory if it's there
+        if hasattr(self, 'inventory') and armor in self.inventory.items:
+            self.inventory.remove_item(armor)
+            
+        # Unequip existing armor in this slot first
+        self.unequip_armor(slot)
+        
+        # Apply armor stats
+        if hasattr(armor, 'stats'):
+            for stat_name, bonus in armor.stats.items():
+                current_value = self.base_stats.get(stat_name, 0.0)
+                self.base_stats[stat_name] = current_value + bonus
+                
+        # Add armor effect IDs
+        if hasattr(armor, 'effect_ids'):
+            self.skill_effect_ids.extend(armor.effect_ids)
+        
+        # Set the armor
+        slot_attr = f"equipped_{slot}"
+        setattr(self, slot_attr, armor)
+        
+        character_logger.info(f"{self.name} equipped {slot} armor: {armor.name}")
+        
+        # Update stats after equipping
+        self.update_stats()
+        return True
 
     def get_total_damage(self) -> float:
         """Calculate total damage from main weapon and offhand weapon."""
@@ -599,7 +703,8 @@ class Actor:
         """Calculate total defense from base stats, armor and shields."""
         total_defense = self.get_stat('defense')
         
-        # Add offhand shield defense (already included in base_stats via Equipment.apply)
+        # Add offhand shield defense (already included in base_stats
+        # via Equipment.apply)
         # This method now just returns the computed defense stat
         return total_defense
 
@@ -728,30 +833,240 @@ class Actor:
         )
         self._defending = value
 
+    @log_exception
+    def equip_weapon_smart(self, weapon: Any):
+        """
+        Smart weapon equipping that handles dual wielding with proper slot
+        restrictions.
+        - Shields and foci (slot_restriction = "offhand_only") can only go in
+          offhand
+        - Dual-wield weapons (slot_restriction = "either_hand") can go in
+          either slot
+        - Regular weapons can only go in main hand
+        """
+        slot_restriction = getattr(weapon, 'slot_restriction', None)
+        
+        # Handle offhand-only items (shields, spell foci)
+        if slot_restriction == "offhand_only":
+            if not self.offhand:
+                return self.equip_offhand(weapon)
+            else:
+                character_logger.info(
+                    f"{weapon.name} can only be equipped in offhand, but "
+                    f"offhand is occupied."
+                )
+                return False
+        
+        # Handle either-hand weapons (dual-wield weapons like daggers)
+        if slot_restriction == "either_hand":
+            # Try main hand first if it's empty
+            if not self.weapon:
+                # Temporarily modify slot to allow main hand equipping
+                original_slot = getattr(weapon, 'slot', 'weapon')
+                weapon.slot = 'weapon'
+                self.equip_weapon(weapon)
+                weapon.slot = original_slot
+                return True
+            
+            # If main hand is occupied, try offhand
+            if not self.offhand:
+                return self.equip_offhand(weapon)
+            
+            # If both hands are full, replace main weapon
+            original_slot = getattr(weapon, 'slot', 'weapon')
+            weapon.slot = 'weapon'
+            self.equip_weapon(weapon)
+            weapon.slot = original_slot
+            return True
+        
+        # Handle regular weapons (main hand only)
+        # If no main weapon, equip to main hand
+        if not self.weapon:
+            self.equip_weapon(weapon)
+            return True
+        
+        # If weapon is two-handed, replace main weapon
+        if hasattr(weapon, 'two_handed') and weapon.two_handed:
+            self.equip_weapon(weapon)
+            return True
+        
+        # If current weapon is two-handed, replace it
+        if (hasattr(self.weapon, 'two_handed') and
+                self.weapon.two_handed):
+            self.equip_weapon(weapon)
+            return True
+        
+        # If both hands are full, replace main weapon
+        self.equip_weapon(weapon)
+        return True
+
 
 class Player(Actor):
     """Player-controlled actor with learning capabilities."""
 
     def __init__(self, name: str, base_stats: Dict[str, float], **overrides):
+        # Initialize learning attributes before calling super() to ensure
+        # they exist before any system tries to access them
+        self.known_skills = []
+        self.known_spells = []
+        self.known_enchantments = []
+        
         super().__init__(name, base_stats, **overrides)
+        
+        # Initialize systems that might access these attributes
         from game_sys.skills.learning_system import LearningSystem
         self.learning = LearningSystem(self)
         from game_sys.character.leveling_manager import LevelingManager
         self.leveling_manager = LevelingManager()
-        from game_sys.character.job_manager import JobManager
-        JobManager.assign(self, 'commoner')
+        
+        # Only assign default job if no job assignment will happen later
+        # Character factory will handle job assignment for template-based creation
+        if not overrides.get('_skip_default_job', False):
+            from game_sys.character.job_manager import JobManager
+            JobManager.assign(self, 'commoner')
+        
         character_logger.info(f"Initialized Player {name} with systems")
 
 
 class NPC(Actor):
-    """Non-player character (dialogue, quests)."""
-    pass
+    """Non-player character with dialogue and quest capabilities."""
+    
+    def __init__(self, name: str, base_stats: Dict[str, float], **overrides):
+        super().__init__(name, base_stats, **overrides)
+        
+        # NPC-specific attributes
+        self.dialogue_state = "idle"
+        self.available_quests = []
+        self.completed_quests = []
+        self.faction = overrides.get('faction', 'neutral')
+        self.shop_inventory = []
+        self.is_vendor = overrides.get('is_vendor', False)
+        self.friendship_level = 0
+        self.last_interaction_time = 0.0
+        
+        # NPCs are typically neutral unless specified
+        if self.team == "player":  # Reset default team assignment
+            self.team = "neutral"
+        
+        character_logger.debug(
+            f"Initialized NPC {self.name} with dialogue and quest capabilities"
+        )
+    
+    def add_quest(self, quest_id: str):
+        """Add a quest that this NPC can offer."""
+        if quest_id not in self.available_quests:
+            self.available_quests.append(quest_id)
+            character_logger.info(
+                f"NPC {self.name} now offers quest: {quest_id}"
+            )
+    
+    def complete_quest(self, quest_id: str):
+        """Mark a quest as completed for this NPC."""
+        if quest_id in self.available_quests:
+            self.available_quests.remove(quest_id)
+            self.completed_quests.append(quest_id)
+            character_logger.info(
+                f"NPC {self.name} quest completed: {quest_id}"
+            )
+            return True
+        return False
+    
+    def set_dialogue_state(self, state: str):
+        """Set the dialogue state for this NPC."""
+        character_logger.debug(
+            f"NPC {self.name} dialogue state changed to {state}"
+        )
+        self.dialogue_state = state
+    
+    def add_shop_item(self, item):
+        """Add an item to this NPC's shop inventory."""
+        if self.is_vendor:
+            self.shop_inventory.append(item)
+            character_logger.info(f"NPC {self.name} added {item.id} to shop")
+        else:
+            character_logger.warning(f"NPC {self.name} is not a vendor")
+    
+    def remove_shop_item(self, item_id: str):
+        """Remove an item from this NPC's shop inventory."""
+        for item in self.shop_inventory:
+            if hasattr(item, 'id') and item.id == item_id:
+                self.shop_inventory.remove(item)
+                character_logger.info(
+                    f"NPC {self.name} removed {item_id} from shop"
+                )
+                return item
+        return None
+    
+    def adjust_friendship(self, amount: float):
+        """Adjust the friendship level with this NPC."""
+        self.friendship_level = max(0, self.friendship_level + amount)
+        character_logger.debug(
+            f"NPC {self.name} friendship adjusted by {amount} "
+            f"to {self.friendship_level}"
+        )
+    
+    def can_interact(self, current_time: float) -> bool:
+        """Check if this NPC can be interacted with based on cooldown."""
+        interaction_cooldown = 0.5  # Half second between interactions
+        return ((current_time - self.last_interaction_time) >=
+                interaction_cooldown)
+    
+    def update_interaction_time(self, current_time: float):
+        """Update the last interaction time."""
+        self.last_interaction_time = current_time
 
 
 class Enemy(Actor):
     """Enemy actor with AI behaviors."""
+    
+    def __init__(self, name: str, base_stats: Dict[str, float], **overrides):
+        super().__init__(name, base_stats, **overrides)
+        
+        # AI-specific attributes
+        self.ai_enabled = False
+        self.behavior_state = "idle"
+        self.team = "enemy"
+        self.target = None
+        self.last_action_time = 0.0
+        self.action_cooldown = 1.0
+        
+        # Give enemies some basic spells
+        self.known_spells = ["magic_missile"]
+        
+        character_logger.debug(
+            f"Initialized Enemy {self.name} with AI attributes"
+        )
+    
     def set_behavior(self, state: str):
+        """Set the AI behavior state for this enemy."""
         character_logger.debug(
             f"Enemy {self.name} behavior changed to {state}"
         )
         self.behavior_state = state
+        
+    def enable_ai(self):
+        """Enable AI control for this enemy."""
+        self.ai_enabled = True
+        character_logger.info(f"AI enabled for enemy {self.name}")
+        
+    def disable_ai(self):
+        """Disable AI control for this enemy."""
+        self.ai_enabled = False
+        self.target = None
+        character_logger.info(f"AI disabled for enemy {self.name}")
+        
+    def set_target(self, target):
+        """Set the combat target for this enemy."""
+        self.target = target
+        if target:
+            character_logger.debug(f"{self.name} now targets {target.name}")
+        else:
+            character_logger.debug(f"{self.name} target cleared")
+            
+    def can_act(self, current_time: float) -> bool:
+        """Check if this enemy can perform an action based on cooldown."""
+        return (current_time - self.last_action_time) >= self.action_cooldown
+        
+    def update_action_time(self, current_time: float):
+        """Update the last action time for cooldown tracking."""
+        self.last_action_time = current_time

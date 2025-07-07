@@ -82,15 +82,25 @@ class LevelingManager:
     def __init__(self):
         self.cfg = ConfigManager()
         
-        # Traditional RPG stats that can be improved with stat points
+        # All stats that can be improved with stat points
+        # Include both traditional RPG stats and game-specific stats
         self.allocatable_stats = [
+            # Traditional RPG stats
             'strength',
-            'dexterity',
+            'dexterity', 
             'vitality',
             'intelligence',
             'wisdom',
             'constitution',
-            'luck'
+            'luck',
+            # Game-specific stats from character templates
+            'attack',
+            'defense',
+            'speed',
+            'health',
+            'mana',
+            'stamina',
+            'magic_power'
         ]
         
         # Stats per level up (can be configured)
@@ -207,97 +217,151 @@ class LevelingManager:
         
         return impacts.get(stat_name, {})
 
-    def check_skill_requirements(self, actor, skill_id: str) -> bool:
-        """Check if actor meets level and stat requirements for a skill."""
-        try:
-            from game_sys.skills.factory import SkillFactory
+    def check_requirements(self, actor, requirements: Dict) -> bool:
+        """
+        Check if an actor meets the requirements for learning something.
+        
+        Args:
+            actor: The actor to check requirements for
+            requirements: Dict with 'level', 'stats', etc.
             
-            # Get skill level requirements
-            level_req = self.get_skill_level_requirement(skill_id)
-            if level_req and actor.level < level_req:
+        Returns:
+            bool: True if requirements are met
+        """
+        # Check level requirement
+        if 'level' in requirements:
+            if actor.level < requirements['level']:
                 return False
-                
-            # Get stat requirements
-            stat_reqs = self.get_skill_stat_requirements(skill_id)
-            if stat_reqs and hasattr(actor, 'base_stats'):
-                for stat, required_value in stat_reqs.items():
-                    current_value = actor.base_stats.get(stat, 0)
-                    if current_value < required_value:
-                        return False
-                        
-            return True
-        except ImportError:
-            # Skills system not available
-            return True
+        
+        # Check stat requirements
+        if 'stats' in requirements:
+            if not hasattr(actor, 'base_stats'):
+                return False
+            for stat, required_value in requirements['stats'].items():
+                current_value = actor.base_stats.get(stat, 0)
+                if current_value < required_value:
+                    return False
+        
+        # Check experience requirement
+        if 'experience' in requirements:
+            current_exp = getattr(actor, 'experience', 0)
+            if current_exp < requirements['experience']:
+                return False
+        
+        # Check skill prerequisites
+        if 'skills' in requirements:
+            known_skills = getattr(actor, 'known_skills', [])
+            for required_skill in requirements['skills']:
+                if required_skill not in known_skills:
+                    return False
+        
+        # Check spell prerequisites
+        if 'spells' in requirements:
+            known_spells = getattr(actor, 'known_spells', [])
+            for required_spell in requirements['spells']:
+                if required_spell not in known_spells:
+                    return False
+        
+        return True
     
-    def check_spell_requirements(self, actor, spell_id: str) -> bool:
-        """Check if actor meets level and stat requirements for a spell."""
-        try:
+    def check_enchantment_requirements(self, actor, enchant_data: Dict) -> bool:
+        """
+        Check if an actor can learn a specific enchantment.
+        
+        Args:
+            actor: The actor to check
+            enchant_data: Enchantment data with requirements
+            
+        Returns:
+            bool: True if requirements are met
+        """
+        requirements = {}
+        
+        # Extract level requirement
+        if 'level_requirement' in enchant_data:
+            requirements['level'] = enchant_data['level_requirement']
+        
+        # Extract stat requirements
+        if 'stat_requirements' in enchant_data:
+            requirements['stats'] = enchant_data['stat_requirements']
+        
+        return self.check_requirements(actor, requirements)
+    
+    def check_spell_requirements(self, actor, spell_input) -> bool:
+        """
+        Check if an actor can learn a specific spell.
+        
+        Args:
+            actor: The actor to check
+            spell_input: Either spell_id (str), spell_data (dict), or Spell
+            
+        Returns:
+            bool: True if requirements are met
+        """
+        # Handle different input types
+        if isinstance(spell_input, str):
+            # spell_id - load spell data from JSON
             from game_sys.magic.factory import SpellFactory
-            
-            # Get spell level requirements
-            level_req = self.get_spell_level_requirement(spell_id)
-            if level_req and actor.level < level_req:
+            try:
+                spell_obj = SpellFactory.create(spell_input)
+                spell_data = {
+                    'level_requirement': spell_obj.level_requirement,
+                    'stat_requirements': spell_obj.stat_requirements
+                }
+            except Exception:
                 return False
-                
-            # Get stat requirements (usually intelligence/wisdom)
-            stat_reqs = self.get_spell_stat_requirements(spell_id)
-            if stat_reqs and hasattr(actor, 'base_stats'):
-                for stat, required_value in stat_reqs.items():
-                    current_value = actor.base_stats.get(stat, 0)
-                    if current_value < required_value:
-                        return False
-                        
-            return True
-        except ImportError:
-            # Magic system not available
-            return True
+        elif hasattr(spell_input, 'level_requirement'):
+            # Spell object
+            spell_data = {
+                'level_requirement': spell_input.level_requirement,
+                'stat_requirements': spell_input.stat_requirements
+            }
+        else:
+            # Dictionary
+            spell_data = spell_input
+        
+        requirements = {}
+        
+        # Extract level requirement
+        if 'level_requirement' in spell_data:
+            requirements['level'] = spell_data['level_requirement']
+        
+        # Extract stat requirements
+        if 'stat_requirements' in spell_data:
+            requirements['stats'] = spell_data['stat_requirements']
+        
+        # Extract prerequisite spells
+        if 'prerequisite_spells' in spell_data:
+            requirements['spells'] = spell_data['prerequisite_spells']
+        
+        return self.check_requirements(actor, requirements)
     
-    def check_item_requirements(self, actor, item_id: str) -> bool:
-        """Check if actor meets level and stat requirements for an item."""
-        try:
-            from game_sys.items.factory import ItemFactory
+    def check_skill_requirements(self, actor, skill_data: Dict) -> bool:
+        """
+        Check if an actor can learn a specific skill.
+        
+        Args:
+            actor: The actor to check
+            skill_data: Skill data with requirements
             
-            # Get item level requirements
-            level_req = self.get_item_level_requirement(item_id)
-            if level_req and actor.level < level_req:
-                return False
-                
-            # Get stat requirements
-            stat_reqs = self.get_item_stat_requirements(item_id)
-            if stat_reqs and hasattr(actor, 'base_stats'):
-                for stat, required_value in stat_reqs.items():
-                    current_value = actor.base_stats.get(stat, 0)
-                    if current_value < required_value:
-                        return False
-                        
-            return True
-        except ImportError:
-            # Items system not available
-            return True
-    
-    def check_enchantment_requirements(self, actor, enchant_id: str) -> bool:
-        """Check if actor meets level and stat requirements for enchantment."""
-        try:
-            from game_sys.items.factory import ItemFactory
-            
-            # Get enchantment level requirements
-            level_req = self.get_enchantment_level_requirement(enchant_id)
-            if level_req and actor.level < level_req:
-                return False
-                
-            # Get stat requirements (usually for advanced enchantments)
-            stat_reqs = self.get_enchantment_stat_requirements(enchant_id)
-            if stat_reqs and hasattr(actor, 'base_stats'):
-                for stat, required_value in stat_reqs.items():
-                    current_value = actor.base_stats.get(stat, 0)
-                    if current_value < required_value:
-                        return False
-                        
-            return True
-        except ImportError:
-            # Items system not available
-            return True
+        Returns:
+            bool: True if requirements are met
+        """
+        requirements = {}
+        
+        # Extract level requirement
+        if 'level_requirement' in skill_data:
+            requirements['level'] = skill_data['level_requirement']
+        
+        # Extract stat requirements
+        if 'stat_requirements' in skill_data:
+            requirements['stats'] = skill_data['stat_requirements']
+        
+        # Extract prerequisite skills
+        if 'prerequisite_skills' in skill_data:
+            requirements['skills'] = skill_data['prerequisite_skills']
+        
+        return self.check_requirements(actor, requirements)
     
     def get_skill_level_requirement(self, skill_id: str) -> Optional[int]:
         """Get the minimum level required for a skill."""
@@ -576,6 +640,58 @@ class LevelingManager:
         actor.spent_stat_points = max(0, actor.spent_stat_points - points)
         character_logger.info(f"Added {points} stat points to {actor.name}")
         return True
+
+    def check_item_requirements(self, actor, item_id: str) -> bool:
+        """Check if an actor meets the requirements for an item."""
+        try:
+            # Try to load the item to check its requirements
+            from game_sys.items.item_loader import load_item
+            item_data = load_item(item_id)
+            if not item_data:
+                return False
+                
+            # Check level requirement
+            if hasattr(item_data, 'level_requirement'):
+                if actor.level < item_data.level_requirement:
+                    return False
+                    
+            # Check stat requirements
+            if hasattr(item_data, 'stat_requirements'):
+                for stat, required_value in item_data.stat_requirements.items():
+                    if (hasattr(actor, 'base_stats') and
+                            stat in actor.base_stats):
+                        if actor.base_stats[stat] < required_value:
+                            return False
+                    elif hasattr(actor, stat):
+                        if getattr(actor, stat) < required_value:
+                            return False
+                    else:
+                        return False  # Actor doesn't have this stat
+                        
+            return True
+            
+        except Exception as e:
+            msg = f"Error checking item requirements for {item_id}: {e}"
+            character_logger.warning(msg)
+            return False
+
+    def get_learned_skills(self, actor) -> List[str]:
+        """Get the list of skills the actor has learned."""
+        if hasattr(actor, 'known_skills'):
+            return actor.known_skills
+        return []
+
+    def get_learned_spells(self, actor) -> List[str]:
+        """Get the list of spells the actor has learned."""
+        if hasattr(actor, 'known_spells'):
+            return actor.known_spells
+        return []
+        
+    def get_learned_enchantments(self, actor) -> List[str]:
+        """Get the list of enchantments the actor has learned."""
+        if hasattr(actor, 'known_enchantments'):
+            return actor.known_enchantments
+        return []
 
 
 # Global instance

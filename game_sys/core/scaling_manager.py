@@ -64,16 +64,69 @@ class ScalingManager:
             base_key = cls._derived_map[stat_name]
             base_val = actor.base_stats.get(base_key, 0.0)
             mult = cfg.get(f'constants.derived_stats.{stat_name}', 1.0)
-            raw = base_val * mult
-            scaling_logger.debug(
-                f"Derived stat: {stat_name} from {base_key}={base_val}, "
-                f"multiplier={mult}, result={raw}"
-            )
+            derived_component = base_val * mult
+            
+            # For defense, also include any direct base defense bonuses
+            if stat_name == 'defense':
+                base_defense = actor.base_stats.get('defense', 0.0)
+                raw = derived_component + base_defense
+                scaling_logger.debug(
+                    f"Hybrid stat: {stat_name} = derived({base_key}={base_val} "
+                    f"* {mult}) + base_defense({base_defense}) = {raw}"
+                )
+            else:
+                raw = derived_component
+                scaling_logger.debug(
+                    f"Derived stat: {stat_name} from {base_key}={base_val}, "
+                    f"multiplier={mult}, result={raw}"
+                )
         else:
             raw = actor.base_stats.get(stat_name, 0.0)
             scaling_logger.debug(f"Base stat: {stat_name}={raw}")
 
-        # 2) Status‐effect stat modifiers (e.g. StatBonusEffect)
+        # 2) Equipment effects from all equipped items
+        if flags.is_enabled('effects'):
+            scaling_logger.debug("Applying equipment effects to stat calculation")
+            
+            # Check all equipped items for effect_ids
+            equipped_items = []
+            
+            # Collect equipped items from various slots
+            if hasattr(actor, 'weapon') and actor.weapon:
+                equipped_items.append(actor.weapon)
+            if hasattr(actor, 'offhand') and actor.offhand:
+                equipped_items.append(actor.offhand)
+            
+            # Armor slots
+            for slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots']:
+                slot_attr = f'equipped_{slot}'
+                if hasattr(actor, slot_attr):
+                    item = getattr(actor, slot_attr)
+                    if item:
+                        equipped_items.append(item)
+            
+            # Apply effects from all equipped items
+            for item in equipped_items:
+                if hasattr(item, 'effect_ids'):
+                    for eid in item.effect_ids:
+                        try:
+                            effect = EffectFactory.create_from_id(eid)
+                            # Only apply effects that modify stats (like EquipmentStatEffect)
+                            # Skip effects that work via other mechanisms (like RegenerationEffect)
+                            if (hasattr(effect, 'modify_stat') and 
+                                hasattr(effect, 'stat_name')):
+                                old_val = raw
+                                raw = effect.modify_stat(raw, actor, stat_name)
+                                scaling_logger.debug(
+                                    f"Equipment effect {eid} from {item.name} "
+                                    f"modified {stat_name}: {old_val} -> {raw}"
+                                )
+                        except Exception as e:
+                            scaling_logger.warning(
+                                f"Failed to apply equipment effect {eid}: {e}"
+                            )
+
+        # 3) Status‐effect stat modifiers (e.g. StatBonusEffect)
         if flags.is_enabled('effects'):
             scaling_logger.debug("Applying status effects to stat calculation")
             # actor.active_statuses: id -> (Effect instance, duration)

@@ -31,7 +31,6 @@ class Weapon(Equipment):
             name=name,
             description=description,
             slot=slot,
-            stats={},
             effect_ids=effect_ids,
             **attrs
         )

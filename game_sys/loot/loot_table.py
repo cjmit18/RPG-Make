@@ -1,3 +1,22 @@
+
+# --- Local data loader helpers (for loot enrichment) ---
+def _load_character_templates_local():
+    """Load character templates from JSON (local fallback)."""
+    import os, json
+    char_file = os.path.join(os.path.dirname(__file__), "..", "character", "data", "character_templates.json")
+    with open(char_file, 'r') as f:
+        data = json.load(f)
+    # Lowercase keys for matching
+    return {k.lower(): v for k, v in data.items()}
+
+def _load_jobs_local():
+    """Load jobs from JSON (local fallback)."""
+    import os, json
+    jobs_file = os.path.join(os.path.dirname(__file__), "..", "character", "data", "jobs.json")
+    with open(jobs_file, 'r') as f:
+        data = json.load(f)
+    return data.get('jobs', {})
+
 # game_sys/loot/loot_table.py
 """
 Dynamic loot table system that loads data from JSON and generates loot based on
@@ -130,26 +149,13 @@ class LootTable:
         variance = random.randint(-2, 2)
         return max(1, base_level + variance)
     
-    def determine_item_grade(self, enemy_type: str, player_luck: int,
-                             enemy_grade: Optional[str] = None) -> str:
+    def determine_item_grade(self, enemy_type: str, player_luck: int) -> str:
         """Determine the grade of items that drop."""
         table = self.get_enemy_loot_table(enemy_type)
         
         # Use the grades from the config if available in the table
         # Otherwise, use the default grade weights from config
         grade_chances = table.get("grade_chances", self.grade_weights)
-        
-        # Enhance chances based on enemy grade
-        if enemy_grade:
-            grade_multiplier = self._get_grade_multiplier(enemy_grade)
-            enhanced_chances = {}
-            for grade, chance in grade_chances.items():
-                # Higher grade enemies have better chance for higher items
-                if self._grade_value(grade) >= self._grade_value(enemy_grade):
-                    enhanced_chances[grade] = chance * grade_multiplier
-                else:
-                    enhanced_chances[grade] = chance
-            grade_chances = enhanced_chances
         
         # Apply luck to each chance
         weighted_grades = []
@@ -171,24 +177,10 @@ class LootTable:
         # Fallback to the first grade in our list
         return self.grades[0] if self.grades else "ONE"
     
-    def determine_item_rarity(self, enemy_type: str, player_luck: int,
-                              enemy_rarity: Optional[str] = None) -> str:
+    def determine_item_rarity(self, enemy_type: str, player_luck: int) -> str:
         """Determine the rarity of items that drop."""
         table = self.get_enemy_loot_table(enemy_type)
         rarity_chances = table.get("rarity_chances", self.base_drop_rates)
-        
-        # Enhance chances based on enemy rarity
-        if enemy_rarity:
-            rarity_multiplier = self._get_rarity_multiplier(enemy_rarity)
-            enhanced_chances = {}
-            for rarity, chance in rarity_chances.items():
-                # Higher rarity enemies drop higher rarity items
-                if (self._rarity_value(rarity) >=
-                        self._rarity_value(enemy_rarity)):
-                    enhanced_chances[rarity] = chance * rarity_multiplier
-                else:
-                    enhanced_chances[rarity] = chance
-            rarity_chances = enhanced_chances
         
         # Apply luck to each chance
         weighted_rarities = []
@@ -211,14 +203,62 @@ class LootTable:
         return self.rarities[0] if self.rarities else "COMMON"
     
     def get_possible_items(self, enemy_type: str) -> List[str]:
-        """Get the list of possible items that can drop."""
+        """Get the list of possible items that can drop, using job and character templates if available."""
         table = self.get_enemy_loot_table(enemy_type)
-        return table.get("possible_items", [])
-    
+        items = set(table.get("possible_items", []))
+
+        # Try to add items from character template and job
+        try:
+            char_templates = _load_character_templates_local()
+            jobs = _load_jobs_local()
+            template = char_templates.get(enemy_type.lower())
+            if template:
+                for entry in template.get("starting_items", []):
+                    if isinstance(entry, dict):
+                        items.add(entry.get("item_id"))
+                    else:
+                        items.add(entry)
+                job_id = template.get("job_id")
+                if job_id and job_id in jobs:
+                    for entry in jobs[job_id].get("starting_items", []):
+                        if isinstance(entry, dict):
+                            items.add(entry.get("item_id"))
+                        else:
+                            items.add(entry)
+        except Exception as e:
+            character_logger.warning(f"Could not enrich possible_items for {enemy_type}: {e}")
+
+        # Remove None and empty strings
+        return [item for item in items if item]
+
     def get_guaranteed_items(self, enemy_type: str) -> List[str]:
-        """Get the list of guaranteed items that will drop."""
+        """Get the list of guaranteed items that will drop, using job and character templates if available."""
         table = self.get_enemy_loot_table(enemy_type)
-        return table.get("guaranteed_items", [])
+        items = set(table.get("guaranteed_items", []))
+
+        # Try to add guaranteed items from character template and job
+        try:
+            char_templates = _load_character_templates_local()
+            jobs = _load_jobs_local()
+            template = char_templates.get(enemy_type.lower())
+            if template:
+                for entry in template.get("starting_items", []):
+                    if isinstance(entry, dict):
+                        items.add(entry.get("item_id"))
+                    else:
+                        items.add(entry)
+                job_id = template.get("job_id")
+                if job_id and job_id in jobs:
+                    for entry in jobs[job_id].get("starting_items", []):
+                        if isinstance(entry, dict):
+                            items.add(entry.get("item_id"))
+                        else:
+                            items.add(entry)
+        except Exception as e:
+            character_logger.warning(f"Could not enrich guaranteed_items for {enemy_type}: {e}")
+
+        # Remove None and empty strings
+        return [item for item in items if item]
     
     def calculate_exp_reward(self, enemy_level: int, enemy_type: str) -> int:
         """Calculate experience reward based on enemy stats."""
@@ -242,40 +282,24 @@ class LootTable:
         
         return random.randint(int(min_gold), int(max_gold))
     
-    def generate_loot(self, enemy_level: int, enemy_type: str,
-                      player_luck: int = 10, enemy_grade: str = 'ONE',
-                      enemy_rarity: str = 'COMMON') -> Dict:
+    def generate_loot(self, enemy_level: int, enemy_type: str, 
+                      player_luck: int = 10) -> Dict:
         """Generate loot drops for a defeated enemy."""
-        # Apply grade and rarity modifiers to base rewards
-        grade_multiplier = self._get_grade_multiplier(enemy_grade)
-        rarity_multiplier = self._get_rarity_multiplier(enemy_rarity)
-        
         loot = {
-            'experience': int(
-                self.calculate_exp_reward(enemy_level, enemy_type) *
-                grade_multiplier * rarity_multiplier
-            ),
-            'gold': int(
-                self.calculate_gold_reward(enemy_level, enemy_type) *
-                grade_multiplier * rarity_multiplier
-            ),
+            'experience': self.calculate_exp_reward(enemy_level, enemy_type),
+            'gold': self.calculate_gold_reward(enemy_level, enemy_type),
             'items': []
         }
         
-        # Enhanced drop chances based on enemy grade and rarity
-        enhanced_luck = int(player_luck * grade_multiplier * rarity_multiplier)
-        
-        # Add guaranteed items with enhanced properties
+        # Add guaranteed items
         guaranteed_items = self.get_guaranteed_items(enemy_type)
         for item_id in guaranteed_items:
             try:
                 item = ItemFactory.create(item_id)
                 if item:
-                    # Enhanced item properties based on enemy stats
-                    item.grade = self.determine_item_grade(enemy_type, enhanced_luck, 
-                                                         enemy_grade)
-                    item.rarity = self.determine_item_rarity(enemy_type, enhanced_luck,
-                                                           enemy_rarity)
+                    # Set grade and rarity
+                    item.grade = self.determine_item_grade(enemy_type, player_luck)
+                    item.rarity = self.determine_item_rarity(enemy_type, player_luck)
                     item.level = self.determine_item_level(enemy_level, enemy_type)
                     
                     loot['items'].append(item)
@@ -288,42 +312,8 @@ class LootTable:
                     f"Failed to create guaranteed item {item_id}: {e}"
                 )
         
-        # Determine if any random items drop (enhanced chances)
-        rarity = self.determine_item_rarity(enemy_type, enhanced_luck, enemy_rarity)
-        if rarity:
-            # Higher grade/rarity enemies can drop multiple items
-            max_items = self._get_max_random_items(enemy_grade, enemy_rarity)
-            
-            for _ in range(max_items):
-                # Roll for each potential item drop
-                if random.random() < (0.3 * grade_multiplier * rarity_multiplier):
-                    possible_items = self.get_possible_items(enemy_type)
-                    if possible_items:
-                        item_id = random.choice(possible_items)
-                        
-                        # Try to create the item
-                        try:
-                            item = ItemFactory.create(item_id)
-                            if item:
-                                # Enhanced item properties
-                                item.grade = self.determine_item_grade(enemy_type, 
-                                                                     enhanced_luck,
-                                                                     enemy_grade)
-                                item.rarity = rarity
-                                item.level = self.determine_item_level(enemy_level, 
-                                                                     enemy_type)
-                                
-                                loot['items'].append(item)
-                                character_logger.info(
-                                    f"Generated random item: {item.name} "
-                                    f"(Lvl {item.level}, {item.grade}, {item.rarity})"
-                                )
-                        except Exception as e:
-                            character_logger.warning(
-                                f"Failed to create random item {item_id}: {e}"
-                            )
-        
-        return loot
+        # Determine if any random items drop
+        rarity = self.determine_item_rarity(enemy_type, player_luck)
         if rarity:
             # Select a random item from possible items
             possible_items = self.get_possible_items(enemy_type)
@@ -363,86 +353,6 @@ class LootTable:
             chances[rarity] = modified_chance * 100  # Convert to percentage
         
         return chances
-    
-    def _get_grade_multiplier(self, enemy_grade: str) -> float:
-        """Get the loot multiplier based on enemy grade."""
-        if not enemy_grade:
-            return 1.0
-            
-        grade_multipliers = {
-            'ONE': 1.0,
-            'TWO': 1.3,
-            'THREE': 1.6,
-            'FOUR': 2.0,
-            'FIVE': 2.5,
-            'SIX': 3.0,
-            'SEVEN': 3.5,
-            'EIGHT': 4.0,
-            'NINE': 4.5,
-            'TEN': 5.0
-        }
-        return grade_multipliers.get(enemy_grade.upper(), 1.0)
-    
-    def _get_rarity_multiplier(self, enemy_rarity: str) -> float:
-        """Get the loot multiplier based on enemy rarity."""
-        if not enemy_rarity:
-            return 1.0
-            
-        rarity_multipliers = {
-            'COMMON': 1.0,
-            'UNCOMMON': 1.2,
-            'RARE': 1.5,
-            'EPIC': 2.0,
-            'LEGENDARY': 3.0,
-            'MYTHIC': 5.0,
-            'DIVINE': 7.0
-        }
-        return rarity_multipliers.get(enemy_rarity.upper(), 1.0)
-    
-    def _get_max_random_items(self, enemy_grade: str,
-                              enemy_rarity: str) -> int:
-        """Get maximum number of random items that can drop."""
-        if not enemy_grade or not enemy_rarity:
-            return 1
-            
-        grade_bonus = (max(0, int(enemy_grade) - 1)
-                       if enemy_grade.isdigit() else 0)
-        
-        rarity_bonus = {
-            'COMMON': 0,
-            'UNCOMMON': 1,
-            'RARE': 2,
-            'EPIC': 3,
-            'LEGENDARY': 4,
-            'MYTHIC': 5,
-            'DIVINE': 6
-        }.get(enemy_rarity.upper(), 0)
-        
-        return min(5, 1 + grade_bonus + rarity_bonus)  # Cap at 5 items
-            'UNCOMMON': 1,
-            'RARE': 2,
-            'EPIC': 3,
-            'LEGENDARY': 4,
-            'MYTHIC': 5
-        }.get(enemy_rarity.upper(), 0)
-        
-        return min(5, 1 + grade_bonus + rarity_bonus)  # Cap at 5 items
-    
-    def _grade_value(self, grade: str) -> int:
-        """Convert grade string to numeric value for comparison."""
-        grade_values = {
-            'ONE': 1, 'TWO': 2, 'THREE': 3, 'FOUR': 4, 'FIVE': 5,
-            'SIX': 6, 'SEVEN': 7, 'EIGHT': 8, 'NINE': 9, 'TEN': 10
-        }
-        return grade_values.get(grade.upper(), 1)
-    
-    def _rarity_value(self, rarity: str) -> int:
-        """Convert rarity string to numeric value for comparison."""
-        rarity_values = {
-            'COMMON': 1, 'UNCOMMON': 2, 'RARE': 3,
-            'EPIC': 4, 'LEGENDARY': 5, 'MYTHIC': 6
-        }
-        return rarity_values.get(rarity.upper(), 1)
 
 
 # Global loot table instance

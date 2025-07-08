@@ -3,6 +3,7 @@
 import json
 import random
 from pathlib import Path
+import re
 from typing import Any, Dict
 from game_sys.config.config_manager import ConfigManager
 from game_sys.character.actor import Actor, Player, NPC, Enemy
@@ -13,7 +14,18 @@ from game_sys.logging import character_logger
 
 def create_character(template_id: str, **overrides) -> Actor:
     character_logger.info(f"Creating character from template: {template_id}")
-    return CharacterFactory.create(template_id, **overrides)
+
+    character = CharacterFactory.create(template_id, **overrides)
+    if character.team == 'enemy':
+        from game_sys.core.scaling_manager import ScalingManager
+        ScalingManager.auto_allocate_stat_points(character)
+        character_logger.info(
+            f"Auto-allocated stat points for enemy: {character.name}"
+        )
+    character_logger.info(f"Character created: {character.name} (Type: {character.__class__.__name__})")
+        
+    return character
+
 
 class CharacterFactory:
     """
@@ -70,7 +82,7 @@ class CharacterFactory:
             character_logger.info(f"Created player: {actor.name}")
 
         cfg = ConfigManager()
-
+    
         # 2) Assign job and apply its stat modifiers
         job_id = data.get('job_id', data.get('job', 'commoner'))
         JobManager.assign(actor, job_id)
@@ -86,22 +98,35 @@ class CharacterFactory:
             actor.grade = overrides['grade']
             # Try to find the corresponding grade name
             grades = cfg.get('defaults.grades', [])
-            if grades and 0 < actor.grade <= len(grades):
-                actor.grade_name = grades[actor.grade - 1]
+            # Handle both 0-indexed and 1-indexed grade values
+            if grades:
+                if 0 <= actor.grade < len(grades):
+                    # 0-indexed grade (0=ONE, 1=TWO, etc.)
+                    setattr(actor, 'grade_name', grades[actor.grade])
+                elif 1 <= actor.grade <= len(grades):
+                    # 1-indexed grade (1=ONE, 2=TWO, etc.) - convert to 0-indexed
+                    setattr(actor, 'grade_name', grades[actor.grade - 1])
+                    actor.grade = actor.grade - 1  # Store as 0-indexed internally
+                else:
+                    setattr(actor, 'grade_name', f"GRADE_{actor.grade}")
             else:
-                actor.grade_name = f"GRADE_{actor.grade}"
-            character_logger.debug(f"Used override grade {actor.grade} for {actor.name}")
+                setattr(actor, 'grade_name', f"GRADE_{actor.grade}")
+            character_logger.debug(f"Used override grade {actor.grade} ({getattr(actor, 'grade_name')}) for {actor.name}")
         else:
             # Generate random grade
             grades = cfg.get('defaults.grades', [])
-            grade_weights = [
-                cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
-                for g in grades
-            ]
-            grade_name = random.choices(grades, grade_weights, k=1)[0]
-            actor.grade_name = grade_name
-            actor.grade = grades.index(grade_name) + 1
-            character_logger.debug(f"Assigned random grade {actor.grade} ({grade_name}) to {actor.name}")
+            if grades:
+                grade_weights = [
+                    cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
+                    for g in grades
+                ]
+                grade_name = random.choices(grades, grade_weights, k=1)[0]
+                setattr(actor, 'grade_name', grade_name)
+                actor.grade = grades.index(grade_name)  # Store as 0-indexed
+                character_logger.debug(f"Assigned random grade {actor.grade} ({grade_name}) to {actor.name}")
+            else:
+                actor.grade = 0
+                setattr(actor, 'grade_name', "ONE")
 
         # 4) Determine rarity (string) - use override if provided
         if 'rarity' in overrides:

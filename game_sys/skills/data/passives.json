@@ -2,7 +2,7 @@
   "passives": {
     "battle_meditation": {
       "name": "Battle Meditation",
-      "description": "Gain +5 defense on each level up, and lose 2 mana per second while alive.",
+      "description": "Gain +5 defense and +1 resilience on each level up, lose 2 mana/sec while alive.",
       "triggers": [
         {
           "event": "on_level_up",
@@ -10,6 +10,10 @@
             {
               "type": "stat_bonus",
               "params": { "stat": "defense", "amount": 5, "duration": 0 }
+            },
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "resilience", "amount": 1, "duration": 0 }
             }
           ]
         },
@@ -18,7 +22,7 @@
           "effects": [
             {
               "type": "resource_drain",
-              "params": { "resource": "mana", "rate": 1.0, "duration": 9999 }
+              "params": { "resource": "mana", "rate": 2.0, "duration": 9999 }
             }
           ]
         }
@@ -26,7 +30,7 @@
     },
     "berserker_rage": {
       "name": "Berserker Rage",
-      "description": "Gain +3 attack on each level up, but drain 1 health per second.",
+      "description": "Gain +3 attack and +0.03 parry chance on each level up, but drain 1 health/sec.",
       "triggers": [
         {
           "event": "on_level_up",
@@ -34,6 +38,10 @@
             {
               "type": "stat_bonus",
               "params": { "stat": "attack", "amount": 3, "duration": 0 }
+            },
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "parry_chance", "amount": 0.03, "duration": 0 }
             }
           ]
         },
@@ -50,7 +58,7 @@
     },
     "endless_sprint": {
       "name": "Endless Sprint", 
-      "description": "Gain +2 speed on each level up, but drain 3 stamina per second.",
+      "description": "Gain +2 speed and +1 initiative on each level up, but drain 3 stamina/sec.",
       "triggers": [
         {
           "event": "on_level_up",
@@ -58,6 +66,10 @@
             {
               "type": "stat_bonus",
               "params": { "stat": "speed", "amount": 2, "duration": 0 }
+            },
+            {
+              "type": "stat_bonus",
+              "params": { "stat": "initiative", "amount": 1, "duration": 0 }
             }
           ]
         },

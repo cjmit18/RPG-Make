@@ -96,77 +96,64 @@ class AIDemoController:
         if current_time - self.last_ai_action_time < self.ai_response_delay:
             return None
             
-        # Get AI decision
-        action = self.ai_service.get_action_for_actor(enemy, [player])
+        logger.debug(f"Processing AI turn for {enemy.name}")
         
-        if action:
+        # Always target the player if present and alive
+        targets = [player] if player.is_alive() else []
+        if not targets:
+            logger.debug(f"No targets found for {enemy.name}")
+            return
+        
+        # Use force_ai_action to trigger immediate AI action
+        result = self.ai_service.force_ai_action(enemy, player)
+        
+        if result:
+            # AI action was successful
             self.last_ai_action_time = current_time
-            result = self._execute_ai_action(enemy, player, action)
-            
-            # Record performance for difficulty scaling
-            if result and result.get('success'):
-                self._record_ai_performance(enemy, player, action, result)
+            logger.info(f"AI {enemy.name} performed action successfully")
+        else:
+            logger.warning(f"AI action failed for {enemy.name}")
                 
-            return result
-            
-        return None
-    
-    def _execute_ai_action(self, enemy, player, action: Dict[str, Any]) -> Optional[Dict]:
-        """Execute an AI action.
+    def _execute_ai_action(self, actor, action: str, targets):
+        """
+        Execute an AI action through the combat service.
         
         Args:
-            enemy: The AI actor performing the action
-            player: The target player
-            action: The action dictionary from AI service
+            actor: The AI actor performing the action
+            action: The action string (e.g., "attack", "spell_fireball")
+            targets: List of potential targets
             
         Returns:
-            Result dictionary from the action execution
+            True if action was executed successfully, False otherwise
         """
-        action_type = action.get('type')
+        if not targets:
+            return False
+            
+        target = targets[0]  # Use first target for simplicity
         
         try:
-            if action_type == 'attack':
-                return self.combat_service.perform_attack(enemy, player, enemy.weapon)
+            if action == "attack":
+                # Perform basic attack
+                result = self.combat_service.perform_attack(
+                    actor, target, actor.weapon
+                )
+                return result.get('success', False)
                 
-            elif action_type == 'cast_spell':
-                spell_id = action.get('spell_id', 'fireball')
-                return self.combat_service.cast_spell_at_target(enemy, spell_id, player)
-                
-            elif action_type == 'defend':
-                # Set defending state
-                enemy.defending = True
-                logger.info(f"{enemy.name} takes a defensive stance")
-                return {
-                    'success': True,
-                    'action': 'defend',
-                    'message': f"{enemy.name} defends"
-                }
-                
-            elif action_type == 'use_item':
-                item_id = action.get('item_id')
-                if item_id and hasattr(enemy, 'use_item'):
-                    success = enemy.use_item(item_id)
-                    return {
-                        'success': success,
-                        'action': 'use_item',
-                        'item': item_id
-                    }
-                    
-            elif action_type == 'wait':
-                logger.debug(f"{enemy.name} waits")
-                return {
-                    'success': True,
-                    'action': 'wait',
-                    'message': f"{enemy.name} waits"
-                }
+            elif action.startswith("spell_"):
+                # Extract spell name from action
+                spell_name = action[6:]  # Remove "spell_" prefix
+                result = self.combat_service.cast_spell_at_target(
+                    actor, spell_name, target
+                )
+                return result.get('success', False)
                 
             else:
-                logger.warning(f"Unknown AI action type: {action_type}")
-                return None
+                logger.warning(f"Unknown AI action: {action}")
+                return False
                 
         except Exception as e:
-            logger.error(f"Error executing AI action {action_type}: {e}")
-            return None
+            logger.error(f"Error executing AI action {action}: {e}")
+            return False
     
     def _apply_difficulty_to_enemy(self, enemy):
         """Apply difficulty modifiers to an enemy.

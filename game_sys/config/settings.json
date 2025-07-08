@@ -85,15 +85,31 @@
       "max_level":   100,
       "xp_base":     100,
       "xp_exponent": 1.0,
-      "stat_points_per_level": 5
+      "stat_points_per_level": 1
     },
 
 
     "grade": {
-      "stat_multiplier": 0.05    
+      "stat_multiplier": {
+        "ONE": 0.05,
+        "TWO": 0.10,
+        "THREE": 0.15,
+        "FOUR": 0.20,
+        "FIVE": 0.25,
+        "SIX": 0.30,
+        "SEVEN": 0.35
+      }
     },
     "rarity": {
-      "stat_multiplier": 0.02   
+      "stat_multiplier": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.04,
+        "RARE": 0.06,
+        "EPIC": 0.08,
+        "LEGENDARY": 0.10,
+        "MYTHIC": 0.12,
+        "DIVINE": 0.15
+      }
     },
     "rendering":   { "fps": 60, "window": { "width": 800, "height": 600 } },
     "inventory":   { "max_size": 20 },

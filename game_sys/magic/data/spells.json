@@ -9,11 +9,16 @@
       "damage_type": "FIRE",
       "level_requirement": 2,
       "stat_requirements": {
-        "intelligence": 12
+        "intelligence": 12,
+        "focus": 2
       },
       "effects": [
-        { "type": "burn", "params": { "duration": 5, "tick_damage": 1 } }
-      ]
+        { "type": "burn", "params": { "duration": 5, "tick_damage": 1, "resilience_scaling": true } }
+      ],
+      "derived_stats": {
+        "spell_power": 5,
+        "focus": 1
+      }
     },
     "ice_shard": {
       "name": "Ice Shard",
@@ -24,12 +29,17 @@
       "damage_type": "ICE",
       "level_requirement": 1,
       "stat_requirements": {
-        "intelligence": 10
+        "intelligence": 10,
+        "focus": 1
       },
       "effects": [
-        { "type": "slow", "params": { "duration": 3, "intensity": 0.8 } }
+        { "type": "slow", "params": { "duration": 3, "intensity": 0.8, "resilience_scaling": true } }
       ],
-      "effect_ids": []
+      "effect_ids": [],
+      "derived_stats": {
+        "spell_power": 2,
+        "focus": 1
+      }
     },
     "lightning_bolt": {
       "name": "Lightning Bolt",
@@ -41,11 +51,16 @@
       "level_requirement": 4,
       "stat_requirements": {
         "intelligence": 15,
-        "wisdom": 12
+        "wisdom": 12,
+        "focus": 2
       },
       "effects": [
-        { "type": "status", "params": { "name": "stun", "duration": 2, "tick_damage": 0 } }
-      ]
+        { "type": "status", "params": { "name": "stun", "duration": 2, "tick_damage": 0, "resilience_scaling": true } }
+      ],
+      "derived_stats": {
+        "spell_power": 4,
+        "focus": 2
+      }
     },
     "heal": {
       "name": "Heal",

@@ -12,6 +12,7 @@ import time
 import random
 import math
 
+
 # Import logging system
 from logs.logs import get_logger, setup_logging
 
@@ -20,15 +21,17 @@ setup_logging()
 logger = get_logger("simple_demo")
 
 # Import game system
+
+
 from game_sys.character.character_factory import create_character
-from game_sys.character.character_service import create_character_with_random_stats
+from game_sys.character.character_service import (
+    create_character_with_random_stats
+)
 from game_sys.combat.combat_service import CombatService
 from game_sys.config.property_loader import PropertyLoader
-from game_sys.config.config_manager import ConfigManager
-from game_sys.core.damage_type_utils import get_damage_type_by_name, get_damage_type_properties
+
 try:
-    from game_sys.items.factory import ItemFactory
-    from game_sys.items.item_loader import load_item
+
     from game_sys.magic.enchanting_system import EnchantingSystem
     ITEMS_AVAILABLE = True
     SPELLS_AVAILABLE = True
@@ -69,7 +72,10 @@ GAME_CONFIG = {
         },
         'stat_caps': {
             'strength': 999, 'dexterity': 999, 'vitality': 999,
-            'intelligence': 999, 'wisdom': 999, 'constitution': 999, 'luck': 999
+            'intelligence': 999,
+            'wisdom': 999,
+            'constitution': 999,
+            'luck': 999
         },
         'points_per_level': 5,
         'max_level': 100,
@@ -112,12 +118,21 @@ GAME_CONFIG = {
     }
 }
 
+  
+
 class SimpleGameDemo:
     """A simple game demo with logging and tabbed UI."""
 
     def __init__(self):
         """Initialize the demo."""
         logger.info("Initializing Simple Game Demo")
+        
+        # TEST: Check the strength multiplier config before doing anything else
+        from game_sys.config.config_manager import ConfigManager
+        cfg = ConfigManager()
+        strength_mult = cfg.get('constants.combat.strength_multiplier', 'NOT FOUND')
+        logger.info(f"STARTUP CONFIG - Strength multiplier: {strength_mult}")
+        logger.info(f"STARTUP CONFIG - Test value: {cfg.get('constants.combat.test_value', 'NOT FOUND')}")
 
         # Create main window
         self.root = tk.Tk()
@@ -154,8 +169,8 @@ class SimpleGameDemo:
         self.tab_control.add(self.stats_tab, text="Character Stats")
         self.tab_control.add(self.combat_tab, text="Combat")
         self.tab_control.add(self.inventory_tab, text="Inventory")
-        self.tab_control.add(self.leveling_tab, text="Leveling")  # Add leveling tab
-        self.tab_control.add(self.enchanting_tab, text="Enchanting")  # Add enchanting tab
+        self.tab_control.add(self.leveling_tab, text="Leveling")
+        self.tab_control.add(self.enchanting_tab, text="Enchanting")
 
         # Add progression tab
         self.progression_tab = ttk.Frame(self.tab_control)
@@ -201,10 +216,14 @@ class SimpleGameDemo:
         """Set up the character stats tab."""
         # Left side: Character portrait and basic info
         left_frame = tk.Frame(self.stats_tab, bg="black")
-        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+        left_frame.pack(
+            side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10
+        )
 
         # Character portrait area
-        portrait_frame = tk.Frame(left_frame, bg="dark gray", width=200, height=200)
+        portrait_frame = tk.Frame(
+            left_frame, bg="dark gray", width=200, height=200
+        )
         portrait_frame.pack(pady=10)
         portrait_frame.pack_propagate(False)
 
@@ -228,7 +247,9 @@ class SimpleGameDemo:
 
         # Right side: Detailed stats
         right_frame = tk.Frame(self.stats_tab, bg="black")
-        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+        right_frame.pack(
+            side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10
+        )
 
         # Detailed character info
         self.detailed_stats = tk.Text(
@@ -316,56 +337,64 @@ class SimpleGameDemo:
         """Set up the initial game state."""
         logger.info("Setting up game state")
 
-        # Initialize combat service
-        self.combat_service = CombatService()
-
-        # Initialize AI system
+        # Initialize AI system first
+        ai_controller = None
         try:
             from game_sys.ai.ai_demo_integration import AIDemoController
-            self.ai_controller = AIDemoController(self.combat_service)
+            # Create a temporary combat service for AI controller
+            temp_combat_service = CombatService()
+            ai_controller = AIDemoController(temp_combat_service)
             self.ai_enabled = True
             logger.info("AI system initialized successfully")
         except ImportError as e:
             logger.warning(f"AI system not available: {e}")
-            self.ai_controller = None
             self.ai_enabled = False
 
-        # Create player character
-        self.player = create_character(template_id="hero")
-        if self.player:
-            logger.info(f"Created player: {self.player.name}")
-            self.log_message(f"Welcome, {self.player.name}!")
+        # Initialize combat service with AI controller
+        self.combat_service = CombatService(ai_controller)
+        
+        # Update AI controller reference if we have one
+        if ai_controller:
+            ai_controller.combat_service = self.combat_service
+            self.ai_controller = ai_controller
+        else:
+            self.ai_controller = None
 
-            # Initialize leveling system attributes for testing
-            if not hasattr(self.player, 'experience'):
-                self.player.experience = 0
-            if not hasattr(self.player, 'level'):
-                self.player.level = 1
-            if not hasattr(self.player, 'spent_stat_points'):
-                self.player.spent_stat_points = 0
-                
-            # Give some starting stat points for testing
-            # Set level to 2 so they have 5 stat points available
-            self.player.level = 2
-            if not hasattr(self.player, 'available_stat_points'):
-                self.player.available_stat_points = 5  # Start with 5 points for testing
+        # Create player character
+        from game_sys.character.leveling_manager import LevelingManager
+        # Create player character with specific grade and rarity
+        # Grade 5 = SIX (0-indexed), and LEGENDARY rarity should give stat boosts
+        self.player = create_character(
+            template_id="hero",
+            level=100,
+            grade=5,
+            rarity="LEGENDARY"
+        )
+        logger.info(f"Created player: {self.player.name}")
+        self.log_message(f"Welcome, {self.player.name}!")
 
             # Initialize enchanting system for player
-            if ENCHANTING_AVAILABLE:
-                self.player.enchanting_system = EnchantingSystem(self.player)
+        if ENCHANTING_AVAILABLE:
+                setattr(
+                    self.player, 'enchanting_system', EnchantingSystem(self.player)
+                )
                 self.log_message("Enchanting system initialized!")
 
-            self.update_char_info()
-            self.log_message("You have 5 stat points to allocate in the Leveling tab!", "info")
-        else:
-            logger.error("Failed to create player")
-            self.log_message("Failed to create player!", "combat")
+        self.update_char_info()
+        # Show correct available stat points from config
+        available_points = self.player.leveling_manager.calculate_stat_points_available(
+                self.player
+        )
+        self.log_message(
+                f"You have {available_points} stat points to allocate in the Leveling tab!",
+                "info"
+            )
 
         # Create enemy with random stats
-        self.enemy = create_character_with_random_stats("dragon")
+        self.enemy = create_character(
+            "dragon", level=1, grade=0, rarity="COMMON"
+        )
         if self.enemy:
-            logger.info(f"Created enemy: {self.enemy.name}")
-            
             # Enable AI for the enemy
             if self.ai_enabled and self.ai_controller:
                 ai_success = self.ai_controller.enable_ai_for_enemy(self.enemy)
@@ -373,12 +402,14 @@ class SimpleGameDemo:
                     self.log_message("AI enabled for enemy", "info")
                 else:
                     self.log_message("Failed to enable AI for enemy", "combat")
-            
+
             # Display enemy info with grade and rarity
-            enemy_info = (f"A {self.enemy.name} appears! "
-                         f"(Level {self.enemy.level}, "
-                         f"Grade {self.enemy.grade}, "
-                         f"Rarity {self.enemy.rarity})")
+            enemy_info = (
+                f"A {self.enemy.name} appears! "
+                f"(Level {getattr(self.enemy, 'level', 100)}, "
+                f"Grade {getattr(self.enemy, 'grade', 7)}, "
+                f"Rarity {getattr(self.enemy, 'rarity', 'DIVINE')})"
+            )
             if self.ai_enabled:
                 enemy_info += " [AI CONTROLLED]"
             self.log_message(enemy_info, "combat")
@@ -442,13 +473,24 @@ class SimpleGameDemo:
 
         # Traditional RPG Stats (Base)
         detailed_info += "\n=== BASE STATS ===\n"
-        if hasattr(self.player, 'base_stats'):
-            rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck']
-            for stat_name in rpg_stats:
-                if stat_name in self.player.base_stats:
-                    value = self.player.base_stats[stat_name]
-                    display_name = stat_name.replace('_', ' ').title()
-                    detailed_info += f"  {display_name}: {value:.2f}\n"
+        rpg_stats = [
+            'strength', 'dexterity', 'vitality', 'intelligence',
+            'wisdom', 'constitution', 'luck'
+        ]
+        # Always show all base stats, and ensure player's base_stats dict is populated
+        if (
+            not hasattr(self.player, 'base_stats') or
+            not isinstance(self.player.base_stats, dict)
+        ):
+            self.player.base_stats = {stat: 10 for stat in rpg_stats}
+        else:
+            for stat in rpg_stats:
+                if stat not in self.player.base_stats:
+                    self.player.base_stats[stat] = 10
+        for stat_name in rpg_stats:
+            value = self.player.base_stats[stat_name]
+            display_name = stat_name.replace('_', ' ').title()
+            detailed_info += f"  {display_name}: {value:.2f}\n"
 
         # Combat Stats (Derived)
         detailed_info += "\n=== COMBAT STATS ===\n"
@@ -577,10 +619,35 @@ class SimpleGameDemo:
         health_val += f"{self.enemy.max_health:.2f}"
         info += f"Health: {health_val}\n"
 
-        # Add attributes if available (safely)
-        if hasattr(self.enemy, 'strength'):
-            str_val = getattr(self.enemy, 'strength', 'N/A')
-            info += f"Strength: {str_val}\n"
+        # Add BASE STATS section (from base_stats dictionary)
+        if hasattr(self.enemy, 'base_stats'):
+            info += "\n=== BASE STATS ===\n"
+            
+            # List of core stats to display
+            rpg_stats = [
+                'strength', 'dexterity', 'vitality', 'intelligence',
+                'wisdom', 'constitution', 'luck'
+            ]
+            
+            # Display each base stat
+            for stat in rpg_stats:
+                if stat in self.enemy.base_stats:
+                    value = self.enemy.base_stats[stat]
+                    display_name = stat.replace('_', ' ').title()
+                    info += f"  {display_name}: {value:.2f}\n"
+        
+        # Add COMBAT STATS section if get_stat method is available
+        if hasattr(self.enemy, 'get_stat'):
+            info += "\n=== COMBAT STATS ===\n"
+            combat_stats = ['attack', 'defense', 'speed', 'magic_power']
+            
+            for stat in combat_stats:
+                try:
+                    value = self.enemy.get_stat(stat)
+                    display_name = stat.replace('_', ' ').title()
+                    info += f"  {display_name}: {value:.1f}\n"
+                except:
+                    pass
 
         # Add resistances and weaknesses
         if hasattr(self.enemy, 'resistances') and self.enemy.resistances:
@@ -620,40 +687,46 @@ class SimpleGameDemo:
             self.log_message("No player character available!")
             return
 
+
         old_level = self.player.level
 
         # Use leveling manager if available
         if hasattr(self.player, 'leveling_manager'):
             # Level up through the leveling manager - use gain_experience instead of level_up
             if hasattr(self.player.leveling_manager, 'gain_experience'):
-                # Give enough XP to level up
                 xp_needed = self.player.level * 100  # Simple XP calculation
                 self.player.leveling_manager.gain_experience(
                     actor=self.player,
                     amount=xp_needed
                 )
             else:
-                # Manual level up
                 self.player.level += 1
 
             # Check if level actually increased
             if self.player.level > old_level:
-                # Award stat points for the level up
+                # Award stat points for the level up (config-driven)
                 points_gained = self.player.level - old_level
+                if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
+                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player)
+                else:
+                    points_per_level = 3
+                total_points = points_gained * points_per_level
                 if hasattr(self.player.leveling_manager, 'add_stat_points'):
                     self.player.leveling_manager.add_stat_points(
                         self.player,
-                        points_gained * 3  # 3 points per level
+                        total_points
                     )
-
-                msg = f"Level up! Now level {self.player.level} (+{points_gained * 3} stat points)!"
+                msg = f"Level up! Now level {self.player.level} (+{total_points} stat points)!"
                 self.log_message(msg, "info")
             else:
-                # Force a level up if manager didn't do it
                 self.player.level += 1
+                if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
+                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player)
+                else:
+                    points_per_level = 3
                 if hasattr(self.player.leveling_manager, 'add_stat_points'):
-                    self.player.leveling_manager.add_stat_points(self.player, 3)
-                msg = f"Level up! Now level {self.player.level} (+3 stat points)!"
+                    self.player.leveling_manager.add_stat_points(self.player, points_per_level)
+                msg = f"Level up! Now level {self.player.level} (+{points_per_level} stat points)!"
                 self.log_message(msg, "info")
         else:
             # Fallback: manual level up
@@ -763,8 +836,7 @@ class SimpleGameDemo:
                 
                 self.enemy = None
         else:
-            # Spell failed
-            self.log_message(f"Fireball failed: {result['message']}", "combat")
+            self.log_message(result['message'], "combat")
 
         # Update displays
         self.update_char_info()
@@ -967,7 +1039,6 @@ class SimpleGameDemo:
         if not hasattr(self, 'player') or not self.player:
             logger.warning("No player to attack with")
             return
-            
         if not hasattr(self, 'enemy') or not self.enemy:
             logger.warning("No enemy to attack")
             self.log_message("No enemy to attack!", "combat")
@@ -977,36 +1048,39 @@ class SimpleGameDemo:
         result = self.combat_service.perform_attack(
             self.player, self.enemy, self.player.weapon
         )
-        
+
         if result['success']:
             # Log the attack result
             weapon_info = ""
             if hasattr(self.player, 'weapon') and self.player.weapon:
                 weapon_info = f" with {self.player.weapon.name}"
-            
             damage_msg = (f"{self.player.name} attacks {self.enemy.name}{weapon_info} "
                          f"for {result['damage']:.0f} damage!")
             self.log_message(damage_msg, "combat")
-            
+
             # Display resistance/weakness messages from combat engine
             if result.get('resistance_messages'):
                 for message in result['resistance_messages']:
                     self.log_message(message, "combat")
-            
+
             # Create visual effect
             self.create_particles(450, 200, "red", 15)
-            
+
             # Handle enemy defeat and loot
             if result['defeated']:
                 self.log_message(f"{self.enemy.name} is defeated!", "combat")
-                
-                # Display loot if any was generated
                 if result['loot']:
                     loot_names = [item.name for item in result['loot']]
                     loot_msg = f"Loot obtained: {', '.join(loot_names)}"
                     self.log_message(loot_msg, "info")
-                
                 self.enemy = None
+            else:
+                # If enemy is still alive and AI is enabled, let AI take its turn
+                if self.ai_enabled and self.ai_controller and self.enemy:
+                    try:
+                        self.ai_controller.process_ai_turn(self.enemy, self.player, 0.0)
+                    except Exception as e:
+                        logger.warning(f"AI turn failed: {e}")
         else:
             # Attack failed
             self.log_message(f"Attack failed: {result['message']}", "combat")
@@ -1047,7 +1121,7 @@ class SimpleGameDemo:
         logger.info(f"Spawning {enemy_type}")
 
         # Create enemy with random stats
-        self.enemy = create_character_with_random_stats(enemy_type)
+        self.enemy = create_character_with_random_stats(enemy_type, grade = 3)
 
         if self.enemy:
             logger.info(f"Created enemy: {self.enemy.name}")
@@ -2020,14 +2094,13 @@ class SimpleGameDemo:
         # Stat allocation buttons - include all character stats
         self.stat_buttons = {}
         
-        # Get actual stats from the player character if available
-        if hasattr(self, 'player') and self.player:
-            # Use actual character stats
-            allocatable_stats = list(self.player.base_stats.keys())
+        # Get allocatable stats from leveling manager if available
+        if hasattr(self, 'player') and self.player and hasattr(self.player, 'leveling_manager'):
+            # Use leveling manager's allocatable stats
+            allocatable_stats = self.player.leveling_manager.get_allocatable_stats()
         else:
-            # Fallback to common stats
+            # Fallback to traditional RPG stats only
             allocatable_stats = [
-                'attack', 'defense', 'speed', 'health', 'mana', 'stamina', 'magic_power',
                 'strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck'
             ]
 
@@ -2960,7 +3033,7 @@ class SimpleGameDemo:
 
             # Update stat points
             if hasattr(self, 'stat_points_label') and hasattr(self.player, 'leveling_manager'):
-                available_points = getattr(self.player.leveling_manager, 'available_stat_points', 0)
+                available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
                 self.stat_points_label.config(text=f"Available Stat Points: {available_points}")
 
             # Update skills lists
@@ -3131,10 +3204,7 @@ class SimpleGameDemo:
                         if stat in self.player.base_stats:
                             self.player.base_stats[stat] = value
 
-                    # Return the points
-                    if not hasattr(self.player, 'available_stat_points'):
-                        self.player.available_stat_points = 0
-                    self.player.available_stat_points += points_to_return
+                    # No legacy available_stat_points; stat points are config-driven
 
                     # Update derived stats
                     if hasattr(self.player, 'update_stats'):
@@ -3195,14 +3265,9 @@ class SimpleGameDemo:
                     self.player.level += 1
                     self.player.experience -= xp_needed
                     
-                    # Add stat points manually (3 per level)
-                    if not hasattr(self.player, 'available_stat_points'):
-                        self.player.available_stat_points = 0
-                    self.player.available_stat_points += 3
-                    
+                    # Stat points are handled by leveling_manager
                     msg = f"Gained {xp_amount} XP and leveled up! Level {self.player.level}"
                     self.log_message(msg, "info")
-                    self.log_message(f"You now have {self.player.available_stat_points} stat points!", "info")
                 else:
                     msg = f"Gained {xp_amount} XP!"
                     self.log_message(msg, "info")
@@ -3240,30 +3305,8 @@ class SimpleGameDemo:
                     msg = f"Cannot allocate point to {stat_name} (available: {available})"
                     self.log_message(msg, "combat")
             else:
-                # Manual stat allocation fallback
-                available_points = getattr(self.player, 'available_stat_points', 0)
-                
-                if available_points <= 0:
-                    self.log_message("No stat points available!", "combat")
-                    return
-                
-                if hasattr(self.player, 'base_stats'):
-                    if stat_name in self.player.base_stats:
-                        self.player.base_stats[stat_name] += 1.0
-                        self.player.available_stat_points -= 1
-
-                        # Update derived stats
-                        if hasattr(self.player, 'update_stats'):
-                            self.player.update_stats()
-
-                        msg = f"Allocated 1 point to {stat_name}! ({self.player.available_stat_points} remaining)"
-                        self.log_message(msg, "info")
-                    else:
-                        msg = f"Stat {stat_name} not found!"
-                        self.log_message(msg, "combat")
-                else:
-                    msg = "No stats system available"
-                    self.log_message(msg, "combat")
+                # Stat points are handled by leveling_manager; no legacy fallback
+                pass
 
             # Update displays
             self.update_char_info()
@@ -3283,13 +3326,7 @@ class SimpleGameDemo:
                 if hasattr(self.player, 'leveling_manager'):
                     available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
                     self.available_points_label.config(text=str(available_points))
-                elif hasattr(self.player, 'available_stat_points'):
-                    # Fallback to manual stat points
-                    self.available_points_label.config(text=str(self.player.available_stat_points))
                 else:
-                    # Initialize stat points if not present
-                    if not hasattr(self.player, 'available_stat_points'):
-                        self.player.available_stat_points = 0
                     self.available_points_label.config(text="0")
 
             # Update allocatable stats display
@@ -3297,107 +3334,127 @@ class SimpleGameDemo:
                 self.allocatable_stats_text.config(state="normal")
                 self.allocatable_stats_text.delete(1.0, tk.END)
 
-                if hasattr(self.player, 'base_stats'):
-                    stats_text = "=== BASE STATS ===\n"
-                    
-                    # Show base stats organized by category
-                    rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck']
-                    combat_stats = ['attack', 'defense', 'speed', 'magic_power']
-                    resource_stats = ['health', 'mana', 'stamina']
-                    
-                    # RPG Stats
-                    stats_text += "\nCore Attributes:\n"
-                    for stat in rpg_stats:
-                        if stat in self.player.base_stats:
-                            base_val = self.player.base_stats[stat]
-                            effective_val = self.player.get_stat(stat) if hasattr(self.player, 'get_stat') else base_val
-                            if abs(base_val - effective_val) > 0.01:
-                                stats_text += f"{stat.title():<15}: {base_val:>6.1f} → {effective_val:>6.1f}\n"
-                            else:
-                                stats_text += f"{stat.title():<15}: {base_val:>8.1f}\n"
-                    
-                    # Combat Stats
-                    stats_text += "\nCombat Stats:\n"
-                    for stat in combat_stats:
-                        if stat in self.player.base_stats:
-                            base_val = self.player.base_stats[stat]
-                            effective_val = self.player.get_stat(stat) if hasattr(self.player, 'get_stat') else base_val
-                            if abs(base_val - effective_val) > 0.01:
-                                stats_text += f"{stat.title():<15}: {base_val:>6.1f} → {effective_val:>6.1f}\n"
-                            else:
-                                stats_text += f"{stat.title():<15}: {base_val:>8.1f}\n"
-                    
-                    # Resource Stats 
-                    stats_text += "\nResource Stats:\n"
-                    for stat in resource_stats:
-                        if stat in self.player.base_stats:
-                            base_val = self.player.base_stats[stat]
-                            effective_val = self.player.get_stat(stat) if hasattr(self.player, 'get_stat') else base_val
-                            if abs(base_val - effective_val) > 0.01:
-                                stats_text += f"{stat.title():<15}: {base_val:>6.1f} → {effective_val:>6.1f}\n"
-                            else:
-                                stats_text += f"{stat.title():<15}: {base_val:>8.1f}\n"
-                    
-                    # Other base stats not in categories above
-                    other_stats = [s for s in sorted(self.player.base_stats.keys()) 
-                                 if s not in rpg_stats + combat_stats + resource_stats]
-                    if other_stats:
-                        stats_text += "\nOther Stats:\n"
-                        for stat in other_stats:
-                            base_val = self.player.base_stats[stat]
-                            effective_val = self.player.get_stat(stat) if hasattr(self.player, 'get_stat') else base_val
-                            if abs(base_val - effective_val) > 0.01:
-                                stats_text += f"{stat.title():<15}: {base_val:>6.1f} → {effective_val:>6.1f}\n"
-                            else:
-                                stats_text += f"{stat.title():<15}: {base_val:>8.1f}\n"
+                # --- Character Info Section ---
+                char_info = f"== {self.player.name} ==\n"
+                char_info += f"Level: {self.player.level}\n"
+                if hasattr(self.player, 'grade_name'):
+                    char_info += f"Grade: {self.player.grade_name}\n"
+                elif hasattr(self.player, 'grade'):
+                    char_info += f"Grade: {self.player.grade}\n"
+                if hasattr(self.player, 'rarity'):
+                    char_info += f"Rarity: {self.player.rarity}\n"
+                health_val = f"{getattr(self.player, 'current_health', 0):.2f}/"
+                health_val += f"{getattr(self.player, 'max_health', 0):.2f}"
+                char_info += f"Health: {health_val}\n"
 
-                    # Add derived stats that aren't base stats
-                    stats_text += "\n=== DERIVED STATS ===\n"
-                    derived_stats = ['dodge_chance', 'block_chance', 'magic_resistance', 'damage_reduction',
-                                   'health_regeneration', 'mana_regeneration', 'stamina_regeneration',
-                                   'critical_chance', 'luck_factor', 'physical_damage']
-                    
-                    for stat in derived_stats:
-                        if hasattr(self.player, 'get_stat'):
-                            try:
-                                value = self.player.get_stat(stat)
-                                if 'chance' in stat or 'factor' in stat:
-                                    stats_text += f"{stat.replace('_', ' ').title():<15}: {value:>7.1%}\n"
-                                elif 'regeneration' in stat:
-                                    stats_text += f"{stat.replace('_', ' ').title():<15}: {value:>7.3f}/s\n"
-                                else:
-                                    stats_text += f"{stat.replace('_', ' ').title():<15}: {value:>8.2f}\n"
-                            except:
-                                # Skip stats that can't be calculated
-                                pass
-
-                    # Add level and XP info
-                    stats_text += f"\n=== PROGRESSION ===\n"
-                    stats_text += f"Level: {getattr(self.player, 'level', 1)}\n"
-                    stats_text += f"Experience: {getattr(self.player, 'experience', 0)}\n"
-                    
-                    # Show stat points info
-                    if hasattr(self.player, 'leveling_manager'):
-                        available = self.player.leveling_manager.calculate_stat_points_available(self.player)
-                        spent = getattr(self.player, 'spent_stat_points', 0)
-                        stats_text += f"Stat Points Available: {available}\n"
-                        stats_text += f"Stat Points Spent: {spent}\n"
-                    elif hasattr(self.player, 'available_stat_points'):
-                        stats_text += f"Stat Points Available: {self.player.available_stat_points}\n"
-
-                    # Add current resource values
-                    stats_text += "\n=== CURRENT RESOURCES ===\n"
-                    if hasattr(self.player, 'current_health'):
-                        stats_text += f"{'Health':<15}: {self.player.current_health:>8.1f} / {self.player.max_health:>8.1f}\n"
-                        if hasattr(self.player, 'current_mana'):
-                            stats_text += f"{'Mana':<15}: {self.player.current_mana:>8.1f} / {self.player.max_mana:>8.1f}\n"
-                        if hasattr(self.player, 'current_stamina'):
-                            stats_text += f"{'Stamina':<15}: {self.player.current_stamina:>8.1f} / {self.player.max_stamina:>8.1f}\n"
-
-                    self.allocatable_stats_text.insert(tk.END, stats_text)
+                # --- Base Stats Section ---
+                rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck']
+                if not hasattr(self.player, 'base_stats') or not isinstance(self.player.base_stats, dict):
+                    self.player.base_stats = {stat: 10 for stat in rpg_stats}
                 else:
-                    self.allocatable_stats_text.insert(tk.END, "No stats system available")
+                    for stat in rpg_stats:
+                        if stat not in self.player.base_stats:
+                            self.player.base_stats[stat] = 10
+                char_info += "\n=== BASE STATS ===\n"
+                for stat_name in rpg_stats:
+                    value = self.player.base_stats[stat_name]
+                    display_name = stat_name.replace('_', ' ').title()
+                    char_info += f"  {display_name}: {value:.2f}\n"
 
+                # --- Combat Stats (Derived) ---
+                char_info += "\n=== COMBAT STATS ===\n"
+                combat_stats = ['attack', 'defense', 'speed', 'magic_power']
+                for stat_name in combat_stats:
+                    if hasattr(self.player, 'get_stat'):
+                        value = self.player.get_stat(stat_name)
+                        display_name = stat_name.replace('_', ' ').title()
+                        char_info += f"  {display_name}: {value:.1f}\n"
+
+                # --- Resource Stats (Derived) ---
+                char_info += "\n=== RESOURCE STATS ===\n"
+                resource_stats = [
+                    ('health', 'max_health', 'current_health'),
+                    ('mana', 'max_mana', 'current_mana'),
+                    ('stamina', 'max_stamina', 'current_stamina')
+                ]
+                for base_stat, max_attr, current_attr in resource_stats:
+                    if hasattr(self.player, 'get_stat'):
+                        max_val = self.player.get_stat(base_stat)
+                        current_val = getattr(self.player, current_attr, max_val)
+                        display_name = base_stat.replace('_', ' ').title()
+                        char_info += f"  {display_name}: {current_val:.0f}/{max_val:.0f}\n"
+
+                # --- Defensive Stats (Derived) ---
+                char_info += "\n=== DEFENSIVE STATS ===\n"
+                defensive_stats = ['dodge_chance', 'block_chance', 'magic_resistance', 'damage_reduction']
+                for stat_name in defensive_stats:
+                    if hasattr(self.player, 'get_stat'):
+                        value = self.player.get_stat(stat_name)
+                        display_name = stat_name.replace('_', ' ').title()
+                        if 'chance' in stat_name:
+                            char_info += f"  {display_name}: {value:.1%}\n"
+                        else:
+                            char_info += f"  {display_name}: {value:.2f}\n"
+
+                # --- Regeneration Stats (Derived) ---
+                char_info += "\n=== REGENERATION ===\n"
+                regen_stats = ['health_regeneration', 'mana_regeneration', 'stamina_regeneration']
+                for stat_name in regen_stats:
+                    if hasattr(self.player, 'get_stat'):
+                        value = self.player.get_stat(stat_name)
+                        display_name = stat_name.replace('_', ' ').title()
+                        char_info += f"  {display_name}: {value:.3f}/sec\n"
+
+                # --- Special Stats ---
+                char_info += "\n=== SPECIAL STATS ===\n"
+                special_stats = ['critical_chance', 'luck_factor', 'physical_damage']
+                for stat_name in special_stats:
+                    if hasattr(self.player, 'get_stat'):
+                        value = self.player.get_stat(stat_name)
+                        display_name = stat_name.replace('_', ' ').title()
+                        if 'chance' in stat_name:
+                            char_info += f"  {display_name}: {value:.1%}\n"
+                        else:
+                            char_info += f"  {display_name}: {value:.2f}\n"
+
+                # --- Equipment Section ---
+                char_info += "\n=== EQUIPMENT ===\n"
+                weapon = getattr(self.player, 'weapon', None)
+                if weapon:
+                    char_info += f"  Weapon: {weapon.name}\n"
+                else:
+                    char_info += "  Weapon: (None)\n"
+                offhand = getattr(self.player, 'offhand', None)
+                if offhand:
+                    char_info += f"  Offhand: {offhand.name}\n"
+                else:
+                    char_info += "  Offhand: (None)\n"
+                body_armor = getattr(self.player, 'equipped_body', None)
+                if body_armor:
+                    char_info += f"  Body: {body_armor.name}\n"
+                else:
+                    char_info += "  Body: (None)\n"
+
+                # --- Inventory Section ---
+                char_info += "\nInventory:\n"
+                if hasattr(self.player, 'inventory'):
+                    try:
+                        items = self.player.inventory.list_items()
+                    except Exception:
+                        items = []
+                    if items:
+                        char_info += f"Items ({len(items)}):\n"
+                        for item in items[:5]:
+                            item_name = getattr(item, 'name', str(item))
+                            char_info += f"  - {item_name}\n"
+                        if len(items) > 5:
+                            char_info += f"  ... and {len(items) - 5} more\n"
+                    else:
+                        char_info += "Empty inventory\n"
+                else:
+                    char_info += "(No inventory system)"
+
+                self.allocatable_stats_text.insert(tk.END, char_info)
                 self.allocatable_stats_text.config(state="disabled")
 
             # Update stat buttons values and enable/disable based on available points
@@ -3406,8 +3463,7 @@ class SimpleGameDemo:
                 if hasattr(self.player, 'leveling_manager'):
                     available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
                 else:
-                    available_points = getattr(self.player, 'available_stat_points', 0)
-                
+                    available_points = 0
                 # Update values for ALL stats that have buttons
                 for stat, base_value in self.player.base_stats.items():
                     value_label_key = f"{stat}_value"
@@ -3419,19 +3475,16 @@ class SimpleGameDemo:
                                 # Show both base → effective
                                 self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}→{effective_value:.1f}")
                             else:
-                                # Just show the value since they're the same
                                 self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}")
                         else:
                             self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}")
-                    
-                    # Enable/disable allocation buttons based on available points
-                    if stat in self.stat_buttons:
-                        btn = self.stat_buttons[stat]
-                        if available_points > 0:
-                            btn.config(state="normal", bg="green")
-                        else:
-                            btn.config(state="disabled", bg="gray")
-
+                        # Enable/disable allocation buttons based on available points
+                        if stat in self.stat_buttons:
+                            btn = self.stat_buttons[stat]
+                            if available_points > 0:
+                                btn.config(state="normal", bg="green")
+                            else:
+                                btn.config(state="disabled", bg="gray")
         except Exception as e:
             self.log_message(f"Error updating leveling display: {e}", "combat")
 

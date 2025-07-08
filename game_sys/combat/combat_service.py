@@ -17,10 +17,19 @@ from game_sys.logging import combat_logger
 class CombatService:
     """High-level service for combat operations."""
     
-    def __init__(self):
-        """Initialize the combat service."""
+    def __init__(self, ai_controller=None):
+        """Initialize the combat service.
+        
+        Args:
+            ai_controller: Optional AI controller for enemy responses
+        """
         self.engine = CombatEngine()
         self.loot_table = LootTable()
+        self.ai_controller = ai_controller
+        
+        # Set AI controller in the engine if provided
+        if ai_controller:
+            self.engine.set_ai_controller(ai_controller)
     
     def perform_attack(self, attacker, target, weapon=None) -> Dict[str, Any]:
         """
@@ -273,8 +282,6 @@ class CombatService:
             loot_result = self.loot_table.generate_loot(
                 enemy_level=enemy_level,
                 enemy_type=enemy_type,
-                enemy_grade=enemy_grade,
-                enemy_rarity=enemy_rarity,
                 player_luck=player_luck
             )
             
@@ -285,18 +292,14 @@ class CombatService:
                         victor.inventory.add_item(item)
                         combat_logger.info(f"Added {item.name} to {victor.name}'s inventory")
                     except Exception as e:
-                        combat_logger.warning(
-                            f"Failed to add {item.name} to inventory: {e}"
-                        )
+                        combat_logger.warning(f"Failed to add {item.name} to inventory: {e}")
             
             # Award experience if victor has a leveling manager
             experience = loot_result.get('experience', 0)
             if experience > 0 and hasattr(victor, 'leveling_manager'):
                 try:
                     victor.leveling_manager.gain_experience(victor, experience)
-                    combat_logger.info(
-                        f"Awarded {experience} XP to {victor.name}"
-                    )
+                    combat_logger.info(f"Awarded {experience} XP to {victor.name}")
                 except Exception as e:
                     combat_logger.warning(f"Failed to award XP: {e}")
             
@@ -331,9 +334,7 @@ class CombatService:
         
         # Apply healing
         if hasattr(target, 'current_health'):
-            target.current_health = min(
-                target.current_health + amount, max_health
-            )
+            target.current_health = min(target.current_health + amount, max_health)
             actual_healing = target.current_health - initial_health
         else:
             actual_healing = 0

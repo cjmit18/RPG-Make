@@ -103,10 +103,77 @@ class LevelingManager:
             'magic_power'
         ]
         
-        # Stats per level up (can be configured)
-        self.stat_points_per_level = self.cfg.get(
-            'constants.leveling.stat_points_per_level', 5
+
+    def get_stat_points_per_level(self, actor=None):
+        """
+        Get the number of stat points awarded per level from config.
+        
+        If actor is provided, applies grade and rarity multipliers to the base
+        stat points per level value, providing more points for higher grades/rarities.
+        
+        Args:
+            actor: Optional actor to calculate bonus points based on grade/rarity
+            
+        Returns:
+            int: Base stat points (default 3) plus any grade/rarity bonuses
+        """
+        base_points = self.cfg.get('constants.leveling.stat_points_per_level', 3)
+        
+        if not actor:
+            return base_points
+            
+        # Get grade multiplier
+        grade_mult_map = (
+            self.cfg.get('constants.grade.stat_multiplier', None)
+            or self.cfg.get('grade.stat_multiplier', None)
         )
+        grade_mult = 0.0
+        grade_key = None
+        
+        if getattr(actor, 'grade_name', None):
+            grade_key = actor.grade_name
+        elif hasattr(actor, 'grade') and isinstance(actor.grade, str):
+            grade_key = actor.grade
+        elif hasattr(actor, 'grade') and isinstance(actor.grade, int):
+            grade_list = self.cfg.get('defaults.grades', [])
+            if grade_list and 0 <= actor.grade < len(grade_list):
+                grade_key = grade_list[actor.grade]
+                
+        # Calculate grade bonus points
+        if isinstance(grade_mult_map, dict):
+            if grade_key and grade_key in grade_mult_map:
+                grade_mult = grade_mult_map[grade_key]
+        elif isinstance(grade_mult_map, (float, int)):
+            grade_mult = float(grade_mult_map)
+            
+        # Get rarity multiplier
+        rarity_mult_map = (
+            self.cfg.get('constants.rarity.stat_multiplier', None)
+            or self.cfg.get('rarity.stat_multiplier', None)
+        )
+        rarity_mult = 0.0
+        rarity_key = None
+        
+        if getattr(actor, 'rarity_name', None):
+            rarity_key = actor.rarity_name
+        elif hasattr(actor, 'rarity') and isinstance(actor.rarity, str):
+            rarity_key = actor.rarity
+        elif hasattr(actor, 'job_level') and isinstance(actor.job_level, int):
+            rarity_list = self.cfg.get('defaults.rarities', [])
+            if rarity_list and 0 <= actor.job_level < len(rarity_list):
+                rarity_key = rarity_list[actor.job_level]
+                
+        # Calculate rarity bonus points
+        if isinstance(rarity_mult_map, dict):
+            if rarity_key and rarity_key in rarity_mult_map:
+                rarity_mult = rarity_mult_map[rarity_key]
+        elif isinstance(rarity_mult_map, (float, int)):
+            rarity_mult = float(rarity_mult_map)
+            
+        # Calculate total bonus points (round to nearest int)
+        # The formula boosts base points by grade and rarity multipliers
+        total_points = base_points * (1.0 + grade_mult) * (1.0 + rarity_mult)
+        return int(total_points)
     
     def get_allocatable_stats(self) -> List[str]:
         """Get the list of stats that can be allocated with stat points."""
@@ -115,17 +182,13 @@ class LevelingManager:
     def calculate_stat_points_available(self, actor) -> int:
         """
         Calculate how many stat points an actor should have available.
-        This assumes they get stat_points_per_level points per level above 1.
+        Uses the current config value for stat points per level.
         """
         if not hasattr(actor, 'level'):
             return 0
-            
-        # Basic formula: (level - 1) * points_per_level
-        total_points = (actor.level - 1) * self.stat_points_per_level
-        
-        # Subtract points already spent (if we track this)
+        points_per_level = self.get_stat_points_per_level(actor)
+        total_points = (actor.level - 1) * points_per_level
         spent_points = getattr(actor, 'spent_stat_points', 0)
-        
         return max(0, total_points - spent_points)
     
     def allocate_stat_point(self, actor, stat_name: str) -> bool:

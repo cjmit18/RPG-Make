@@ -2,73 +2,104 @@
   "enchantments": {
     "fire_enchant": {
       "name": "Flame Enchantment",
-      "description": "Adds fire damage on hit.",
+      "description": "Adds fire damage on hit. Scales with spell_power and focus.",
       "level_requirement": 3,
       "stat_requirements": {
-        "intelligence": 12
+        "intelligence": 12,
+        "focus": 1
       },
       "effects": [
         {
           "type": "elemental",
           "params": {
             "element": "FIRE",
-            "multiplier": 1
+            "multiplier": 1,
+            "spell_power_scaling": true,
+            "focus_scaling": true
           }
         }
       ],
-      "damage_type": "FIRE"
+      "damage_type": "FIRE",
+      "derived_stats": {
+        "spell_power": 2,
+        "focus": 1
+      }
     },
     "ice_enchant": {
       "name": "Frost Enchantment",
-      "description": "Adds ice damage and slowing effect on hit.",
+      "description": "Adds ice damage and slowing effect on hit. Slow duration reduced by target resilience.",
       "level_requirement": 3,
       "stat_requirements": {
-        "intelligence": 12
+        "intelligence": 12,
+        "focus": 1
       },
       "effects": [
         {
           "type": "elemental",
           "params": {
             "element": "ICE",
-            "multiplier": 1.1
+            "multiplier": 1.1,
+            "spell_power_scaling": true,
+            "focus_scaling": true
           }
         },
         {
           "type": "slow",
           "params": {
             "speed_reduction": 0.2,
-            "duration": 3.0
+            "duration": 3.0,
+            "resilience_scaling": true
           }
         }
       ],
-      "damage_type": "ICE"
+      "damage_type": "ICE",
+      "derived_stats": {
+        "spell_power": 2,
+        "focus": 1
+      }
     },
     "lightning_enchant": {
       "name": "Lightning Enchantment",
-      "description": "Adds lightning damage with chance to stun.",
+      "description": "Adds lightning damage with chance to stun. Stun duration reduced by resilience.",
       "level_requirement": 5,
       "stat_requirements": {
         "intelligence": 15,
-        "wisdom": 10
+        "wisdom": 10,
+        "focus": 2
       },
       "effects": [
         {
           "type": "elemental",
           "params": {
             "element": "LIGHTNING",
-            "multiplier": 1.3
+            "multiplier": 1.3,
+            "spell_power_scaling": true,
+            "focus_scaling": true
+          }
+        },
+        {
+          "type": "status",
+          "params": {
+            "name": "stun",
+            "duration": 2.0,
+            "resilience_scaling": true
           }
         }
       ],
-      "damage_type": "LIGHTNING"
+      "damage_type": "LIGHTNING",
+      "derived_stats": {
+        "spell_power": 3,
+        "focus": 2
+      }
     },
     "poison_enchant": {
       "name": "Poison Enchantment",
-      "description": "Adds poison damage over time.",
+      "description": "Adds poison damage over time. Duration reduced by resilience.",
       "level_requirement": 4,
       "stat_requirements": {
         "intelligence": 12,
-        "wisdom": 8
+        "wisdom": 8,
+        "focus": 1
       },
       "effects": [
         {
@@ -76,15 +107,19 @@
           "params": {
             "tick_damage": 2,
             "duration": 5.0,
-            "tick_interval": 1.0
+            "tick_interval": 1.0,
+            "resilience_scaling": true
           }
         }
       ],
-      "damage_type": "POISON"
+      "damage_type": "POISON",
+      "derived_stats": {
+        "focus": 1
+      }
     },
     "strength_enchant": {
       "name": "Strength Enchantment",
-      "description": "Increases the wielder's strength.",
+      "description": "Increases the wielder's strength and parry chance.",
       "level_requirement": 3,
       "stat_requirements": {
         "strength": 15
@@ -96,13 +131,23 @@
             "stat": "strength",
             "bonus": 3
           }
+        },
+        {
+          "type": "stat_bonus",
+          "params": {
+            "stat": "parry_chance",
+            "bonus": 0.05
+          }
         }
       ],
-      "damage_type": "PHYSICAL"
+      "damage_type": "PHYSICAL",
+      "derived_stats": {
+        "parry_chance": 0.05
+      }
     },
     "speed_enchant": {
       "name": "Speed Enchantment",
-      "description": "Increases the wielder's dexterity and speed.",
+      "description": "Increases the wielder's dexterity, speed, and initiative.",
       "level_requirement": 3,
       "stat_requirements": {
         "dexterity": 15
@@ -114,9 +159,19 @@
             "stat": "dexterity",
             "bonus": 2
           }
+        },
+        {
+          "type": "stat_bonus",
+          "params": {
+            "stat": "initiative",
+            "bonus": 1
+          }
         }
       ],
-      "damage_type": "PHYSICAL"
+      "damage_type": "PHYSICAL",
+      "derived_stats": {
+        "initiative": 1
+      }
     }
   }
 }

@@ -62,11 +62,13 @@ class ConfigManager:
 
     def _init_paths(self):
         """
-        Determine default & user JSON paths relative to this file.
+        Determine config JSON paths relative to this file.
+        default_settings.json is the primary config source.
+        settings.json is only used as fallback if default_settings.json is missing/corrupt.
         """
         base = Path(__file__).parent
         self.default_path = base / 'default_settings.json'
-        self.user_path = base / 'settings.json' or base / 'default_settings.json'
+        self.user_path = base / 'settings.json'
         
         # Added for backward compatibility with game_settings.json users
         self.game_settings_path = base / 'game_settings.json'
@@ -74,7 +76,7 @@ class ConfigManager:
         self._data = {}
         self._data_lock = Lock()
         config_logger.debug(
-            f"Config paths: default={self.default_path}, user={self.user_path}"
+            f"Config paths: primary={self.default_path}, fallback={self.user_path}"
         )
 
     @log_exception
@@ -127,25 +129,41 @@ class ConfigManager:
         config_logger.info("Loading configuration files")
         
         # Primary configuration source is default_settings.json
-        # If it doesn't exist, try to use game_settings.json for backward compatibility
-        if self.default_path.exists():
-            defaults = self._load_json(self.default_path)
-        elif self.game_settings_path.exists():
-            config_logger.warning(
-                f"default_settings.json not found, using game_settings.json instead"
-            )
-            defaults = self._load_json(self.game_settings_path)
-        else:
-            config_logger.error("No configuration file found!")
-            defaults = {}
-            
-        # Load user overrides (if any)
-        overrides = self._load_json(self.user_path, optional=True)
-        merged = self._deep_merge(defaults, overrides)
+        defaults = None
+        
+        try:
+            if self.default_path.exists():
+                config_logger.info("Loading primary config from default_settings.json")
+                defaults = self._load_json(self.default_path)
+            else:
+                config_logger.warning("default_settings.json not found")
+        except Exception as e:
+            config_logger.error(f"Failed to load default_settings.json: {e}")
+            defaults = None
+        
+        # Only use settings.json as fallback if default_settings.json failed or is missing
+        if defaults is None:
+            config_logger.warning("Falling back to settings.json")
+            try:
+                if self.user_path.exists():
+                    defaults = self._load_json(self.user_path)
+                elif self.game_settings_path.exists():
+                    config_logger.warning("Using game_settings.json as last resort")
+                    defaults = self._load_json(self.game_settings_path)
+                else:
+                    config_logger.error("No configuration file found!")
+                    defaults = {}
+            except Exception as e:
+                config_logger.error(f"Failed to load fallback config: {e}")
+                defaults = {}
+        
+        # Note: We're not loading user overrides anymore - default_settings.json is the source of truth
+        # If you need to modify configuration, edit default_settings.json directly
+        merged = defaults
 
         # Validate
         try:
-            config_logger.debug("Validating merged configuration")
+            config_logger.debug("Validating configuration")
             jsonschema.validate(merged, CONFIG_SCHEMA)
             config_logger.info("Configuration validation successful")
         except Exception as e:

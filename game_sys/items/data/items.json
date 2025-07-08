@@ -31,7 +31,10 @@
       },
       "stats": {
         "strength": 3,
-        "dexterity": 1
+        "dexterity": 1,
+        "accuracy": 2,
+        "parry_chance": 0.05,
+        "initiative": 1
       },
       "effect_ids": [
         "flat_5"
@@ -45,7 +48,9 @@
       "level_requirement": 2,
       "stats": {
         "defense": 5,
-        "dexterity": 1
+        "dexterity": 1,
+        "evasion": 0.03,
+        "resilience": 0.02
       },
       "effect_ids": []
     },
@@ -58,7 +63,9 @@
       "slot_restriction": "offhand_only",
       "effect_ids": [],
       "dual_wield": true,
-      "block_chance": 0.15
+      "block_chance": 0.15,
+      "parry_chance": 0.08,
+      "resilience": 0.04
     },
     "iron_dagger": {
       "type": "offhand_weapon",
@@ -115,6 +122,10 @@
       "base_damage": 12,
       "damage_type": "MAGICAL",
       "slot": "two_handed",
+      "stats": {
+        "spell_power": 12,
+        "focus": 4
+      },
       "effect_ids": [
         "mana_boost_10",
         "spell_power_15"
@@ -211,7 +222,9 @@
       "slot": "ring",
       "stats": {
         "intelligence": 5,
-        "wisdom": 3
+        "wisdom": 3,
+        "focus": 3,
+        "spell_power": 8
       },
       "effect_ids": [
         "spell_power_15",
@@ -226,7 +239,9 @@
       "defense": 3,
       "slot": "feet",
       "stats": {
-        "dexterity": 4
+        "dexterity": 4,
+        "evasion": 0.10,
+        "initiative": 2
       },
       "effect_ids": [
         "move_speed_2.0",
@@ -280,7 +295,8 @@
       "slot": "body",
       "stats": {
         "constitution": 6,
-        "defense": 8
+        "defense": 8,
+        "resilience": 0.10
       },
       "effect_ids": [
         "thorns_25",

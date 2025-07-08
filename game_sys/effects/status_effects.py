@@ -32,14 +32,24 @@ class StatusEffect(Effect):
         self.metadata = kwargs
     
     def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
-        """Apply the status effect to the target."""
+        """Apply the status effect to the target, reducing duration by resilience if present."""
         if not hasattr(target, 'status_flags'):
             # Initialize status flag manager if not present
             target.status_flags = StatusFlagManager(target)
-        
+
+        # Reduce duration by resilience stat (up to 75% reduction, min 1.0 duration)
+        duration = self.duration
+        resilience = 0.0
+        if hasattr(target, 'get_stat'):
+            try:
+                resilience = max(0.0, min(0.75, target.get_stat('resilience')))
+            except Exception:
+                resilience = 0.0
+        reduced_duration = max(1.0, duration * (1.0 - resilience))
+
         flag_data = StatusFlagData(
             flag=self.flag,
-            duration=self.duration,
+            duration=reduced_duration,
             intensity=self.intensity,
             tick_damage=self.tick_damage,
             tick_heal=self.tick_heal,

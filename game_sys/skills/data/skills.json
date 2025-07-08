@@ -8,11 +8,16 @@
       "damage_type": "PHYSICAL",
       "level_requirement": 3,
       "stat_requirements": {
-        "strength": 15
+        "strength": 15,
+        "initiative": 1
       },
       "effects": [
         { "type": "flat", "params": { "amount": 5 } }
-      ]
+      ],
+      "derived_stats": {
+        "parry_chance": 0.03,
+        "initiative": 1
+      }
     },
     "pierce": {
       "name": "Pierce",
@@ -66,11 +71,15 @@
       "damage_type": "NONE",
       "level_requirement": 1,
       "stat_requirements": {
-        "dexterity": 8
+        "dexterity": 8,
+        "evasion": 1
       },
       "effects": [
-        { "type": "status", "params": { "effect": "evasion_boost", "duration": 3 } }
-      ]
+        { "type": "status", "params": { "effect": "evasion_boost", "duration": 3, "resilience_scaling": true } }
+      ],
+      "derived_stats": {
+        "evasion": 0.10
+      }
     },
     "fire_breath": {
       "name": "Fire Breath",
@@ -80,12 +89,17 @@
       "damage_type": "FIRE",
       "level_requirement": 5,
       "stat_requirements": {
-        "magic_power": 15
+        "magic_power": 15,
+        "focus": 2
       },
       "effects": [
         { "type": "percent", "params": { "multiplier": 2.0 } },
-        { "type": "status", "params": { "effect": "burn", "duration": 5 } }
-      ]
+        { "type": "status", "params": { "effect": "burn", "duration": 5, "resilience_scaling": true } }
+      ],
+      "derived_stats": {
+        "spell_power": 4,
+        "focus": 2
+      }
     },
     "tail_sweep": {
       "name": "Tail Sweep",

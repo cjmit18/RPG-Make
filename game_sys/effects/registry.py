@@ -71,6 +71,10 @@ _effect_map: Dict[str, Type[Effect]] = {
     'invisibility': InvisibilityEffect,
     'paralyze':    ParalyzeEffect,
     'sleep':       SleepEffect,
+    
+    # Spell aliases (for backwards compatibility or convenience)
+    'ice_shard':   SlowEffect,  # ice_shard spell should apply slow effect
+    'fireball':    BurnEffect,  # fireball spell should apply burn effect
 }
 
 

@@ -3,8 +3,9 @@
 Module: game_sys.character.actor
 
 Defines the core Actor hierarchy, encapsulating character state,
-stats, pools, progression, inventory, action scheduling, combat interactions,
-status effects, item usage, abilities, interactions, serialization, and metadata.
+stats, pools, progression, inventory, action scheduling, combat
+interactions, status effects, item usage, abilities, interactions,
+serialization, and metadata.
 """
 
 from __future__ import annotations
@@ -23,7 +24,6 @@ from game_sys.hooks.hooks_setup import (
     ON_DEATH,
     ON_LEVEL_UP,
     ON_STATUS_APPLIED,
-    ON_STATUS_EXPIRED,
     ON_ITEM_USED,
     ON_ABILITY_CAST,
     ON_INTERACT,
@@ -48,10 +48,17 @@ def _fmt(val: float) -> str:
     return str(val)
 
 
+
+
 class Actor:
-    """
-    Base class for all characters.
-    """
+    """Base class for all characters."""
+
+    @property
+    def is_player(self):
+        return (
+            getattr(self, 'team', None) == 'player' or
+            self.__class__.__name__ == 'Player'
+        )
 
     def __init__(
         self,
@@ -63,21 +70,33 @@ class Actor:
         self.name = name
         cfg = ConfigManager()
 
+        # RPG stat/leveling system integration
+        self.enchanting_system = None
+        from game_sys.character.leveling_manager import LevelingManager
+        self.leveling_manager = LevelingManager()
+
         # Initialize base stats
         defaults = cfg.get('constants.stats_defaults', {})
+        if defaults is None:
+            defaults = {}
         self.base_stats: Dict[str, float] = {
             s: defaults.get(s, 0.0) for s in defaults
         }
         self.base_stats.update(base_stats)
         for k, v in overrides.items():
             self.base_stats[k] = v
-            
+
         character_logger.debug(f"Actor {name} base stats: {self.base_stats}")
 
         # Progression
         self.level: int = 1
         self.xp: float = 0.0
-        self.max_level: int = cfg.get('constants.leveling.max_level', 100)
+
+        max_level_val = cfg.get('constants.leveling.max_level', 100)
+        if isinstance(max_level_val, int):
+            self.max_level: int = max_level_val
+        else:
+            self.max_level: int = 100
 
         # Pools
         self.max_health: float = self.get_stat('health')
@@ -106,7 +125,7 @@ class Actor:
         self.team = 'neutral'  # 'player', 'enemy', 'neutral'
         
         # Spell and skill tracking
-        self.pending_spell: Optional[str] = None  # Track currently casting spell
+        self.pending_spell: Optional[str] = None  # Track currently casting
         self._spell_state: bool = False  # Flag for spell execution
 
         # Status effects
@@ -141,40 +160,60 @@ class Actor:
         self.skill_effect_ids: List[str] = []
 
         # Coordinates & facing
+
         self.position: Tuple[float, float] = (0.0, 0.0)
         self.facing_vector: Tuple[float, float] = (1.0, 0.0)
 
         # Emit spawn event
         emit(ON_SPAWN, actor=self)
+
     # --- Stat & progression ---
+
+
 
     def get_stat(self, stat_name: str) -> float:
         """Return effective stat (base or derived) including bonuses."""
         return ScalingManager.compute_stat(self, stat_name)
 
+
+
     def gain_xp(self, amount: float):
         """Award XP and handle level-ups."""
         character_logger.debug(f"{self.name} gained {amount} XP")
         self.xp += amount
-        while self.xp >= self._xp_for_next() and self.level < self.max_level:
+        while (
+            self.xp >= self._xp_for_next() and
+            self.level < self.max_level
+        ):
             self.xp -= self._xp_for_next()
             old_level = self.level
             self.level += 1
-            character_logger.info(f"{self.name} leveled up from {old_level} to {self.level}")
+            character_logger.info(
+                f"{self.name} leveled up from {old_level} to {self.level}"
+            )
             emit(ON_LEVEL_UP, actor=self, new_level=self.level)
             self.on_level_up()
+
+
 
     def _xp_for_next(self) -> float:
         """Calculate XP threshold from config formula: base * level^exponent."""
         cfg = ConfigManager()
         base = cfg.get('constants.leveling.xp_base', 100)
         exp = cfg.get('constants.leveling.xp_exponent', 1.0)
-        return base * (self.level ** exp)
+        try:
+            return base * (self.level ** float(exp))
+        except Exception:
+            return 100.0 * (self.level ** 1.0)
+
+
 
     def on_level_up(self):
         """Hook called after leveling up."""
         self.update_stats()
         self.restore_all()
+
+
 
     @log_exception
     def update_stats(self):
@@ -187,6 +226,8 @@ class Actor:
         self.current_mana = min(self.current_mana, self.max_mana)
         self.current_stamina = min(self.current_stamina, self.max_stamina)
 
+
+
     def restore_all(self):
         """Restore health, mana, and stamina, but respect active drain effects."""
         # Check for active resource drain effects by effect ID pattern
@@ -198,7 +239,7 @@ class Actor:
                 if len(parts) >= 3:
                     resource = parts[2]  # 'mana', 'health', or 'stamina'
                     active_drains.add(resource)
-        
+
         # Only restore resources that aren't being drained
         if 'health' not in active_drains:
             self.current_health = self.max_health
@@ -252,7 +293,8 @@ class Actor:
             f"Applying status effect {effect.id} to {self.name}"
         )
         emit(ON_STATUS_APPLIED, actor=self, effect=effect.id)
-        self.active_statuses[effect.id] = (effect, effect.duration)
+        duration = getattr(effect, 'duration', 0.0)
+        self.active_statuses[effect.id] = (effect, duration)
         # ensure status effects are ticked
         from game_sys.effects.status_manager import status_manager
         status_manager.register_actor(self)
@@ -456,7 +498,7 @@ class Actor:
     def equip_weapon(self, weapon: Any):
         """Equip the given weapon on this actor."""
         # Remove weapon from inventory if it's there
-        if hasattr(self, 'inventory') and weapon in self.inventory.items:
+        if hasattr(self, 'inventory') and hasattr(self.inventory, 'items') and weapon in self.inventory.items:
             self.inventory.remove_item(weapon)
             
         # Unequip current weapon first
@@ -534,13 +576,16 @@ class Actor:
         
         if can_equip_offhand:
             # Remove item from inventory if it's there
-            if hasattr(self, 'inventory') and item in self.inventory.items:
+            if (
+                hasattr(self, 'inventory') and hasattr(self.inventory, 'items')
+                and item in self.inventory.items
+            ):
                 self.inventory.remove_item(item)
-                
+
             # Unequip current offhand first
             if self.offhand:
                 self._unequip_offhand()
-            
+
             # Merge offhand stats into base_stats
             if hasattr(item, 'stats'):
                 for stat_name, bonus in item.stats.items():
@@ -657,7 +702,10 @@ class Actor:
             return False
             
         # Remove armor from inventory if it's there
-        if hasattr(self, 'inventory') and armor in self.inventory.items:
+        if (
+            hasattr(self, 'inventory') and hasattr(self.inventory, 'items')
+            and armor in self.inventory.items
+        ):
             self.inventory.remove_item(armor)
             
         # Unequip existing armor in this slot first
@@ -901,6 +949,8 @@ class Actor:
         return True
 
 
+
+
 class Player(Actor):
     """Player-controlled actor with learning capabilities."""
 
@@ -910,30 +960,32 @@ class Player(Actor):
         self.known_skills = []
         self.known_spells = []
         self.known_enchantments = []
-        
+
         super().__init__(name, base_stats, **overrides)
-        
+
         # Initialize systems that might access these attributes
         from game_sys.skills.learning_system import LearningSystem
         self.learning = LearningSystem(self)
-        from game_sys.character.leveling_manager import LevelingManager
-        self.leveling_manager = LevelingManager()
-        
+        self.experience = 0
+        self.spent_stat_points = 0
+
         # Only assign default job if no job assignment will happen later
         # Character factory will handle job assignment for template-based creation
         if not overrides.get('_skip_default_job', False):
             from game_sys.character.job_manager import JobManager
             JobManager.assign(self, 'commoner')
-        
+
         character_logger.info(f"Initialized Player {name} with systems")
+
+
 
 
 class NPC(Actor):
     """Non-player character with dialogue and quest capabilities."""
-    
+
     def __init__(self, name: str, base_stats: Dict[str, float], **overrides):
         super().__init__(name, base_stats, **overrides)
-        
+
         # NPC-specific attributes
         self.dialogue_state = "idle"
         self.available_quests = []
@@ -943,15 +995,15 @@ class NPC(Actor):
         self.is_vendor = overrides.get('is_vendor', False)
         self.friendship_level = 0
         self.last_interaction_time = 0.0
-        
+
         # NPCs are typically neutral unless specified
         if self.team == "player":  # Reset default team assignment
             self.team = "neutral"
-        
+
         character_logger.debug(
             f"Initialized NPC {self.name} with dialogue and quest capabilities"
         )
-    
+
     def add_quest(self, quest_id: str):
         """Add a quest that this NPC can offer."""
         if quest_id not in self.available_quests:
@@ -959,7 +1011,7 @@ class NPC(Actor):
             character_logger.info(
                 f"NPC {self.name} now offers quest: {quest_id}"
             )
-    
+
     def complete_quest(self, quest_id: str):
         """Mark a quest as completed for this NPC."""
         if quest_id in self.available_quests:
@@ -970,14 +1022,14 @@ class NPC(Actor):
             )
             return True
         return False
-    
+
     def set_dialogue_state(self, state: str):
         """Set the dialogue state for this NPC."""
         character_logger.debug(
             f"NPC {self.name} dialogue state changed to {state}"
         )
         self.dialogue_state = state
-    
+
     def add_shop_item(self, item):
         """Add an item to this NPC's shop inventory."""
         if self.is_vendor:
@@ -985,7 +1037,7 @@ class NPC(Actor):
             character_logger.info(f"NPC {self.name} added {item.id} to shop")
         else:
             character_logger.warning(f"NPC {self.name} is not a vendor")
-    
+
     def remove_shop_item(self, item_id: str):
         """Remove an item from this NPC's shop inventory."""
         for item in self.shop_inventory:
@@ -996,7 +1048,7 @@ class NPC(Actor):
                 )
                 return item
         return None
-    
+
     def adjust_friendship(self, amount: float):
         """Adjust the friendship level with this NPC."""
         self.friendship_level = max(0, self.friendship_level + amount)
@@ -1004,24 +1056,28 @@ class NPC(Actor):
             f"NPC {self.name} friendship adjusted by {amount} "
             f"to {self.friendship_level}"
         )
-    
+
     def can_interact(self, current_time: float) -> bool:
         """Check if this NPC can be interacted with based on cooldown."""
         interaction_cooldown = 0.5  # Half second between interactions
-        return ((current_time - self.last_interaction_time) >=
-                interaction_cooldown)
-    
+        return (
+            (current_time - self.last_interaction_time) >=
+            interaction_cooldown
+        )
+
     def update_interaction_time(self, current_time: float):
         """Update the last interaction time."""
         self.last_interaction_time = current_time
 
 
+
+
 class Enemy(Actor):
     """Enemy actor with AI behaviors."""
-    
+
     def __init__(self, name: str, base_stats: Dict[str, float], **overrides):
         super().__init__(name, base_stats, **overrides)
-        
+
         # AI-specific attributes
         self.ai_enabled = False
         self.behavior_state = "idle"
@@ -1029,32 +1085,31 @@ class Enemy(Actor):
         self.target = None
         self.last_action_time = 0.0
         self.action_cooldown = 1.0
-        
         # Give enemies some basic spells
         self.known_spells = ["magic_missile"]
-        
+
         character_logger.debug(
             f"Initialized Enemy {self.name} with AI attributes"
         )
-    
+
     def set_behavior(self, state: str):
         """Set the AI behavior state for this enemy."""
         character_logger.debug(
             f"Enemy {self.name} behavior changed to {state}"
         )
         self.behavior_state = state
-        
+
     def enable_ai(self):
         """Enable AI control for this enemy."""
         self.ai_enabled = True
         character_logger.info(f"AI enabled for enemy {self.name}")
-        
+
     def disable_ai(self):
         """Disable AI control for this enemy."""
         self.ai_enabled = False
         self.target = None
         character_logger.info(f"AI disabled for enemy {self.name}")
-        
+
     def set_target(self, target):
         """Set the combat target for this enemy."""
         self.target = target
@@ -1062,11 +1117,13 @@ class Enemy(Actor):
             character_logger.debug(f"{self.name} now targets {target.name}")
         else:
             character_logger.debug(f"{self.name} target cleared")
-            
+
     def can_act(self, current_time: float) -> bool:
         """Check if this enemy can perform an action based on cooldown."""
-        return (current_time - self.last_action_time) >= self.action_cooldown
-        
+        return (
+            (current_time - self.last_action_time) >= self.action_cooldown
+        )
+
     def update_action_time(self, current_time: float):
         """Update the last action time for cooldown tracking."""
         self.last_action_time = current_time

@@ -111,7 +111,7 @@ class DamagePacket:
     @classmethod
     def from_spell_cast(
         cls, attacker: "Actor", defender: "Actor",
-        spell_damage: float, spell_id: str = "magic"
+        spell_damage: float, spell_id: str = "magic", damage_type=None
     ) -> "DamagePacket":
         """
         Create a DamagePacket from a spell cast.
@@ -121,6 +121,7 @@ class DamagePacket:
             defender: The target actor
             spell_damage: Base spell damage
             spell_id: ID of the spell being cast
+            damage_type: The elemental type of the spell (FIRE, ICE, etc)
             
         Returns:
             DamagePacket with spell data populated
@@ -134,10 +135,12 @@ class DamagePacket:
         
         # Add the spell ID to the effect_ids for tracking
         effect_ids = [spell_id] if spell_id else []
-        
+        # Use provided damage_type if available, else default to MAGIC
+        if damage_type is None:
+            damage_type = DamageType.MAGIC
         return cls(
             base_damage=spell_damage,
-            damage_type=DamageType.MAGIC,
+            damage_type=damage_type,
             attacker=attacker,
             defender=defender,
             weapon=None,

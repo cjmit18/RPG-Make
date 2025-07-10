@@ -8,6 +8,19 @@ from game_sys.logging import effects_logger, log_exception
 flags = FeatureFlags()
 
 class HealEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        # Async extensibility: pre-apply hook
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+
+        # Default: call sync apply
+        result = self.apply(caster, target, combat_engine)
+
+        # Async extensibility: post-apply hook
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+
+        return result
     """
     Instantly restores health to the target.
     """
@@ -39,6 +52,13 @@ class HealEffect(Effect):
 
 
 class BuffEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Applies a temporary stat bonus via a StatusEffect-like wrapper.
     """
@@ -86,6 +106,13 @@ class BuffEffect(Effect):
 
 
 class DebuffEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Applies a negative stat modifier temporarily.
     """
@@ -132,6 +159,13 @@ class DebuffEffect(Effect):
 
 
 class StatusEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     A generic status that ticks damage over time.
     """
@@ -170,6 +204,13 @@ class StatusEffect(Effect):
 
 
 class StatBonusEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Temporarily (or permanently, if duration=0) adds `amount` to a stat.
     Accepts JSON param 'stat' for compatibility.
@@ -224,6 +265,13 @@ class StatBonusEffect(Effect):
 
 
 class InstantManaEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Instantly restores mana to the target.
     """
@@ -255,6 +303,13 @@ class InstantManaEffect(Effect):
 
 
 class ResourceDrainEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Drains a resource (health, mana, stamina) from the target.
     """
@@ -299,6 +354,13 @@ class ResourceDrainEffect(Effect):
 
 
 class EquipmentStatEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Passive stat bonus from equipment. Always active when item is equipped.
     """
@@ -322,6 +384,13 @@ class EquipmentStatEffect(Effect):
 
 
 class RegenerationEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Passive regeneration effect that continuously restores a resource.
     """

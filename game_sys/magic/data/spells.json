@@ -140,6 +140,25 @@
         { "type": "debuff", "params": { "stat": "defense", "amount": -0.5, "duration": 8 } }
       ]
     },
+    "magic_missile": {
+      "name": "Magic Missile",
+      "mana_cost": 10,
+      "cast_time": 0.5,
+      "cooldown": 1.0,
+      "base_power": 15,
+      "damage_type": "MAGIC",
+      "level_requirement": 1,
+      "stat_requirements": {
+        "intelligence": 8
+      },
+      "effects": [
+        { "type": "flat", "params": { "amount": 15 } }
+      ],
+      "derived_stats": {
+        "spell_power": 1,
+        "focus": 1
+      }
+    },
     "blizzard": {
       "name": "Blizzard",
       "mana_cost": 45,

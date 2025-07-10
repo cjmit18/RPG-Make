@@ -12,7 +12,7 @@
 ### 2. **Item Slots and Types**
 - **Problem**: Many items missing valid slots and types
 - **Solution**: Added missing slots to all items in `items.json`:
-  - `iron_sword`, `wooden_stick`, `orch_axe`, `dragon_claw`, `vampiric_blade`: added `slot: "weapon"`
+  - `iron_sword`, `wooden_stick`, `orc_axe`, `dragon_claw`, `vampiric_blade`: added `slot: "weapon"`
   - `apprentice_staff`, `arcane_staff`: added `slot: "two_handed"`
   - Ring of Power: already fixed to `type: "accessory"`
 

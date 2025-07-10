@@ -442,3 +442,58 @@ class CombatAI:
             return ai._execute_spell(actor, spell, target)
             
         return NodeStatus.FAILURE
+    
+    def process_ai_turn(self, ai_actor: Any, player: Any, dt: float = 0.0) -> None:
+        """Legacy sync AI turn handler for compatibility."""
+        # Example: select target, choose action, execute
+        target = player
+        strategy = self.choose_combat_strategy(ai_actor, target)
+        action = self.select_best_action(ai_actor, target, strategy)
+        self.execute_action(ai_actor, action)
+
+    async def process_ai_turn_async(self, ai_actor: Any, player: Any, dt: float = 0.0) -> None:
+        """Async AI turn handler for compatibility with async combat engine, with real async effects."""
+        import asyncio
+        # Simulate AI thinking delay (e.g., for UI/animation/network)
+        thinking_time = 0.2 + random.random() * 0.4  # 200-600ms
+        await asyncio.sleep(thinking_time)
+
+        # Example: select target, choose action, execute (awaitable for future async effects)
+        target = player
+        strategy = self.choose_combat_strategy(ai_actor, target)
+
+        # --- Real async effect: pre-decision hook ---
+        if hasattr(self, 'on_pre_ai_decision') and callable(getattr(self, 'on_pre_ai_decision')):
+            await self.on_pre_ai_decision(ai_actor, target, strategy)
+
+        # Simulate async animation or VFX (e.g., highlight, emote, etc.)
+        if hasattr(ai_actor, 'show_thinking_animation') and callable(getattr(ai_actor, 'show_thinking_animation')):
+            await ai_actor.show_thinking_animation(duration=thinking_time)
+
+        action = self.select_best_action(ai_actor, target, strategy)
+
+        # --- Real async effect: post-decision hook ---
+        if hasattr(self, 'on_post_ai_decision') and callable(getattr(self, 'on_post_ai_decision')):
+            await self.on_post_ai_decision(ai_actor, target, action)
+
+        # Simulate async effect: e.g., play action animation, wait for UI, VFX, or network sync
+        if hasattr(ai_actor, 'play_action_animation') and callable(getattr(ai_actor, 'play_action_animation')):
+            await ai_actor.play_action_animation(action.get('action', ''))
+
+        # Async UI/animation/network/multiplayer hook (extensible for future systems)
+        if hasattr(self, 'on_pre_action_execute_async') and callable(getattr(self, 'on_pre_action_execute_async')):
+            await self.on_pre_action_execute_async(ai_actor, action)
+
+        # Async multiplayer/network sync (future-proofing)
+        if hasattr(self, 'sync_action_to_network_async') and callable(getattr(self, 'sync_action_to_network_async')):
+            await self.sync_action_to_network_async(ai_actor, action)
+
+        # Async VFX hook (future-proofing)
+        if hasattr(self, 'play_action_vfx_async') and callable(getattr(self, 'play_action_vfx_async')):
+            await self.play_action_vfx_async(ai_actor, action)
+
+        # Execute the action (async extensibility: prefer async if available)
+        if hasattr(self, 'execute_action_async') and callable(getattr(self, 'execute_action_async')):
+            await self.execute_action_async(ai_actor, action)
+        else:
+            self.execute_action(ai_actor, action)

@@ -26,6 +26,7 @@ class CombatEventType(Enum):
     CRITICAL_HIT = "critical_hit"
     DAMAGE_DEALT = "damage_dealt"
     HEALING_APPLIED = "healing_applied"
+    ATTACK_PARRIED = "attack_parried"
     DEATH = "death"
 
 

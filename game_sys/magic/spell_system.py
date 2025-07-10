@@ -22,7 +22,12 @@ class SpellSystem:
         """Load available spells from config."""
         self.available_spells = {}
         spells = self.config_manager.get_section('spells', {})
+        from game_sys.magic.spell_loader import load_spell
         for spell_id, spell_data in spells.items():
+            # Attach the spell object for async casting/extensibility
+            spell_obj = load_spell(spell_id)
+            spell_data = dict(spell_data)  # copy to avoid mutating config
+            spell_data['object'] = spell_obj
             self.available_spells[spell_id] = spell_data
 
     def learn_spell(self, spell_id: str) -> bool:
@@ -110,6 +115,55 @@ class SpellSystem:
             f"{self.actor.name} cast {spell_id} on {target.name if target else 'self'}"
         )
         return True
+
+    async def cast_spell_async(self, spell_id: str, target=None) -> bool:
+        """
+        Async version of cast_spell. Uses async spell logic if available.
+        """
+        if spell_id not in self.actor.known_spells:
+            character_logger.info(
+                f"{self.actor.name} doesn't know spell: {spell_id}"
+            )
+            return False
+
+        spell_data = self.available_spells.get(spell_id)
+        if not spell_data:
+            character_logger.error(f"No data for spell: {spell_id}")
+            return False
+
+        mana_cost = spell_data.get('mana_cost', 0)
+        if hasattr(self.actor, 'current_mana'):
+            if self.actor.current_mana < mana_cost:
+                character_logger.info(
+                    f"{self.actor.name} doesn't have enough mana to cast {spell_id}"
+                )
+                return False
+            self.actor.current_mana -= mana_cost
+
+        # --- Async extensibility: pre-cast hook ---
+        if hasattr(self, 'on_pre_cast_async') and callable(getattr(self, 'on_pre_cast_async')):
+            await self.on_pre_cast_async(self.actor, spell_id, target)
+
+        # Try to use async spell logic from base if available
+        spell_obj = spell_data.get('object')
+        if spell_obj and hasattr(spell_obj, 'cast') and callable(getattr(spell_obj, 'cast')):
+            try:
+                result = await spell_obj.cast(self.actor, target)
+            except Exception as e:
+                character_logger.error(f"Async spell cast failed: {e}")
+                return False
+        else:
+            # Fallback: just log
+            character_logger.info(
+                f"{self.actor.name} cast {spell_id} on {target.name if target else 'self'} (async fallback)"
+            )
+            result = True
+
+        # --- Async extensibility: post-cast hook ---
+        if hasattr(self, 'on_post_cast_async') and callable(getattr(self, 'on_post_cast_async')):
+            await self.on_post_cast_async(self.actor, spell_id, target, result)
+
+        return result
     
     def get_spell_info(self, spell_id: str) -> Dict:
         """Get information about a spell."""

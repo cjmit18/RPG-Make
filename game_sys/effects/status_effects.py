@@ -17,6 +17,13 @@ from game_sys.logging import effects_logger
 
 
 class StatusEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Base class for status effects that use the flag system.
     """
@@ -117,6 +124,13 @@ class StatusEffect(Effect):
 
 
 class BurnEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Fire damage over time effect."""
     
     def __init__(self, duration: float = 5.0, tick_damage: float = 2.0, **kwargs):
@@ -140,6 +154,13 @@ class BurnEffect(StatusEffect):
 
 
 class PoisonEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Poison damage over time effect."""
     
     def __init__(self, duration: float = 8.0, tick_damage: float = 1.5, **kwargs):
@@ -152,6 +173,13 @@ class PoisonEffect(StatusEffect):
 
 
 class StunEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents all actions."""
     
     def __init__(self, duration: float = 2.0, **kwargs):
@@ -163,6 +191,13 @@ class StunEffect(StatusEffect):
 
 
 class FearEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents attacks and may cause fleeing."""
     
     def __init__(self, duration: float = 3.0, **kwargs):
@@ -174,6 +209,13 @@ class FearEffect(StatusEffect):
 
 
 class SlowEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Reduces movement and action speed."""
     
     def __init__(self, duration: float = 5.0, intensity: float = 1.0, **kwargs):
@@ -186,6 +228,13 @@ class SlowEffect(StatusEffect):
 
 
 class FreezeEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents movement and reduces physical damage taken."""
     
     def __init__(self, duration: float = 3.0, **kwargs):
@@ -197,6 +246,13 @@ class FreezeEffect(StatusEffect):
 
 
 class HasteEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Increases movement and action speed."""
     
     def __init__(self, duration: float = 10.0, intensity: float = 1.0, **kwargs):
@@ -209,6 +265,13 @@ class HasteEffect(StatusEffect):
 
 
 class RegenerationEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Healing over time effect."""
     
     def __init__(self, duration: float = 10.0, tick_heal: float = 2.0, **kwargs):
@@ -221,6 +284,13 @@ class RegenerationEffect(StatusEffect):
 
 
 class SilenceEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents spellcasting."""
     
     def __init__(self, duration: float = 4.0, **kwargs):
@@ -232,6 +302,13 @@ class SilenceEffect(StatusEffect):
 
 
 class WeakenEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Reduces physical damage output."""
     
     def __init__(self, duration: float = 6.0, intensity: float = 1.0, **kwargs):
@@ -244,6 +321,13 @@ class WeakenEffect(StatusEffect):
 
 
 class BerserkEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Increases damage output but also damage taken."""
     
     def __init__(self, duration: float = 8.0, intensity: float = 1.0, **kwargs):
@@ -256,6 +340,13 @@ class BerserkEffect(StatusEffect):
 
 
 class ProtectionEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Reduces incoming damage."""
     
     def __init__(self, duration: float = 12.0, intensity: float = 1.0, **kwargs):
@@ -268,6 +359,13 @@ class ProtectionEffect(StatusEffect):
 
 
 class InvisibilityEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Makes the target untargetable by most attacks."""
     
     def __init__(self, duration: float = 6.0, **kwargs):
@@ -279,6 +377,13 @@ class InvisibilityEffect(StatusEffect):
 
 
 class ParalyzeEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents movement and physical actions."""
     
     def __init__(self, duration: float = 3.0, **kwargs):
@@ -290,6 +395,13 @@ class ParalyzeEffect(StatusEffect):
 
 
 class SleepEffect(StatusEffect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """Prevents all actions and makes vulnerable."""
     
     def __init__(self, duration: float = 5.0, **kwargs):

@@ -46,7 +46,8 @@ class NullModLoader:
 
 class NullInventoryManager:
     def __init__(self, actor): pass
-    def add_item(self, item): return False
+    def add_item(self, item, quantity=1, auto_equip=True):
+        return False
     def remove_item(self, item): return False
     def find(self, item_id): return None
     def list_items(self): return []

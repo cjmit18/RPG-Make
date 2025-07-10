@@ -1,6 +1,24 @@
 # game_sys/items/equipment.py
 
 from typing import Any, List, Optional
+import uuid
+def create_item_with_uuid(item_id: str, **attrs):
+    """Factory to create an item with a unique UUID, stackable by id."""
+    # This should be extended to support all item types (Weapon, Armor, etc.)
+    # For now, try Weapon, then Armor, then Equipment
+    from game_sys.items.weapon import Weapon
+    from game_sys.items.armor import Armor
+    # Try to load item data from JSON or config if needed
+    # For now, just pass through attrs
+    try:
+        return Weapon(item_id=item_id, name=attrs.get('name', item_id), description=attrs.get('description', ''), base_damage=attrs.get('base_damage', 1), effect_ids=attrs.get('effect_ids', []), damage_type=attrs.get('damage_type', 'PHYSICAL'), uuid=str(uuid.uuid4()), **attrs)
+    except Exception:
+        pass
+    try:
+        return Armor(item_id=item_id, name=attrs.get('name', item_id), description=attrs.get('description', ''), uuid=str(uuid.uuid4()), **attrs)
+    except Exception:
+        pass
+    return Equipment(item_id=item_id, name=attrs.get('name', item_id), description=attrs.get('description', ''), slot=attrs.get('slot', 'body'), uuid=str(uuid.uuid4()), **attrs)
 from game_sys.items.base import Item
 
 class Equipment(Item):

@@ -30,145 +30,207 @@
     "debug": true
   },
   "modules": {
-    "combat":    { "enabled": true, "modes": ["turn","2d","3d"], "active_mode": "turn" },
-    "rendering": { "enabled": true, "backend": "pygame" },
-    "audio":     { "enabled": true, "volume": { "music": 0.8, "sfx": 0.8 } },
-    "ui":        { "enabled": true }
+    "combat": {
+      "enabled": true,
+      "modes": [
+        "turn",
+        "2d",
+        "3d"
+      ],
+      "active_mode": "turn"
+    },
+    "rendering": {
+      "enabled": true,
+      "backend": "pygame"
+    },
+    "audio": {
+      "enabled": true,
+      "volume": {
+        "music": 0.8,
+        "sfx": 0.8
+      }
+    },
+    "ui": {
+      "enabled": true
+    }
   },
   "constants": {
+    "config_file": "settings.json",
     "combat": {
-      "defense_pivot":       100.0,
-      "defense_alpha":        1.2,
-      "flat_defense_factor":  0.1,
-      "min_damage_percent":   0.1,
-      "crit_chance_default":  0.10,
-      "variance_default":     0.10
+      "defense_pivot": 100.0,
+      "defense_alpha": 1.2,
+      "flat_defense_factor": 0.1,
+      "min_damage_percent": 0.15,
+      "crit_chance_default": 0.05,
+      "variance_default": 0.1,
+      "spell_bonus": 1.5,
+      "strength_multiplier": 2.0,
+      "dexterity_multiplier": 1.5,
+      "vitality_multiplier": 2.5,
+      "intelligence_multiplier": 2.0,
+      "wisdom_multiplier": 1.5,
+      "constitution_multiplier": 2.0,
+      "luck_multiplier": 1.0,
+      "agility_multiplier": 1.5,
+      "stamina_costs": {
+        "attack": 5,
+        "dodge": 8,
+        "parry": 6,
+        "evade": 7,
+        "block": 4
+      }
     },
     "derived_stats": {
-      "attack":              1.0,
-      "defense":             1.0,
-      "speed":               0.1,
-      "dodge_chance":        0.01,
-      "block_chance":        0.01,
-      "magic_damage":        0.1,
-      "magic_resistance":    0.1,
-      "physical_damage":     0.05,
-      "damage_reduction":    0.05,
-      "mana_regeneration":   0.005,
-      "health_regeneration": 0.005,
-      "stamina_regeneration":0.005,
-      "critical_chance":     0.01,
-      "luck_factor":         0.01,
-      "health":              10.0,
-      "mana":                5.0,
-      "stamina":             8.0,
-      "magic_power":         1.0
+      "attack": 1.5,
+      "defense": 1.0,
+      "speed": 1.2,
+      "dodge_chance": 0.02,
+      "block_chance": 0.03,
+      "magic_resistance": 0.15,
+      "physical_damage": 1.5,
+      "damage_reduction": 0.15,
+      "mana_regeneration": 0.08,
+      "health_regeneration": 0.05,
+      "stamina_regeneration": 0.1,
+      "critical_chance": 0.05,
+      "luck_factor": 0.02,
+      "health": 15.0,
+      "mana": 10.0,
+      "stamina": 8.0,
+      "magic_power": 1.5,
+      "accuracy": 1.2,
+      "evasion": 0.02,
+      "parry_chance": 0.02,
+      "resilience": 1.2,
+      "spell_power": 1.5,
+      "focus": 1.2,
+      "initiative": 1.2
     },
     "stats_defaults": {
-      "attack":    1.0,
-      "defense":   1.0,
-      "speed":     1.0,
-      "health":    100.0,
-      "mana":      50.0,
-      "stamina":   50.0,
       "magic_power": 1.0,
       "max_targets": 1.0,
-      "strength":  10.0,
+      "strength": 10.0,
       "dexterity": 10.0,
-      "vitality":  10.0,
+      "vitality": 10.0,
       "intelligence": 10.0,
-      "wisdom":    10.0,
+      "wisdom": 10.0,
       "constitution": 10.0,
-      "luck":      10.0
+      "luck": 10.0
     },
     "leveling": {
-      "max_level":   100,
-      "xp_base":     100,
+      "max_level": 100,
+      "xp_base": 100,
       "xp_exponent": 1.0,
-      "stat_points_per_level": 1
+      "stat_points_per_level": 3
     },
-
-
     "grade": {
       "stat_multiplier": {
-        "ONE": 0.05,
-        "TWO": 0.10,
+        "ONE": 0.00,
+        "TWO": 0.1,
         "THREE": 0.15,
-        "FOUR": 0.20,
+        "FOUR": 0.2,
         "FIVE": 0.25,
-        "SIX": 0.30,
+        "SIX": 0.3,
         "SEVEN": 0.35
       }
     },
     "rarity": {
       "stat_multiplier": {
-        "COMMON": 0.02,
+        "COMMON": 0.00,
         "UNCOMMON": 0.04,
         "RARE": 0.06,
         "EPIC": 0.08,
-        "LEGENDARY": 0.10,
+        "LEGENDARY": 0.1,
         "MYTHIC": 0.12,
         "DIVINE": 0.15
       }
     },
-    "rendering":   { "fps": 60, "window": { "width": 800, "height": 600 } },
-    "inventory":   { "max_size": 20 },
-    "progression": { "max_level": 100 }
+    "rendering": {
+      "fps": 60,
+      "window": {
+        "width": 800,
+        "height": 600
+      }
+    },
+    "inventory": {
+      "max_size": 20
+    },
+    "progression": {
+      "max_level": 100
+    }
   },
   "defaults": {
-    "grades": ["ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN"],
-    "rarities": ["COMMON","UNCOMMON","RARE","EPIC","LEGENDARY","MYTHIC","DIVINE"],
+    "grades": [
+      "ONE",
+      "TWO",
+      "THREE",
+      "FOUR",
+      "FIVE",
+      "SIX",
+      "SEVEN"
+    ],
+    "rarities": [
+      "COMMON",
+      "UNCOMMON",
+      "RARE",
+      "EPIC",
+      "LEGENDARY",
+      "MYTHIC",
+      "DIVINE"
+    ],
     "difficulty": {
-      "easy":      { "enemy_multiplier": 0.75, "loot_multiplier": 1.25 },
-      "normal":    { "enemy_multiplier": 1.0,  "loot_multiplier": 1.0  },
-      "hard":      { "enemy_multiplier": 1.25, "loot_multiplier": 0.75 },
-      "nightmare": { "enemy_multiplier": 1.5,  "loot_multiplier": 0.5  }
-    },
-    "damage_types": ["NONE","PHYSICAL","FIRE","ICE","LIGHTNING","POISON","ARCANE","HOLY","DARK","MAGIC"],
-    "base_stats": {
-      "strength": 10,
-      "dexterity": 10,
-      "vitality": 10,
-      "intelligence": 10,
-      "wisdom": 10,
-      "constitution": 10,
-      "luck": 10
-    },
-    "xp_formula": "level * 100",
-    "stat_points_per_level": 3,
-    "character": {
-      "starting_level": 1,
-      "starting_stats": {
-        "strength": 10,
-        "dexterity": 10,
-        "vitality": 10,
-        "intelligence": 10,
-        "wisdom": 10,
-        "constitution": 10,
-        "luck": 10
+      "easy": {
+        "enemy_multiplier": 0.75,
+        "loot_multiplier": 1.25
+      },
+      "normal": {
+        "enemy_multiplier": 1.0,
+        "loot_multiplier": 1.0
+      },
+      "hard": {
+        "enemy_multiplier": 1.25,
+        "loot_multiplier": 0.75
+      },
+      "nightmare": {
+        "enemy_multiplier": 1.5,
+        "loot_multiplier": 0.5
       }
-    }
+    },
+    "damage_types": [
+      "NONE",
+      "PHYSICAL",
+      "FIRE",
+      "ICE",
+      "LIGHTNING",
+      "POISON",
+      "ARCANE",
+      "HOLY",
+      "DARK",
+      "MAGIC"
+    ],
+    "xp_formula": "level * 100",
+    "stat_points_per_level": 3
   },
   "randomness": {
     "seed": null,
     "global_seed": null,
     "regenerate_on_reload": false,
     "rarity_weights": {
-      "COMMON":    0.60,
-      "UNCOMMON":  0.20,
-      "RARE":      0.10,
-      "EPIC":      0.05,
+      "COMMON": 0.6,
+      "UNCOMMON": 0.2,
+      "RARE": 0.1,
+      "EPIC": 0.05,
       "LEGENDARY": 0.03,
-      "MYTHIC":    0.015,
-      "DIVINE":    0.005
+      "MYTHIC": 0.015,
+      "DIVINE": 0.005
     },
     "grade_weights": {
-      "ONE":   0.40,
-      "TWO":   0.25,
+      "ONE": 0.4,
+      "TWO": 0.25,
       "THREE": 0.15,
-      "FOUR":  0.10,
-      "FIVE":  0.06,
-      "SIX":   0.03,
+      "FOUR": 0.1,
+      "FIVE": 0.06,
+      "SIX": 0.03,
       "SEVEN": 0.01
     }
   },
@@ -191,7 +253,8 @@
       "intelligence": 10,
       "wisdom": 10,
       "constitution": 10,
-      "luck": 10
+      "luck": 10,
+      "agility": 10
     },
     "points_per_level": 3,
     "xp_for_level": {
@@ -204,166 +267,7 @@
       }
     },
     "stat_impacts": {
-      "strength": {
-        "physical_damage": 0.5,
-        "carry_capacity": 1.0
-      },
-      "dexterity": {
-        "attack_speed": 0.2,
-        "dodge_chance": 0.25,
-        "critical_chance": 0.15
-      },
-      "vitality": {
-        "max_health": 5.0,
-        "health_regen": 0.1
-      },
-      "intelligence": {
-        "max_mana": 4.0,
-        "spell_damage": 0.5,
-        "mana_regen": 0.1
-      },
-      "wisdom": {
-        "spell_efficiency": 0.2,
-        "magic_resistance": 0.3,
-        "spell_duration": 0.1
-      },
-      "constitution": {
-        "max_stamina": 3.0,
-        "physical_resistance": 0.2,
-        "stamina_regen": 0.1
-      },
-      "luck": {
-        "critical_damage": 0.3,
-        "item_find": 0.5,
-        "rare_find": 0.2
-      }
-    }
-  },
-  "skills": {
-    "sword_mastery": {
-      "name": "Sword Mastery",
-      "level_requirement": 1,
-      "stat_requirements": {
-        "strength": 12
-      },
-      "description": "Improves sword damage and accuracy",
-      "max_level": 10,
-      "effects": {
-        "weapon_damage_bonus": 0.1,
-        "accuracy_bonus": 0.05
-      }
-    },
-    "shield_bash": {
-      "name": "Shield Bash",
-      "level_requirement": 2,
-      "stat_requirements": {
-        "strength": 12,
-        "constitution": 10
-      },
-      "description": "A powerful bash with your shield that deals damage and stuns",
-      "stamina_cost": 10,
-      "base_damage": 8,
-      "stun_duration": 2,
-      "cooldown": 8
-    },
-    "dual_wield": {
-      "name": "Dual Wield",
-      "level_requirement": 3,
-      "stat_requirements": {
-        "dexterity": 15
-      },
-      "description": "Allows wielding two one-handed weapons simultaneously",
-      "effects": {
-        "attack_speed_bonus": 0.2,
-        "dual_wield_penalty_reduction": 0.5
-      }
-    }
-  },
-  "spells": {
-    "fireball": {
-      "name": "Fireball",
-      "level_requirement": 1,
-      "stat_requirements": {
-        "intelligence": 10
-      },
-      "description": "Hurls a ball of fire that deals fire damage",
-      "mana_cost": 10,
-      "base_damage": 15,
-      "damage_type": "FIRE",
-      "range": 5,
-      "cooldown": 3
-    },
-    "ice_shard": {
-      "name": "Ice Shard",
-      "level_requirement": 2,
-      "stat_requirements": {
-        "intelligence": 12
-      },
-      "description": "Hurls a shard of ice that deals ice damage and slows the target",
-      "mana_cost": 12,
-      "base_damage": 12,
-      "damage_type": "ICE",
-      "range": 6,
-      "cooldown": 4,
-      "effects": ["slow"]
-    },
-    "healing_touch": {
-      "name": "Healing Touch",
-      "level_requirement": 3,
-      "stat_requirements": {
-        "wisdom": 12
-      },
-      "description": "Heals the target for a moderate amount",
-      "mana_cost": 15,
-      "base_healing": 20,
-      "range": 4,
-      "cooldown": 8
-    },
-    "mana_shield": {
-      "name": "Mana Shield",
-      "level_requirement": 4,
-      "stat_requirements": {
-        "intelligence": 14,
-        "wisdom": 12
-      },
-      "description": "Creates a shield that absorbs damage using mana instead of health",
-      "mana_cost": 20,
-      "shield_amount": 30,
-      "duration": 15,
-      "cooldown": 20
-    }
-  },
-  "enchantments": {
-    "fire_enchant": {
-      "name": "Flame Enchantment",
-      "level_requirement": 2,
-      "stat_requirements": {
-        "intelligence": 12
-      },
-      "description": "Adds fire damage to a weapon or armor",
-      "effects": [
-        {
-          "type": "burn",
-          "amount": 1,
-          "duration": 3
-        },
-        {
-          "type": "slow",
-          "amount": 20,
-          "duration": 3
-        }
-      ]
-    },
-    "strength_enchant": {
-      "name": "Strength Enchantment",
-      "level_requirement": 4,
-      "stat_requirements": {
-        "strength": 14
-      },
-      "description": "Increases the strength of the wearer",
-      "stat_bonuses": {
-        "strength": 2
-      }
+      
     }
   },
   "ui": {
@@ -378,10 +282,24 @@
       "heal": "light green"
     },
     "fonts": {
-      "default": ["Arial", 10],
-      "title": ["Arial", 16, "bold"],
-      "subtitle": ["Arial", 12, "bold"],
-      "data": ["Courier", 10]
+      "default": [
+        "Arial",
+        10
+      ],
+      "title": [
+        "Arial",
+        16,
+        "bold"
+      ],
+      "subtitle": [
+        "Arial",
+        12,
+        "bold"
+      ],
+      "data": [
+        "Courier",
+        10
+      ]
     }
   }
 }

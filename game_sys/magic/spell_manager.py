@@ -71,18 +71,21 @@ class SpellManager:
     
     def cast_spell(self, actor, spell_id: str, target=None) -> bool:
         """
-        Cast a spell on a target.
-        
-        Args:
-            actor: The actor casting the spell
-            spell_id: The ID of the spell to cast
-            target: The target of the spell (default: None for self)
-            
-        Returns:
-            bool: True if cast successfully, False otherwise
+        Cast a spell on a target (sync version).
         """
         self.initialize_actor_spells(actor)
         return actor.spell_system.cast_spell(spell_id, target)
+
+    async def cast_spell_async(self, actor, spell_id: str, target=None) -> bool:
+        """
+        Async version of cast_spell. Uses async spell logic if available.
+        """
+        self.initialize_actor_spells(actor)
+        if hasattr(actor.spell_system, 'cast_spell_async') and callable(getattr(actor.spell_system, 'cast_spell_async')):
+            return await actor.spell_system.cast_spell_async(spell_id, target)
+        else:
+            # Fallback to sync
+            return actor.spell_system.cast_spell(spell_id, target)
     
     def get_spell_info(self, actor, spell_id: str) -> Dict:
         """

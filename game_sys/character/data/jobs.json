@@ -9,7 +9,8 @@
         "intelligence": 0,
         "wisdom": 0,
         "constitution": 0,
-        "luck": 0
+        "luck": 0,
+        "agility": 0
       },
       "skill_list": [],
       "spell_list": [],
@@ -21,11 +22,14 @@
     "warrior": {
       "name": "Warrior",
       "base_stat_mods": {
-        "attack": 5,
-        "defense": 3,
-        "strength": 5,
-        "vitality": 3,
-        "constitution": 2
+        "strength": 8,
+        "dexterity": 4,
+        "vitality": 6,
+        "intelligence": 2,
+        "wisdom": 1,
+        "constitution": 5,
+        "luck": 2,
+        "agility": 4
       },
       "skill_list": ["cleave", "pierce"],
       "spell_list": [],
@@ -38,12 +42,14 @@
     "mage": {
       "name": "Mage",
       "base_stat_mods": {
-        "magic_power": 5,
-        "mana": 20,
-        "max_targets": 1,
-        "intelligence": 5,
-        "wisdom": 3,
-        "luck": 2
+        "strength": 2,
+        "dexterity": 3,
+        "vitality": 3,
+        "intelligence": 8,
+        "wisdom": 6,
+        "constitution": 2,
+        "luck": 4,
+        "agility": 3
       },
       "skill_list": [],
       "spell_list": ["fireball", "ice_shard"],
@@ -57,12 +63,14 @@
     "archmage": {
       "name": "Archmage",
       "base_stat_mods": {
-        "magic_power": 10,
-        "mana": 50,
-        "max_targets": 3,
-        "intelligence": 8,
-        "wisdom": 6,
-        "luck": 4
+        "strength": 3,
+        "dexterity": 4,
+        "vitality": 4,
+        "intelligence": 12,
+        "wisdom": 10,
+        "constitution": 3,
+        "luck": 6,
+        "agility": 4
       },
       "skill_list": [],
       "spell_list": ["fireball", "ice_shard", "ignite"],
@@ -77,11 +85,14 @@
     "rogue": {
       "name": "Rogue",
       "base_stat_mods": {
-        "attack": 3,
-        "speed": 4,
-        "dexterity": 5,
-        "luck": 3,
-        "constitution": 1
+        "strength": 4,
+        "dexterity": 8,
+        "vitality": 3,
+        "intelligence": 2,
+        "wisdom": 2,
+        "constitution": 3,
+        "luck": 5,
+        "agility": 8
       },
       "skill_list": ["sneak_attack", "dodge"],
       "spell_list": [],
@@ -94,17 +105,19 @@
     "orc": {
       "name": "Orc Warrior",
       "base_stat_mods": {
-        "attack": 3,
-        "defense": 2,
-        "stamina": 5,
-        "strength": 4,
-        "constitution": 3,
-        "vitality": 2
+        "strength": 0,
+        "dexterity": 0,
+        "vitality": 0,
+        "intelligence": 0,
+        "wisdom": 0,
+        "constitution": 0,
+        "luck": 0,
+        "agility": 0
       },
       "skill_list": [],
       "spell_list": [],
       "starting_items": [
-        {"item_id": "orch_axe", "quantity": 1},
+        {"item_id": "orc_axe", "quantity": 1},
         {"item_id": "orc_leather_armor", "quantity": 1},
         {"item_id": "orc_shield", "quantity": 1}
       ]
@@ -112,15 +125,14 @@
     "dragon": {
       "name": "Dragon",
       "base_stat_mods": {
-        "attack": 10,
-        "defense": 8,
-        "health": 100,
-        "mana": 50,
-        "strength": 12,
-        "constitution": 10,
-        "vitality": 8,
-        "intelligence": 6,
-        "wisdom": 5
+        "strength": 18,
+        "dexterity": 8,
+        "vitality": 15,
+        "intelligence": 8,
+        "wisdom": 6,
+        "constitution": 14,
+        "luck": 4,
+        "agility": 8
       },
       "skill_list": ["fire_breath", "tail_sweep"],
       "spell_list": ["dragon_roar"],
@@ -132,10 +144,14 @@
     "goblin": {
       "name": "Goblin",
       "base_stat_mods": {
-        "attack": 1,
-        "speed": 2,
-        "dexterity": 3,
-        "luck": 1
+        "strength": 2,
+        "dexterity": 5,
+        "vitality": 2,
+        "intelligence": 1,
+        "wisdom": 1,
+        "constitution": 2,
+        "luck": 2,
+        "agility": 2
       },
       "skill_list": ["sneak_attack"],
       "spell_list": [],
@@ -147,10 +163,14 @@
     "skeleton": {
       "name": "Skeleton",
       "base_stat_mods": {
-        "attack": 2,
-        "defense": 1,
+        "strength": 1,
+        "dexterity": 1,
+        "vitality": -3,
+        "intelligence": 0,
+        "wisdom": 0,
         "constitution": -2,
-        "vitality": -3
+        "luck": 0,
+        "agility": 1
       },
       "skill_list": [],
       "spell_list": [],
@@ -161,10 +181,14 @@
     "wolf": {
       "name": "Wolf",
       "base_stat_mods": {
-        "attack": 3,
-        "speed": 4,
-        "dexterity": 3,
-        "constitution": 2
+        "strength": 4,
+        "dexterity": 6,
+        "vitality": 3,
+        "intelligence": 1,
+        "wisdom": 1,
+        "constitution": 4,
+        "luck": 2,
+        "agility": 6
       },
       "skill_list": ["bite", "howl"],
       "spell_list": [],

@@ -75,6 +75,7 @@ _effect_map: Dict[str, Type[Effect]] = {
     # Spell aliases (for backwards compatibility or convenience)
     'ice_shard':   SlowEffect,  # ice_shard spell should apply slow effect
     'fireball':    BurnEffect,  # fireball spell should apply burn effect
+    'magic_missile': FlatDamageMod  # magic_missile should apply flat damage effect
 }
 
 

@@ -5,6 +5,13 @@ from game_sys.effects.base import Effect
 from game_sys.logging import effects_logger
 
 class FlatDamageMod(Effect):
+    async def apply_async(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Adds a flat amount to the damage.
     """
@@ -30,6 +37,13 @@ class FlatDamageMod(Effect):
 
 
 class PercentDamageMod(Effect):
+    async def apply_async(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Multiplies damage by a percentage.
     """
@@ -53,6 +67,13 @@ class PercentDamageMod(Effect):
         return ""
 
 class ElementalDamageMod(Effect):
+    async def apply_async(self, caster: Any = None, target: Any = None, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
     """
     Multiplies damage by a factor for a specific element.
     """

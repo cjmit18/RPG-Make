@@ -9,6 +9,61 @@ from typing import Any, Callable, Dict, List
 from game_sys.logging import hooks_logger, log_exception
 
 class EventBus:
+    async def emit_async(self, event: str, *args, **kwargs):
+        """
+        Awaitable version of emit: awaits all async listeners, calls sync listeners immediately.
+        Returns when all listeners have completed.
+        """
+        listener_count = len(self._listeners.get(event, []))
+        hooks_logger.debug(
+            f"[async] Emitting event '{event}' to {listener_count} listeners"
+        )
+        tasks = []
+        for listener in list(self._listeners.get(event, [])):
+            if asyncio.iscoroutinefunction(listener):
+                tasks.append(listener(*args, **kwargs))
+            else:
+                hooks_logger.debug(f"[async] Calling sync listener {listener.__name__}")
+                listener(*args, **kwargs)
+        if tasks:
+            await asyncio.gather(*tasks)
+
+    def once(self, event: str, listener: Callable[..., Any]):
+        """
+        Register a one-time listener for an event. Listener is removed after first call.
+        """
+        def wrapper(*args, **kwargs):
+            self.off(event, wrapper)
+            return listener(*args, **kwargs)
+        self.on(event, wrapper)
+
+    def on_pre(self, event: str, listener: Callable[..., Any]):
+        """
+        Register a listener to run before the main event listeners (pre-hook).
+        """
+        self.on(f"pre_{event}", listener)
+
+    def on_post(self, event: str, listener: Callable[..., Any]):
+        """
+        Register a listener to run after the main event listeners (post-hook).
+        """
+        self.on(f"post_{event}", listener)
+
+    def emit_with_hooks(self, event: str, *args, **kwargs):
+        """
+        Emit pre-event, main event, and post-event hooks in order (sync).
+        """
+        self.emit(f"pre_{event}", *args, **kwargs)
+        self.emit(event, *args, **kwargs)
+        self.emit(f"post_{event}", *args, **kwargs)
+
+    async def emit_with_hooks_async(self, event: str, *args, **kwargs):
+        """
+        Awaitable version: emits pre-event, main event, and post-event hooks in order.
+        """
+        await self.emit_async(f"pre_{event}", *args, **kwargs)
+        await self.emit_async(event, *args, **kwargs)
+        await self.emit_async(f"post_{event}", *args, **kwargs)
     def __init__(self):
         self._listeners: Dict[str, List[Callable[..., Any]]] = {}
         hooks_logger.debug("EventBus initialized")

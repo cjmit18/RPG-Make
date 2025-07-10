@@ -14,7 +14,7 @@
 
 ### ✅ 3. **Valid Item Slots and Types**
 - **Fixed**: Added missing slots to all equipment items:
-  - Weapons: iron_sword, wooden_stick, orch_axe, dragon_claw, vampiric_blade → slot: "weapon"
+  - Weapons: iron_sword, wooden_stick, orc_axe, dragon_claw, vampiric_blade → slot: "weapon"
   - Two-handed: apprentice_staff, arcane_staff → slot: "two_handed"
 - **Status**: All 28 items now have proper types and slots
 

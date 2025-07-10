@@ -93,14 +93,7 @@ class LevelingManager:
             'wisdom',
             'constitution',
             'luck',
-            # Game-specific stats from character templates
-            'attack',
-            'defense',
-            'speed',
-            'health',
-            'mana',
-            'stamina',
-            'magic_power'
+            'agility',
         ]
         
 
@@ -221,7 +214,22 @@ class LevelingManager:
             actor.spent_stat_points = 0
         actor.spent_stat_points += 1
         
-        character_logger.info(f"Allocated 1 point to {stat_name} for {actor.name}")
+        # Only log stat allocation if actor is not an enemy (robust check)
+        is_enemy = False
+        # Set is_enemy attribute if this actor is detected as an enemy
+        if hasattr(actor, 'team') and getattr(actor, 'team', None) == 'enemy':
+            is_enemy = True
+            setattr(actor, 'is_enemy', True)
+        elif hasattr(actor, 'enemy') and getattr(actor, 'enemy', False):
+            is_enemy = True
+            setattr(actor, 'is_enemy', True)
+        elif hasattr(actor, 'name') and isinstance(actor.name, str) and actor.name.lower().startswith('enemy'):
+            is_enemy = True
+            setattr(actor, 'is_enemy', True)
+        elif hasattr(actor, 'is_enemy') and getattr(actor, 'is_enemy', False):
+            is_enemy = True
+        if not is_enemy:
+            character_logger.info(f"Allocated 1 point to {stat_name} for {getattr(actor, 'name', repr(actor))}")
         
         # Update derived stats
         if hasattr(actor, 'update_stats'):

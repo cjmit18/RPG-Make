@@ -51,6 +51,57 @@ def _fmt(val: float) -> str:
 
 
 class Actor:
+    def equip_item_by_uuid(self, uuid: str) -> bool:
+        """Equip an item from inventory by its UUID, only if the slot is empty."""
+        if not hasattr(self, 'inventory') or not hasattr(self.inventory, 'items'):
+            return False
+        # Find the item by UUID
+        item = next((itm for itm in self.inventory.items if getattr(itm, 'uuid', None) == uuid), None)
+        if not item:
+            return False
+        slot = getattr(item, 'slot', None)
+        slot_empty = False
+        if slot == 'weapon':
+            slot_empty = getattr(self, 'weapon', None) is None
+        elif slot == 'offhand':
+            slot_empty = getattr(self, 'offhand', None) is None
+        elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
+            slot_empty = getattr(self, f'equipped_{slot}', None) is None
+        if not slot_empty:
+            return False
+        # Equip and remove from inventory
+        if slot == 'weapon' and hasattr(self, 'equip_weapon'):
+            self.equip_weapon(item)
+        elif slot == 'offhand' and hasattr(self, 'equip_offhand'):
+            self.equip_offhand(item)
+        elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self, 'equip_armor'):
+            self.equip_armor(item)
+        else:
+            return False
+        # Remove from inventory (if not already removed by equip)
+        if item in self.inventory.items:
+            self.inventory.remove_item(item)
+        return True
+
+    def unequip_item_by_slot(self, slot: str):
+        """Unequip an item from the specified slot and return it (uses UUID logic)."""
+        # Map slot to attribute
+        if slot == 'weapon' and hasattr(self, 'weapon') and self.weapon:
+            item = self.weapon
+            self.unequip_weapon()
+            return item
+        elif slot == 'offhand' and hasattr(self, 'offhand') and self.offhand:
+            item = self.offhand
+            self.unequip_offhand()
+            return item
+        elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
+            slot_attr = f'equipped_{slot}'
+            if hasattr(self, slot_attr):
+                item = getattr(self, slot_attr)
+                if item:
+                    self.unequip_armor(slot)
+                    return item
+        return None
     """Base class for all characters."""
 
     @property
@@ -550,7 +601,7 @@ class Actor:
         
         # Add unequipped weapon back to inventory if it exists
         if unequipped_weapon and hasattr(self, 'inventory'):
-            self.inventory.add_item(unequipped_weapon)
+            self.inventory.add_item(unequipped_weapon, auto_equip=False)
         
         return unequipped_weapon
 
@@ -637,7 +688,7 @@ class Actor:
         
         # Add unequipped offhand back to inventory if it exists
         if unequipped_offhand and hasattr(self, 'inventory'):
-            self.inventory.add_item(unequipped_offhand)
+            self.inventory.add_item(unequipped_offhand, auto_equip=False)
         
         return unequipped_offhand
 
@@ -682,7 +733,7 @@ class Actor:
             
             # Add unequipped armor back to inventory if it exists
             if equipped_item and hasattr(self, 'inventory'):
-                self.inventory.add_item(equipped_item)
+                self.inventory.add_item(equipped_item, auto_equip=False)
             
             return equipped_item
         else:
@@ -765,7 +816,20 @@ class Actor:
 
     @log_exception
     def serialize(self) -> str:
-        """Return JSON representing actor state."""
+        """Return JSON representing actor state, including full inventory item info and quantities."""
+        inv_items = []
+        if hasattr(self, 'inventory'):
+            for item in self.inventory.list_items():
+                entry = {"id": getattr(item, "id", None), "quantity": getattr(item, "quantity", 1)}
+                # Add standard RPG fields if present
+                for attr in ("grade", "rarity", "level", "enchantments"):
+                    val = getattr(item, attr, None)
+                    if val is not None:
+                        entry[attr] = val
+                # Add custom/modded fields if present
+                if hasattr(item, "custom") and isinstance(item.custom, dict):
+                    entry["custom"] = item.custom
+                inv_items.append(entry)
         data = {
             'name': self.name,
             'base_stats': self.base_stats,
@@ -777,16 +841,20 @@ class Actor:
             'grade': self.grade,
             'rarity': self.rarity,
             'gold': self.gold,
-            'statuses': [eid for eid in self.active_statuses],
-            'skills': self.skill_effect_ids,
-            'inventory': self.inventory.list_items()
+            'position': getattr(self, 'position', (0.0, 0.0)),
+            'facing_vector': getattr(self, 'facing_vector', (1.0, 0.0)),
+            'team': getattr(self, 'team', 'neutral'),
+            'statuses': [eid for eid in getattr(self, 'active_statuses', {})],
+            'skills': getattr(self, 'skill_effect_ids', []),
+            'inventory': inv_items,
+            # Optionally add equipment serialization here if needed
         }
         character_logger.debug(f"Serializing actor {self.name}")
         return json.dumps(data)
 
     @log_exception
     def deserialize(self, data_str: str):
-        """Restore actor state from JSON string."""
+        """Restore actor state from JSON string, including all inventory item info and quantities."""
         character_logger.debug(f"Deserializing actor {self.name}")
         data = json.loads(data_str)
         self.base_stats.update(data.get('base_stats', {}))
@@ -794,18 +862,59 @@ class Actor:
         self.xp = data.get('xp', self.xp)
         self.current_health = data.get('current_health', self.current_health)
         self.current_mana = data.get('current_mana', self.current_mana)
-        
-        # Split long line to avoid lint error
-        self.current_stamina = data.get(
-            'current_stamina', self.current_stamina
-        )
-        
+        self.current_stamina = data.get('current_stamina', self.current_stamina)
         self.grade = data.get('grade', self.grade)
         self.rarity = data.get('rarity', self.rarity)
         self.gold = data.get('gold', self.gold)
-        character_logger.info(
-            f"Actor {self.name} state restored from saved data"
-        )
+        # Restore optional fields if present
+        if 'position' in data:
+            self.position = tuple(data['position'])
+        if 'facing_vector' in data:
+            self.facing_vector = tuple(data['facing_vector'])
+        if 'team' in data:
+            self.team = data['team']
+        if 'statuses' in data:
+            self.active_statuses = {}
+            for status_id in data['statuses']:
+                if hasattr(self, 'apply_status'):
+                    try:
+                        from game_sys.effects.effect_loader import load_effect
+                        effect = load_effect(status_id)
+                        if effect:
+                            self.apply_status(effect)
+                        else:
+                            character_logger.warning(f"Failed to load status effect {status_id}")
+                    except Exception as e:
+                        character_logger.warning(f"Error loading status effect {status_id}: {e}")
+        if 'skills' in data:
+            self.skill_effect_ids = data['skills']
+        if 'inventory' in data and hasattr(self, 'inventory'):
+            try:
+                self.inventory.clear()
+                for entry in data['inventory']:
+                    # entry is a dict with id, quantity, and relevant info
+                    if isinstance(entry, dict) and 'id' in entry:
+                        item_id = entry['id']
+                        quantity = entry.get('quantity', 1)
+                    else:
+                        item_id = entry
+                        quantity = 1
+                    from game_sys.items.item_loader import load_item
+                    loaded_item = load_item(item_id)
+                    if loaded_item:
+                        # Restore standard RPG fields
+                        if isinstance(entry, dict):
+                            for attr in ("grade", "rarity", "level", "enchantments"):
+                                if attr in entry:
+                                    setattr(loaded_item, attr, entry[attr])
+                            # Restore custom/modded fields
+                            if "custom" in entry and isinstance(entry["custom"], dict):
+                                loaded_item.custom = entry["custom"]
+                        for _ in range(quantity):
+                            self.inventory.add_item(loaded_item)
+            except Exception as e:
+                character_logger.error(f"Error restoring inventory: {e}")
+        character_logger.info(f"Actor {self.name} state restored from saved data")
 
     def __str__(self) -> str:
         # Format base_stats

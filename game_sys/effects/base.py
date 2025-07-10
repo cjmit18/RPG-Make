@@ -13,6 +13,23 @@ flags = FeatureFlags()
 
 
 class Effect(ABC):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        """
+        Async version of apply. By default, calls sync apply. Override for VFX/network/multiplayer.
+        Extensible: supports async pre/post hooks if present.
+        """
+        # Async extensibility: pre-apply hook
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+
+        # Default: call sync apply
+        result = self.apply(caster, target, combat_engine)
+
+        # Async extensibility: post-apply hook
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+
+        return result
     """
     Base class for all effect types.
     """

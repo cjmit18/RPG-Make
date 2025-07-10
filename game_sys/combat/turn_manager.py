@@ -8,9 +8,10 @@ Every tick:
     * Dispatch to CombatEngine for execution.
 """
 
+
+
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Dict
-import time
 
 if TYPE_CHECKING:
     from game_sys.character.actor import Actor
@@ -28,7 +29,9 @@ class TurnManager:
         self._actors: List[Actor] = []
         self._engine = CombatEngine()  # Each TurnManager gets its own engine
         self._casting_states: Dict[str, Dict] = {}  # actor_id -> spell_state
-        combat_logger.info("TurnManager initialized")
+        combat_logger.info(
+            f"Registered actor {self.__class__.__name__} initialized"
+        )
 
     # ------------------------------------------------------------------ #
     #  registration                                                      #
@@ -36,13 +39,17 @@ class TurnManager:
     def register(self, actor: "Actor") -> None:
         if actor not in self._actors:
             self._actors.append(actor)
-            combat_logger.info(f"Registered actor {actor.name} with TurnManager")
+            combat_logger.info(
+                f"Registered actor {actor.name} with TurnManager"
+            )
 
     def unregister(self, actor: "Actor") -> None:
         """Remove actor from turn management (called when actor dies)."""
         if actor in self._actors:
             self._actors.remove(actor)
-            combat_logger.info(f"Unregistered actor {actor.name} from TurnManager")
+            combat_logger.info(
+                f"Unregistered actor {actor.name} from TurnManager"
+            )
         # Clean up any casting states
         actor_id = getattr(actor, 'id', str(id(actor)))
         if actor_id in self._casting_states:
@@ -56,25 +63,38 @@ class TurnManager:
     # ------------------------------------------------------------------ #
     #  tick driver                                                       #
     # ------------------------------------------------------------------ #
-    def tick(self, dt: float) -> None:
+    async def tick(self, dt: float) -> None:
         # Let ActionQueue advance cooldowns first
         _action_queue.tick(dt)
 
-        # Execute all ready actions
-        for actor in list(self._actors):
+        # Sort actors by initiative (descending) for turn order
+        sorted_actors = sorted(
+            list(self._actors),
+            key=lambda a: getattr(a, 'get_stat', lambda n: 0)("initiative"),
+            reverse=True
+        )
+
+        # Execute all ready actions in initiative order
+        for actor in sorted_actors:
             for name, payload in _action_queue.consume(actor):
                 if name == "attack":
                     tgt_list = payload.get("targets", [])
-                    self._engine.execute_attack_sync(actor, tgt_list)
+                    # If engine supports async, use it, else fallback
+                    if hasattr(self._engine, 'execute_attack_async'):
+                        await self._engine.execute_attack_async(
+                            actor, tgt_list
+                        )
+                    else:
+                        self._engine.execute_attack_sync(actor, tgt_list)
                 elif name == "cast":
                     # Handle spell casting with wind-up delay
-                    self._handle_spell_cast(actor, payload)
+                    await self._handle_spell_cast(actor, payload)
                 elif name == "cast_complete":
                     # Handle spell execution after wind-up
-                    self._handle_spell_execution(actor, payload)
+                    await self._handle_spell_execution(actor, payload)
 
     @log_exception
-    def _handle_spell_cast(self, actor: "Actor", payload: dict) -> None:
+    async def _handle_spell_cast(self, actor: "Actor", payload: dict) -> None:
         """
         Handle initial spell casting with wind-up delay.
         
@@ -101,21 +121,33 @@ class TurnManager:
         }
         
         # Schedule the actual spell execution after wind-up
-        _action_queue.schedule(
-            actor,
-            "cast_complete",
-            {"spell_id": spell_id, "targets": targets},
-            wind_up_time
-        )
+        # Schedule the actual spell execution after wind-up
+        # If ActionQueue supports async scheduling, use it, else fallback
+        if hasattr(_action_queue, 'schedule_async'):
+            await _action_queue.schedule_async(
+                actor,
+                "cast_complete",
+                {"spell_id": spell_id, "targets": targets},
+                wind_up_time
+            )
+        else:
+            _action_queue.schedule(
+                actor,
+                "cast_complete",
+                {"spell_id": spell_id, "targets": targets},
+                wind_up_time
+            )
         
         # Emit spell casting started event
         from game_sys.hooks.hooks_setup import emit, ON_ABILITY_CAST
         emit(ON_ABILITY_CAST, actor=actor, ability_id=spell_id,
              targets=targets, phase="start")
-        combat_logger.debug(f"Emitted ON_ABILITY_CAST event with phase=start")
+        combat_logger.debug("Emitted ON_ABILITY_CAST event with phase=start")
 
     @log_exception
-    def _handle_spell_execution(self, actor: "Actor", payload: dict) -> None:
+    async def _handle_spell_execution(
+        self, actor: "Actor", payload: dict
+    ) -> None:
         """
         Execute spell after wind-up delay completes.
         
@@ -149,7 +181,15 @@ class TurnManager:
             
             try:
                 # Execute using spell pathway
-                outcome = self._execute_spell_attack(actor, targets, spell_info)
+                # If engine supports async spell execution, use it
+                if hasattr(self._engine, 'execute_spell_attack_async'):
+                    outcome = await self._engine.execute_spell_attack_async(
+                        actor, targets, spell_info
+                    )
+                else:
+                    outcome = self._execute_spell_attack(
+                        actor, targets, spell_info
+                    )
                 
                 # Emit spell completion event
                 from game_sys.hooks.hooks_setup import emit, ON_ABILITY_CAST
@@ -161,8 +201,9 @@ class TurnManager:
                 emit(ON_ABILITY_CAST, actor=actor, ability_id=spell_id,
                      targets=targets, phase="failed", error=str(e))
 
-    def _execute_spell_attack(self, actor: "Actor", targets: list, 
-                              spell_info: dict):
+    def _execute_spell_attack(
+        self, actor: "Actor", targets: list, spell_info: dict
+    ):
         """
         Execute spell attack through combat engine.
         

@@ -213,13 +213,36 @@ class Spell:
             f"Emitting ON_ABILITY_CAST for {self.name} ({self.id})"
         )
         
-        emit(
-            ON_ABILITY_CAST, 
-            actor=caster, 
-            ability=self.id, 
-            damage=last_dmg, 
-            target=primary_target
-        )
+        # Async event emission if running in async context, else sync
+        try:
+            import asyncio
+            if asyncio.get_running_loop().is_running():
+                from game_sys.hooks.hooks_setup import emit_async
+                await emit_async(
+                    ON_ABILITY_CAST,
+                    actor=caster,
+                    ability=self.id,
+                    damage=last_dmg,
+                    target=primary_target
+                )
+            else:
+                from game_sys.hooks.hooks_setup import emit
+                emit(
+                    ON_ABILITY_CAST,
+                    actor=caster,
+                    ability=self.id,
+                    damage=last_dmg,
+                    target=primary_target
+                )
+        except Exception:
+            from game_sys.hooks.hooks_setup import emit
+            emit(
+                ON_ABILITY_CAST,
+                actor=caster,
+                ability=self.id,
+                damage=last_dmg,
+                target=primary_target
+            )
         
         ComboManager.record_cast(caster, self.id)
         

@@ -19,11 +19,8 @@ def create_character(template_id: str, **overrides) -> Actor:
     if character.team == 'enemy':
         from game_sys.core.scaling_manager import ScalingManager
         ScalingManager.auto_allocate_stat_points(character)
-        character_logger.info(
-            f"Auto-allocated stat points for enemy: {character.name}"
-        )
     character_logger.info(f"Character created: {character.name} (Type: {character.__class__.__name__})")
-        
+
     return character
 
 
@@ -58,28 +55,55 @@ class CharacterFactory:
         ctype = data.get('type', 'player').lower()
         character_logger.debug(f"Creating {ctype} from template: {template_id}")
         
+        # Always ensure agility is present in base_stats
+        base_stats = dict(data.get('base_stats', {}))
+        if 'agility' not in base_stats:
+            base_stats['agility'] = 0
         if ctype == 'enemy':
             actor = Enemy(
                 name=data.get('display_name', template_id),
-                base_stats=data.get('base_stats', {}),
+                base_stats=base_stats,
                 **overrides
             )
             character_logger.info(f"Created enemy: {actor.name}")
         elif ctype == 'npc':
             actor = NPC(
                 name=data.get('display_name', template_id),
-                base_stats=data.get('base_stats', {}),
+                base_stats=base_stats,
                 **overrides
             )
             character_logger.info(f"Created NPC: {actor.name}")
         else:
             actor = Player(
                 name=data.get('display_name', template_id),
-                base_stats=data.get('base_stats', {}),
+                base_stats=base_stats,
                 _skip_default_job=True,  # Skip default job since we'll assign one
                 **overrides
             )
             character_logger.info(f"Created player: {actor.name}")
+
+        # Always set template_id for loot and other systems
+        setattr(actor, 'template_id', template_id.lower())
+
+        # Automatically add AI if enabled in config and actor is NPC or Enemy
+        cfg = ConfigManager()
+        ai_enabled = cfg.get('toggles.ai', False)
+        if ai_enabled and (isinstance(actor, Enemy) or isinstance(actor, NPC)):
+            try:
+                # Use a global AI controller for all actors
+                global _GLOBAL_AI_CONTROLLER
+                if '_GLOBAL_AI_CONTROLLER' not in globals() or _GLOBAL_AI_CONTROLLER is None:
+                    from game_sys.ai.ai_demo_integration import AIDemoController
+                    try:
+                        from game_sys.combat.combat_service import CombatService
+                        temp_combat_service = CombatService()
+                    except Exception:
+                        temp_combat_service = None
+                    _GLOBAL_AI_CONTROLLER = AIDemoController(temp_combat_service) if temp_combat_service else AIDemoController()
+                _GLOBAL_AI_CONTROLLER.enable_ai_for_enemy(actor)
+                character_logger.info(f"AI enabled for {actor.name} (auto, global controller)")
+            except Exception as e:
+                character_logger.warning(f"Failed to auto-enable AI for {actor.name}: {e}")
 
         cfg = ConfigManager()
     

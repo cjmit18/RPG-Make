@@ -21,6 +21,22 @@ from game_sys.logging import engine_logger
 
 
 class Engine:
+    async def save_game_async(self, path: str) -> None:
+        """Asynchronously save all managed actors to a file."""
+        from game_sys.config.save_load import save_actors_async
+        await save_actors_async(self.actors, path)
+
+    async def load_game_async(self, path: str) -> None:
+        """Asynchronously load all actors from a file and replace current actors."""
+        from game_sys.config.save_load import load_actors_async
+        loaded_actors = await load_actors_async(path)
+        # Unregister old actors
+        for actor in list(self.actors):
+            self.unregister_actor(actor)
+        # Register loaded actors
+        for actor in loaded_actors:
+            self.register_actor(actor)
+        self.actors = loaded_actors
     """
     The main game engine. Manages initialization, the game loop, and shutdown.
     """

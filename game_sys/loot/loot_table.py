@@ -34,6 +34,73 @@ from game_sys.config.config_manager import ConfigManager
 
 
 class LootTable:
+    # --- ASYNC HOOKS: can be monkey-patched or subclassed --- #
+    async def on_pre_generate_loot(self, enemy_level, enemy_type, player_luck):
+        """Async hook before loot generation. Override for effects, UI, etc."""
+        from game_sys.hooks.hooks_setup import emit_async, ON_PRE_GENERATE_LOOT
+        await emit_async(ON_PRE_GENERATE_LOOT, enemy_level=enemy_level, enemy_type=enemy_type, player_luck=player_luck)
+
+    async def on_post_generate_loot(self, loot: dict):
+        """Async hook after loot generation. Override for effects, UI, etc."""
+        from game_sys.hooks.hooks_setup import emit_async, ON_POST_GENERATE_LOOT
+        await emit_async(ON_POST_GENERATE_LOOT, loot=loot)
+
+    async def on_item_drop(self, item, loot: dict):
+        """Async hook for each item drop. Override for effects, UI, etc."""
+        from game_sys.hooks.hooks_setup import emit_async, ON_ITEM_DROP
+        await emit_async(ON_ITEM_DROP, item=item, loot=loot)
+
+    async def generate_loot_async(self, enemy_level: int, enemy_type: str, player_luck: int = 10) -> Dict:
+        """Async version of generate_loot with awaitable hooks/effects."""
+        await self.on_pre_generate_loot(enemy_level, enemy_type, player_luck)
+        loot = {
+            'experience': self.calculate_exp_reward(enemy_level, enemy_type),
+            'gold': self.calculate_gold_reward(enemy_level, enemy_type),
+            'items': []
+        }
+        # Add guaranteed items
+        guaranteed_items = self.get_guaranteed_items(enemy_type)
+        for item_id in guaranteed_items:
+            try:
+                item = ItemFactory.create(item_id)
+                if item:
+                    item.grade = self.determine_item_grade(enemy_type, player_luck)
+                    item.rarity = self.determine_item_rarity(enemy_type, player_luck)
+                    item.level = self.determine_item_level(enemy_level, enemy_type)
+                    loot['items'].append(item)
+                    await self.on_item_drop(item, loot)
+                    character_logger.info(
+                        f"Generated guaranteed item: {item.name} "
+                        f"(Lvl {item.level}, {item.grade}, {item.rarity})"
+                    )
+            except Exception as e:
+                character_logger.warning(
+                    f"Failed to create guaranteed item {item_id}: {e}"
+                )
+        # Determine if any random items drop
+        rarity = self.determine_item_rarity(enemy_type, player_luck)
+        if rarity:
+            possible_items = self.get_possible_items(enemy_type)
+            if possible_items:
+                item_id = random.choice(possible_items)
+                try:
+                    item = ItemFactory.create(item_id)
+                    if item:
+                        item.grade = self.determine_item_grade(enemy_type, player_luck)
+                        item.rarity = rarity
+                        item.level = self.determine_item_level(enemy_level, enemy_type)
+                        loot['items'].append(item)
+                        await self.on_item_drop(item, loot)
+                        character_logger.info(
+                            f"Generated random item: {item.name} "
+                            f"(Lvl {item.level}, {item.grade}, {item.rarity})"
+                        )
+                except Exception as e:
+                    character_logger.warning(
+                        f"Failed to create random item {item_id}: {e}"
+                    )
+        await self.on_post_generate_loot(loot)
+        return loot
     """
     Dynamic loot table that loads data from JSON and adjusts based on 
     enemy type, level, grade, rarity and player luck.

@@ -1,5 +1,14 @@
 {
   "items": {
+    "empty_hands": {
+      "type": "weapon",
+      "name": "Empty Hands",
+      "description": "Your own two fists. Not very effective, but always available.",
+      "base_damage": 1,
+      "damage_type": "PHYSICAL",
+      "slot": "weapon",
+      "effect_ids": []
+    },
     "potion_health": {
       "type": "consumable",
       "name": "Health Potion",
@@ -172,7 +181,7 @@
       "dual_wield": true,
       "block_chance": 0.05
     },
-    "orch_axe": {
+    "orc_axe": {
       "type": "weapon",
       "name": "Orc Axe",
       "description": "A heavy axe favored by orc warriors.",

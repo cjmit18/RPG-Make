@@ -41,98 +41,92 @@ except ImportError:
     SPELLS_AVAILABLE = False
     ENCHANTING_AVAILABLE = False
 
-# Default game configuration and toggles
-GAME_CONFIG = {
-    # Core system toggles
-    'COMBAT_ENABLED': True,
-    'MAGIC_ENABLED': True,
-    'CRAFTING_ENABLED': True,
-    'ENCHANTING_ENABLED': True,
-    'DUAL_WIELD_ENABLED': True,
-    'TWO_HANDED_ENABLED': True,
-    'BLOCKING_ENABLED': True,
-    'CRITICAL_HITS_ENABLED': True,
-    'STATUS_EFFECTS_ENABLED': True,
-    'LEARNING_SYSTEM_ENABLED': True,
-
-    # Item quality/rarity system - now loaded from config
-    'ITEM_RARITIES': PropertyLoader.get_item_rarities(),
-
-    # Item grades - now loaded from config
-    'ITEM_GRADES': PropertyLoader.get_item_grades(),
-
-    # Damage types - now loaded from config
-    'DAMAGE_TYPES': PropertyLoader.get_damage_types(),
-
-    # Stat caps and defaults
-    'STAT_DEFAULTS': {
-        'base_stats': {
-            'strength': 10, 'dexterity': 10, 'vitality': 10,
-            'intelligence': 10, 'wisdom': 10, 'constitution': 10, 'luck': 10
-        },
-        'stat_caps': {
-            'strength': 999, 'dexterity': 999, 'vitality': 999,
-            'intelligence': 999,
-            'wisdom': 999,
-            'constitution': 999,
-            'luck': 999
-        },
-        'points_per_level': 5,
-        'max_level': 100,
-    },
-
-    # Combat settings
-    'COMBAT_SETTINGS': {
-        'critical_chance_base': 0.05,  # 5% base crit chance
-        'critical_multiplier': 2.0,    # 2x damage on crit
-        'block_reduction': 0.5,        # 50% damage reduction when blocking
-        'dodge_chance_base': 0.05,     # 5% base dodge chance
-        'accuracy_base': 0.95,         # 95% base hit chance
-    },
-
-    # Magic settings
-    'MAGIC_SETTINGS': {
-        'mana_regen_rate': 1.0,        # Mana per second
-        'spell_cooldown_enabled': True,
-        'spell_components_required': False,
-        'mana_burn_enabled': True,
-    },
-
-    # Quality of life settings
-    'QOL_SETTINGS': {
-        'auto_pickup_enabled': True,
-        'auto_sort_inventory': False,
-        'show_damage_numbers': True,
-        'show_experience_gain': True,
-        'fast_animations': False,
-        'skip_intro': True,
-    },
-
-    # Debug settings
-    'DEBUG_SETTINGS': {
-        'god_mode': False,
-        'infinite_mana': False,
-        'infinite_stamina': False,
-        'show_debug_info': False,
-        'log_all_events': True,
-    }
-}
-
-  
-
 class SimpleGameDemo:
+    def save_game(self):
+        """Save the current game state asynchronously (demo version)."""
+        import asyncio
+        from game_sys.config.save_load import save_actors_async
+        try:
+            # For demo, just save player and enemy if they exist
+            actors = [a for a in [getattr(self, 'player', None), getattr(self, 'enemy', None)] if a]
+            asyncio.run(save_actors_async(actors, "demo_save.json"))
+            self.log_message("Game saved to demo_save.json", "info")
+        except Exception as e:
+            self.log_message(f"Save failed: {e}", "combat")
+
+    def load_game(self):
+        """Load the game state asynchronously (demo version)."""
+        import asyncio
+        from game_sys.config.save_load import load_actors_async
+        try:
+            actors = asyncio.run(load_actors_async("demo_save.json"))
+            # For demo, assign first to player, second to enemy
+            if actors:
+                self.player = actors[0]
+                if len(actors) > 1:
+                    self.enemy = actors[1]
+                self.log_message("Game loaded from demo_save.json", "info")
+                self.update_char_info()
+                self.update_enemy_info()
+            else:
+                self.log_message("No actors found in save file.", "combat")
+        except Exception as e:
+            self.log_message(f"Load failed: {e}", "combat")
     """A simple game demo with logging and tabbed UI."""
 
     def __init__(self):
         """Initialize the demo."""
         logger.info("Initializing Simple Game Demo")
         
-        # TEST: Check the strength multiplier config before doing anything else
+        # --- Startup validation and logging ---
         from game_sys.config.config_manager import ConfigManager
+        import os
         cfg = ConfigManager()
-        strength_mult = cfg.get('constants.combat.strength_multiplier', 'NOT FOUND')
-        logger.info(f"STARTUP CONFIG - Strength multiplier: {strength_mult}")
-        logger.info(f"STARTUP CONFIG - Test value: {cfg.get('constants.combat.test_value', 'NOT FOUND')}")
+        config_files = [
+            os.path.abspath(cfg.default_path),
+            os.path.abspath(cfg.user_path),
+            os.path.abspath(cfg.game_settings_path)
+        ]
+        logger.info("STARTUP: Validating config files...")
+        for path in config_files:
+            if os.path.exists(path):
+                logger.info(f"Config file found: {path}")
+            else:
+                logger.warning(f"Config file missing: {path}")
+
+        # Validate config keys and log important values
+        try:
+            # Check a few critical config values
+            strength_mult = cfg.get('constants.combat.strength_multiplier', None)
+            stamina_costs = cfg.get('constants.combat.stamina_costs', None)
+            max_level = cfg.get('constants.leveling.max_level', None)
+            logger.info(f"CONFIG: strength_multiplier = {strength_mult}")
+            logger.info(f"CONFIG: stamina_costs = {stamina_costs}")
+            logger.info(f"CONFIG: max_level = {max_level}")
+            # Check for required keys
+            required_keys = [
+                'constants.combat.strength_multiplier',
+                'constants.combat.stamina_costs',
+                'constants.derived_stats.health',
+                'constants.derived_stats.stamina',
+                'constants.derived_stats.mana',
+                'constants.leveling.max_level',
+                'defaults.grades',
+                'defaults.rarities'
+            ]
+            for key in required_keys:
+                val = cfg.get(key, None)
+                if val is None:
+                    logger.error(f"CONFIG ERROR: Missing required config key: {key}")
+                else:
+                    logger.info(f"CONFIG OK: {key} = {val}")
+        except Exception as e:
+            logger.error(f"CONFIG VALIDATION ERROR: {e}")
+
+        # Log working directory and Python version
+        import sys
+        logger.info(f"Working directory: {os.getcwd()}")
+        logger.info(f"Python version: {sys.version}")
 
         # Create main window
         self.root = tk.Tk()
@@ -176,6 +170,11 @@ class SimpleGameDemo:
         self.progression_tab = ttk.Frame(self.tab_control)
         self.tab_control.add(self.progression_tab, text="Progression")
 
+        # Settings tab
+        self.settings_tab = ttk.Frame(self.tab_control)
+        self.tab_control.add(self.settings_tab, text="Settings")
+
+
         # Pack the tab control
         self.tab_control.pack(expand=1, fill=tk.BOTH, padx=10, pady=10)
 
@@ -199,6 +198,10 @@ class SimpleGameDemo:
 
         # Set up the Progression tab
         self.setup_progression_tab()  # Set up progression tab
+
+        # Set up the Settings tab
+        self.setup_settings_tab()
+
 
         # Create log area
         self.log_frame = tk.Frame(self.root, bg="black")
@@ -262,61 +265,112 @@ class SimpleGameDemo:
         self.detailed_stats.pack(fill=tk.BOTH, expand=True)
 
         # Bottom: Character actions
-        button_frame = tk.Frame(self.stats_tab, bg="black")
+        button_frame = tk.Frame(self.stats_tab, bg="#222")
         button_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
 
+        # Improved button style
+        button_style = {
+            'bg': '#444',
+            'fg': 'white',
+            'activebackground': '#666',
+            'activeforeground': 'cyan',
+            'font': ("Segoe UI", 11, "bold"),
+            'relief': tk.RAISED,
+            'bd': 2,
+            'width': 14,
+            'height': 2
+        }
+
         stat_buttons = [
-            ("View Inventory", self.view_inventory),
-            ("Level Up", self.level_up),
-            ("Equip Gear", self.equip_gear),
-            ("Restore Health", self.restore_health),
-            ("Restore Mana", self.restore_mana),
-            ("Restore Stamina", self.restore_stamina),
-            ("Restore All", self.restore_all_resources),
+            ("View Inventory", self.view_inventory, "#5bc0de"),
+            ("Level Up", self.level_up, "#5cb85c"),
+            ("Equip Gear", self.equip_gear, "#f0ad4e"),
+            ("Restore Health", self.restore_health, "#d9534f"),
+            ("Restore Mana", self.restore_mana, "#5bc0de"),
+            ("Restore Stamina", self.restore_stamina, "#f7e359"),
+            ("Restore All", self.restore_all_resources, "#337ab7"),
+            ("Save Game", self.save_game, "#0275d8"),
+            ("Load Game", self.load_game, "#5cb85c"),
         ]
 
-        for text, command in stat_buttons:
-            btn = tk.Button(button_frame, text=text, command=command)
-            btn.pack(side=tk.LEFT, padx=5)
+
+        # Use a grid layout for better button visibility and wrapping
+        max_cols = 3
+        for idx, (text, command, color) in enumerate(stat_buttons):
+            row = idx // max_cols
+            col = idx % max_cols
+            btn = tk.Button(button_frame, text=text, command=command, **button_style)
+            btn.configure(bg=color)
+            btn.grid(row=row, column=col, padx=6, pady=6, sticky="nsew")
+
+        # Make columns expand equally
+        for col in range(max_cols):
+            button_frame.grid_columnconfigure(col, weight=1)
+
+        # Add a visual separator
+        sep = tk.Frame(self.stats_tab, height=2, bd=1, relief=tk.SUNKEN, bg="#444")
+        sep.pack(fill=tk.X, padx=10, pady=(0, 10), side=tk.BOTTOM)
 
     def setup_combat_tab(self):
-        """Set up the combat tab."""
-        # Combat canvas for visualization
+        """Set up the combat tab with improved layout and visuals."""
+        # Main combat frame
+        combat_main = tk.Frame(self.combat_tab, bg="black")
+        combat_main.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Canvas for battle visualization
         self.canvas = tk.Canvas(
-            self.combat_tab,
+            combat_main,
             bg="black",
             width=600,
-            height=400
+            height=400,
+            highlightthickness=2,
+            highlightbackground="#444"
         )
-        self.canvas.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.canvas.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
 
-        # Combat controls
-        control_frame = tk.Frame(self.combat_tab, bg="gray")
-        control_frame.pack(fill=tk.X, padx=10, pady=10)
-
-        # Create combat buttons
-        combat_buttons = [
-            ("Attack", self.attack),
-            ("Heal", self.heal),
-            ("Spawn Enemy", self.spawn_enemy),
-            ("Cast Fireball", self.cast_fireball),
-            ("Cast Ice Shard", self.cast_ice_shard),
-            ("Tick Status", self.tick_status_effects)
-        ]
-
-        for text, command in combat_buttons:
-            btn = tk.Button(control_frame, text=text, command=command)
-            btn.pack(side=tk.LEFT, padx=5, pady=5)
-
-        # Enemy info
+        # Enemy info panel (right)
         self.enemy_info = tk.Text(
-            self.combat_tab,
-            width=25,
-            height=5,
-            bg="light gray",
-            state="disabled"
+            combat_main,
+            width=28,
+            height=12,
+            bg="#f8f8f8",
+            fg="#222",
+            font=("Segoe UI", 10),
+            state="disabled",
+            relief=tk.RIDGE,
+            bd=2
         )
-        self.enemy_info.pack(side=tk.RIGHT, padx=10, pady=10)
+        self.enemy_info.grid(row=0, column=2, sticky="nsew", padx=(10, 0), pady=10)
+
+        # Combat controls (bottom)
+        control_frame = tk.Frame(combat_main, bg="#222")
+        control_frame.grid(row=1, column=0, columnspan=3, sticky="ew", padx=10, pady=(0, 10))
+
+        # Create styled combat buttons
+        combat_buttons = [
+            ("Attack", self.attack, "#d9534f"),
+            ("Heal", self.heal, "#5cb85c"),
+            ("Spawn Enemy", self.spawn_enemy, "#f0ad4e"),
+            ("Cast Fireball", self.cast_fireball, "#ff7043"),
+            ("Cast Ice Shard", self.cast_ice_shard, "#42a5f5"),
+            ("Tick Status", self.tick_status_effects, "#bdb76b")
+        ]
+        for idx, (text, command, color) in enumerate(combat_buttons):
+            btn = tk.Button(control_frame, text=text, command=command,
+                            bg=color, fg="white", font=("Segoe UI", 11, "bold"),
+                            activebackground="#444", activeforeground="cyan",
+                            relief=tk.RAISED, bd=2, width=16, height=2)
+            btn.grid(row=0, column=idx, padx=8, pady=8, sticky="nsew")
+
+        # Make columns expand equally
+        for idx in range(len(combat_buttons)):
+            control_frame.grid_columnconfigure(idx, weight=1)
+
+        # Configure grid weights for resizing
+        combat_main.grid_rowconfigure(0, weight=1)
+        combat_main.grid_columnconfigure(0, weight=3)
+        combat_main.grid_columnconfigure(1, weight=0)
+        combat_main.grid_columnconfigure(2, weight=1)
 
     def log_message(self, message, tag="info"):
         """Add a message to the log.
@@ -366,9 +420,7 @@ class SimpleGameDemo:
         # Grade 5 = SIX (0-indexed), and LEGENDARY rarity should give stat boosts
         self.player = create_character(
             template_id="hero",
-            level=100,
-            grade=5,
-            rarity="LEGENDARY"
+            level=1, grade=0, rarity="COMMON"
         )
         logger.info(f"Created player: {self.player.name}")
         self.log_message(f"Welcome, {self.player.name}!")
@@ -392,7 +444,7 @@ class SimpleGameDemo:
 
         # Create enemy with random stats
         self.enemy = create_character(
-            "dragon", level=1, grade=0, rarity="COMMON"
+            "goblin"
         )
         if self.enemy:
             # Enable AI for the enemy
@@ -446,9 +498,21 @@ class SimpleGameDemo:
         basic_info = f"Name: {self.player.name}\n"
         basic_info += f"Level: {self.player.level}\n"
         
-        # Add grade and rarity if available
+        # Add grade and rarity if available, display grade name if possible
+        grade_display = None
         if hasattr(self.player, 'grade'):
-            basic_info += f"Grade: {self.player.grade}\n"
+            grade_val = self.player.grade
+            try:
+                from game_sys.config.config_manager import ConfigManager
+                cfg = ConfigManager()
+                grade_list = cfg.get('defaults.grades', ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"])
+                if isinstance(grade_val, int) and 0 <= grade_val < len(grade_list):
+                    grade_display = grade_list[grade_val]
+                else:
+                    grade_display = str(grade_val)
+            except Exception:
+                grade_display = str(grade_val)
+            basic_info += f"Grade: {grade_display}\n"
         if hasattr(self.player, 'rarity'):
             basic_info += f"Rarity: {self.player.rarity}\n"
             
@@ -465,41 +529,139 @@ class SimpleGameDemo:
         
         # Add grade and rarity to detailed view as well
         if hasattr(self.player, 'grade'):
-            detailed_info += f"Grade: {self.player.grade}\n"
+            grade_val = self.player.grade
+            try:
+                from game_sys.config.config_manager import ConfigManager
+                cfg = ConfigManager()
+                grade_list = cfg.get('defaults.grades', [])
+                if isinstance(grade_val, int) and 0 <= grade_val < len(grade_list):
+                    grade_display = grade_list[grade_val]
+                else:
+                    grade_display = str(grade_val)
+            except Exception:
+                grade_display = str(grade_val)
+            detailed_info += f"Grade: {grade_display}\n"
         if hasattr(self.player, 'rarity'):
             detailed_info += f"Rarity: {self.player.rarity}\n"
             
         detailed_info += f"Health: {health_val}\n"
 
-        # Traditional RPG Stats (Base)
+        # Show all available base stats
         detailed_info += "\n=== BASE STATS ===\n"
-        rpg_stats = [
-            'strength', 'dexterity', 'vitality', 'intelligence',
-            'wisdom', 'constitution', 'luck'
-        ]
-        # Always show all base stats, and ensure player's base_stats dict is populated
-        if (
-            not hasattr(self.player, 'base_stats') or
-            not isinstance(self.player.base_stats, dict)
-        ):
-            self.player.base_stats = {stat: 10 for stat in rpg_stats}
-        else:
-            for stat in rpg_stats:
-                if stat not in self.player.base_stats:
-                    self.player.base_stats[stat] = 10
-        for stat_name in rpg_stats:
-            value = self.player.base_stats[stat_name]
-            display_name = stat_name.replace('_', ' ').title()
-            detailed_info += f"  {display_name}: {value:.2f}\n"
+        if hasattr(self.player, 'base_stats') and isinstance(self.player.base_stats, dict):
+            from game_sys.config.config_manager import ConfigManager
+            cfg = ConfigManager()
+            stats_defaults = cfg.get('constants.stats_defaults', {})
+            # Filter out non-stat meta keys and tidy formatting
+            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets"}
+            core_stats = []
+            for raw_key, raw_val in sorted(self.player.base_stats.items()):
+                key = str(raw_key).strip()
+                if key in meta_keys or key.startswith("_"):
+                    continue
+                core_stats.append((key, raw_val))
 
-        # Combat Stats (Derived)
-        detailed_info += "\n=== COMBAT STATS ===\n"
-        combat_stats = ['attack', 'defense', 'speed', 'magic_power']
-        for stat_name in combat_stats:
-            if hasattr(self.player, 'get_stat'):
-                value = self.player.get_stat(stat_name)
+            # Build output, showing effective values when they differ
+            for stat_name, base_val in core_stats:
+                stat_key = stat_name.lower()
+                display_name = stat_key.replace("_", " ").title()
+                try:
+                    if hasattr(self.player, "get_stat"):
+                        effective_val = float(self.player.get_stat(stat_key))
+                    else:
+                        effective_val = float(base_val)
+                except Exception:
+                    effective_val = base_val
+
+                # Special-case magic power: if base is tiny (<=1) but effective bigger, prefer effective
+                if stat_key == "magic_power" and effective_val > base_val:
+                    shown_val = effective_val
+                else:
+                    shown_val = base_val
+
+                # If effective differs noticeably, show both
+                detailed_info += f"  {display_name}: {effective_val:.2f}\n"
+
+        # Show all derived/combat stats, grouped by category
+        if hasattr(self.player, 'get_stat'):
+            # --- Offensive Stats ---
+            detailed_info += "\n=== OFFENSIVE STATS ===\n"
+            offensive_stats = [
+                ('Attack', 'attack'),
+                ('Magic Power', 'magic_power'),
+                ('Physical Damage', 'physical_damage'),
+                ('Critical Chance', 'critical_chance'),
+                ('Parry Chance', 'parry_chance'),
+                ('Initiative', 'initiative'),
+                ('Speed', 'speed'),
+            ]
+            for display_name, stat_name in offensive_stats:
+                try:
+                    value = self.player.get_stat(stat_name)
+                    if 'chance' in stat_name:
+                        detailed_info += f"  {display_name}: {float(value):.1%}\n"
+                    else:
+                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
+                except Exception:
+                    detailed_info += f"  {display_name}: N/A\n"
+
+            # --- Defensive Stats ---
+            detailed_info += "\n=== DEFENSIVE STATS ===\n"
+            # Revert to simple defense display (no formula breakdown)
+            try:
+                defense_val = self.player.get_stat('defense')
+                detailed_info += f"  Defense: {defense_val:.2f}\n"
+            except Exception:
+                detailed_info += "  Defense: N/A\n"
+            defensive_stats = [
+                ('Block Chance', 'block_chance'),
+                ('Dodge Chance', 'dodge_chance'),
+                ('Magic Resistance', 'magic_resistance'),
+                ('Damage Reduction', 'damage_reduction'),
+            ]
+            for display_name, stat_name in defensive_stats:
+                try:
+                    value = self.player.get_stat(stat_name)
+                    if 'chance' in stat_name:
+                        detailed_info += f"  {display_name}: {float(value):.1%}\n"
+                    else:
+                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
+                except Exception:
+                    detailed_info += f"  {display_name}: N/A\n"
+
+            # --- Regeneration Stats ---
+            detailed_info += "\n=== REGENERATION ===\n"
+            regen_stats = ['health_regeneration', 'mana_regeneration', 'stamina_regeneration']
+            for stat_name in regen_stats:
+                try:
+                    value = self.player.get_stat(stat_name)
+                except Exception:
+                    value = None
                 display_name = stat_name.replace('_', ' ').title()
-                detailed_info += f"  {display_name}: {value:.1f}\n"
+                try:
+                    if value is None:
+                        detailed_info += f"  {display_name}: N/A\n"
+                    else:
+                        detailed_info += f"  {display_name}: {float(value):.3f}/sec\n"
+                except (ValueError, TypeError):
+                    detailed_info += f"  {display_name}: {value}\n"
+
+            # --- Luck & Special ---
+            detailed_info += "\n=== SPECIAL STATS ===\n"
+            special_stats = ['luck_factor']
+            for stat_name in special_stats:
+                try:
+                    value = self.player.get_stat(stat_name)
+                except Exception:
+                    value = None
+                display_name = stat_name.replace('_', ' ').title()
+                try:
+                    if value is None:
+                        detailed_info += f"  {display_name}: N/A\n"
+                    else:
+                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
+                except (ValueError, TypeError):
+                    detailed_info += f"  {display_name}: {value}\n"
 
         # Resource Stats (Derived)
         detailed_info += "\n=== RESOURCE STATS ===\n"
@@ -611,7 +773,18 @@ class SimpleGameDemo:
         if hasattr(self.enemy, 'level'):
             info += f"Level: {self.enemy.level}\n"
         if hasattr(self.enemy, 'grade'):
-            info += f"Grade: {self.enemy.grade}\n"
+            grade_val = self.enemy.grade
+            try:
+                from game_sys.config.config_manager import ConfigManager
+                cfg = ConfigManager()
+                grade_list = cfg.get('defaults.grades', ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"])
+                if isinstance(grade_val, int) and 0 <= grade_val < len(grade_list):
+                    grade_display = grade_list[grade_val]
+                else:
+                    grade_display = str(grade_val)
+            except Exception:
+                grade_display = str(grade_val)
+            info += f"Grade: {grade_display}\n"
         if hasattr(self.enemy, 'rarity'):
             info += f"Rarity: {self.enemy.rarity}\n"
             
@@ -723,7 +896,7 @@ class SimpleGameDemo:
                 if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
                     points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player)
                 else:
-                    points_per_level = 3
+                    points_per_level = 4
                 if hasattr(self.player.leveling_manager, 'add_stat_points'):
                     self.player.leveling_manager.add_stat_points(self.player, points_per_level)
                 msg = f"Level up! Now level {self.player.level} (+{points_per_level} stat points)!"
@@ -735,14 +908,14 @@ class SimpleGameDemo:
             # Increase base stats manually
             if hasattr(self.player, 'base_stats'):
                 stat_increases = {
-                    'attack': 2,
+                    'attack': 200,
                     'defense': 2,
                     'speed': 1,
                     'health': 15,
                     'mana': 8,
                     'stamina': 5,
                     'magic_power': 2,
-                    'intelligence': 2,
+                    'intelligence': 200,
                     'strength': 2,
                     'dexterity': 1,
                     'vitality': 2,
@@ -922,19 +1095,68 @@ class SimpleGameDemo:
             # Draw health bar
             health_pct = self.player.current_health / self.player.max_health
             bar_width = 100
+            bar_y = player_y + 40
+            bar_height = 10
 
-            # Background
+            # Health background
             self.canvas.create_rectangle(
-                player_x - bar_width/2, player_y + 40,
-                player_x + bar_width/2, player_y + 50,
+                player_x - bar_width/2, bar_y,
+                player_x + bar_width/2, bar_y + bar_height,
                 fill="gray", outline="white"
             )
-
             # Health
             self.canvas.create_rectangle(
-                player_x - bar_width/2, player_y + 40,
-                player_x - bar_width/2 + bar_width * health_pct, player_y + 50,
+                player_x - bar_width/2, bar_y,
+                player_x - bar_width/2 + bar_width * health_pct, bar_y + bar_height,
                 fill="red", outline=""
+            )
+            # Health label
+            self.canvas.create_text(
+                player_x, bar_y + bar_height/2,
+                text=f"HP: {int(self.player.current_health)}/{int(self.player.max_health)}",
+                fill="white", font=("Arial", 9)
+            )
+
+            # Draw mana bar below health
+            mana_pct = 0
+            if hasattr(self.player, 'current_mana') and hasattr(self.player, 'max_mana') and self.player.max_mana > 0:
+                mana_pct = self.player.current_mana / self.player.max_mana
+            mana_y = bar_y + bar_height + 4
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, mana_y,
+                player_x + bar_width/2, mana_y + bar_height,
+                fill="#224488", outline="white"
+            )
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, mana_y,
+                player_x - bar_width/2 + bar_width * mana_pct, mana_y + bar_height,
+                fill="#3399ff", outline=""
+            )
+            self.canvas.create_text(
+                player_x, mana_y + bar_height/2,
+                text=f"MP: {int(getattr(self.player, 'current_mana', 0))}/{int(getattr(self.player, 'max_mana', 0))}",
+                fill="white", font=("Arial", 9)
+            )
+
+            # Draw stamina bar below mana
+            stamina_pct = 0
+            if hasattr(self.player, 'current_stamina') and hasattr(self.player, 'max_stamina') and self.player.max_stamina > 0:
+                stamina_pct = self.player.current_stamina / self.player.max_stamina
+            stamina_y = mana_y + bar_height + 4
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, stamina_y,
+                player_x + bar_width/2, stamina_y + bar_height,
+                fill="#555522", outline="white"
+            )
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, stamina_y,
+                player_x - bar_width/2 + bar_width * stamina_pct, stamina_y + bar_height,
+                fill="#f7e359", outline=""
+            )
+            self.canvas.create_text(
+                player_x, stamina_y + bar_height/2,
+                text=f"SP: {int(getattr(self.player, 'current_stamina', 0))}/{int(getattr(self.player, 'max_stamina', 0))}",
+                fill="black", font=("Arial", 9)
             )
 
         # Draw enemy if exists
@@ -956,21 +1178,70 @@ class SimpleGameDemo:
             )
 
             # Draw health bar
-            health_pct = self.enemy.current_health / self.enemy.max_health
+            health_pct = self.enemy.current_health / self.enemy.max_health if self.enemy.max_health > 0 else 0
             bar_width = 100
+            bar_y = enemy_y + 40
+            bar_height = 10
 
-            # Background
+            # Health background
             self.canvas.create_rectangle(
-                enemy_x - bar_width/2, enemy_y + 40,
-                enemy_x + bar_width/2, enemy_y + 50,
+                enemy_x - bar_width/2, bar_y,
+                enemy_x + bar_width/2, bar_y + bar_height,
                 fill="gray", outline="white"
             )
-
             # Health
             self.canvas.create_rectangle(
-                enemy_x - bar_width/2, enemy_y + 40,
-                enemy_x - bar_width/2 + bar_width * health_pct, enemy_y + 50,
+                enemy_x - bar_width/2, bar_y,
+                enemy_x - bar_width/2 + bar_width * health_pct, bar_y + bar_height,
                 fill="red", outline=""
+            )
+            # Health label
+            self.canvas.create_text(
+                enemy_x, bar_y + bar_height/2,
+                text=f"HP: {int(getattr(self.enemy, 'current_health', 0))}/{int(getattr(self.enemy, 'max_health', 0))}",
+                fill="white", font=("Arial", 9)
+            )
+
+            # Draw mana bar below health
+            mana_pct = 0
+            if hasattr(self.enemy, 'current_mana') and hasattr(self.enemy, 'max_mana') and self.enemy.max_mana > 0:
+                mana_pct = self.enemy.current_mana / self.enemy.max_mana
+            mana_y = bar_y + bar_height + 4
+            self.canvas.create_rectangle(
+                enemy_x - bar_width/2, mana_y,
+                enemy_x + bar_width/2, mana_y + bar_height,
+                fill="#224488", outline="white"
+            )
+            self.canvas.create_rectangle(
+                enemy_x - bar_width/2, mana_y,
+                enemy_x - bar_width/2 + bar_width * mana_pct, mana_y + bar_height,
+                fill="#3399ff", outline=""
+            )
+            self.canvas.create_text(
+                enemy_x, mana_y + bar_height/2,
+                text=f"MP: {int(getattr(self.enemy, 'current_mana', 0))}/{int(getattr(self.enemy, 'max_mana', 0))}",
+                fill="white", font=("Arial", 9)
+            )
+
+            # Draw stamina bar below mana
+            stamina_pct = 0
+            if hasattr(self.enemy, 'current_stamina') and hasattr(self.enemy, 'max_stamina') and self.enemy.max_stamina > 0:
+                stamina_pct = self.enemy.current_stamina / self.enemy.max_stamina
+            stamina_y = mana_y + bar_height + 4
+            self.canvas.create_rectangle(
+                enemy_x - bar_width/2, stamina_y,
+                enemy_x + bar_width/2, stamina_y + bar_height,
+                fill="#555522", outline="white"
+            )
+            self.canvas.create_rectangle(
+                enemy_x - bar_width/2, stamina_y,
+                enemy_x - bar_width/2 + bar_width * stamina_pct, stamina_y + bar_height,
+                fill="#f7e359", outline=""
+            )
+            self.canvas.create_text(
+                enemy_x, stamina_y + bar_height/2,
+                text=f"SP: {int(getattr(self.enemy, 'current_stamina', 0))}/{int(getattr(self.enemy, 'max_stamina', 0))}",
+                fill="black", font=("Arial", 9)
             )
 
         # Draw dividing line
@@ -1121,7 +1392,15 @@ class SimpleGameDemo:
         logger.info(f"Spawning {enemy_type}")
 
         # Create enemy with random stats
-        self.enemy = create_character_with_random_stats(enemy_type, grade = 3)
+        self.enemy = create_character_with_random_stats(enemy_type)
+
+        # Enable AI for the spawned enemy if AI is available
+        if self.enemy and getattr(self, 'ai_enabled', False) and getattr(self, 'ai_controller', None):
+            ai_success = self.ai_controller.enable_ai_for_enemy(self.enemy)
+            if ai_success:
+                self.log_message(f"AI enabled for {self.enemy.name}", "info")
+            else:
+                self.log_message(f"Failed to enable AI for {self.enemy.name}", "combat")
 
         if self.enemy:
             logger.info(f"Created enemy: {self.enemy.name}")
@@ -1167,13 +1446,28 @@ class SimpleGameDemo:
         logger.info("Exiting demo")
         self.root.destroy()
 
+    def reload_game(self):
+        """Reload the game state without restarting the application."""
+        logger.info("Reloading game state...")
+        # Remove current player/enemy and re-initialize game state
+        self.player = None
+        self.enemy = None
+        self.setup_game_state()
+        self.log_message("Game state reloaded!", "info")
+
     def run(self):
         """Run the demo."""
         logger.info("Starting demo")
 
-        # Add quit button to main window
-        quit_btn = tk.Button(self.root, text="Quit Game", command=self.quit)
-        quit_btn.pack(side=tk.BOTTOM, pady=5)
+        # Add reload and quit buttons to main window
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(side=tk.BOTTOM, pady=5)
+
+        reload_btn = tk.Button(button_frame, text="Reload Game", command=self.reload_game)
+        reload_btn.pack(side=tk.LEFT, padx=10)
+
+        quit_btn = tk.Button(button_frame, text="Quit Game", command=self.quit)
+        quit_btn.pack(side=tk.LEFT, padx=10)
 
         self.root.mainloop()
         logger.info("Demo ended")
@@ -1197,6 +1491,10 @@ class SimpleGameDemo:
         elif selected_tab == "Enchanting":
             self.refresh_enchanting_lists()  # Update enchanting tab display
         elif selected_tab == "Progression":
+            self.update_progression_display()  # Update progression tab display
+        elif selected_tab == "Settings":
+            pass  # Currently nothing dynamic to refresh for settings
+
             self.update_progression_display()  # Update progression tab display
 
     def setup_inventory_tab(self):
@@ -1336,7 +1634,7 @@ class SimpleGameDemo:
             # Weapons
             "iron_sword",
             "wooden_stick",
-            "orch_axe",
+            "orc_axe",
             "dragon_claw",
             "vampiric_blade",
 
@@ -1478,38 +1776,24 @@ class SimpleGameDemo:
         self.create_and_add_item(item_id)
 
     def create_and_add_item(self, item_id):
-        """Create an item and add it to inventory."""
+        """Create an item with a unique UUID and add it to the player's inventory (stackable)."""
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!", "combat")
             return
-
         if not hasattr(self.player, 'inventory'):
             self.log_message("No inventory system available!", "combat")
             return
-
         try:
-            # Create the item using ItemFactory
-            if not ITEMS_AVAILABLE:
-                self.log_message("Items system not available!", "combat")
-                return
-
-            # Import locally to avoid linting issues
-            from game_sys.items.factory import ItemFactory
-            item = ItemFactory.create(item_id)
+            from game_sys.items.equipment import create_item_with_uuid
+            item = create_item_with_uuid(item_id)
             if item:
-                # Try to add to inventory
-                if hasattr(self.player.inventory, 'add_item'):
-                    success = self.player.inventory.add_item(item)
-                    if success:
-                        msg = f"Created and added {item.name} to inventory!"
-                        self.log_message(msg, "info")
-                    else:
-                        self.log_message("Inventory full!", "combat")
+                success = self.player.inventory.add_item(item)
+                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
+                if success:
+                    msg = f"Created and added {display_name} (UUID: {getattr(item, 'uuid', 'N/A')}) to inventory!"
+                    self.log_message(msg, "info")
                 else:
-                    msg = "No inventory add method available"
-                    self.log_message(msg, "combat")
-                    return
-
+                    self.log_message("Inventory full!", "combat")
                 self.update_inventory_display()
                 self.update_equipment_display()
             else:
@@ -1518,15 +1802,18 @@ class SimpleGameDemo:
             self.log_message(f"Error creating item {item_id}: {e}", "combat")
 
     def add_random_item(self):
-        """Add a random item to inventory."""
-        if not ITEMS_AVAILABLE:
-            self.log_message("Items system not available!", "combat")
-            return
-
-        # Pick a random item from available items
-        item_count = self.available_items_listbox.size()
-        if item_count == 0:
-            return
+        """Add a random item with a unique UUID to the player's inventory."""
+        import random
+        available_items = [
+            "potion_health", "potion_mana", "iron_sword", "wooden_stick", "orc_axe", "dragon_claw",
+            "vampiric_blade", "apprentice_staff", "arcane_staff", "iron_dagger", "wooden_shield",
+            "spell_focus", "arcane_focus", "leather_armor", "basic_clothes", "mage_robes",
+            "archmage_robes", "dragon_scale_armor", "thornmail_armor", "boots_of_speed",
+            "cloak_of_fortune", "ring_of_power", "fire_enchant", "ice_enchant", "lightning_enchant",
+            "poison_enchant", "strength_enchant", "speed_enchant"
+        ]
+        item_id = random.choice(available_items)
+        self.create_and_add_item(item_id)
 
         random_index = random.randint(0, item_count - 1)
         item_id = self.available_items_listbox.get(random_index)
@@ -1551,13 +1838,13 @@ class SimpleGameDemo:
             items = self.player.inventory.list_items()
             if selection[0] < len(items):
                 item = items[selection[0]]
+                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
 
                 # Check if item is consumable or has active abilities
                 is_consumable = (
                     (hasattr(item, 'consumable') and item.consumable) or
-                    (hasattr(item, 'item_type') and
-                     item.item_type == 'consumable') or
-                    'potion' in item.name.lower()
+                    (hasattr(item, 'item_type') and item.item_type == 'consumable') or
+                    'potion' in display_name.lower()
                 )
 
                 has_active_ability = (
@@ -1572,10 +1859,10 @@ class SimpleGameDemo:
                     if hasattr(item, 'use_action'):
                         # Item has a use action method
                         item.use_action(self.player)
-                        msg = f"Used {item.name}!"
+                        msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})!"
                     elif is_consumable:
                         # Basic consumable (e.g., health potion)
-                        if 'health' in item.name.lower():
+                        if 'health' in display_name.lower():
                             heal_amount = getattr(item, 'heal_amount', 25)
                             old_health = self.player.current_health
                             new_health = min(
@@ -1584,14 +1871,13 @@ class SimpleGameDemo:
                             )
                             self.player.current_health = new_health
                             actual_heal = new_health - old_health
-                            item_name = item.name
                             heal_val = f"+{actual_heal:.1f}HP"
-                            heal_msg = f"Used {item_name}! {heal_val}"
+                            heal_msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})! {heal_val}"
                             msg = heal_msg
                         else:
-                            msg = f"Used {item.name}! (simulated effect)"
+                            msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})! (simulated effect)"
                     else:
-                        msg = f"Activated {item.name}!"
+                        msg = f"Activated {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})!"
 
                     self.log_message(msg, "heal")
 
@@ -1602,85 +1888,69 @@ class SimpleGameDemo:
                     self.update_inventory_display()
                     self.update_char_info()
                 else:
-                    msg = f"Cannot use {item.name} - not consumable or usable"
+                    msg = f"Cannot use {display_name} (UUID: {getattr(item, 'uuid', 'N/A')}) - not consumable or usable"
                     self.log_message(msg, "info")
         except Exception as e:
             self.log_message(f"Error using item: {e}", "combat")
 
     def equip_selected_item(self):
-        """Equip the selected inventory item."""
+        """Equip the selected item by UUID, only if the slot is empty. Dual wield logic fixed."""
         selection = self.inventory_listbox.curselection()
         if not selection:
             self.log_message("Please select an item to equip", "info")
             return
-
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!", "combat")
             return
-
-        if not hasattr(self.player, 'inventory'):
+        if not hasattr(self, 'inventory'):
             self.log_message("No inventory system available!", "combat")
             return
-
         try:
             items = self.player.inventory.list_items()
             if selection[0] < len(items):
                 item = items[selection[0]]
-
-                # Use the item's apply method which handles equipping
-                if hasattr(item, 'apply'):
-                    item.apply(self.player)
-
-                    # Remove item from inventory after equipping
-                    self.player.inventory.remove_item(item)
-
-                    self.log_message(f"Equipped {item.name}!", "info")
-                elif hasattr(item, 'slot'):
-                    # Use smart equipping for weapons that handles dual wield
-                    if (item.slot in ["weapon", "offhand"] or
-                        getattr(item, 'dual_wield', False)):
-                        if hasattr(self.player, 'equip_weapon_smart'):
-                            success = self.player.equip_weapon_smart(item)
-                            if success:
-                                # Remove item from inventory after equipping
-                                self.player.inventory.remove_item(item)
-                                msg = f"Equipped {item.name}!"
-                                self.log_message(msg, "info")
-                            else:
-                                msg = f"Failed to equip {item.name}"
-                                self.log_message(msg, "combat")
-                        else:
-                            # Fallback to regular weapon equipping
-                            if hasattr(self.player, 'equip_weapon'):
-                                self.player.equip_weapon(item)
-                                self.player.inventory.remove_item(item)
-                                msg = f"Equipped weapon: {item.name}"
-                                self.log_message(msg, "info")
-                    elif item.slot in ["body", "helmet", "legs", "feet", "gloves", "boots", "cloak"]:
-                        # Use proper armor equipping method
-                        if hasattr(self.player, 'equip_armor'):
-                            success = self.player.equip_armor(item)
-                            if success:
-                                msg = f"Equipped {item.slot}: {item.name}"
-                                self.log_message(msg, "info")
-                            else:
-                                msg = f"Failed to equip {item.name}"
-                                self.log_message(msg, "combat")
-                        else:
-                            # Fallback for older actor without equip_armor method
-                            slot_attr = f"equipped_{item.slot}"
-                            setattr(self.player, slot_attr, item)
-                            self.player.inventory.remove_item(item)
-                            self.player.update_stats()
-                            msg = f"Equipped {item.slot}: {item.name}"
-                            self.log_message(msg, "info")
+                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
+                slot = getattr(item, 'slot', None)
+                # --- Dual wield logic: allow dagger in offhand if main hand is dagger or empty ---
+                if slot == 'offhand' and hasattr(item, 'dual_wield') and item.dual_wield:
+                    main_weapon = getattr(self.player, 'weapon', None)
+                    # Only allow if main hand is empty or also a dual_wield dagger
+                    if main_weapon is None or (hasattr(main_weapon, 'dual_wield') and main_weapon.dual_wield):
+                        slot_empty = getattr(self.player, 'offhand', None) is None
                     else:
-                        msg = f"Cannot equip {item.name} - unknown slot: {item.slot}"
-                        self.log_message(msg, "combat")
+                        slot_empty = False
                 else:
-                    msg = f"Cannot equip {item.name} - not equipment"
-                    self.log_message(msg, "combat")
-
+                    # Only allow auto-equip if slot is empty
+                    if slot == 'weapon':
+                        slot_empty = getattr(self.player, 'weapon', None) is None
+                    elif slot == 'offhand':
+                        slot_empty = getattr(self.player, 'offhand', None) is None
+                    elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
+                        slot_empty = getattr(self.player, f'equipped_{slot}', None) is None
+                    else:
+                        slot_empty = False
+                if slot_empty:
+                    if hasattr(self.player, 'equip_item_by_uuid') and hasattr(item, 'uuid'):
+                        success = self.player.equip_item_by_uuid(item.uuid)
+                        if success:
+                            self.log_message(f"Equipped {display_name} (UUID: {item.uuid}).", "info")
+                        else:
+                            self.log_message(f"Failed to equip {display_name} (UUID: {item.uuid}).", "combat")
+                    else:
+                        # Fallback to slot-based equip
+                        if slot == 'weapon' and hasattr(self.player, 'equip_weapon'):
+                            self.player.equip_weapon(item)
+                            self.log_message(f"Equipped {display_name}.", "info")
+                        elif slot == 'offhand' and hasattr(self.player, 'equip_offhand'):
+                            self.player.equip_offhand(item)
+                            self.log_message(f"Equipped {display_name}.", "info")
+                        elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self.player, 'equip_armor'):
+                            self.player.equip_armor(item)
+                            self.log_message(f"Equipped {display_name}.", "info")
+                        else:
+                            self.log_message(f"Failed to equip {display_name}.", "combat")
+                else:
+                    self.log_message(f"Slot '{slot}' is already occupied or not allowed. Unequip first.", "combat")
                 self.update_inventory_display()
                 self.update_equipment_display()
                 self.update_char_info()
@@ -1706,17 +1976,18 @@ class SimpleGameDemo:
             items = self.player.inventory.list_items()
             if selection[0] < len(items):
                 item = items[selection[0]]
+                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
                 success = self.player.inventory.remove_item(item)
                 if success:
-                    self.log_message(f"Dropped {item.name}", "info")
+                    self.log_message(f"Dropped {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})", "info")
                 else:
-                    self.log_message(f"Could not drop {item.name}", "combat")
+                    self.log_message(f"Could not drop {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})", "combat")
                 self.update_inventory_display()
         except Exception as e:
             self.log_message(f"Error dropping item: {e}", "combat")
 
     def update_inventory_display(self):
-        """Update the inventory display."""
+        """Update the inventory display. Use display name, not item id."""
         if not hasattr(self, 'inventory_listbox'):
             return
 
@@ -1766,8 +2037,8 @@ class SimpleGameDemo:
                 self.inventory_listbox.insert(tk.END, "and shown in equipment")
             else:
                 for item in unequipped_items:
-                    # Just show item name for now
-                    display_text = getattr(item, 'name', str(item))
+                    # Prefer display_name, fallback to name, then id
+                    display_text = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
                     self.inventory_listbox.insert(tk.END, display_text)
         except Exception as e:
             self.inventory_listbox.insert(tk.END, f"Error: {e}")
@@ -1835,60 +2106,58 @@ class SimpleGameDemo:
         self.equipment_display.config(state="disabled")
 
     def unequip_item(self, slot):
-        """Unequip an item from the specified slot."""
+        """Unequip an item from the specified slot using UUID if possible."""
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!", "combat")
             return
-
         try:
-            if slot == "weapon":
-                if hasattr(self.player, 'weapon') and self.player.weapon:
-                    # Use the player's unequip_weapon method which returns the item
-                    unequipped_weapon = self.player.unequip_weapon()
-
-                    if unequipped_weapon:
-                        # The unequip_weapon method already adds to inventory
-                        msg = f"Unequipped weapon: {unequipped_weapon.name} (returned to inventory)"
-                        self.log_message(msg, "info")
-                    else:
-                        self.log_message("Failed to unequip weapon", "combat")
+            # Use UUID-based unequip if available
+            if hasattr(self.player, 'unequip_item_by_slot'):
+                unequipped = self.player.unequip_item_by_slot(slot)
+                if unequipped:
+                    display_name = getattr(unequipped, 'display_name', None) or getattr(unequipped, 'name', None) or getattr(unequipped, 'id', str(unequipped))
+                    msg = f"Unequipped {slot}: {display_name} (UUID: {getattr(unequipped, 'uuid', 'N/A')}) returned to inventory."
+                    self.log_message(msg, "info")
                 else:
-                    self.log_message("No weapon equipped", "info")
-
-            elif slot == "offhand":
-                if hasattr(self.player, 'offhand') and self.player.offhand:
-                    # Use the player's unequip_offhand method which returns the item
-                    unequipped_offhand = self.player.unequip_offhand()
-
-                    if unequipped_offhand:
-                        # The unequip_offhand method already adds to inventory
-                        msg = f"Unequipped offhand: {unequipped_offhand.name} (returned to inventory)"
-                        self.log_message(msg, "info")
-                    else:
-                        self.log_message("Failed to unequip offhand", "combat")
-                else:
-                    self.log_message("No offhand item equipped", "info")
-
-            elif slot == "body":
-                # Use the actor's unequip_armor method
-                if hasattr(self.player, 'unequip_armor'):
-                    unequipped_item = self.player.unequip_armor("body")
-                    if unequipped_item:
-                        # The unequip_armor method already adds to inventory
-                        msg = f"Unequipped body armor: {unequipped_item.name} (returned to inventory)"
-                        self.log_message(msg, "info")
-                    else:
-                        self.log_message("No body armor equipped", "info")
-                else:
-                    self.log_message("Armor unequipping not implemented", "combat")
+                    self.log_message(f"No item equipped in {slot} slot.", "info")
             else:
-                self.log_message(f"Unknown equipment slot: {slot}", "combat")
-
+                # Fallback to legacy slot-based unequip
+                if slot == "weapon":
+                    if hasattr(self.player, 'weapon') and self.player.weapon:
+                        unequipped_weapon = self.player.unequip_weapon()
+                        if unequipped_weapon:
+                            msg = f"Unequipped weapon: {unequipped_weapon.name} (returned to inventory)"
+                            self.log_message(msg, "info")
+                        else:
+                            self.log_message("Failed to unequip weapon", "combat")
+                    else:
+                        self.log_message("No weapon equipped", "info")
+                elif slot == "offhand":
+                    if hasattr(self.player, 'offhand') and self.player.offhand:
+                        unequipped_offhand = self.player.unequip_offhand()
+                        if unequipped_offhand:
+                            msg = f"Unequipped offhand: {unequipped_offhand.name} (returned to inventory)"
+                            self.log_message(msg, "info")
+                        else:
+                            self.log_message("Failed to unequip offhand", "combat")
+                    else:
+                        self.log_message("No offhand item equipped", "info")
+                elif slot == "body":
+                    if hasattr(self.player, 'unequip_armor'):
+                        unequipped_item = self.player.unequip_armor("body")
+                        if unequipped_item:
+                            msg = f"Unequipped body armor: {unequipped_item.name} (returned to inventory)"
+                            self.log_message(msg, "info")
+                        else:
+                            self.log_message("No body armor equipped", "info")
+                    else:
+                        self.log_message("Armor unequipping not implemented", "combat")
+                else:
+                    self.log_message(f"Unknown equipment slot: {slot}", "combat")
             # Update displays
             self.update_inventory_display()
             self.update_equipment_display()
             self.update_char_info()
-
         except Exception as e:
             self.log_message(f"Error unequipping {slot}: {e}", "combat")
 
@@ -2101,7 +2370,7 @@ class SimpleGameDemo:
         else:
             # Fallback to traditional RPG stats only
             allocatable_stats = [
-                'strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck'
+                'strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility'
             ]
 
         for stat in allocatable_stats:
@@ -3080,7 +3349,7 @@ class SimpleGameDemo:
                     4: ["mage_robes", "spell_focus", "boots_of_speed"],
                     5: ["arcane_staff", "archmage_robes", "vampiric_blade"],
                     10: ["ring_of_power", "cloak_of_fortune", "thornmail_armor"],
-                    15: ["orch_axe", "arcane_focus"],
+                    15: ["orc_axe", "arcane_focus"],
                     25: ["dragon_claw", "dragon_scale_armor"]
                 }
 
@@ -3141,7 +3410,7 @@ class SimpleGameDemo:
                     4: ["mage_robes", "spell_focus", "boots_of_speed"],
                     5: ["arcane_staff", "archmage_robes", "vampiric_blade"],
                     10: ["ring_of_power", "cloak_of_fortune", "thornmail_armor"],
-                    15: ["orch_axe", "arcane_focus"],
+                    15: ["orc_axe", "arcane_focus"],
                     25: ["dragon_claw", "dragon_scale_armor"]
                 }
 
@@ -3294,9 +3563,11 @@ class SimpleGameDemo:
                 )
 
                 if success:
-                    msg = f"Allocated 1 point to {stat_name}!"
-                    self.log_message(msg, "info")
-                    
+                    # Only log stat allocation if player is not an enemy (debug silence for enemies)
+                    is_enemy = hasattr(self.player, 'type') and getattr(self.player, 'type', None) == 'enemy'
+                    if not is_enemy:
+                        msg = f"Allocated 1 point to {stat_name}!"
+                        self.log_message(msg, "info")
                     # Update derived stats
                     if hasattr(self.player, 'update_stats'):
                         self.player.update_stats()
@@ -3348,7 +3619,7 @@ class SimpleGameDemo:
                 char_info += f"Health: {health_val}\n"
 
                 # --- Base Stats Section ---
-                rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck']
+                rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility']
                 if not hasattr(self.player, 'base_stats') or not isinstance(self.player.base_stats, dict):
                     self.player.base_stats = {stat: 10 for stat in rpg_stats}
                 else:
@@ -3510,6 +3781,29 @@ class SimpleGameDemo:
         self.selected_item_text = None
         self.log_message("Both selections cleared", "info")
         self.update_enchanting_feedback()
+
+
+    def setup_settings_tab(self):
+        """Set up the Settings tab with Save, Load, and Reload buttons."""
+        settings_frame = tk.Frame(self.settings_tab, bg="black")
+        settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        button_style = {
+            "bg": "#444",
+            "fg": "white",
+            "activebackground": "#666",
+            "activeforeground": "cyan",
+            "font": ("Segoe UI", 12, "bold"),
+            "relief": tk.RAISED,
+            "bd": 2,
+            "width": 18,
+            "height": 2
+        }
+
+        tk.Button(settings_frame, text="Save Game", command=self.save_game, **button_style).pack(pady=10)
+        tk.Button(settings_frame, text="Load Game", command=self.load_game, **button_style).pack(pady=10)
+        tk.Button(settings_frame, text="Reload Game", command=self.reload_game, **button_style).pack(pady=10)
+
 
 def main():
     """Main entry point for the demo."""

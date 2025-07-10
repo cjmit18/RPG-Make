@@ -73,7 +73,8 @@ class ScalingManager:
         wisdom_boost_mult = cfg.get('constants.combat.wisdom_multiplier', 5)
         constitution_boost_mult = cfg.get('constants.combat.constitution_multiplier', 0.5)
         luck_boost_mult = cfg.get('constants.combat.luck_multiplier', 0.5)
-        
+        agility_boost_mult = cfg.get('constants.combat.agility_multiplier', 1)
+
         # Validate the multiplier value
         if not isinstance(strength_boost_mult, (int, float)):
             scaling_logger.error(
@@ -110,6 +111,11 @@ class ScalingManager:
                 f"Invalid luck_multiplier: {luck_boost_mult}, using default 0.5"
             )
             luck_boost_mult = 0.5
+        if not isinstance(agility_boost_mult, (int, float)):
+            scaling_logger.error(
+                f"Invalid agility_multiplier: {agility_boost_mult}, using default 1"
+            )
+            agility_boost_mult = 1
             
         # Calculate the boost 
         strength_boost = int(level * multiplier * strength_boost_mult)
@@ -119,6 +125,7 @@ class ScalingManager:
         wisdom_boost = int(level * multiplier * wisdom_boost_mult)
         constitution_boost = int(level * multiplier * constitution_boost_mult)
         luck_boost = int(level * multiplier * luck_boost_mult)
+        agility_boost = int(level * multiplier * agility_boost_mult)
         boost = {
             'strength': strength_boost,
             'dexterity': dexterity_boost,
@@ -126,8 +133,9 @@ class ScalingManager:
             'intelligence': intelligence_boost,
             'wisdom': wisdom_boost,
             'constitution': constitution_boost,
-            'luck': luck_boost
-            }
+            'luck': luck_boost,
+            'agility': agility_boost
+        }
         if hasattr(enemy, 'base_stats'):
             for stat, value in boost.items():
                 old_value = enemy.base_stats.get(stat, 0)
@@ -148,10 +156,9 @@ class ScalingManager:
     _derived_map = {
         'attack': 'strength',
         'defense': 'vitality',
-        'speed': 'dexterity',
-        'dodge_chance': 'dexterity',
-        'block_chance': 'constitution',
-        'magic_damage': 'magic_power',
+        'speed': 'agility',
+        'dodge_chance': 'agility',
+        'block_chance': 'strength',
         'magic_resistance': 'wisdom',
         'physical_damage': 'strength',
         'damage_reduction': 'vitality',
@@ -167,12 +174,12 @@ class ScalingManager:
         'magic_power': 'intelligence',
         # Modernized derived stats
         'accuracy': 'dexterity',
-        'evasion': 'dexterity',
-        'parry_chance': 'dexterity',
+        'evasion': 'agility',
+        'parry_chance': 'agility',
         'resilience': 'constitution',
         'spell_power': 'intelligence',
         'focus': 'wisdom',
-        'initiative': 'speed'
+        'initiative': 'agility'
     }
     
     @classmethod
@@ -195,11 +202,27 @@ class ScalingManager:
             base_key = cls._derived_map[stat_name]
             base_val = actor.base_stats.get(base_key, 0.0)
             mult = cfg.get(f'constants.derived_stats.{stat_name}', 1.0)
-            derived_component = base_val * mult
             
+            # Validate numeric types
+            if not isinstance(base_val, (int, float)):
+                scaling_logger.error(f"Non-numeric base value for {stat_name}: {base_val}, defaulting to 0.0")
+                base_val = 0.0
+            if not isinstance(mult, (int, float)):
+                scaling_logger.error(f"Non-numeric multiplier for {stat_name}: {mult}, defaulting to 1.0")
+                mult = 1.0
+                
+            # Convert to float for consistent multiplication
+            base_val = float(base_val)
+            mult = float(mult)
+            
+            derived_component = base_val * mult
             # For defense, also include any direct base defense bonuses
             if stat_name == 'defense':
                 base_defense = actor.base_stats.get('defense', 0.0)
+                if not isinstance(base_defense, (int, float)):
+                    scaling_logger.error(f"Non-numeric base defense: {base_defense}, defaulting to 0.0")
+                    base_defense = 0.0
+                base_defense = float(base_defense)
                 raw = derived_component + base_defense
                 scaling_logger.debug(
                     f"Hybrid stat: {stat_name} = derived({base_key}={base_val} "
@@ -211,6 +234,14 @@ class ScalingManager:
                     f"Derived stat: {stat_name} from {base_key}={base_val}, "
                     f"multiplier={mult}, result={raw}"
                 )
+
+            # Clamp chance-based stats to [0, 1]
+            if stat_name in ['parry_chance', 'block_chance', 'dodge_chance', 'critical_chance', 'luck_factor']:
+                if isinstance(raw, (int, float)):
+                    if raw < 0:
+                        raw = 0.0
+                    elif raw > 1:
+                        raw = 1.0
         else:
             raw = actor.base_stats.get(stat_name, 0.0)
             scaling_logger.debug(f"Base stat: {stat_name}={raw}")
@@ -296,8 +327,8 @@ class ScalingManager:
         elif hasattr(actor, 'grade') and isinstance(actor.grade, str):
             grade_key = actor.grade
         elif hasattr(actor, 'grade') and isinstance(actor.grade, int):
-            grade_list = cfg.get('defaults.grades', [])
-            if 0 <= actor.grade < len(grade_list):
+            grade_list = cfg.get('defaults.grades', []) or []
+            if isinstance(grade_list, list) and 0 <= actor.grade < len(grade_list):
                 grade_key = grade_list[actor.grade]
         # If mapping, use mapping; if float, use as flat multiplier
         if isinstance(grade_mult_map, dict):
@@ -305,12 +336,16 @@ class ScalingManager:
                 grade_mult = grade_mult_map[grade_key]
         elif isinstance(grade_mult_map, (float, int)):
             grade_mult = float(grade_mult_map)
-        if grade_mult > 0.0:
-            old_val = raw
-            raw *= (1.0 + grade_mult)
-            scaling_logger.debug(
-                f"Applied grade {grade_key} multiplier: {old_val} -> {raw}"
-            )
+        # Only apply multiplier to numeric stats
+        if grade_mult > 0.0 and isinstance(raw, (int, float)):
+            try:
+                old_val = raw
+                raw = float(raw) * (1.0 + float(grade_mult))
+                scaling_logger.debug(
+                    f"Applied grade {grade_key} multiplier: {old_val} -> {raw}"
+                )
+            except Exception as e:
+                scaling_logger.error(f"Grade multiplier error for stat '{stat_name}': {e}")
 
         # 4) Rarity multiplier (per-rarity config mapping, robust to float fallback)
         rarity_mult_map = (
@@ -324,20 +359,24 @@ class ScalingManager:
         elif hasattr(actor, 'rarity') and isinstance(actor.rarity, str):
             rarity_key = actor.rarity
         elif hasattr(actor, 'job_level') and isinstance(actor.job_level, int):
-            rarity_list = cfg.get('defaults.rarities', [])
-            if 0 <= actor.job_level < len(rarity_list):
+            rarity_list = cfg.get('defaults.rarities', []) or []
+            if isinstance(rarity_list, list) and 0 <= actor.job_level < len(rarity_list):
                 rarity_key = rarity_list[actor.job_level]
         if isinstance(rarity_mult_map, dict):
             if rarity_key and rarity_key in rarity_mult_map:
                 rarity_mult = rarity_mult_map[rarity_key]
         elif isinstance(rarity_mult_map, (float, int)):
             rarity_mult = float(rarity_mult_map)
-        if rarity_mult > 0.0:
-            old_val = raw
-            raw *= (1.0 + rarity_mult)
-            scaling_logger.debug(
-                f"Applied rarity {rarity_key} multiplier: {old_val} -> {raw}"
-            )
+        # Only apply multiplier to numeric stats
+        if rarity_mult > 0.0 and isinstance(raw, (int, float)):
+            try:
+                old_val = raw
+                raw = float(raw) * (1.0 + float(rarity_mult))
+                scaling_logger.debug(
+                    f"Applied rarity {rarity_key} multiplier: {old_val} -> {raw}"
+                )
+            except Exception as e:
+                scaling_logger.error(f"Rarity multiplier error for stat '{stat_name}': {e}")
 
         scaling_logger.debug(f"Final {stat_name} value for {actor_name}: {raw}")
         return raw
@@ -409,21 +448,30 @@ class ScalingManager:
         defender_name = getattr(defender, 'name', 'Unknown Defender')
         
         scaling_logger.info(
-            f"Computing damage from {attacker_name} to {defender_name}"
+            f"Computing damage: {attacker_name} -> {defender_name}"
         )
         
-        # Debug packet details
-        scaling_logger.debug("Processing damage packet details:")
-        scaling_logger.debug(f"  base_damage: {packet.base_damage}")
-        scaling_logger.debug(f"  weapon_type: {packet.weapon_type}")
-        scaling_logger.debug(f"  modifiers: {packet.damage_modifiers}")
+        # 1) Effective base damage
+        dmg = packet.get_effective_damage()
+        scaling_logger.debug(f"Base effective damage: {dmg}")
         
-        # 1) Start with base damage and apply packet modifiers
-        multiplier = packet.get_total_multiplier()
-        dmg = packet.base_damage * multiplier
-        scaling_logger.debug(f"Total multiplier from modifiers: {multiplier}")
-        scaling_logger.debug(f"Initial damage after modifiers: {dmg}")
+        # Apply a reasonable damage cap based on attacker level and target health
+        attacker_level = getattr(attacker, 'level', 1)
+        target_max_health = getattr(defender, 'max_health', 100.0)
         
+        # Cap damage to a percentage of target's max health based on level difference
+        level_diff = max(0, attacker_level - getattr(defender, 'level', 1))
+        max_percent_damage = min(0.5, 0.25 + (level_diff * 0.05))  # 25% base, +5% per level diff, max 50%
+        damage_cap = target_max_health * max_percent_damage
+        
+        # Apply damage cap if damage is unreasonably high
+        if dmg > damage_cap:
+            old_dmg = dmg
+            dmg = damage_cap
+            scaling_logger.warning(
+                f"Damage capped from {old_dmg:.2f} to {dmg:.2f} ({max_percent_damage*100:.0f}% of target health)"
+            )
+            
         # 2) Effects pipeline
         if flags.is_enabled('effects') and packet.attacker and packet.defender:
             effect_ids = (
@@ -549,10 +597,13 @@ class ScalingManager:
             return
             
         available_points = leveling_manager.calculate_stat_points_available(character)
-        scaling_logger.info(f"Character {getattr(character, 'name', 'Unknown')} has {available_points} stat points to allocate")
+        is_enemy = hasattr(character, 'type') and getattr(character, 'type', None) == 'enemy'
+        if not is_enemy:
+            scaling_logger.info(f"Character {getattr(character, 'name', 'Unknown')} has {available_points} stat points to allocate")
         
         if available_points <= 0:
-            scaling_logger.info("No stat points to allocate")
+            if not is_enemy:
+                scaling_logger.info("No stat points to allocate")
             return
             
         # Get allocatable stats
@@ -566,14 +617,15 @@ class ScalingManager:
             return
             
         # Filter to only base RPG stats (not derived stats like attack, defense, etc.)
-        base_rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck']
+        base_rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility']
         filtered_stats = [stat for stat in allocatable_stats if stat in base_rpg_stats]
         
         if not filtered_stats:
             scaling_logger.warning("No base RPG stats available for allocation")
             return
             
-        scaling_logger.info(f"Base RPG stats for allocation: {filtered_stats}")
+        if not is_enemy:
+            scaling_logger.info(f"Base RPG stats for allocation: {filtered_stats}")
         
         # Distribute points evenly across base RPG stats only
         points_allocated = 0
@@ -583,17 +635,21 @@ class ScalingManager:
                 success = leveling_manager.allocate_stat_point(character, stat_to_allocate)
                 if success:
                     points_allocated += 1
-                    scaling_logger.debug(f"Allocated 1 point to {stat_to_allocate}")
+                    if not is_enemy:
+                        scaling_logger.debug(f"Allocated 1c point to {stat_to_allocate}")
                 else:
-                    scaling_logger.warning(f"Failed to allocate point to {stat_to_allocate}")
+                    if not is_enemy:
+                        scaling_logger.warning(f"Failed to allocate point to {stat_to_allocate}")
             else:
                 scaling_logger.warning("Leveling manager has no allocate_stat_point method")
                 break
                 
-        scaling_logger.info(f"Successfully allocated {points_allocated} out of {available_points} stat points")
+        if not is_enemy:
+            scaling_logger.info(f"Successfully allocated {points_allocated} out of {available_points} stat points")
         
         # Force stat recalculation
         if hasattr(character, 'update_stats'):
             character.update_stats()
             character.restore_all()
-            scaling_logger.info("Character stats updated after point allocation")
+            if not is_enemy:
+                scaling_logger.info("Character stats updated after point allocation")

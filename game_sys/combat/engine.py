@@ -32,7 +32,118 @@ class RandomProtocol(Protocol):
     def seed(self, seed: int) -> None: ...
 
 
+
 class CombatEngine:
+    # --- ASYNC HOOKS: These can be extended or monkey-patched as needed --- #
+    async def on_pre_attack(self, attacker, targets, weapon):
+        """Async hook: called before attack is resolved. Override for effects, logging, etc."""
+        pass
+
+    async def on_post_attack(self, attacker, targets, outcome):
+        """Async hook: called after attack is resolved. Override for effects, logging, etc."""
+        pass
+
+    async def on_attack_hit(self, attacker, defender, damage, outcome):
+        """Async hook: called when an attack hits. Override for effects, animations, etc."""
+        pass
+
+    async def on_attack_miss(self, attacker, defender, outcome):
+        """Async hook: called when an attack misses. Override for effects, animations, etc."""
+        pass
+
+    # --- ASYNC AI HOOKS --- #
+    async def on_ai_turn_start(self, ai_actor, player, outcome):
+        """Async hook: called before an AI actor takes its turn. Override for effects, logging, etc."""
+        pass
+
+    async def on_ai_turn_end(self, ai_actor, player, outcome):
+        """Async hook: called after an AI actor takes its turn. Override for effects, logging, etc."""
+        pass
+
+    async def process_ai_responses_async(self, attacker, targets, outcome):
+        """
+        Async version of AI response processing. Calls async AI controller if available, else falls back to sync.
+        """
+        if not self._ai_controller:
+            return
+        ai_actors = []
+        for target in targets:
+            if (target and hasattr(target, 'is_alive') and target.is_alive() and hasattr(target, 'ai_enabled') and target.ai_enabled):
+                ai_actors.append(target)
+        player = None
+        for t in [attacker] + targets:
+            if hasattr(t, 'is_player') and t.is_player:
+                player = t
+                break
+        if not player:
+            for t in [attacker] + targets:
+                if not (hasattr(t, 'ai_enabled') and t.ai_enabled):
+                    player = t
+                    break
+        for ai_actor in ai_actors:
+            try:
+                await self.on_ai_turn_start(ai_actor, player, outcome)
+                # Prefer async AI controller if available
+                ai_ctrl = self._ai_controller
+                if hasattr(ai_ctrl, 'process_ai_turn_async') and callable(getattr(ai_ctrl, 'process_ai_turn_async')):
+                    await ai_ctrl.process_ai_turn_async(ai_actor, player, 0.0)
+                elif hasattr(ai_ctrl, 'process_ai_turn') and callable(getattr(ai_ctrl, 'process_ai_turn')):
+                    ai_ctrl.process_ai_turn(ai_actor, player, 0.0)
+                await self.on_ai_turn_end(ai_actor, player, outcome)
+            except Exception as e:
+                combat_logger.warning(f"Error processing async AI responses: {e}")
+
+    async def execute_attack_async(
+        self, attacker: "Actor", targets: List["Actor"], weapon: Any | None = None
+    ) -> "CombatOutcome":
+        """
+        Async version of execute_attack_sync. Use this in async game loops.
+        Mirrors execute_attack_sync, but allows for awaitable hooks or delays in the future.
+        """
+        # Practical async hooks: pre-attack, post-attack, on-hit, on-miss
+        await self.on_pre_attack(attacker, targets, weapon)
+        # Call the sync version for now, but process events for async hooks
+        outcome = self.execute_attack_sync(attacker, targets, weapon)
+        # For each event, call appropriate async hooks
+        for event in getattr(outcome, 'events', []):
+            if hasattr(event, 'event_type'):
+                et = event.event_type.name if hasattr(event.event_type, 'name') else str(event.event_type)
+                if et == 'DAMAGE_DEALT' and getattr(event, 'was_critical', False) is not None:
+                    await self.on_attack_hit(event.attacker, event.defender, getattr(event, 'damage', 0), outcome)
+                elif et in ('ATTACK_MISSED', 'ATTACK_DODGED'):
+                    await self.on_attack_miss(event.attacker, event.defender, outcome)
+        await self.on_post_attack(attacker, targets, outcome)
+        return outcome
+
+    async def execute_spell_attack_async(
+        self, actor: "Actor", targets: list, spell_info: dict
+    ) -> "CombatOutcome":
+        """
+        Async version of spell attack execution for compatibility with async TurnManager.
+        Mirrors the sync pathway, but allows for awaitable hooks or delays in the future.
+        """
+        # Set up spell state as in the sync pathway if needed
+        actor_id = getattr(actor, 'id', str(id(actor)))
+        if not hasattr(self, '_casting_states'):
+            self._casting_states = {}
+        if actor_id not in self._casting_states:
+            self._casting_states[actor_id] = {}
+        self._casting_states[actor_id]['executing'] = True
+        actor._spell_state = True
+        spell_id = spell_info.get('id')
+        if spell_id:
+            actor.pending_spell = spell_id
+        try:
+            # Call the sync attack for now
+            return self.execute_attack_sync(actor, targets, weapon=None)
+        finally:
+            if hasattr(actor, '_spell_state'):
+                delattr(actor, '_spell_state')
+            if hasattr(actor, 'pending_spell'):
+                delattr(actor, 'pending_spell')
+            if (actor_id in self._casting_states and
+                    'executing' in self._casting_states[actor_id]):
+                del self._casting_states[actor_id]['executing']
     """
     Core combat engine that processes attacks, defenses, and outcomes.
     
@@ -127,6 +238,24 @@ class CombatEngine:
         self, attacker: "Actor", targets: List["Actor"],
         weapon: Any | None = None
     ) -> CombatOutcome:
+        # --- Stamina enforcement for attacks ---
+        from game_sys.config.config_manager import ConfigManager
+        cfg = ConfigManager()
+        stamina_cost = cfg.get("constants.combat.stamina_costs.attack", 5)
+        # Only operate if attacker has a numeric current_stamina attribute
+        current_stamina = getattr(attacker, 'current_stamina', None)
+        # Defensive: ensure both are numbers
+        if not (isinstance(current_stamina, (int, float)) and isinstance(stamina_cost, (int, float))):
+            return CombatOutcome(False, [], description=f"{getattr(attacker, 'name', 'Attacker')} has no usable stamina stat!")
+        if float(current_stamina) < float(stamina_cost):
+            return CombatOutcome(
+                False, [],
+                description=f"{getattr(attacker, 'name', 'Attacker')} is too exhausted to attack! (Needs {stamina_cost} stamina)"
+            )
+        # Deduct stamina immediately
+        attacker.current_stamina = float(current_stamina) - float(stamina_cost)
+        if attacker.current_stamina < 0:
+            attacker.current_stamina = 0
         # Input validation
         if not attacker:
             combat_logger.warning("Attack failed: Invalid attacker")
@@ -145,18 +274,26 @@ class CombatEngine:
             )
         
         weapon = weapon or getattr(attacker, 'weapon', None)
-        weapon_name = getattr(weapon, 'name', 'Unarmed')
-        combat_logger.debug(f"Attacker {attacker.name} using {weapon_name}")
-        
-        # Validate weapon exists OR attacker has pending spell/ability
+        # If no weapon and not casting a spell, assign 'empty_hands' weapon
         has_spell = (hasattr(attacker, 'pending_spell') or
                      hasattr(attacker, 'casting_spell') or
                      self._is_casting_spell(attacker))
-        
         if not weapon and not has_spell:
-            return CombatOutcome(
-                False, [], description="No valid weapon or spell available"
-            )
+            try:
+                from game_sys.items.factory import ItemFactory
+                weapon = ItemFactory.create('empty_hands')
+                combat_logger.debug(
+                    f"Assigned 'empty_hands' weapon to {attacker.name}"
+                )
+            except Exception as e:
+                combat_logger.warning(
+                    f"Could not assign 'empty_hands' weapon: {e}"
+                )
+                return CombatOutcome(
+                    False, [], description="No valid weapon or spell available"
+                )
+        weapon_name = getattr(weapon, 'name', 'Unarmed')
+        combat_logger.debug(f"Attacker {attacker.name} using {weapon_name}")
             
         # For weapons, validate required attributes
         if weapon and not (
@@ -195,9 +332,9 @@ class CombatEngine:
                     target.is_alive() and
                     target != attacker):  # Don't allow self-attack
                 valid_targets.append(target)
-                print(f"  -> VALID TARGET")
+                print("  -> VALID TARGET")
             else:
-                print(f"  -> INVALID TARGET")
+                print("  -> INVALID TARGET")
 
         if not valid_targets:
             return CombatOutcome(
@@ -255,26 +392,44 @@ class CombatEngine:
         atk_cp = CombatCapabilities(attacker, defender, self._rng)
         def_cp = CombatCapabilities(defender, attacker, self._rng)
 
-        # Modern hit chance calculation: accuracy vs dodge, clamped
-        attacker_accuracy = attacker.get_stat('accuracy')
-        defender_dodge = defender.get_stat('dodge_chance')
-        defender_evasion = defender.get_stat('evasion')
-        defender_parry = defender.get_stat('parry_chance')
-        defender_resilience = defender.get_stat('resilience')
-        attacker_focus = attacker.get_stat('focus')
+
+        # --- Modern hit, evade, block, parry logic using stat ranges ---
+        import random
+        # Add some randomness to accuracy and evasion for each attack
+        accuracy_base = attacker.get_stat('accuracy')
+        evasion_base = defender.get_stat('evasion')
+        dodge_base = defender.get_stat('dodge_chance')
+        parry_base = defender.get_stat('parry_chance')
+        block_base = defender.get_stat('block_chance')
+        resilience_base = defender.get_stat('resilience')
+        focus_base = attacker.get_stat('focus')  # noqa: F841
+        
+
+        # Define a range (e.g., ±10%) for each stat
+        def stat_with_variance(base, variance=0.1):
+            spread = base * variance
+            return random.uniform(base - spread, base + spread)
+
+        attacker_accuracy = stat_with_variance(accuracy_base, 0.1)
+        defender_evasion = stat_with_variance(evasion_base, 0.1)
+        defender_dodge = stat_with_variance(dodge_base, 0.1)
+        defender_parry = stat_with_variance(parry_base, 0.1)
+        defender_block = stat_with_variance(block_base, 0.1)
+        defender_resilience = stat_with_variance(resilience_base, 0.1)
+
         print(
-            f"DEBUG: Modern hit_chance = (accuracy={attacker_accuracy}, dodge={defender_dodge})"
+            f"DEBUG: Modern hit_chance = (accuracy={attacker_accuracy:.3f}, "
+            f"dodge={defender_dodge:.3f})"
         )
         # Clamp: min 0.05, max 0.95, base 0.85 offset for typical RPG feel
         hit_chance = max(
             0.05,
             min(0.95, attacker_accuracy - defender_dodge + 0.85)
         )
-        # Initiative could be used for turn order elsewhere
-        # Evasion: roll after hit, before block
-        evasion_roll = self._rng.random()
-        print(f"DEBUG: Evasion check - RNG={evasion_roll}, evasion={defender_evasion}")
-        if evasion_roll < defender_evasion:
+
+        # Evasion: attacker_accuracy vs defender_evasion (with variance)
+        print(f"DEBUG: Evasion check - accuracy={attacker_accuracy:.3f}, evasion={defender_evasion:.3f}")
+        if attacker_accuracy < defender_evasion:
             attack_event = AttackEvent(
                 event_type=CombatEventType.ATTACK_DODGED,
                 attacker=attacker,
@@ -286,12 +441,11 @@ class CombatEngine:
             attack_event.was_hit = False
             attack_event.final_damage = 0.0
             out.add_event(attack_event)
-            out.description = f"{defender.name} evaded {attacker.name}'s attack"
+            out.description = (
+                f"{defender.name} dodged {attacker.name}'s attack! (No damage dealt)"
+            )
+            combat_logger.info(out.description)
             return out
-        
-        # Note: base_damage calculation removed to avoid divergent maths
-        # Real damage comes from ScalingManager.compute_damage()
-        # Future: pass base_damage via DamagePacket to ScalingManager
 
         # --- start event
         attack_event = AttackEvent(
@@ -304,22 +458,22 @@ class CombatEngine:
         )
         out.add_event(attack_event)
 
-        # miss?
-        rng_value = self._rng.random()
-        print(f"DEBUG: Hit check - RNG={rng_value}, hit_chance={hit_chance}")
-        if rng_value > hit_chance:
+        # miss? (accuracy vs dodge)
+        print(f"DEBUG: Hit check - accuracy={attacker_accuracy}, dodge={defender_dodge}, hit_chance={hit_chance}")
+        if attacker_accuracy < defender_dodge:
             attack_event.was_hit = False
             attack_event.final_damage = 0.0  # No damage on miss
-            out.add_event(CombatEvent(
-                CombatEventType.ATTACK_MISSED, attacker, defender))
+            miss_event = CombatEvent(
+                CombatEventType.ATTACK_MISSED, attacker, defender)
+            out.add_event(miss_event)
             # Set a descriptive outcome for miss
-            miss_desc = f"{attacker.name}'s attack missed {defender.name}"
+            miss_desc = f"{attacker.name}'s attack missed {defender.name}! (No damage dealt)"
             out.description = miss_desc
+            combat_logger.info(miss_desc)
             return out
-        # Dodge is now fully handled by hit_chance; no separate dodge roll.
 
-        # block?
-        print(f"DEBUG: Checking if {defender.name} can block...")
+        # block? (accuracy vs block)
+        print(f"DEBUG: Checking if {defender.name} can block... accuracy={attacker_accuracy}, block={defender_block}")
         has_offhand = (
             hasattr(defender, 'offhand') and defender.offhand is not None
         )
@@ -327,7 +481,7 @@ class CombatEngine:
             getattr(defender.offhand, 'name', 'None')
             if has_offhand else 'None'
         )
-        block_chance_stat = defender.get_stat('block_chance')
+        block_chance_stat = defender_block
         print(f"DEBUG: Has offhand: {has_offhand}, Offhand: {offhand_name}")
         print(f"DEBUG: Block chance stat: {block_chance_stat}")
         if has_offhand and hasattr(defender.offhand, 'block_chance'):
@@ -335,43 +489,24 @@ class CombatEngine:
                 f"DEBUG: Offhand block chance: "
                 f"{defender.offhand.block_chance}"
             )
-        if def_cp.can_block():
+        if def_cp.can_block() and attacker_accuracy < defender_block:
             print("DEBUG: Attack was BLOCKED!")
-            # Parry check after block triggers
-            parry_roll = self._rng.random()
-            print(f"DEBUG: Parry check - RNG={parry_roll}, parry={defender_parry}")
-            if parry_roll < defender_parry:
-                attack_event = AttackEvent(
-                    event_type=CombatEventType.ATTACK_BLOCKED,
-                    attacker=attacker,
-                    defender=defender,
-                    weapon=weapon,
-                    hit_chance=hit_chance,
-                    base_damage=0.0
-                )
-                attack_event.was_hit = False
-                attack_event.final_damage = 0.0
-                out.add_event(attack_event)
-                out.description = f"{defender.name} parried {attacker.name}'s attack!"
+            # Parry check after block triggers (accuracy vs parry)
+            print(f"DEBUG: Parry check - accuracy={attacker_accuracy}, parry={defender_parry}")
+            if attacker_accuracy < defender_parry:
+                # Parry successful
+                parry_event = CombatEvent(
+                    CombatEventType.ATTACK_PARRIED, attacker, defender)
+                out.add_event(parry_event)
+                out.description = f"{defender.name} parried {attacker.name}'s attack! (No damage dealt)"
                 combat_logger.info(out.description)
-                # Optionally: implement counterattack here
                 return out
             else:
-                attack_event = AttackEvent(
-                    event_type=CombatEventType.ATTACK_BLOCKED,
-                    attacker=attacker,
-                    defender=defender,
-                    weapon=weapon,
-                    hit_chance=hit_chance,
-                    base_damage=0.0
-                )
-                attack_event.was_hit = False
-                attack_event.final_damage = 0.0  # No damage on block
-                out.add_event(attack_event)
-                # Set a descriptive outcome for block
-                block_desc = f"{defender.name} blocked {attacker.name}'s attack"
-                out.description = block_desc
-                combat_logger.info(block_desc)
+                block_event = CombatEvent(
+                    CombatEventType.ATTACK_BLOCKED, attacker, defender)
+                out.add_event(block_event)
+                out.description = f"{defender.name} blocked {attacker.name}'s attack! (No damage dealt)"
+                combat_logger.info(out.description)
                 return out
 
         # Hit successful!
@@ -398,12 +533,34 @@ class CombatEngine:
             f"{pending_spell_value}"
         )
         
-        # Calculate intellect bonus
-        intellect_value = attacker.get_stat('intellect')
-        intellect_multiplier = intellect_value / 10.0
+        # Calculate intelligence bonus (use correct stat name)
+        intelligence_value = attacker.get_stat('intelligence')
+        intelligence_multiplier = intelligence_value / 10.0
+        # Crit chance base value from config or stat
+        from game_sys.config.config_manager import ConfigManager
+        cfg = ConfigManager()
+        # Use derived_stats.critical_chance as the config default
+        base_crit_chance = cfg.get('constants.derived_stats.critical_chance', 0.01)
+        # Ensure base_crit_chance is a float
+        if not isinstance(base_crit_chance, (int, float)):
+            base_crit_chance = 0.01
+        # Allow override from character stat if present
+        stat_crit_chance = attacker.get_stat('critical_chance')
+        if isinstance(stat_crit_chance, (int, float)):
+            base_crit_chance = stat_crit_chance
+        # Physical crit chance: increased by dexterity
+        dexterity_value = attacker.get_stat('dexterity')
+        if not isinstance(dexterity_value, (int, float)):
+            dexterity_value = 0.0
+        physical_crit_chance = base_crit_chance + (dexterity_value / 100.0)
+        # Spell crit chance: increased by focus
+        focus_value = attacker.get_stat('focus')
+        if not isinstance(focus_value, (int, float)):
+            focus_value = 0.0
+        spell_crit_chance = base_crit_chance + (focus_value / 100.0)
         combat_logger.debug(
-            f"{attacker.name} intellect: {intellect_value} "
-            f"(multiplier: {intellect_multiplier:.2f})"
+            f"{attacker.name} intelligence: {intelligence_value} "
+            f"(multiplier: {intelligence_multiplier:.2f}), focus: {focus_value} (spell crit+{spell_crit_chance:.2%}), dexterity: {dexterity_value} (phys crit+{physical_crit_chance:.2%}), base_crit_chance: {base_crit_chance:.2%}"
         )
         
         # Determine if we should use spell path
@@ -419,6 +576,16 @@ class CombatEngine:
         should_use_spell_path = (
             is_spell_state or has_spell or (not is_weapon_attack and is_mage)
         )
+
+        # --- PATCH: If not is_weapon_attack and not should_use_spell_path, force empty_hands weapon ---
+        if not is_weapon_attack and not should_use_spell_path:
+            try:
+                from game_sys.items.factory import ItemFactory
+                weapon = ItemFactory.create('empty_hands')
+                is_weapon_attack = True
+                combat_logger.debug(f"Forced 'empty_hands' weapon for {attacker.name} (no fallback)")
+            except Exception as e:
+                combat_logger.warning(f"Could not assign 'empty_hands' weapon in _attack_vs_single_internal: {e}")
         
         print("DEBUG: Combat path decision:")
         print(f"  has_spell_state: {has_spell_state}")
@@ -433,59 +600,54 @@ class CombatEngine:
         
         if should_use_spell_path:
             print("DEBUG: Using SPELL DAMAGE PATH")
-            
             # Get the spell_id from the actor's pending_spell
-            spell_id = getattr(
-                attacker, 'pending_spell', 'fireball'
-            )  # Default to fireball
+            spell_id = getattr(attacker, 'pending_spell', 'fireball')
             print(f"DEBUG: Spell ID from actor: {spell_id}")
-            
-            # Load the actual spell to get its base_power
+            # Load the actual spell to get its base_power and damage_type
             base_power = 50  # Default if we can't load the spell
+            spell_damage_type = None
             try:
                 from game_sys.magic.spell_loader import load_spell
                 spell = load_spell(spell_id)
                 if spell:
-                    # Get the actual base_power from the spell
                     base_power = spell.base_power
-                    print(
-                        f"DEBUG: Loaded spell {spell_id} "
-                        f"with base_power: {base_power}"
-                    )
+                    spell_damage_type = getattr(spell, 'damage_type', None)
+                    print(f"DEBUG: Loaded spell {spell_id} with base_power: {base_power} and damage_type: {spell_damage_type}")
             except Exception as e:
                 print(f"DEBUG: Error loading spell: {e}")
-            
-            # Apply intellect enhancement formula:
-            # base_power * (1 + intellect/10)
-            enhanced_power = base_power * (1.0 + intellect_multiplier)
-            
-            print("DEBUG: Intellect enhancement formula:")
+            # Apply intelligence and magic power enhancement formula:
+            magic_power = attacker.get_stat('magic_power') or 1.0
+            enhanced_power = base_power * (1.0 + intelligence_multiplier) * magic_power
+            print("DEBUG: Intelligence & magic power enhancement formula:")
             print(f"  Base power: {base_power}")
-            print(f"  Intellect: {intellect_value}")
-            print(f"  Multiplier: {intellect_multiplier}")
+            print(f"  Intelligence: {intelligence_value}")
+            print(f"  Multiplier: {intelligence_multiplier}")
+            print(f"  Magic Power: {magic_power}")
             print(f"  Enhanced power: {enhanced_power}")
-            
-            # Create spell packet
+            # Always use the spell's damage_type if available, else fallback to MAGIC
+            if spell_damage_type is None:
+                from game_sys.core.damage_types import DamageType
+                spell_damage_type = DamageType.MAGIC
             spell_packet = DamagePacket.from_spell_cast(
-                attacker, defender, enhanced_power, spell_id
+                attacker, defender, enhanced_power, spell_id, damage_type=spell_damage_type
             )
-            print(
-                f"DEBUG: Created spell packet with "
-                f"enhanced_power={enhanced_power}"
+            # Use logger for debug output instead of print
+            combat_logger.debug(
+                f"Created spell packet with enhanced_power={enhanced_power} and damage_type={spell_damage_type}"
             )
-            
-            # Apply modifiers
-            spell_packet.apply_modifier("spell_bonus", 2.0)
-            print("DEBUG: Applied spell_bonus=2.0 to packet")
-            print(
-                f"DEBUG: Final packet base_damage: "
-                f"{spell_packet.base_damage}"
-            )
-            print(
-                f"DEBUG: Final effective damage: "
-                f"{spell_packet.get_effective_damage()}"
-            )
-            
+            # Get spell bonus from config
+            spell_bonus = cfg.get('constants.combat.spell_bonus', 2.0)
+            if not isinstance(spell_bonus, (int, float)):
+                spell_bonus = 2.0
+            spell_packet.apply_modifier("spell_bonus", float(spell_bonus))
+            combat_logger.debug(f"Applied spell_bonus={spell_bonus} to packet")
+            combat_logger.debug(f"Final packet base_damage: {spell_packet.base_damage}")
+            combat_logger.debug(f"Final effective damage: {spell_packet.get_effective_damage()}")
+            # --- Spell Crit Calculation ---
+            import random
+            spell_crit_roll = random.random()
+            is_spell_crit = spell_crit_roll < spell_crit_chance
+            combat_logger.debug(f"Spell crit roll: {spell_crit_roll:.3f} vs chance: {spell_crit_chance:.3f}")
             damage_packet = spell_packet
         elif weapon:
             print("DEBUG: Using WEAPON DAMAGE PATH")
@@ -494,30 +656,43 @@ class CombatEngine:
             )
         else:
             # Fallback to old calculation
-            print("DEBUG: Using FALLBACK INTELLECT DAMAGE")
-            spell_power = intellect_value * 5.0
-            
+            print("DEBUG: Using FALLBACK INTELLIGENCE DAMAGE")
+            # Fallback: use a flat, low base damage (not based on intelligence)
+            fallback_base_damage = 8.0  # You can tune this value for balance
             spell_packet = DamagePacket.from_spell_cast(
-                attacker, defender, spell_power
+                attacker, defender, fallback_base_damage, damage_type=None
             )
-            spell_packet.apply_modifier("spell_bonus", 2.0)
-            
+            # No luck or stat-based bonus for fallback
             damage_packet = spell_packet
         
         base_dmg = ScalingManager.compute_damage_from_packet(damage_packet)
         print(f"DEBUG: ScalingManager returned base damage: {base_dmg}")
-        
-        # Focus: increases spell crit chance (handled in spell logic if needed)
+
+        # Focus: increases spell crit chance (now handled above)
         # Resilience: reduces critical hit multiplier
-        critical = atk_cp.is_critical_hit()
-        if critical:
-            # Reduce crit multiplier by defender's resilience (up to 50% reduction)
-            resilience_factor = max(0.0, min(1.0, 1.0 - defender_resilience))
-            final_dmg = atk_cp.apply_critical_damage(base_dmg) * resilience_factor
-            print(f"DEBUG: Critical hit! Damage increased to {final_dmg} (resilience factor: {resilience_factor})")
+        if should_use_spell_path:
+            critical = is_spell_crit
+            crit_chance_used = spell_crit_chance
+        else:
+            # Use physical crit chance for weapon attacks
+            import random
+            phys_crit_roll = random.random()
+            critical = phys_crit_roll < physical_crit_chance
+            crit_chance_used = physical_crit_chance
+            combat_logger.debug(f"Physical crit roll: {phys_crit_roll:.3f} vs chance: {physical_crit_chance:.3f}")
+
+        # Apply magic resistance for spells, physical for weapon
+        if should_use_spell_path:
+            magic_resistance = defender.get_stat('magic_resistance') or 0.0
+            final_dmg = base_dmg * (1.0 - magic_resistance)
         else:
             final_dmg = base_dmg
-            print(f"DEBUG: Normal hit, damage remains {final_dmg}")
+
+        if critical:
+            # Reduce crit multiplier by defender's resilience (up to 50% reduction)
+            crit_multiplier = 2.0 - min(defender_resilience, 0.5)
+            final_dmg = final_dmg * crit_multiplier
+            combat_logger.info(f"CRITICAL HIT! {attacker.name} crit {defender.name} for {final_dmg:.2f} (crit chance used: {crit_chance_used:.2%})")
 
         # Apply status flag damage modifiers
         if hasattr(attacker, 'status_flags'):
@@ -541,38 +716,11 @@ class CombatEngine:
             )
 
         # Determine damage type for resistance/weakness calculations
-        damage_type = None
-        if weapon and hasattr(weapon, 'damage_type'):
-            damage_type = weapon.damage_type
-        elif hasattr(attacker, 'pending_spell') and attacker.pending_spell:
-            # For spells, try to get damage type from spell data
-            try:
-                from game_sys.magic.spell_loader import load_spell
-                spell_data = load_spell(attacker.pending_spell)
-                if spell_data and hasattr(spell_data, 'damage_type'):
-                    damage_type = spell_data.damage_type
-                elif 'fire' in str(attacker.pending_spell).lower():
-                    from game_sys.core.damage_type_utils import (
-                        get_damage_type_by_name
-                    )
-                    damage_type = get_damage_type_by_name("FIRE")
-                elif 'ice' in str(attacker.pending_spell).lower():
-                    from game_sys.core.damage_type_utils import (
-                        get_damage_type_by_name
-                    )
-                    damage_type = get_damage_type_by_name("ICE")
-                elif 'lightning' in str(attacker.pending_spell).lower():
-                    from game_sys.core.damage_type_utils import (
-                        get_damage_type_by_name
-                    )
-                    damage_type = get_damage_type_by_name("LIGHTNING")
-            except Exception as e:
-                print(f"DEBUG: Error getting spell damage type: {e}")
-        
+        # Always use the damage_type from the DamagePacket if present
+        damage_type = getattr(damage_packet, 'damage_type', None)
         debug_msg = (f"DEBUG: Applying {final_dmg} damage to {defender.name} "
                      f"with damage type: {damage_type}")
         print(debug_msg)
-        
         hp_left = defender.take_damage(final_dmg, attacker, damage_type)
         print(f"DEBUG: {defender.name} has {hp_left} HP remaining")
         
@@ -775,47 +923,38 @@ class CombatEngine:
         outcome: CombatOutcome
     ) -> None:
         """
-        Process AI responses for enemy actors after a player action.
-        
-        Args:
-            attacker: The actor who performed the attack
-            targets: List of targets that were attacked
-            outcome: The outcome of the combat action
+        Legacy sync AI response for backward compatibility. Prefer process_ai_responses_async in async flows.
         """
-        if not self._ai_controller:
-            return  # No AI controller available
-
-        # Look for alive AI-controlled enemies in targets
-        ai_actors = []
-        for target in targets:
-            if (target and 
-                hasattr(target, 'is_alive') and 
-                target.is_alive() and
-                hasattr(target, 'ai_enabled') and 
-                target.ai_enabled):
-                ai_actors.append(target)
-
-        # Attempt to find the player (non-enemy) in the targets or attacker
-        player = None
-        for t in [attacker] + targets:
-            if hasattr(t, 'is_player') and t.is_player:
-                player = t
-                break
-        # Fallback: if no explicit is_player, pick the first non-AI actor
-        if not player:
+        import asyncio
+        try:
+            # Try to run the async version if in an event loop
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.create_task(self.process_ai_responses_async(attacker, targets, outcome))
+            else:
+                loop.run_until_complete(self.process_ai_responses_async(attacker, targets, outcome))
+        except Exception:
+            # Fallback to old sync logic if async fails
+            if not self._ai_controller:
+                return
+            ai_actors = []
+            for target in targets:
+                if (target and hasattr(target, 'is_alive') and target.is_alive() and hasattr(target, 'ai_enabled') and target.ai_enabled):
+                    ai_actors.append(target)
+            player = None
             for t in [attacker] + targets:
-                if not (hasattr(t, 'ai_enabled') and t.ai_enabled):
+                if hasattr(t, 'is_player') and t.is_player:
                     player = t
                     break
-
-        for ai_actor in ai_actors:
-            try:
-                combat_logger.debug(
-                    f"Processing AI turn for {ai_actor.name}"
-                )
-                # Use the stored AI controller
-                if hasattr(self._ai_controller, 'process_ai_turn'):
-                    # Pass enemy, player, and dt (use 0.0 for now)
-                    self._ai_controller.process_ai_turn(ai_actor, player, 0.0)
-            except Exception as e:
-                combat_logger.warning(f"Error processing AI responses: {e}")
+            if not player:
+                for t in [attacker] + targets:
+                    if not (hasattr(t, 'ai_enabled') and t.ai_enabled):
+                        player = t
+                        break
+            for ai_actor in ai_actors:
+                try:
+                    combat_logger.debug(f"Processing AI turn for {ai_actor.name}")
+                    if hasattr(self._ai_controller, 'process_ai_turn'):
+                        self._ai_controller.process_ai_turn(ai_actor, player, 0.0)
+                except Exception as e:
+                    combat_logger.warning(f"Error processing AI responses: {e}")

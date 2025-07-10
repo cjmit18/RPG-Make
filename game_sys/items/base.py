@@ -14,14 +14,15 @@ class Item(ABC):
     """
 
     def __init__(self, item_id: str, name: str, description: str, **attrs):
+        import uuid
         self.id = item_id
         self.name = name
         self.description = description
-        
+        # Unique instance identifier for stackable/unique logic
+        self.uuid = attrs.pop('uuid', str(uuid.uuid4()))
         # Level and stat requirements
         self.level_requirement = attrs.get('level_requirement', 1)
         self.stat_requirements = attrs.get('stat_requirements', {})
-        
         # any extra attributes (e.g. stats) get attached
         for k, v in attrs.items():
             setattr(self, k, v)

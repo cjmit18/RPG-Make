@@ -55,48 +55,56 @@
     }
   },
   "constants": {
+    "config_file": "default_settings.json",
     "combat": {
       "defense_pivot": 100.0,
       "defense_alpha": 1.2,
       "flat_defense_factor": 0.1,
-      "min_damage_percent": 0.1,
-      "crit_chance_default": 0.1,
+      "min_damage_percent": 0.15,
+      "crit_chance_default": 0.05,
       "variance_default": 0.1,
-      "strength_multiplier": 1,
-      "dexterity_multiplier": 1,
-      "vitality_multiplier": 1,
-      "intelligence_multiplier": 0.5,
-      "wisdom_multiplier": 0.5,
-      "constitution_multiplier": 0.5,
-      "luck_multiplier": 0.5,
-      "test_value": "DEBUG_TEST"
+      "spell_bonus": 1.5,
+      "strength_multiplier": 2.0,
+      "dexterity_multiplier": 1.5,
+      "vitality_multiplier": 2.5,
+      "intelligence_multiplier": 2.0,
+      "wisdom_multiplier": 1.5,
+      "constitution_multiplier": 2.0,
+      "luck_multiplier": 1.0,
+      "agility_multiplier": 1.5,
+      "stamina_costs": {
+        "attack": 5,
+        "dodge": 8,
+        "parry": 6,
+        "evade": 7,
+        "block": 4
+      }
     },
     "derived_stats": {
-      "attack": 1.0,
+      "attack": 1.5,
       "defense": 1.0,
-      "speed": 1.0,
-      "dodge_chance": 0.01,
-      "block_chance": 0.01,
-      "magic_damage": 0.1,
-      "magic_resistance": 0.1,
-      "physical_damage": 0.05,
-      "damage_reduction": 0.05,
-      "mana_regeneration": 0.005,
-      "health_regeneration": 0.005,
-      "stamina_regeneration": 0.005,
-      "critical_chance": 0.01,
-      "luck_factor": 0.01,
+      "speed": 1.2,
+      "dodge_chance": 0.02,
+      "block_chance": 0.03,
+      "magic_resistance": 0.15,
+      "physical_damage": 1.5,
+      "damage_reduction": 0.15,
+      "mana_regeneration": 0.08,
+      "health_regeneration": 0.05,
+      "stamina_regeneration": 0.1,
+      "critical_chance": 0.05,
+      "luck_factor": 0.02,
       "health": 10.0,
-      "mana": 5.0,
+      "mana": 10.0,
       "stamina": 8.0,
-      "magic_power": 1.0,
-      "accuracy": 0.01,
-      "evasion": 0.01,
-      "parry_chance": 0.01,
-      "resilience": 0.01,
-      "spell_power": 0.01,
-      "focus": 0.01,
-      "initiative": 0.01
+      "magic_power": 1.5,
+      "accuracy": 1.2,
+      "evasion": 0.02,
+      "parry_chance": 0.02,
+      "resilience": 1.2,
+      "spell_power": 1.5,
+      "focus": 1.2,
+      "initiative": 1.2
     },
     "stats_defaults": {
       "magic_power": 1.0,
@@ -113,11 +121,11 @@
       "max_level": 100,
       "xp_base": 100,
       "xp_exponent": 1.0,
-      "stat_points_per_level": 1
+      "stat_points_per_level": 3
     },
     "grade": {
       "stat_multiplier": {
-        "ONE": 0.05,
+        "ONE": 0.0,
         "TWO": 0.1,
         "THREE": 0.15,
         "FOUR": 0.2,
@@ -128,7 +136,7 @@
     },
     "rarity": {
       "stat_multiplier": {
-        "COMMON": 0.02,
+        "COMMON": 0.0,
         "UNCOMMON": 0.04,
         "RARE": 0.06,
         "EPIC": 0.08,
@@ -200,29 +208,8 @@
       "DARK",
       "MAGIC"
     ],
-    "base_stats": {
-      "strength": 10,
-      "dexterity": 10,
-      "vitality": 10,
-      "intelligence": 10,
-      "wisdom": 10,
-      "constitution": 10,
-      "luck": 10
-    },
     "xp_formula": "level * 100",
-    "stat_points_per_level": 3,
-    "character": {
-      "starting_level": 1,
-      "starting_stats": {
-        "strength": 10,
-        "dexterity": 10,
-        "vitality": 10,
-        "intelligence": 10,
-        "wisdom": 10,
-        "constitution": 10,
-        "luck": 10
-      }
-    }
+    "stat_points_per_level": 3
   },
   "randomness": {
     "seed": null,
@@ -266,7 +253,8 @@
       "intelligence": 10,
       "wisdom": 10,
       "constitution": 10,
-      "luck": 10
+      "luck": 10,
+      "agility": 10
     },
     "points_per_level": 3,
     "xp_for_level": {
@@ -279,39 +267,7 @@
       }
     },
     "stat_impacts": {
-      "strength": {
-        "physical_damage": 0.5,
-        "carry_capacity": 1.0
-      },
-      "dexterity": {
-        "attack_speed": 0.2,
-        "dodge_chance": 0.25,
-        "critical_chance": 0.15
-      },
-      "vitality": {
-        "max_health": 5.0,
-        "health_regen": 0.1
-      },
-      "intelligence": {
-        "max_mana": 4.0,
-        "spell_damage": 0.5,
-        "mana_regen": 0.1
-      },
-      "wisdom": {
-        "spell_efficiency": 0.2,
-        "magic_resistance": 0.3,
-        "spell_duration": 0.1
-      },
-      "constitution": {
-        "max_stamina": 3.0,
-        "physical_resistance": 0.2,
-        "stamina_regen": 0.1
-      },
-      "luck": {
-        "critical_damage": 0.3,
-        "item_find": 0.5,
-        "rare_find": 0.2
-      }
+      
     }
   },
   "ui": {

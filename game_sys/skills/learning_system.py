@@ -1,7 +1,7 @@
 # game_sys/skills/learning_system.py
 
 from typing import Any, Dict, List, Optional
-from game_sys.hooks.hooks_setup import emit
+from game_sys.hooks.hooks_setup import emit, emit_async
 
 # Events you can hook into
 ON_SKILL_LEARNED  = 'skill_learned'
@@ -27,6 +27,7 @@ class LearningSystem:
             return False
         self.learned_skills[skill_id] = 1
         emit(ON_SKILL_LEARNED, actor=self.actor, skill_id=skill_id, level=1)
+        # Optionally: await emit_async(ON_SKILL_LEARNED, ...)
         return True
 
     def upgrade(self, skill_id: str) -> bool:
@@ -39,6 +40,7 @@ class LearningSystem:
         new_level = self.learned_skills[skill_id] + 1
         self.learned_skills[skill_id] = new_level
         emit(ON_SKILL_UPGRADED, actor=self.actor, skill_id=skill_id, level=new_level)
+        # Optionally: await emit_async(ON_SKILL_UPGRADED, ...)
         return True
 
     def get_skill_level(self, skill_id: str) -> Optional[int]:

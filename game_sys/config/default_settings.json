@@ -61,7 +61,7 @@
       "defense_alpha": 1.2,
       "flat_defense_factor": 0.1,
       "min_damage_percent": 0.15,
-      "crit_chance_default": 0.05,
+      "crit_chance_default": 0.01,
       "variance_default": 0.1,
       "spell_bonus": 1.5,
       "strength_multiplier": 2.0,
@@ -92,7 +92,7 @@
       "mana_regeneration": 0.08,
       "health_regeneration": 0.05,
       "stamina_regeneration": 0.1,
-      "critical_chance": 0.05,
+      "critical_chance": 0.005,
       "luck_factor": 0.02,
       "health": 10.0,
       "mana": 10.0,
@@ -107,20 +107,20 @@
       "initiative": 1.2
     },
     "stats_defaults": {
-      "magic_power": 1.0,
-      "max_targets": 1.0,
-      "strength": 10.0,
-      "dexterity": 10.0,
-      "vitality": 10.0,
-      "intelligence": 10.0,
-      "wisdom": 10.0,
-      "constitution": 10.0,
-      "luck": 10.0
+      "magic_power": 0.0,
+      "max_targets": 0.0,
+      "strength": 0.0,
+      "dexterity": 0.0,
+      "vitality": 0.0,
+      "intelligence": 0.0,
+      "wisdom": 0.0,
+      "constitution": 0.0,
+      "luck": 0.0
     },
     "leveling": {
       "max_level": 100,
       "xp_base": 100,
-      "xp_exponent": 1.0,
+      "xp_exponent": 2.0,
       "stat_points_per_level": 3
     },
     "grade": {
@@ -265,9 +265,6 @@
         "3": 300,
         "4": 400
       }
-    },
-    "stat_impacts": {
-      
     }
   },
   "ui": {

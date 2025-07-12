@@ -129,6 +129,7 @@ class Actor:
         # Initialize base stats
         defaults = cfg.get('constants.stats_defaults', {})
         if defaults is None:
+            character_logger.warning("Stats defaults missing in config, using empty dict")
             defaults = {}
         self.base_stats: Dict[str, float] = {
             s: defaults.get(s, 0.0) for s in defaults

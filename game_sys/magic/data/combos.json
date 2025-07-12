@@ -1,9 +1,9 @@
 {
   "combos": {
-    "flame_combo": {
-      "sequence": ["fireball","ignite"],
+    "steam": {
+      "sequence": ["fireball","ice_shard"],
       "effects": [
-        { "type":"buff","params":{ "stat":"intellect","amount":5,"duration":10 } }
+        { "type":"buff","params":{ "stat":"intelligence","amount":5,"duration":10 } }
       ]
     }
   }

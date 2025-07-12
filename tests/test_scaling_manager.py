@@ -146,14 +146,14 @@ def test_derived_stat_scaling_with_level():
         actor.base_stats['strength'] = 10 + points
         actor.spent_stat_points = points
     
-    # Derived stats like attack and physical_damage should scale with strength
+    # Derived stats like attack and  should scale with strength
     for i in range(1, len(actors)):
         prev_attack = actors[i-1].get_stat('attack')
         curr_attack = actors[i].get_stat('attack')
         assert curr_attack > prev_attack, f"Attack should increase with level: level {actors[i-1].level}={prev_attack}, level {actors[i].level}={curr_attack}"
         
-        prev_dmg = actors[i-1].get_stat('physical_damage')
-        curr_dmg = actors[i].get_stat('physical_damage')
+        prev_dmg = actors[i-1].get_stat('')
+        curr_dmg = actors[i].get_stat('')
         assert curr_dmg > prev_dmg, f"Physical damage should increase with level: level {actors[i-1].level}={prev_dmg}, level {actors[i].level}={curr_dmg}"
 
 def test_complex_level_grade_rarity_interaction():

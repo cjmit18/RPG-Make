@@ -1,3 +1,74 @@
+# Combo Bar and Combo Tab Implementation Guide
+
+This guide outlines the step-by-step process to implement a combo bar in the combat section and a dedicated combo tab in the SimpleGameDemo UI.
+
+---
+
+## Needed Files
+
+- `demo.py`: Main implementation file. Add combo tracking, update spell casting, draw combo bar, and set up combo tab here.
+- `game_sys/magic/data/combos.json`: Contains combo definitions and effects. Use for displaying available combos in the combo tab.
+- `instructions/combo_bar_and_tab_implementation.md`: This guide and checklist for implementation steps.
+
+---
+
+## 1. Combo Bar in Combat Section
+
+### 1.1. Track Combo State
+- Add attributes to `SimpleGameDemo` for combo tracking:
+  - `self.combo_sequence = []`  # List of recent spells cast
+  - `self.combo_timer = 0`      # Time left in combo window
+  - `self.combo_window = 5.0`   # Max seconds to complete a combo
+  - `self.last_combo_time = 0`  # Timestamp of last spell cast
+
+### 1.2. Update Combo on Spell Cast
+- In spell casting methods (e.g. `cast_fireball`, `cast_ice_shard`):
+  - Call a helper: `self._update_combo_sequence("fireball")` or `self._update_combo_sequence("ice_shard")`
+- Implement `_update_combo_sequence(spell_id)`:
+  - Append spell to `self.combo_sequence`
+  - Reset or update `self.combo_timer` and `self.last_combo_time`
+  - Trim sequence to max combo length
+
+### 1.3. Draw Combo Bar in Combat UI
+- In `draw_game_state`, after stamina bar:
+  - Calculate combo progress: `combo_pct = self.combo_timer / self.combo_window`
+  - Draw a rectangle below stamina bar, fill based on `combo_pct`
+  - Optionally, display current combo sequence as text
+
+### 1.4. Combo Timer Update
+- On each game tick or after actions:
+  - Decrease `self.combo_timer` based on elapsed time
+  - If timer reaches zero, reset `self.combo_sequence`
+
+---
+
+## 2. Combo Tab Implementation
+
+### 2.1. Create Combo Tab
+- In `setup_ui`, add a new tab:
+  - `self.combo_tab = ttk.Frame(self.tab_control)`
+  - `self.tab_control.add(self.combo_tab, text="Combos")`
+
+### 2.2. Combo Tab UI Elements
+- In a new method (e.g. `setup_combo_tab`):
+  - Display current combo sequence
+  - List possible combos (from `game_sys/magic/data/combos.json`)
+  - Show combo effects and requirements
+
+### 2.3. Update Combo Tab
+- When combo sequence changes or a combo is triggered:
+  - Update the combo tab display to show progress and effects
+
+---
+
+## 3. Best Practices
+- Use clear visual feedback for combo progress
+- Keep UI responsive and update combo bar/tab in real time
+- Document combo logic for future improvements
+
+---
+
+**End of Guide**
 #!/usr/bin/env python3
 """
 Simple Game Demo
@@ -11,16 +82,10 @@ from tkinter import ttk
 import time
 import random
 import math
-import os
-import sys
-import json
 
 
 # Import logging system
 from logs.logs import get_logger, setup_logging
-
-# Import hooks system
-from game_sys.hooks.hooks_setup import emit, on, ON_COMBO_TRIGGERED, ON_COMBO_FINISHED
 
 # Set up logging
 setup_logging()
@@ -43,32 +108,11 @@ try:
     SPELLS_AVAILABLE = True
     ENCHANTING_AVAILABLE = True
 except ImportError:
-    ITEMS_AVAILABLE = True
-    SPELLS_AVAILABLE = True
-    ENCHANTING_AVAILABLE = True
+    ITEMS_AVAILABLE = False
+    SPELLS_AVAILABLE = False
+    ENCHANTING_AVAILABLE = False
 
 class SimpleGameDemo:
-    def check_and_apply_combo_bonus(self):
-        """Check if the current combo sequence matches any defined combo and apply its bonus."""
-        if not hasattr(self, 'combo_sequence') or not self.combo_sequence:
-            return
-        if not hasattr(self, 'combos_data') or not isinstance(self.combos_data, list):
-            return
-        for combo in self.combos_data:
-            if isinstance(combo, dict):
-                sequence = combo.get('sequence', [])
-                effects = combo.get('effects', None)
-                name = combo.get('name', 'Unnamed Combo')
-                # Check for exact match (can be improved for partials, order, etc.)
-                if self.combo_sequence == sequence:
-                    # Apply effects (for demo, just log and show in combo tab)
-                    self.log_message(f"Combo Bonus Activated: {name}! Effects: {effects}", "info")
-                    # Optionally, apply effects to player/enemy here
-                    # Reset combo sequence after activation
-                    self.combo_sequence = []
-                    self.combo_timer = 0
-                    self.update_combo_tab()
-                    break
     def save_game(self):
         """Save the current game state asynchronously (demo version)."""
         import asyncio
@@ -107,6 +151,7 @@ class SimpleGameDemo:
         
         # --- Startup validation and logging ---
         from game_sys.config.config_manager import ConfigManager
+        import os
         cfg = ConfigManager()
         config_files = [
             os.path.abspath(cfg.default_path),
@@ -150,6 +195,7 @@ class SimpleGameDemo:
             logger.error(f"CONFIG VALIDATION ERROR: {e}")
 
         # Log working directory and Python version
+        import sys
         logger.info(f"Working directory: {os.getcwd()}")
         logger.info(f"Python version: {sys.version}")
 
@@ -159,7 +205,12 @@ class SimpleGameDemo:
         self.root.geometry("900x700")
 
         # Set up UI
-        self.setup_ui()
+        self.setup_ui()        # Initialize combo tracking attributes
+        self.combo_sequence = []
+        self.combo_max_length = 3  # Maximum length of combo sequence to display
+        self.combo_timer = 0  # Time remaining for combo window
+        self.combo_window = 5.0  # 5 seconds to complete a combo
+        self.last_combo_time = 0  # Last time a spell was cast
 
         # Set up game state
         self.setup_game_state()
@@ -195,13 +246,10 @@ class SimpleGameDemo:
         self.progression_tab = ttk.Frame(self.tab_control)
         self.tab_control.add(self.progression_tab, text="Progression")
 
-        # Combo Tab
-        self.combo_tab = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.combo_tab, text="Combos")
-
         # Settings tab
         self.settings_tab = ttk.Frame(self.tab_control)
         self.tab_control.add(self.settings_tab, text="Settings")
+
 
         # Pack the tab control
         self.tab_control.pack(expand=1, fill=tk.BOTH, padx=10, pady=10)
@@ -227,11 +275,9 @@ class SimpleGameDemo:
         # Set up the Progression tab
         self.setup_progression_tab()  # Set up progression tab
 
-        # Set up the Combo tab
-        self.setup_combo_tab()
-
         # Set up the Settings tab
         self.setup_settings_tab()
+
 
         # Create log area
         self.log_frame = tk.Frame(self.root, bg="black")
@@ -244,107 +290,6 @@ class SimpleGameDemo:
         self.log.tag_configure("info", foreground="cyan")
         self.log.tag_configure("combat", foreground="red")
         self.log.tag_configure("heal", foreground="green")
-    def setup_combo_tab(self):
-        """Set up the combo tab UI elements."""
-        import json
-        import os
-        combo_tab = self.combo_tab
-        # Do not set bg for ttk.Frame (combo_tab)
-
-        # Title
-        title = tk.Label(combo_tab, text="Combo System", font=("Arial", 16, "bold"), fg="cyan", bg="black")
-        title.pack(pady=(10, 5))
-
-        # Current combo sequence
-        self.combo_sequence_label = tk.Label(combo_tab, text="Current Combo: -", font=("Arial", 12), fg="white", bg="black")
-        self.combo_sequence_label.pack(pady=(5, 10))
-
-        # Combo progress bar
-        self.combo_progress_var = tk.DoubleVar()
-        self.combo_progress = tk.Scale(combo_tab, variable=self.combo_progress_var, from_=0, to=100, orient=tk.HORIZONTAL, length=300, showvalue=0, fg="green", troughcolor="#222", sliderrelief=tk.FLAT)
-        self.combo_progress.pack(pady=(0, 10))
-
-        # Available combos section
-        combos_frame = tk.Frame(combo_tab, bg="black")
-        combos_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        combos_title = tk.Label(combos_frame, text="Available Combos", font=("Arial", 14, "bold"), fg="yellow", bg="black")
-        combos_title.pack(anchor="w")
-
-        self.combos_listbox = tk.Listbox(combos_frame, bg="#222", fg="white", font=("Arial", 11), height=8)
-        self.combos_listbox.pack(fill=tk.BOTH, expand=True, pady=(5, 0))
-
-        # Combo details
-        self.combo_details = tk.Text(combos_frame, bg="#111", fg="white", font=("Arial", 10), height=6, state="disabled")
-        self.combo_details.pack(fill=tk.X, pady=(5, 0))
-
-        # Load combos from config
-        combos_path = os.path.join("game_sys", "magic", "data", "combos.json")
-        self.combos_data = []
-        if os.path.exists(combos_path):
-            try:
-                with open(combos_path, "r") as f:
-                    self.combos_data = json.load(f)
-            except Exception as e:
-                self.log_message(f"Failed to load combos.json: {e}", "info")
-
-        # Populate combos listbox
-        for combo in self.combos_data:
-            if isinstance(combo, dict):
-                name = combo.get("name", "Unnamed Combo")
-            else:
-                name = str(combo)
-            self.combos_listbox.insert(tk.END, name)
-
-        self.combos_listbox.bind("<<ListboxSelect>>", self.on_combo_select)
-
-        # Initial update
-        self.update_combo_tab()
-
-    def update_combo_tab(self):
-        """Update the combo tab display with current sequence and progress."""
-        # Update current combo sequence
-        seq = self.combo_sequence if hasattr(self, "combo_sequence") else []
-        seq_str = " > ".join(seq) if seq else "-"
-        self.combo_sequence_label.config(text=f"Current Combo: {seq_str}")
-
-        # Update progress bar
-        pct = 0
-        if hasattr(self, "combo_timer") and hasattr(self, "combo_window") and self.combo_window > 0:
-            pct = max(0, min(100, int(100 * self.combo_timer / self.combo_window)))
-        self.combo_progress_var.set(pct)
-
-        # If a combo is selected, show details
-        selection = self.combos_listbox.curselection()
-        if selection and isinstance(self.combos_data, list) and selection[0] < len(self.combos_data):
-            idx = selection[0]
-            combo = self.combos_data[idx]
-            if isinstance(combo, dict):
-                details = (
-                    f"Name: {combo.get('name', '-') }\n"
-                    f"Sequence: {', '.join(combo.get('sequence', []))}\n"
-                    f"Timing Window: {combo.get('window', '-')}\n"
-                    f"Cost: {combo.get('cost', '-')}\n"
-                    f"Effects: {combo.get('effects', '-')}\n"
-                    f"Requirements: {combo.get('requirements', '-')}\n"
-                )
-            else:
-                details = str(combo)
-            self.combo_details.config(state="normal")
-            self.combo_details.delete(1.0, tk.END)
-            self.combo_details.insert(tk.END, details)
-            self.combo_details.config(state="disabled")
-        else:
-            self.combo_details.config(state="normal")
-            self.combo_details.delete(1.0, tk.END)
-            self.combo_details.insert(tk.END, "Select a combo to view details.")
-            self.combo_details.config(state="disabled")
-
-    def on_combo_select(self, event):
-        """Handle selection of a combo in the listbox."""
-        self.update_combo_tab()
-
-    # Call update_combo_tab() whenever combo state changes (e.g., after spell cast)
 
     def setup_stats_tab(self):
         """Set up the character stats tab."""
@@ -575,7 +520,7 @@ class SimpleGameDemo:
 
         # Create enemy with random stats
         self.enemy = create_character(
-            "dragon", level= 50
+            "goblin"
         )
         if self.enemy:
             # Enable AI for the enemy
@@ -684,11 +629,11 @@ class SimpleGameDemo:
             cfg = ConfigManager()
             stats_defaults = cfg.get('constants.stats_defaults', {})
             # Filter out non-stat meta keys and tidy formatting
-            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets", "level"}
+            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets"}
             core_stats = []
             for raw_key, raw_val in sorted(self.player.base_stats.items()):
                 key = str(raw_key).strip()
-                if key in meta_keys or key.startswith("_") or key.lower() == "level":
+                if key in meta_keys or key.startswith("_"):
                     continue
                 core_stats.append((key, raw_val))
 
@@ -720,7 +665,7 @@ class SimpleGameDemo:
             offensive_stats = [
                 ('Attack', 'attack'),
                 ('Magic Power', 'magic_power'),
-                ('Physical Damage', 'physical_damage'),
+                ('Physical Damage', ''),
                 ('Critical Chance', 'critical_chance'),
                 ('Parry Chance', 'parry_chance'),
                 ('Initiative', 'initiative'),
@@ -831,7 +776,7 @@ class SimpleGameDemo:
 
         # Special Stats
         detailed_info += "\n=== SPECIAL STATS ===\n"
-        special_stats = ['critical_chance', 'luck_factor', 'physical_damage']
+        special_stats = ['critical_chance', 'luck_factor', '']
         for stat_name in special_stats:
             if hasattr(self.player, 'get_stat'):
                 value = self.player.get_stat(stat_name)
@@ -991,13 +936,18 @@ class SimpleGameDemo:
             self.log_message("No player character available!")
             return
 
+
         old_level = self.player.level
 
         # Use leveling manager if available
         if hasattr(self.player, 'leveling_manager'):
             # Level up through the leveling manager - use gain_experience instead of level_up
             if hasattr(self.player.leveling_manager, 'gain_experience'):
-                self.player.leveling_manager.gain_experience(self.player, self.player.leveling_manager._xp_for_next_level(self.player.level))
+                xp_needed = self.player.level * 100  # Simple XP calculation
+                self.player.leveling_manager.gain_experience(
+                    actor=self.player,
+                    amount=xp_needed
+                )
             else:
                 self.player.level += 1
 
@@ -1006,7 +956,7 @@ class SimpleGameDemo:
                 # Award stat points for the level up (config-driven)
                 points_gained = self.player.level - old_level
                 if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
-                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player.level)
+                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player)
                 else:
                     points_per_level = 3
                 total_points = points_gained * points_per_level
@@ -1034,14 +984,14 @@ class SimpleGameDemo:
             # Increase base stats manually
             if hasattr(self.player, 'base_stats'):
                 stat_increases = {
-                    'attack': 2,
+                    'attack': 200,
                     'defense': 2,
                     'speed': 1,
                     'health': 15,
                     'mana': 8,
                     'stamina': 5,
                     'magic_power': 2,
-                    'intelligence': 2,
+                    'intelligence': 200,
                     'strength': 2,
                     'dexterity': 1,
                     'vitality': 2,
@@ -1068,12 +1018,10 @@ class SimpleGameDemo:
         if hasattr(self.player, 'max_stamina'):
             self.player.current_stamina = self.player.max_stamina
 
-        # Update displays - ensure level is reflected in all UI components
+        # Update displays
         self.update_char_info()
         if hasattr(self, 'update_leveling_display'):
             self.update_leveling_display()
-        if hasattr(self, 'update_progression_display'):
-            self.update_progression_display()  # Make sure progression tab is updated too
 
     def equip_gear(self):
         """Equip gear on the character."""
@@ -1085,9 +1033,7 @@ class SimpleGameDemo:
         self.log_message("Opening inventory for equipment management...")
         self.tab_control.select(self.inventory_tab)
         self.update_inventory_display()
-        self.update_equipment_display()
-
-    def cast_fireball(self):
+        self.update_equipment_display()    def cast_fireball(self):
         """Cast fireball spell at the enemy."""
         if not SPELLS_AVAILABLE:
             self.log_message("Spell system not available!", "combat")
@@ -1105,6 +1051,9 @@ class SimpleGameDemo:
         result = self.combat_service.cast_spell_at_target(
             self.player, "fireball", self.enemy
         )
+        
+        # Update combo tracking
+        self._update_combo_sequence("fireball")
         
         if result['success']:
             # Log the spell cast
@@ -1142,9 +1091,7 @@ class SimpleGameDemo:
         # Update displays
         self.update_char_info()
         self.update_enemy_info()
-        self.draw_game_state()
-
-    def cast_ice_shard(self):
+        self.draw_game_state()    def cast_ice_shard(self):
         """Cast ice shard spell at the enemy."""
         if not SPELLS_AVAILABLE:
             self.log_message("Spell system not available!", "combat")
@@ -1160,6 +1107,9 @@ class SimpleGameDemo:
 
         # Use combat service to cast ice shard
         result = self.combat_service.cast_spell_at_target(self.player, "ice_shard", self.enemy)
+        
+        # Update combo tracking
+        self._update_combo_sequence("ice_shard")
         
         if result['success']:
             # Log spell cast
@@ -1280,11 +1230,45 @@ class SimpleGameDemo:
                 player_x - bar_width/2, stamina_y,
                 player_x - bar_width/2 + bar_width * stamina_pct, stamina_y + bar_height,
                 fill="#f7e359", outline=""
-            )
-            self.canvas.create_text(
+            )            self.canvas.create_text(
                 player_x, stamina_y + bar_height/2,
                 text=f"SP: {int(getattr(self.player, 'current_stamina', 0))}/{int(getattr(self.player, 'max_stamina', 0))}",
                 fill="black", font=("Arial", 9)
+            )
+            
+            # Draw combo bar below stamina
+            combo_y = stamina_y + bar_height + 4
+            
+            # Calculate combo progress percentage
+            combo_pct = 0
+            if hasattr(self, 'combo_timer') and self.combo_timer > 0:
+                combo_pct = self.combo_timer / self.combo_window
+            
+            # Combo background
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, combo_y,
+                player_x + bar_width/2, combo_y + bar_height,
+                fill="#333333", outline="white"
+            )
+            
+            # Combo fill
+            self.canvas.create_rectangle(
+                player_x - bar_width/2, combo_y,
+                player_x - bar_width/2 + bar_width * combo_pct, combo_y + bar_height,
+                fill="#9900cc", outline=""
+            )
+            
+            # Combo text
+            combo_text = "COMBO: "
+            if hasattr(self, 'combo_sequence') and self.combo_sequence:
+                combo_text += " → ".join([spell.upper() for spell in self.combo_sequence])
+            else:
+                combo_text += "NONE"
+                
+            self.canvas.create_text(
+                player_x, combo_y + bar_height/2,
+                text=combo_text,
+                fill="white", font=("Arial", 9, "bold")
             )
 
         # Draw enemy if exists
@@ -2420,9 +2404,6 @@ class SimpleGameDemo:
         points_frame = tk.Frame(left_frame, bg="dark gray")
         points_frame.pack(fill=tk.X, pady=(0, 10))
 
-        # Create stat frame for allocatable stats
-        stat_frame = tk.Frame(left_frame, bg="dark gray")
-
         tk.Label(
             points_frame,
             text="Available Stat Points:",
@@ -2439,11 +2420,13 @@ class SimpleGameDemo:
             font=("Arial", 14, "bold")
         )
         self.available_points_label.pack(anchor="w")
-        
-        stat_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Current allocatable stats display
+        stats_frame = tk.Frame(left_frame, bg="dark gray")
+        stats_frame.pack(fill=tk.BOTH, expand=True)
 
         tk.Label(
-            stat_frame,
+            stats_frame,
             text="Allocatable Stats:",
             bg="dark gray",
             fg="white",
@@ -2451,7 +2434,7 @@ class SimpleGameDemo:
         ).pack(anchor="w", pady=(0, 5))
 
         self.allocatable_stats_text = tk.Text(
-            stat_frame,
+            stats_frame,
             bg="black",
             fg="white",
             font=("Courier", 10),
@@ -3807,7 +3790,7 @@ class SimpleGameDemo:
 
                 # --- Special Stats ---
                 char_info += "\n=== SPECIAL STATS ===\n"
-                special_stats = ['critical_chance', 'luck_factor', 'physical_damage']
+                special_stats = ['critical_chance', 'luck_factor', '']
                 for stat_name in special_stats:
                     if hasattr(self.player, 'get_stat'):
                         value = self.player.get_stat(stat_name)

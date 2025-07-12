@@ -74,7 +74,6 @@ Updated to automatically apply all equipped item effects to stat calculations, e
 - `crit_damage_X`: +X% Critical damage
 
 ### Damage Types
-- `physical_damage_X`: +X Physical damage
 - `magical_damage_X`: +X Magical damage
 - `fire_damage_X`: +X Fire damage
 - `lightning_damage_X`: +X Lightning damage
@@ -134,7 +133,7 @@ Updated to automatically apply all equipped item effects to stat calculations, e
   "vampiric_blade": {
     "type": "weapon", 
     "name": "Vampiric Blade",
-    "effect_ids": ["life_steal_8", "physical_damage_20", "crit_damage_125"]
+    "effect_ids": ["life_steal_8", "_20", "crit_damage_125"]
   }
 }
 ```

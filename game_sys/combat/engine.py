@@ -679,11 +679,11 @@ class CombatEngine:
             phys_crit_roll = random.random()
             critical = phys_crit_roll < physical_crit_chance
             crit_chance_used = physical_crit_chance
-            combat_logger.debug(f"Physical crit roll: {phys_crit_roll:.3f} vs chance: {physical_crit_chance:.3f}")
-
-        # Apply magic resistance for spells, physical for weapon
+            combat_logger.debug(f"Physical crit roll: {phys_crit_roll:.3f} vs chance: {physical_crit_chance:.3f}")        # Apply magic resistance for spells, physical for weapon
         if should_use_spell_path:
             magic_resistance = defender.get_stat('magic_resistance') or 0.0
+            # Cap magic resistance at 95% to prevent negative damage
+            magic_resistance = min(magic_resistance, 0.95)
             final_dmg = base_dmg * (1.0 - magic_resistance)
         else:
             final_dmg = base_dmg
@@ -691,8 +691,13 @@ class CombatEngine:
         if critical:
             # Reduce crit multiplier by defender's resilience (up to 50% reduction)
             crit_multiplier = 2.0 - min(defender_resilience, 0.5)
+            # Ensure crit multiplier is always positive (minimum 1.0x damage)
+            crit_multiplier = max(crit_multiplier, 1.0)
             final_dmg = final_dmg * crit_multiplier
             combat_logger.info(f"CRITICAL HIT! {attacker.name} crit {defender.name} for {final_dmg:.2f} (crit chance used: {crit_chance_used:.2%})")
+        
+        # Ensure final damage is never negative (safety check)
+        final_dmg = max(final_dmg, 0.0)
 
         # Apply status flag damage modifiers
         if hasattr(attacker, 'status_flags'):

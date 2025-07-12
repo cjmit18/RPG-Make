@@ -10,40 +10,46 @@ Integrates with skills, spells, enchantments and items for level requirements.
 from typing import Dict, List, Optional, Set
 from game_sys.config.config_manager import ConfigManager
 from game_sys.logging import character_logger
+from game_sys.hooks.hooks_setup import emit_with_hooks, ON_LEVEL_UP, ON_EXPERIENCE_GAINED, ON_PRELEVEL_UP, ON_POSTLEVEL_UP
+import asyncio
 
 
 class LevelingManager:
+
     def gain_experience(self, actor, amount):
-        """Add experience to the actor and handle level up if needed."""
+        """
+        Add experience to the actor and handle level up if needed.
+        """
         if not hasattr(actor, 'experience'):
             actor.experience = 0
         if not hasattr(actor, 'level'):
             actor.level = 1
-        if not hasattr(actor, 'spent_stat_points'):
-            actor.spent_stat_points = 0
 
         actor.experience += amount
-        leveled_up = False
-        while True:
-            xp_needed = self._xp_for_next_level(actor.level)
-            if actor.experience >= xp_needed:
-                actor.experience -= xp_needed
-                actor.level += 1
-                leveled_up = True
-                # Optionally, reset health/mana/stamina on level up
-                if hasattr(actor, 'max_health'):
-                    actor.current_health = actor.max_health
-                if hasattr(actor, 'max_mana'):
-                    actor.current_mana = actor.max_mana
-                if hasattr(actor, 'max_stamina'):
-                    actor.current_stamina = actor.max_stamina
-            else:
-                break
-        return leveled_up
+        character_logger.info(f"{getattr(actor, 'name', repr(actor))} gained {amount} XP (total: {actor.experience})")
+        emit_with_hooks(ON_EXPERIENCE_GAINED, actor=actor, amount=amount)
 
+        # Check for level up
+        xp_for_next_level = self._xp_for_next_level(actor.level)
+        while actor.experience >= xp_for_next_level:
+            # Pre-level up hook
+            emit_with_hooks(ON_PRELEVEL_UP, actor=actor, new_level=actor.level + 1)
+
+            actor.level += 1
+            character_logger.info(f"{getattr(actor, 'name', repr(actor))} leveled up to level {actor.level}!")
+            emit_with_hooks(ON_LEVEL_UP, actor=actor, new_level=actor.level)
+
+            # Post-level up hook
+            emit_with_hooks(ON_POSTLEVEL_UP, actor=actor, new_level=actor.level)
+
+            # Recalculate XP needed for next level
+            xp_for_next_level = self._xp_for_next_level(actor.level)
+        
     def _xp_for_next_level(self, level):
-        # Simple XP curve: 100 * level
-        return 100 * level
+        cfg = ConfigManager()
+        base_xp = cfg.get('constants.leveling.xp_base', 100)
+        exponent = cfg.get('constants.leveling.xp_exponent', 1.0)
+        return int(base_xp * (level ** int(exponent)))
 
     def reset_stat_points(self, actor):
         """Reset all allocated stat points for the actor."""
@@ -64,7 +70,9 @@ class LevelingManager:
             actor.update_stats()
 
     def level_up(self, actor):
-        """Force the actor to level up by one level."""
+        """
+        Force the actor to level up by one level.
+        """
         if not hasattr(actor, 'level'):
             actor.level = 1
         actor.level += 1

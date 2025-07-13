@@ -27,7 +27,6 @@ class CombatStats:
     max_health: float
     current_health: float
     crit_chance: float
-    crit_multiplier: float
     block_chance: float
     dodge_chance: float
     accuracy: float
@@ -69,8 +68,7 @@ class CombatCapabilities:
             defense=self.character.get_stat('defense'),
             max_health=self.character.max_health,
             current_health=self.character.current_health,
-            crit_chance=self.character.get_stat('crit_chance'),
-            crit_multiplier=self.character.get_stat('crit_multiplier'),
+            critical_chance=self.character.get_stat('critical_chance'),
             block_chance=self.character.get_stat('block_chance'),
             dodge_chance=self.character.get_stat('dodge_chance'),
             accuracy=self.character.get_stat('accuracy'),
@@ -240,14 +238,9 @@ class CombatCapabilities:
     
     def is_critical_hit(self) -> bool:
         """Determine if an attack results in a critical hit."""
-        crit_chance = self.character.get_stat('crit_chance')
-        return self.rng.random() < crit_chance
-    
-    def apply_critical_damage(self, base_damage: float) -> float:
-        """Apply critical hit multiplier to damage."""
-        crit_multiplier = self.character.get_stat('crit_multiplier')
-        return base_damage * crit_multiplier
-    
+        critical_chance = self.character.get_stat('critical_chance')
+        return self.rng.random() < critical_chance
+        
     # Compatibility methods for existing tests
     @property
     def stats(self):

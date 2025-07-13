@@ -86,12 +86,10 @@ class BuffEffect(Effect):
         )
         return f"Applied {self.stat} buff"
 
-    def modify_stat(self, base_stat: float, actor: Any) -> float:
-        if self.id in getattr(actor, 'stat_bonus_ids', []):
+    def modify_stat(self, base_stat: float, actor: Any, stat_name: str = None) -> float:
+        if (self.id in getattr(actor, 'stat_bonus_ids', []) and 
+            stat_name == self.stat):  # Only modify the target stat
             new_value = base_stat + self.amount
-            effects_logger.debug(
-                f"BuffEffect: {actor.name} {self.stat} {base_stat} -> {new_value}"
-            )
             return new_value
         return base_stat
 
@@ -137,8 +135,9 @@ class DebuffEffect(Effect):
         )
         return f"Applied {self.stat} debuff"
 
-    def modify_stat(self, base_stat: float, actor: Any) -> float:
-        if self.id in getattr(actor, 'stat_bonus_ids', []):
+    def modify_stat(self, base_stat: float, actor: Any, stat_name: str = None) -> float:
+        if self.id in getattr(actor, 'stat_bonus_ids', []) and stat_name == self.stat:
+            stat_name = stat_name or self.stat
             new_value = base_stat - self.amount
             effects_logger.debug(
                 f"DebuffEffect: {actor.name} {self.stat} "
@@ -241,8 +240,8 @@ class StatBonusEffect(Effect):
         )
         return f"Applied {self.stat_name} bonus"
 
-    def modify_stat(self, current: float, actor: Any) -> float:
-        if self.id in getattr(actor, 'stat_bonus_ids', []):
+    def modify_stat(self, current: float, actor: Any, stat_name: str = None) -> float:
+        if self.id in getattr(actor, 'stat_bonus_ids', []) and stat_name == self.stat_name:
             return current + self.amount
         return current
 

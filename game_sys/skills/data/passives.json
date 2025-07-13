@@ -37,11 +37,11 @@
           "effects": [
             {
               "type": "stat_bonus",
-              "params": { "stat": "attack", "amount": 3, "duration": 0 }
+              "params": { "stat": "strength", "amount": 3, "duration": 0 }
             },
             {
               "type": "stat_bonus",
-              "params": { "stat": "parry_chance", "amount": 0.03, "duration": 0 }
+              "params": { "stat": "dexterity", "amount": 0.03, "duration": 0 }
             }
           ]
         },

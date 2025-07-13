@@ -65,6 +65,11 @@ class Actor:
             slot_empty = getattr(self, 'weapon', None) is None
         elif slot == 'offhand':
             slot_empty = getattr(self, 'offhand', None) is None
+            if not slot_empty and hasattr(item, 'dual_wield') and item.dual_wield:
+                # Allow equipping dual-wield offhand if main hand is empty or also dual-wield
+                main_weapon = getattr(self, 'weapon', None)
+                if main_weapon is None or (hasattr(main_weapon, 'dual_wield') and main_weapon.dual_wield):
+                    slot_empty = True
         elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
             slot_empty = getattr(self, f'equipped_{slot}', None) is None
         if not slot_empty:

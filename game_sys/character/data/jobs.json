@@ -16,7 +16,7 @@
       "spell_list": [],
       "starting_items": [
         {"item_id": "basic_clothes", "quantity": 1},
-        {"item_id": "wooden_stick", "quantity": 1}
+        {"item_id": "iron_sword", "quantity": 1}
       ]
     },
     "warrior": {

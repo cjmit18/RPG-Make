@@ -61,7 +61,7 @@
       "defense_alpha": 1.2,
       "flat_defense_factor": 0.1,
       "min_damage_percent": 0.15,
-      "crit_chance_default": 0.05,
+      "critical_chance_default": 0.05,
       "variance_default": 0.1,
       "spell_bonus": 1.5,
       "strength_multiplier": 2.0,

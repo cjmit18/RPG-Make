@@ -225,6 +225,10 @@ class CombatService:
                             effect_name = params.get('name', 'unknown')
                             effects_applied.append(effect_name)
             
+            # Record spell cast for combo tracking
+            from game_sys.magic.combo import ComboManager
+            ComboManager.record_cast(caster, spell_id)
+            
             # Generate loot if target was defeated
             loot_items = []
             if defeated:

@@ -63,8 +63,8 @@ class EffectFactory:
         - attack_boost_X: Attack stat bonus
         - defense_boost_X: Defense stat bonus
         - crit_boost_X: Critical hit chance bonus
-        - spell_power_X: Spell power bonus
-        - spell_accuracy_X: Spell accuracy bonus
+        - magic_power_X: Magic power bonus
+        - magic_accuracy_X: Magic accuracy bonus
         - fire_resist_X: Fire resistance
         - cold_resist_X: Cold resistance
         - lightning_resist_X: Lightning resistance
@@ -125,7 +125,7 @@ class EffectFactory:
                 "attack": "attack",
                 "defense": "defense",
                 "crit": "critical_chance",
-                "spell": "spell_power",
+                "magic": "magic_power",
                 "accuracy": "accuracy",
                 "mana": "max_mana",
                 "health": "max_health",
@@ -140,16 +140,16 @@ class EffectFactory:
 
         # Special spell effects
         if len(parts) >= 3:
-            if etype == "spell" and parts[1] == "power":
+            if etype == "magic" and parts[1] == "power":
                 amount = float(parts[2])
                 effects_logger.debug(f"Creating spell power bonus: +{amount}")
                 cls = EffectRegistry._registry.get("equipment_stat")
-                return cls(stat_name="spell_power", amount=amount) if cls else NullEffect()
-            elif etype == "spell" and parts[1] == "accuracy":
+                return cls(stat_name="magic_power", amount=amount) if cls else NullEffect()
+            elif etype == "magic" and parts[1] == "accuracy":
                 amount = float(parts[2])
                 effects_logger.debug(f"Creating spell accuracy bonus: +{amount}")
                 cls = EffectRegistry._registry.get("equipment_stat")
-                return cls(stat_name="spell_accuracy", amount=amount) if cls else NullEffect()
+                return cls(stat_name="accuracy", amount=amount) if cls else NullEffect()
 
         # Elemental resistances
         if len(parts) >= 3 and parts[1] == "resist":

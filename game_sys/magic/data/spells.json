@@ -5,7 +5,7 @@
       "mana_cost": 20,
       "cast_time": 1.5,
       "cooldown": 3.0,
-      "base_power": 50,
+      "base_power": 5,
       "damage_type": "FIRE",
       "level_requirement": 2,
       "stat_requirements": {
@@ -25,7 +25,7 @@
       "mana_cost": 15,
       "cast_time": 1.0,
       "cooldown": 2.5,
-      "base_power": 20,
+      "base_power": 5,
       "damage_type": "ICE",
       "level_requirement": 1,
       "stat_requirements": {
@@ -105,7 +105,7 @@
       },
       "effects": [
         { "type": "fear", "params": { "duration": 4 } },
-        { "type": "debuff", "params": { "stat": "attack", "amount": -0.3, "duration": 5 } }
+        { "type": "debuff", "params": { "stat": "strength", "amount": -0.3, "duration": 5 } }
       ]
     },
     "greater_heal": {

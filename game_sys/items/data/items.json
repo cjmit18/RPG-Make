@@ -41,9 +41,7 @@
       "stats": {
         "strength": 3,
         "dexterity": 1,
-        "accuracy": 2,
-        "parry_chance": 0.05,
-        "initiative": 1
+        "agility": 1
       },
       "effect_ids": [
         "flat_5"
@@ -96,7 +94,7 @@
       "damage_type": "PHYSICAL",
       "slot": "weapon",
       "effect_ids": [
-        "flat_5"
+        "armor_penetration_5"
       ],
       "stats": {
         "strength": 1,
@@ -176,7 +174,7 @@
       "slot": "offhand",
       "slot_restriction": "offhand_only",
       "effect_ids": [
-        "spell_accuracy_10"
+        "magic_accuracy_5"
       ],
       "dual_wield": true,
       "block_chance": 0.05
@@ -220,7 +218,7 @@
       "effect_ids": [
         "str_boost_8",
         "attack_boost_15",
-        "crit_boost_10"
+        "crit_boost_0.001"
       ]
     },
     "ring_of_power": {
@@ -238,7 +236,7 @@
       "effect_ids": [
         "spell_power_15",
         "mana_regen_3",
-        "crit_chance_8"
+        "crit_boost_0.0001"
       ]
     },
     "boots_of_speed": {
@@ -326,7 +324,7 @@
       },
       "effect_ids": [
         "dodge_chance_10",
-        "crit_chance_5"
+        "crit_boost_0.00"
       ]
     },
     "orc_leather_armor": {
@@ -381,7 +379,6 @@
         "dexterity": 4
       },
       "effect_ids": [
-        "crit_chance_8",
         "poison_damage_5"
       ]
     },

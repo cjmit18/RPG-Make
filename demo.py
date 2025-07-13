@@ -161,6 +161,9 @@ class SimpleGameDemo:
         # Set up UI
         self.setup_ui()
 
+        # Set up combo hooks
+        self.setup_combo_hooks()
+
         # Set up game state
         self.setup_game_state()
 
@@ -244,6 +247,38 @@ class SimpleGameDemo:
         self.log.tag_configure("info", foreground="cyan")
         self.log.tag_configure("combat", foreground="red")
         self.log.tag_configure("heal", foreground="green")
+
+    def setup_combo_hooks(self):
+        """Set up combo system hooks for real-time updates."""
+        # Initialize combo tracking variables
+        self.combo_sequence = []
+        self.combo_timer = 0.0
+        self.combo_window = 3.0  # 3 second window for combos
+        
+        # Hook for combo triggers
+        def on_combo_triggered(actor, combo):
+            self.log_message(f"{actor.name} triggered combo: {combo}!", "combat")
+            # Update combo display
+            self.combo_sequence = []
+            self.combo_timer = 0.0
+            # Flash combo notification
+            if hasattr(self, 'combo_tab') and hasattr(self, 'combo_status_label'):
+                self.combo_status_label.config(text=f"COMBO TRIGGERED: {combo.upper()}", fg="yellow")
+                self.root.after(2000, lambda: self.combo_status_label.config(text="Ready for combo...", fg="white"))
+        
+        on(ON_COMBO_TRIGGERED, on_combo_triggered)
+        
+        # Hook for combo finish (if available)
+        try:
+            def on_combo_finished(actor, combo):
+                self.log_message(f"{actor.name} completed combo: {combo}", "info")
+                if hasattr(self, 'combo_tab'):
+                    self.update_combo_tab()
+            on(ON_COMBO_FINISHED, on_combo_finished)
+        except NameError:
+            # ON_COMBO_FINISHED might not be defined
+            pass
+
     def setup_combo_tab(self):
         """Set up the combo tab UI elements."""
         import json
@@ -263,6 +298,16 @@ class SimpleGameDemo:
         self.combo_progress_var = tk.DoubleVar()
         self.combo_progress = tk.Scale(combo_tab, variable=self.combo_progress_var, from_=0, to=100, orient=tk.HORIZONTAL, length=300, showvalue=0, fg="green", troughcolor="#222", sliderrelief=tk.FLAT)
         self.combo_progress.pack(pady=(0, 10))
+
+        # Combo status bar
+        status_frame = tk.Frame(combo_tab, bg="black")
+        status_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+        
+        self.combo_status_label = tk.Label(status_frame, text="Status: Ready", font=("Arial", 10), fg="green", bg="black")
+        self.combo_status_label.pack(side=tk.LEFT)
+        
+        self.combo_timer_label = tk.Label(status_frame, text="Timer: 0.0s", font=("Arial", 10), fg="yellow", bg="black")
+        self.combo_timer_label.pack(side=tk.RIGHT)
 
         # Available combos section
         combos_frame = tk.Frame(combo_tab, bg="black")
@@ -284,7 +329,14 @@ class SimpleGameDemo:
         if os.path.exists(combos_path):
             try:
                 with open(combos_path, "r") as f:
-                    self.combos_data = json.load(f)
+                    data = json.load(f)
+                    # Convert from the actual JSON structure to list format expected by demo
+                    combos_dict = data.get("combos", {})
+                    for combo_id, combo_info in combos_dict.items():
+                        combo_with_name = combo_info.copy()
+                        if "name" not in combo_with_name:
+                            combo_with_name["name"] = combo_id.replace("_", " ").title()
+                        self.combos_data.append(combo_with_name)
             except Exception as e:
                 self.log_message(f"Failed to load combos.json: {e}", "info")
 
@@ -310,9 +362,27 @@ class SimpleGameDemo:
 
         # Update progress bar
         pct = 0
+        timer_val = 0.0
         if hasattr(self, "combo_timer") and hasattr(self, "combo_window") and self.combo_window > 0:
+            timer_val = self.combo_timer
             pct = max(0, min(100, int(100 * self.combo_timer / self.combo_window)))
         self.combo_progress_var.set(pct)
+        
+        # Update status bar
+        if hasattr(self, 'combo_status_label'):
+            if seq:
+                status = "Building Combo" if pct > 0 else "Combo Ready"
+                color = "orange" if pct > 0 else "green"
+            else:
+                status = "Ready"
+                color = "green"
+            self.combo_status_label.config(text=f"Status: {status}", fg=color)
+        
+        if hasattr(self, 'combo_timer_label'):
+            self.combo_timer_label.config(text=f"Timer: {timer_val:.1f}s")
+            
+        # Update combat tab combo visuals
+        self.update_combat_combo_display(seq, pct, timer_val)
 
         # If a combo is selected, show details
         selection = self.combos_listbox.curselection()
@@ -346,6 +416,75 @@ class SimpleGameDemo:
 
     # Call update_combo_tab() whenever combo state changes (e.g., after spell cast)
 
+    def update_combat_combo_display(self, seq, pct, timer_val):
+        """Update combo visuals in the combat tab."""
+        if not hasattr(self, 'combat_combo_sequence'):
+            return
+            
+        # Update sequence display
+        seq_text = " > ".join(seq[-3:]) if seq else "Ready"  # Show last 3 spells
+        if len(seq) > 3:
+            seq_text = "..." + seq_text
+        self.combat_combo_sequence.config(text=seq_text)
+        
+        # Update color based on sequence length
+        if len(seq) >= 2:
+            self.combat_combo_sequence.config(fg="orange")
+        elif len(seq) == 1:
+            self.combat_combo_sequence.config(fg="yellow")
+        else:
+            self.combat_combo_sequence.config(fg="green")
+            
+        # Update progress bar
+        if hasattr(self, 'combat_combo_progress'):
+            self.combat_combo_progress.delete("all")
+            width = self.combat_combo_progress.winfo_width()
+            if width > 1:  # Only draw if widget is rendered
+                # Background
+                self.combat_combo_progress.create_rectangle(0, 0, width, 20, 
+                                                          fill="#333", outline="")
+                # Progress
+                if pct > 0:
+                    progress_width = int(width * pct / 100)
+                    color = "#ff4444" if pct > 80 else "#ffaa00" if pct > 50 else "#44ff44"
+                    self.combat_combo_progress.create_rectangle(0, 0, progress_width, 20, 
+                                                              fill=color, outline="")
+
+    def track_spell_cast(self, spell_id):
+        """Track a spell cast for combo building."""
+        import time
+        
+        # Add to sequence
+        if not hasattr(self, 'combo_sequence'):
+            self.combo_sequence = []
+        self.combo_sequence.append(spell_id)
+        
+        # Reset timer
+        self.combo_timer = self.combo_window
+        
+        # Trim sequence to reasonable length
+        if len(self.combo_sequence) > 5:
+            self.combo_sequence.pop(0)
+            
+        # Show visual feedback for spell cast
+        self.log_message(f"Cast spell: {spell_id}", "magic")
+            
+        # Update displays
+        self.update_combo_tab()
+        
+        # Start timer countdown
+        self.start_combo_timer()
+        
+    def start_combo_timer(self):
+        """Start/continue the combo timer countdown."""
+        if hasattr(self, 'combo_timer') and self.combo_timer > 0:
+            self.combo_timer -= 0.1
+            self.root.after(100, self.start_combo_timer)  # Update every 100ms
+            if self.combo_timer <= 0:
+                # Timer expired, clear sequence
+                self.combo_sequence = []
+                self.update_combo_tab()
+
     def setup_stats_tab(self):
         """Set up the character stats tab."""
         # Left side: Character portrait and basic info
@@ -373,11 +512,28 @@ class SimpleGameDemo:
         self.basic_info = tk.Text(
             left_frame,
             width=25,
-            height=10,
+            height=8,
             bg="light gray",
             state="disabled"
         )
         self.basic_info.pack(fill=tk.X, pady=10)
+
+        # Status effects display
+        status_frame = tk.Frame(left_frame, bg="black")
+        status_frame.pack(fill=tk.X, pady=5)
+        
+        status_title = tk.Label(status_frame, text="Active Effects", font=("Arial", 12, "bold"), fg="cyan", bg="black")
+        status_title.pack()
+        
+        self.status_effects_display = tk.Text(
+            status_frame,
+            width=25,
+            height=4,
+            bg="dark gray",
+            fg="white",
+            state="disabled"
+        )
+        self.status_effects_display.pack(fill=tk.X, pady=5)
 
         # Right side: Detailed stats
         right_frame = tk.Frame(self.stats_tab, bg="black")
@@ -460,10 +616,30 @@ class SimpleGameDemo:
         self.canvas.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
 
         # Enemy info panel (right)
+        info_frame = tk.Frame(combat_main, bg="black")
+        info_frame.grid(row=0, column=2, sticky="nsew", padx=(10, 0), pady=10)
+        
+        # Combo indicator (top part of info panel)
+        combo_indicator = tk.Frame(info_frame, bg="#1a1a1a", relief=tk.RIDGE, bd=2)
+        combo_indicator.pack(fill=tk.X, pady=(0, 5))
+        
+        combo_label = tk.Label(combo_indicator, text="COMBO", font=("Arial", 10, "bold"), 
+                              fg="gold", bg="#1a1a1a")
+        combo_label.pack(pady=2)
+        
+        self.combat_combo_sequence = tk.Label(combo_indicator, text="Ready", font=("Arial", 9), 
+                                            fg="green", bg="#1a1a1a")
+        self.combat_combo_sequence.pack(pady=2)
+        
+        self.combat_combo_progress = tk.Canvas(combo_indicator, height=20, bg="#333", 
+                                             highlightthickness=0)
+        self.combat_combo_progress.pack(fill=tk.X, padx=5, pady=2)
+        
+        # Enemy info panel
         self.enemy_info = tk.Text(
-            combat_main,
+            info_frame,
             width=28,
-            height=12,
+            height=10,
             bg="#f8f8f8",
             fg="#222",
             font=("Segoe UI", 10),
@@ -471,7 +647,7 @@ class SimpleGameDemo:
             relief=tk.RIDGE,
             bd=2
         )
-        self.enemy_info.grid(row=0, column=2, sticky="nsew", padx=(10, 0), pady=10)
+        self.enemy_info.pack(fill=tk.BOTH, expand=True)
 
         # Combat controls (bottom)
         control_frame = tk.Frame(combat_main, bg="#222")
@@ -484,6 +660,7 @@ class SimpleGameDemo:
             ("Spawn Enemy", self.spawn_enemy, "#f0ad4e"),
             ("Cast Fireball", self.cast_fireball, "#ff7043"),
             ("Cast Ice Shard", self.cast_ice_shard, "#42a5f5"),
+            ("Test Dual Wield", self.test_dual_wield, "#9c27b0"),
             ("Tick Status", self.tick_status_effects, "#bdb76b")
         ]
         for idx, (text, command, color) in enumerate(combat_buttons):
@@ -575,7 +752,7 @@ class SimpleGameDemo:
 
         # Create enemy with random stats
         self.enemy = create_character(
-            "dragon", level= 50
+            "dragon", level= 50, grade=0, rarity="COMMON"
         )
         if self.enemy:
             # Enable AI for the enemy
@@ -590,7 +767,7 @@ class SimpleGameDemo:
             enemy_info = (
                 f"A {self.enemy.name} appears! "
                 f"(Level {getattr(self.enemy, 'level', 100)}, "
-                f"Grade {getattr(self.enemy, 'grade', 7)}, "
+                f"Grade {getattr(self.enemy, 'grade', 7)+1}, "
                 f"Rarity {getattr(self.enemy, 'rarity', 'DIVINE')})"
             )
             if self.ai_enabled:
@@ -620,10 +797,14 @@ class SimpleGameDemo:
         # Enable text widgets for updating
         self.basic_info.config(state="normal")
         self.detailed_stats.config(state="normal")
+        if hasattr(self, 'status_effects_display'):
+            self.status_effects_display.config(state="normal")
 
         # Clear current text
         self.basic_info.delete(1.0, tk.END)
         self.detailed_stats.delete(1.0, tk.END)
+        if hasattr(self, 'status_effects_display'):
+            self.status_effects_display.delete(1.0, tk.END)
 
         # Build basic character info text
         basic_info = f"Name: {self.player.name}\n"
@@ -684,7 +865,7 @@ class SimpleGameDemo:
             cfg = ConfigManager()
             stats_defaults = cfg.get('constants.stats_defaults', {})
             # Filter out non-stat meta keys and tidy formatting
-            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets", "level"}
+            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets", "level", "defense", "accuracy", "initiative", "magic_power", "parry_chance"}
             core_stats = []
             for raw_key, raw_val in sorted(self.player.base_stats.items()):
                 key = str(raw_key).strip()
@@ -776,24 +957,6 @@ class SimpleGameDemo:
                         detailed_info += f"  {display_name}: {float(value):.3f}/sec\n"
                 except (ValueError, TypeError):
                     detailed_info += f"  {display_name}: {value}\n"
-
-            # --- Luck & Special ---
-            detailed_info += "\n=== SPECIAL STATS ===\n"
-            special_stats = ['luck_factor']
-            for stat_name in special_stats:
-                try:
-                    value = self.player.get_stat(stat_name)
-                except Exception:
-                    value = None
-                display_name = stat_name.replace('_', ' ').title()
-                try:
-                    if value is None:
-                        detailed_info += f"  {display_name}: N/A\n"
-                    else:
-                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
-                except (ValueError, TypeError):
-                    detailed_info += f"  {display_name}: {value}\n"
-
         # Resource Stats (Derived)
         detailed_info += "\n=== RESOURCE STATS ===\n"
         resource_stats = [
@@ -930,7 +1093,7 @@ class SimpleGameDemo:
             # List of core stats to display
             rpg_stats = [
                 'strength', 'dexterity', 'vitality', 'intelligence',
-                'wisdom', 'constitution', 'luck'
+                'wisdom', 'constitution', 'luck', 
             ]
             
             # Display each base stat
@@ -943,7 +1106,7 @@ class SimpleGameDemo:
         # Add COMBAT STATS section if get_stat method is available
         if hasattr(self.enemy, 'get_stat'):
             info += "\n=== COMBAT STATS ===\n"
-            combat_stats = ['attack', 'defense', 'speed', 'magic_power']
+            combat_stats = ['attack', 'defense', 'speed', 'magic_power', 'critical_chance', 'dodge_chance']
             
             for stat in combat_stats:
                 try:
@@ -1101,6 +1264,9 @@ class SimpleGameDemo:
             self.log_message("No enemy to target!", "combat")
             return
 
+        # Track combo sequence
+        self.track_spell_cast("fireball")
+        
         # Use combat service to cast the spell
         result = self.combat_service.cast_spell_at_target(
             self.player, "fireball", self.enemy
@@ -1158,6 +1324,9 @@ class SimpleGameDemo:
             self.log_message("No enemy to target!", "combat")
             return
 
+        # Track combo sequence
+        self.track_spell_cast("ice_shard")
+        
         # Use combat service to cast ice shard
         result = self.combat_service.cast_spell_at_target(self.player, "ice_shard", self.enemy)
         
@@ -1569,6 +1738,89 @@ class SimpleGameDemo:
             logger.error(f"Failed to create {enemy_type}")
             self.log_message(f"Failed to spawn {enemy_type}!", "combat")
 
+    def test_dual_wield(self):
+        """Test dual wielding functionality."""
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player available for dual wield test!", "combat")
+            return
+
+        try:
+            from game_sys.items.factory import ItemFactory
+            
+            self.log_message("=== Dual Wield Test ===", "info")
+            
+            # Check current equipment
+            current_weapon = getattr(self.player, 'weapon', None)
+            current_offhand = getattr(self.player, 'offhand', None)
+            
+            self.log_message(f"Current weapon: {current_weapon.name if current_weapon else 'None'}", "info")
+            self.log_message(f"Current offhand: {current_offhand.name if current_offhand else 'None'}", "info")
+            
+            # Try to equip dual-wieldable weapons
+            try:
+                # Create two daggers for dual wielding
+                main_dagger = ItemFactory.create('iron_dagger')
+                offhand_dagger = ItemFactory.create('iron_dagger')
+                
+                # Check if items were created successfully
+                if not main_dagger or not offhand_dagger:
+                    self.log_message("Failed to create dual-wield weapons", "combat")
+                    return
+                
+                # Check dual_wield property
+                main_dual_wield = getattr(main_dagger, 'dual_wield', False)
+                offhand_dual_wield = getattr(offhand_dagger, 'dual_wield', False)
+                
+                self.log_message(f"Main dagger dual_wield: {main_dual_wield}", "info")
+                self.log_message(f"Offhand dagger dual_wield: {offhand_dual_wield}", "info")
+                
+                if not main_dual_wield or not offhand_dual_wield:
+                    self.log_message("Warning: Daggers may not be configured for dual wielding", "combat")
+                
+                # Try to equip main hand weapon
+                success = self.player.equip_weapon(main_dagger)
+                if success:
+                    self.log_message(f"✓ Equipped {main_dagger.name} in main hand", "info")
+                else:
+                    self.log_message(f"✗ Failed to equip {main_dagger.name} in main hand", "combat")
+                    return
+                
+                # Try to equip offhand weapon
+                success = self.player.equip_offhand(offhand_dagger)
+                if success:
+                    self.log_message(f"✓ Equipped {offhand_dagger.name} in offhand", "info")
+                    self.log_message("✓ Dual wielding setup complete!", "info")
+                    
+                    # Show dual wield stats
+                    main_attack = getattr(main_dagger, 'attack', 0)
+                    offhand_attack = getattr(offhand_dagger, 'attack', 0)
+                    total_attack = main_attack + offhand_attack
+                    
+                    self.log_message(f"Main hand attack: {main_attack}", "info")
+                    self.log_message(f"Offhand attack: {offhand_attack}", "info") 
+                    self.log_message(f"Combined attack power: {total_attack}", "info")
+                    
+                    # Test combat with dual wielding
+                    if hasattr(self, 'enemy') and self.enemy:
+                        self.log_message("Testing dual wield attack...", "info")
+                        self.attack()
+                    else:
+                        self.log_message("Spawn an enemy to test dual wield combat!", "info")
+                        
+                else:
+                    self.log_message(f"✗ Failed to equip {offhand_dagger.name} in offhand", "combat")
+                    
+            except Exception as e:
+                self.log_message(f"Error creating dual wield weapons: {e}", "combat")
+                
+        except Exception as e:
+            self.log_message(f"Dual wield test failed: {e}", "combat")
+            logger.error(f"Dual wield test error: {e}")
+        
+        # Update displays
+        self.update_char_info()
+        self.draw_game_state()
+
     def quit(self):
         """Quit the demo."""
         logger.info("Exiting demo")
@@ -1904,30 +2156,42 @@ class SimpleGameDemo:
         self.create_and_add_item(item_id)
 
     def create_and_add_item(self, item_id):
+        from game_sys.items.factory import ItemFactory
         """Create an item with a unique UUID and add it to the player's inventory (stackable)."""
+        if not ITEMS_AVAILABLE:
+            self.log_message("Items system not available!", "combat")
+            return
+
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!", "combat")
             return
+
         if not hasattr(self.player, 'inventory'):
             self.log_message("No inventory system available!", "combat")
             return
+
         try:
-            from game_sys.items.equipment import create_item_with_uuid
-            item = create_item_with_uuid(item_id)
-            if item:
-                success = self.player.inventory.add_item(item)
-                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
-                if success:
-                    msg = f"Created and added {display_name} (UUID: {getattr(item, 'uuid', 'N/A')}) to inventory!"
-                    self.log_message(msg, "info")
-                else:
-                    self.log_message("Inventory full!", "combat")
-                self.update_inventory_display()
-                self.update_equipment_display()
-            else:
+            # Create item instance
+            item = ItemFactory.create(item_id)
+            if not item:
                 self.log_message(f"Failed to create item: {item_id}", "combat")
+                return
+
+            # Assign a unique UUID to the item
+            import uuid
+            item.uuid = str(uuid.uuid4())
+
+            # Add item to player's inventory
+            self.player.inventory.add_item(item)
+
+            display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
+            msg = f"Created and added {display_name} (UUID: {item.uuid}) to inventory!"
+            self.log_message(msg, "info")
+
+            # Update inventory display
+            self.update_inventory_display()
         except Exception as e:
-            self.log_message(f"Error creating item {item_id}: {e}", "combat")
+            self.log_message(f"Error creating item: {e}", "combat")
 
     def add_random_item(self):
         """Add a random item with a unique UUID to the player's inventory."""
@@ -1942,9 +2206,9 @@ class SimpleGameDemo:
         ]
         item_id = random.choice(available_items)
         self.create_and_add_item(item_id)
-
+        item_count = len(available_items)
         random_index = random.randint(0, item_count - 1)
-        item_id = self.available_items_listbox.get(random_index)
+        item_id = available_items[random_index]
         self.create_and_add_item(item_id)
 
     def use_selected_item(self):
@@ -2022,68 +2286,234 @@ class SimpleGameDemo:
             self.log_message(f"Error using item: {e}", "combat")
 
     def equip_selected_item(self):
-        """Equip the selected item by UUID, only if the slot is empty. Dual wield logic fixed."""
+        """Equip the selected item by UUID with proper slot validation and inventory manager integration."""
+        
+        if not ITEMS_AVAILABLE:
+            self.log_message("Items system not available!", "combat")
+            return
+        from game_sys.logging import inventory_logger
+
         selection = self.inventory_listbox.curselection()
         if not selection:
             self.log_message("Please select an item to equip", "info")
             return
+            
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!", "combat")
             return
-        if not hasattr(self, 'inventory'):
+            
+        if not hasattr(self.player, 'inventory'):
             self.log_message("No inventory system available!", "combat")
             return
+
         try:
+            # Use inventory manager's list_items method
             items = self.player.inventory.list_items()
-            if selection[0] < len(items):
-                item = items[selection[0]]
-                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
-                slot = getattr(item, 'slot', None)
-                # --- Dual wield logic: allow dagger in offhand if main hand is dagger or empty ---
-                if slot == 'offhand' and hasattr(item, 'dual_wield') and item.dual_wield:
-                    main_weapon = getattr(self.player, 'weapon', None)
-                    # Only allow if main hand is empty or also a dual_wield dagger
-                    if main_weapon is None or (hasattr(main_weapon, 'dual_wield') and main_weapon.dual_wield):
-                        slot_empty = getattr(self.player, 'offhand', None) is None
-                    else:
-                        slot_empty = False
+            if selection[0] >= len(items):
+                self.log_message("Selected item is no longer available", "combat")
+                return
+                
+            item = items[selection[0]]
+            display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
+            item_uuid = getattr(item, 'uuid', None)
+            slot = getattr(item, 'slot', None)
+            
+            if not slot:
+                self.log_message(f"Cannot equip {display_name} - no equipment slot defined", "combat")
+                return
+                
+            # Check if slot is available based on equipment type
+            slot_available = False
+            conflict_message = None
+            
+            if slot == 'weapon':
+                current_weapon = getattr(self.player, 'weapon', None)
+                current_offhand = getattr(self.player, 'offhand', None)
+                
+                # Check if weapon slot is available
+                if current_weapon is None:
+                    slot_available = True
                 else:
-                    # Only allow auto-equip if slot is empty
-                    if slot == 'weapon':
-                        slot_empty = getattr(self.player, 'weapon', None) is None
-                    elif slot == 'offhand':
-                        slot_empty = getattr(self.player, 'offhand', None) is None
-                    elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
-                        slot_empty = getattr(self.player, f'equipped_{slot}', None) is None
+                    # Weapon slot occupied - check if it's a dual-wield scenario
+                    if (hasattr(item, 'dual_wield') and item.dual_wield and 
+                        hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield and
+                        current_offhand is None):
+                        # Both weapons are dual-wieldable and offhand is free
+                        # Move current weapon to offhand and equip new weapon in main hand
+                        slot_available = True
+                        self.log_message(f"Moving {current_weapon.name} to offhand to make room for {display_name}", "info")
                     else:
-                        slot_empty = False
-                if slot_empty:
-                    if hasattr(self.player, 'equip_item_by_uuid') and hasattr(item, 'uuid'):
-                        success = self.player.equip_item_by_uuid(item.uuid)
-                        if success:
-                            self.log_message(f"Equipped {display_name} (UUID: {item.uuid}).", "info")
+                        slot_available = False
+                        weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+                        if hasattr(item, 'dual_wield') and item.dual_wield:
+                            if not (hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield):
+                                conflict_message = f"Cannot dual-wield: {weapon_name} is not dual-wieldable"
+                            elif current_offhand is not None:
+                                offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+                                conflict_message = f"Cannot dual-wield: offhand occupied by {offhand_name}"
+                            else:
+                                conflict_message = f"Weapon slot occupied by {weapon_name}"
                         else:
-                            self.log_message(f"Failed to equip {display_name} (UUID: {item.uuid}).", "combat")
+                            conflict_message = f"Weapon slot occupied by {weapon_name}"
+                    
+            elif slot == 'offhand':
+                current_offhand = getattr(self.player, 'offhand', None)
+                current_weapon = getattr(self.player, 'weapon', None)
+                
+                # Special dual-wield logic
+                if hasattr(item, 'dual_wield') and item.dual_wield:
+                    # Dual-wield items can go in offhand if main hand is empty or also dual-wield
+                    if current_weapon is None or (hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield):
+                        slot_available = current_offhand is None
+                        if not slot_available:
+                            offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+                            conflict_message = f"Offhand slot occupied by {offhand_name}"
                     else:
-                        # Fallback to slot-based equip
-                        if slot == 'weapon' and hasattr(self.player, 'equip_weapon'):
-                            self.player.equip_weapon(item)
-                            self.log_message(f"Equipped {display_name}.", "info")
-                        elif slot == 'offhand' and hasattr(self.player, 'equip_offhand'):
-                            self.player.equip_offhand(item)
-                            self.log_message(f"Equipped {display_name}.", "info")
-                        elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self.player, 'equip_armor'):
-                            self.player.equip_armor(item)
-                            self.log_message(f"Equipped {display_name}.", "info")
-                        else:
-                            self.log_message(f"Failed to equip {display_name}.", "combat")
+                        weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+                        slot_available = False
+                        conflict_message = f"Cannot dual-wield: main weapon {weapon_name} is not dual-wieldable"
                 else:
-                    self.log_message(f"Slot '{slot}' is already occupied or not allowed. Unequip first.", "combat")
+                    # Regular offhand item (shield, focus, etc.)
+                    slot_available = current_offhand is None
+                    if not slot_available:
+                        offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+                        conflict_message = f"Offhand slot occupied by {offhand_name}"
+                        
+            elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
+                slot_attr = f'equipped_{slot}'
+                current_item = getattr(self.player, slot_attr, None)
+                slot_available = current_item is None
+                if not slot_available:
+                    item_name = getattr(current_item, 'name', str(current_item))
+                    conflict_message = f"{slot.title()} slot occupied by {item_name}"
+            else:
+                slot_available = False
+                conflict_message = f"Unknown equipment slot: {slot}"
+                
+            if not slot_available:
+                self.log_message(f"Cannot equip {display_name}: {conflict_message}", "combat")
+                self.log_message("Use unequip buttons first to free up slots", "info")
+                return
+                
+            # Attempt to equip using UUID-based method if available
+            equipped_successfully = False
+            weapon_moved_to_offhand = False
+            
+            # Check if we need to move current weapon to offhand for dual-wield
+            if (slot == 'weapon' and slot_available and 
+                hasattr(item, 'dual_wield') and item.dual_wield and
+                getattr(self.player, 'weapon', None) is not None and
+                getattr(self.player, 'offhand', None) is None):
+                
+                current_weapon = self.player.weapon
+                if hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield:
+                    # Move current weapon to offhand first
+                    if hasattr(self.player, 'equip_offhand'):
+                        try:
+                            # Unequip current weapon without adding to inventory
+                            self.player.weapon = None
+                            # Equip it to offhand
+                            self.player.equip_offhand(current_weapon)
+                            weapon_moved_to_offhand = True
+                            self.log_message(f"Moved {current_weapon.name} to offhand for dual-wielding", "info")
+                        except Exception as e:
+                            self.log_message(f"Failed to move weapon to offhand: {e}", "combat")
+                            # Restore weapon if move failed
+                            self.player.weapon = current_weapon
+                            slot_available = False
+            
+            if slot_available and hasattr(self.player, 'equip_item_by_uuid') and item_uuid:
+                # Preferred: Use UUID-based equipment
+                success = self.player.equip_item_by_uuid(item_uuid)
+                if success:
+                    if weapon_moved_to_offhand:
+                        self.log_message(f"Equipped {display_name} (UUID: {item_uuid}) - moved previous weapon to offhand for dual-wielding", "info")
+                    else:
+                        self.log_message(f"Equipped {display_name} (UUID: {item_uuid})", "info")
+                    equipped_successfully = True
+                    
+                    # Remove item from inventory after successful equipment
+                    removal_success = self.player.inventory.remove_item(item)
+                    if not removal_success:
+                        inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
+                else:
+                    self.log_message(f"Failed to equip {display_name} by UUID", "combat")
+                    
+            elif hasattr(self.player, 'equip_item') and item_uuid:
+                # Alternative: Generic equip_item method with UUID
+                success = self.player.equip_item(item_uuid)
+                if success:
+                    self.log_message(f"Equipped {display_name} (UUID: {item_uuid})", "info")
+                    equipped_successfully = True
+                    
+                    # Remove item from inventory after successful equipment
+                    removal_success = self.player.inventory.remove_item(item)
+                    if not removal_success:
+                        inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
+                else:
+                    self.log_message(f"Failed to equip {display_name} by UUID", "combat")
+                    
+            else:
+                # Fallback: Direct slot-based equipment (legacy support)
+                try:
+                    if slot == 'weapon' and hasattr(self.player, 'equip_weapon'):
+                        self.player.equip_weapon(item)
+                        equipped_successfully = True
+                    elif slot == 'offhand' and hasattr(self.player, 'equip_offhand'):
+                        self.player.equip_offhand(item)
+                        equipped_successfully = True
+                    elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self.player, 'equip_armor'):
+                        self.player.equip_armor(item)
+                        equipped_successfully = True
+                    else:
+                        self.log_message(f"No equipment method available for slot: {slot}", "combat")
+                        
+                    if equipped_successfully:
+                        uuid_text = f" (UUID: {item_uuid})" if item_uuid else ""
+                        if weapon_moved_to_offhand:
+                            self.log_message(f"Equipped {display_name}{uuid_text} using fallback method (moved previous weapon to offhand for dual-wielding)", "info")
+                        else:
+                            self.log_message(f"Equipped {display_name}{uuid_text} using fallback method", "info")
+                        
+                        # Remove item from inventory after successful equipment
+                        removal_success = self.player.inventory.remove_item(item)
+                        if not removal_success:
+                            inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
+                        
+                except Exception as e:
+                    self.log_message(f"Fallback equipment failed: {e}", "combat")
+                    
+            # Update displays if equipment was successful
+            if equipped_successfully:
+                # Force stat recalculation to apply equipment bonuses
+                if hasattr(self.player, 'update_stats'):
+                    self.player.update_stats()
+                    
+                # Update all relevant displays
                 self.update_inventory_display()
                 self.update_equipment_display()
                 self.update_char_info()
+                
+                # Show equipment stats if available
+                if hasattr(item, 'stats') and item.stats:
+                    stat_bonuses = []
+                    for stat, value in item.stats.items():
+                        if isinstance(value, float) and 'chance' in stat:
+                            stat_bonuses.append(f"+{value:.1%} {stat.replace('_', ' ').title()}")
+                        else:
+                            stat_bonuses.append(f"+{value} {stat.replace('_', ' ').title()}")
+                            
+                    if stat_bonuses:
+                        self.log_message(f"Equipment bonuses: {', '.join(stat_bonuses)}", "info")
+            else:
+                self.log_message(f"Failed to equip {display_name}", "combat")
+                
         except Exception as e:
             self.log_message(f"Error equipping item: {e}", "combat")
+            # Log additional debug info
+            logger.error(f"Equipment error details: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
 
     def drop_selected_item(self):
         """Drop (remove) the selected inventory item."""

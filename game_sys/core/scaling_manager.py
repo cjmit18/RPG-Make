@@ -177,7 +177,6 @@ class ScalingManager:
         'evasion': 'agility',
         'parry_chance': 'agility',
         'resilience': 'constitution',
-        'spell_power': 'intelligence',
         'focus': 'wisdom',
         'initiative': 'agility'
     }
@@ -188,7 +187,7 @@ class ScalingManager:
         """
         Calculate a stat:
           1) Base or derived stat
-          2) Apply all active status‐effects that modify stats
+          2) Apply all active status-effects that modify stats
           3) Apply grade multiplier
           4) Apply rarity (job_level) multiplier
         """
@@ -200,7 +199,15 @@ class ScalingManager:
         # 1) Base vs derived
         if stat_name in cls._derived_map:
             base_key = cls._derived_map[stat_name]
-            base_val = actor.base_stats.get(base_key, 0.0)
+            # Use computed base stat (includes buffs/effects) for derived calculations
+            # But be careful to avoid circular dependencies
+            if base_key == stat_name:
+                # Avoid infinite recursion - use raw base stat if computing same stat
+                base_val = actor.base_stats.get(base_key, 0.0)
+            else:
+                # Use computed stat (with buffs) for derived calculations
+                base_val = actor.get_stat(base_key)
+            
             mult = cfg.get(f'constants.derived_stats.{stat_name}', 1.0)
             
             # Validate numeric types
@@ -236,7 +243,7 @@ class ScalingManager:
                 )
 
             # Clamp chance-based stats to [0, 1]
-            if stat_name in ['parry_chance', 'block_chance', 'dodge_chance', 'critical_chance', 'luck_factor']:
+            if stat_name in ['parry_chance', 'block_chance', 'dodge_chance', 'critical_chance', 'luck_factor', 'critical_chance_default']:
                 if isinstance(raw, (int, float)):
                     if raw < 0:
                         raw = 0.0
@@ -297,22 +304,17 @@ class ScalingManager:
             ).items():
                 if hasattr(eff, 'modify_stat'):
                     old_val = raw
-                    raw = eff.modify_stat(raw, actor)
+                    # Try to pass stat_name parameter for effects that support it,
+                    # fall back to 2-parameter call for backward compatibility
+                    try:
+                        raw = eff.modify_stat(raw, actor, stat_name)
+                    except TypeError:
+                        # Fallback for effects with 2-parameter modify_stat
+                        raw = eff.modify_stat(raw, actor)
                     scaling_logger.debug(
                         f"Effect {eff_id} modified {stat_name}: {old_val} -> {raw}"
                     )
             
-            # Also check stat_bonus_ids for StatBonusEffect instances
-            for bonus_id in getattr(actor, 'stat_bonus_ids', []):
-                if bonus_id in getattr(actor, 'active_statuses', {}):
-                    eff, _ = actor.active_statuses[bonus_id]
-                    if hasattr(eff, 'modify_stat'):
-                        old_val = raw
-                        raw = eff.modify_stat(raw, actor)
-                        scaling_logger.debug(
-                            f"Bonus {bonus_id} modified {stat_name}: {old_val} -> {raw}"
-                        )
-
 
         # 3) Grade multiplier (per-grade config mapping)
         # 3) Grade multiplier (per-grade config mapping, robust to float fallback)
@@ -461,7 +463,7 @@ class ScalingManager:
         
         # Cap damage to a percentage of target's max health based on level difference
         level_diff = max(0, attacker_level - getattr(defender, 'level', 1))
-        max_percent_damage = min(0.5, 0.25 + (level_diff * 0.05))  # 25% base, +5% per level diff, max 50%
+        max_percent_damage = min(0.50, 0.25 + (level_diff * 0.05))  # 25% base, +5% per level diff, max 80%
         damage_cap = target_max_health * max_percent_damage
         
         # Apply damage cap if damage is unreasonably high

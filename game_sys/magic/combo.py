@@ -2,7 +2,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 from game_sys.effects.factory import EffectFactory
-from game_sys.hooks.hooks_setup import emit, ON_COMBO_TRIGGERED
+from game_sys.effects.registry import EffectRegistry
+from game_sys.hooks.hooks_setup import emit, ON_COMBO_TRIGGERED, ON_COMBO_FINISHED
 from game_sys.logging import magic_logger, log_exception
 
 
@@ -53,16 +54,20 @@ class ComboManager:
                 )
                 
                 # apply combo effects
+                emit(ON_COMBO_TRIGGERED, actor=actor, combo=cid)
                 for eff_def in defn.get('effects', []):
                     effect = EffectFactory.create(eff_def)
                     result = effect.apply(actor, actor)
                     magic_logger.debug(
                         f"Applied combo effect {effect.id}: {result}"
                     )
-                    
-                emit(ON_COMBO_TRIGGERED, actor=actor, combo=cid)
+                    if not result:
+                        magic_logger.warning(f"Combo effect {effect.id} failed")
+                    emit(ON_COMBO_FINISHED, actor=actor, combo=cid)
+                # clear sequence after triggering
                 seq.clear()
                 magic_logger.debug(f"Cleared sequence for {actor.name}")
+
                 break
 
 

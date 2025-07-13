@@ -539,7 +539,7 @@ class CombatEngine:
         # Crit chance base value from config or stat
         from game_sys.config.config_manager import ConfigManager
         cfg = ConfigManager()
-        # Use derived_stats.critical_chance as the config default
+        # Use critical_chance_default as the config default
         base_crit_chance = cfg.get('constants.derived_stats.critical_chance', 0.01)
         # Ensure base_crit_chance is a float
         if not isinstance(base_crit_chance, (int, float)):
@@ -548,19 +548,15 @@ class CombatEngine:
         stat_crit_chance = attacker.get_stat('critical_chance')
         if isinstance(stat_crit_chance, (int, float)):
             base_crit_chance = stat_crit_chance
-        # Physical crit chance: increased by dexterity
-        dexterity_value = attacker.get_stat('dexterity')
-        if not isinstance(dexterity_value, (int, float)):
-            dexterity_value = 0.0
-        physical_crit_chance = base_crit_chance + (dexterity_value / 100.0)
+        physical_crit_chance = base_crit_chance
         # Spell crit chance: increased by focus
         focus_value = attacker.get_stat('focus')
         if not isinstance(focus_value, (int, float)):
             focus_value = 0.0
-        spell_crit_chance = base_crit_chance + (focus_value / 100.0)
+        spell_crit_chance = base_crit_chance
         combat_logger.debug(
             f"{attacker.name} intelligence: {intelligence_value} "
-            f"(multiplier: {intelligence_multiplier:.2f}), focus: {focus_value} (spell crit+{spell_crit_chance:.2%}), dexterity: {dexterity_value} (phys crit+{physical_crit_chance:.2%}), base_crit_chance: {base_crit_chance:.2%}"
+            f"(multiplier: {intelligence_multiplier:.2f}), focus: {focus_value} (spell crit+{spell_crit_chance:.2%}), (phys crit+{physical_crit_chance:.2%}), base_crit_chance: {base_crit_chance:.2%}"
         )
         
         # Determine if we should use spell path
@@ -604,7 +600,7 @@ class CombatEngine:
             spell_id = getattr(attacker, 'pending_spell', 'fireball')
             print(f"DEBUG: Spell ID from actor: {spell_id}")
             # Load the actual spell to get its base_power and damage_type
-            base_power = 50  # Default if we can't load the spell
+            base_power = 1  # Default if we can't load the spell
             spell_damage_type = None
             try:
                 from game_sys.magic.spell_loader import load_spell
@@ -617,11 +613,9 @@ class CombatEngine:
                 print(f"DEBUG: Error loading spell: {e}")
             # Apply intelligence and magic power enhancement formula:
             magic_power = attacker.get_stat('magic_power') or 1.0
-            enhanced_power = base_power * (1.0 + intelligence_multiplier) * magic_power
-            print("DEBUG: Intelligence & magic power enhancement formula:")
+            enhanced_power = base_power + magic_power
+            print("DEBUG:magic power enhancement formula:")
             print(f"  Base power: {base_power}")
-            print(f"  Intelligence: {intelligence_value}")
-            print(f"  Multiplier: {intelligence_multiplier}")
             print(f"  Magic Power: {magic_power}")
             print(f"  Enhanced power: {enhanced_power}")
             # Always use the spell's damage_type if available, else fallback to MAGIC
@@ -658,7 +652,7 @@ class CombatEngine:
             # Fallback to old calculation
             print("DEBUG: Using FALLBACK INTELLIGENCE DAMAGE")
             # Fallback: use a flat, low base damage (not based on intelligence)
-            fallback_base_damage = 8.0  # You can tune this value for balance
+            fallback_base_damage = 1.0  # You can tune this value for balance
             spell_packet = DamagePacket.from_spell_cast(
                 attacker, defender, fallback_base_damage, damage_type=None
             )
@@ -670,16 +664,17 @@ class CombatEngine:
 
         # Focus: increases spell crit chance (now handled above)
         # Resilience: reduces critical hit multiplier
+        crit_chance_used = 0.0  # Initialize the variable
         if should_use_spell_path:
             critical = is_spell_crit
             crit_chance_used = spell_crit_chance
         else:
             # Use physical crit chance for weapon attacks
             import random
-            phys_crit_roll = random.random()
-            critical = phys_crit_roll < physical_crit_chance
-            crit_chance_used = physical_crit_chance
-            combat_logger.debug(f"Physical crit roll: {phys_crit_roll:.3f} vs chance: {physical_crit_chance:.3f}")        # Apply magic resistance for spells, physical for weapon
+            physical_crit_roll = random.random()
+            critical = physical_crit_roll < physical_crit_chance
+            crit_chance_used = physical_crit_chance  # Set the chance used for physical attacks
+            combat_logger.debug(f"Physical crit roll: {physical_crit_roll:.3f} vs chance: {physical_crit_chance:.3f}")
         if should_use_spell_path:
             magic_resistance = defender.get_stat('magic_resistance') or 0.0
             # Cap magic resistance at 95% to prevent negative damage

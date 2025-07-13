@@ -15,6 +15,16 @@ import asyncio
 
 
 class LevelingManager:
+    def get_all_stat_impacts(self) -> Dict[str, Dict[str, float]]:
+        """
+        Get the impact mappings for all allocatable stats.
+        Returns a dictionary mapping stat names to their impact dicts.
+        Useful for displaying in UI or documentation.
+        """
+        impacts = {}
+        for stat in self.get_allocatable_stats():
+            impacts[stat] = self.get_stat_impact(stat)
+        return impacts
 
     def gain_experience(self, actor, amount):
         """
@@ -289,7 +299,7 @@ class LevelingManager:
                 'status_resistance': 0.01
             },
             'luck': {
-                'critical_chance': 0.005,
+                'critical_chance': 0.001,
                 'item_find': 0.01
             }
         }

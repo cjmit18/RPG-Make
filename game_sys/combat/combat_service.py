@@ -141,8 +141,13 @@ class CombatService:
             
             # Set up the caster for spell casting - tells the combat engine
             # to use the spell path for damage calculation
+            print(f"DEBUG: Setting pending_spell={spell_id} on {caster.name}")
             caster.pending_spell = spell_id
             caster._spell_state = True
+            
+            # Verify the spell was set correctly
+            verify_spell = getattr(caster, 'pending_spell', None)
+            print(f"DEBUG: Verified pending_spell={verify_spell} on {caster.name}")
             
             # Execute spell damage through combat engine (no weapon = spell)
             outcome = self.engine.execute_attack_sync(
@@ -150,6 +155,7 @@ class CombatService:
             )
             
             # Clean up spell state
+            print(f"DEBUG: Cleaning up spell state for {caster.name}")
             if hasattr(caster, 'pending_spell'):
                 delattr(caster, 'pending_spell')
             if hasattr(caster, '_spell_state'):

@@ -110,21 +110,22 @@ class InventoryManager:
         )
         # Auto-equip logic if enabled and quantity is 1
         if auto_equip and quantity == 1 and hasattr(item, 'slot'):
-            slot = item.slot
-            slot_empty = False
-            if slot == 'weapon':
-                slot_empty = getattr(self.actor, 'weapon', None) is None
-            elif slot == 'offhand':
-                slot_empty = getattr(self.actor, 'offhand', None) is None
-            elif slot in ['body', 'helmet', 'legs', 'feet']:
-                slot_empty = getattr(self.actor, f'equipped_{slot}', None) is None
-            if slot_empty:
-                if slot == 'weapon' and hasattr(self.actor, 'equip_weapon'):
-                    self.actor.equip_weapon(item)
-                elif slot == 'offhand' and hasattr(self.actor, 'equip_offhand'):
-                    self.actor.equip_offhand(item)
-                elif slot in ['body', 'helmet', 'legs', 'feet'] and hasattr(self.actor, 'equip_armor'):
-                    self.actor.equip_armor(item)
+            try:
+                # Use the equipment manager for smart auto-equipping
+                from game_sys.managers.equipment_manager import equipment_manager
+                success, message = equipment_manager.equip_item_with_smart_logic(self.actor, item)
+                if success:
+                    inventory_logger.info(
+                        f"Auto-equipped {item_name} on {self.actor.name}: {message}"
+                    )
+                else:
+                    inventory_logger.debug(
+                        f"Auto-equip skipped for {item_name} on {self.actor.name}: {message}"
+                    )
+            except Exception as e:
+                inventory_logger.warning(
+                    f"Auto-equip failed for {item_name} on {self.actor.name}: {e}"
+                )
         return True
 
     @log_exception

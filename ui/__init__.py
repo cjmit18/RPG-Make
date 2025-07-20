@@ -3,10 +3,12 @@
 UI Package Initialization
 ========================
 
-This package contains UI components and widgets for the game system.
+This package contains UI components for the game system.
+Main UI functionality is provided through DemoUI.
 """
 
-# Import key components to expose at the top level
-from .ui_manager import UIManager
-from .base_widget import BaseWidget
-from .event_types import UIEventType, UIEvent
+# Import the main UI component that's actually used
+from .demo_ui import DemoUI
+
+# Expose at package level
+__all__ = ['DemoUI']

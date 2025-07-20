@@ -52,6 +52,7 @@ class NullInventoryManager:
     def find(self, item_id): return None
     def list_items(self): return []
 
+
 # Factory functions
 flags = FeatureFlags()
 

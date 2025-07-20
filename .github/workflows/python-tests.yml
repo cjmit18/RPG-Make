@@ -1,0 +1,103 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ main, testing_center, develop ]
+  pull_request:
+    branches: [ main, testing_center, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Run core system tests
+      run: |
+        # Test basic imports and core functionality
+        python -c "import game_sys.config.config_manager; print('✅ Config system imports successfully')"
+        python -c "import game_sys.character.character_factory; print('✅ Character system imports successfully')" 
+        python -c "import game_sys.combat.combat_service; print('✅ Combat system imports successfully')"
+        python -c "import game_sys.magic.spell_system; print('✅ Magic system imports successfully')"
+        python -c "import game_sys.items.item_factory; print('✅ Item system imports successfully')"
+        
+    - name: Run configuration tests
+      run: |
+        python -c "
+        from game_sys.config.config_manager import ConfigManager
+        cfg = ConfigManager()
+        assert cfg.get('constants.combat.strength_multiplier') is not None
+        assert cfg.get('defaults.grades') is not None
+        print('✅ Configuration validation passed')
+        "
+        
+    - name: Run character creation tests
+      run: |
+        python -c "
+        from game_sys.character.character_factory import create_character
+        hero = create_character('hero')
+        assert hero is not None
+        assert hero.name == 'Valiant Hero'
+        assert hasattr(hero, 'level')
+        assert hasattr(hero, 'current_health')
+        print('✅ Character creation tests passed')
+        "
+        
+    - name: Run combat system tests
+      run: |
+        python -c "
+        from game_sys.combat.combat_service import CombatService
+        from game_sys.character.character_factory import create_character
+        service = CombatService()
+        hero = create_character('hero')
+        enemy = create_character('goblin')
+        assert service is not None
+        assert hero is not None
+        assert enemy is not None
+        print('✅ Combat system tests passed')
+        "
+        
+    - name: Run spell system tests
+      run: |
+        python -c "
+        from game_sys.magic.spell_system import SpellSystem
+        system = SpellSystem()
+        assert system is not None
+        spells = system.list_spells()
+        assert isinstance(spells, list)
+        print('✅ Spell system tests passed')
+        "
+        
+    - name: Run item system tests  
+      run: |
+        python -c "
+        from game_sys.items.item_factory import create_item
+        sword = create_item('iron_sword')
+        assert sword is not None
+        assert hasattr(sword, 'name')
+        print('✅ Item system tests passed')
+        "
+
+    - name: Run integration tests (if available)
+      run: |
+        if [ -f test_comprehensive.py ]; then
+          python test_comprehensive.py
+          echo '✅ Integration tests passed'
+        else
+          echo '⚠️ No integration tests found, skipping'
+        fi

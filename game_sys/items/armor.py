@@ -64,12 +64,9 @@ class Shield(Armor):
         self.block_chance = block_chance
 
     def apply(self, user: Any, target: Any = None) -> None:
-        """Equip as offhand shield."""
-        if hasattr(user, 'equip_offhand'):
-            user.equip_offhand(self)
-        else:
-            # Fallback to regular equipment
-            super().apply(user, target)
+        """Equip as offhand shield using integrated equipment service."""
+        # Use the parent Equipment.apply() method which routes through equipment service
+        super().apply(user, target)
 
     def can_block(self) -> bool:
         """Check if this shield can block an incoming attack."""

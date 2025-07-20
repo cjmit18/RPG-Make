@@ -52,37 +52,88 @@ def _fmt(val: float) -> str:
 
 class Actor:
     def equip_item_by_uuid(self, uuid: str) -> bool:
-        """Equip an item from inventory by its UUID, only if the slot is empty."""
+        """Equip an item from inventory by its UUID, with smart slot selection for dual-wield items."""
         if not hasattr(self, 'inventory') or not hasattr(self.inventory, 'items'):
             return False
         # Find the item by UUID
         item = next((itm for itm in self.inventory.items if getattr(itm, 'uuid', None) == uuid), None)
         if not item:
             return False
+            
         slot = getattr(item, 'slot', None)
+        slot_restriction = getattr(item, 'slot_restriction', None)
+        
+        # Smart dual-wield handling for either_hand items
+        if slot_restriction == "either_hand":
+            # Try to use the smart equipping method for dual-wield weapons
+            if hasattr(self, 'equip_weapon_smart'):
+                success = self.equip_weapon_smart(item)
+                if success:
+                    # Remove from inventory if still there (equip_weapon_smart might not remove it)
+                    if item in self.inventory.items:
+                        self.inventory.remove_item(item)
+                return success
+            else:
+                # Fallback: Try weapon slot first, then offhand slot
+                weapon_slot_empty = getattr(self, 'weapon', None) is None
+                offhand_slot_empty = getattr(self, 'offhand', None) is None
+                
+                if weapon_slot_empty:
+                    # Equip to weapon slot
+                    if hasattr(self, 'equip_weapon'):
+                        self.equip_weapon(item)
+                        if item in self.inventory.items:
+                            self.inventory.remove_item(item)
+                        return True
+                elif offhand_slot_empty:
+                    # Equip to offhand slot
+                    if hasattr(self, 'equip_offhand'):
+                        success = self.equip_offhand(item)
+                        if success and item in self.inventory.items:
+                            self.inventory.remove_item(item)
+                        return success
+                        
+                return False
+        
+        # Handle offhand_only items
+        elif slot_restriction == "offhand_only":
+            offhand_slot_empty = getattr(self, 'offhand', None) is None
+            if not offhand_slot_empty:
+                return False
+            if hasattr(self, 'equip_offhand'):
+                success = self.equip_offhand(item)
+                if success and item in self.inventory.items:
+                    self.inventory.remove_item(item)
+                return success
+            return False
+        
+        # Handle regular items with standard slot logic
         slot_empty = False
         if slot == 'weapon':
             slot_empty = getattr(self, 'weapon', None) is None
         elif slot == 'offhand':
             slot_empty = getattr(self, 'offhand', None) is None
-            if not slot_empty and hasattr(item, 'dual_wield') and item.dual_wield:
-                # Allow equipping dual-wield offhand if main hand is empty or also dual-wield
-                main_weapon = getattr(self, 'weapon', None)
-                if main_weapon is None or (hasattr(main_weapon, 'dual_wield') and main_weapon.dual_wield):
-                    slot_empty = True
+        elif slot == 'ring':
+            slot_empty = getattr(self, 'equipped_ring', None) is None
         elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
             slot_empty = getattr(self, f'equipped_{slot}', None) is None
+        
         if not slot_empty:
             return False
+            
         # Equip and remove from inventory
         if slot == 'weapon' and hasattr(self, 'equip_weapon'):
             self.equip_weapon(item)
         elif slot == 'offhand' and hasattr(self, 'equip_offhand'):
             self.equip_offhand(item)
+        elif slot == 'ring':
+            # Direct attribute setting for ring since there's no equip_ring method
+            setattr(self, 'equipped_ring', item)
         elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self, 'equip_armor'):
             self.equip_armor(item)
         else:
             return False
+            
         # Remove from inventory (if not already removed by equip)
         if item in self.inventory.items:
             self.inventory.remove_item(item)
@@ -98,6 +149,13 @@ class Actor:
         elif slot == 'offhand' and hasattr(self, 'offhand') and self.offhand:
             item = self.offhand
             self.unequip_offhand()
+            return item
+        elif slot == 'ring' and hasattr(self, 'equipped_ring') and self.equipped_ring:
+            item = self.equipped_ring
+            setattr(self, 'equipped_ring', None)  # Direct unequip for ring
+            # Add back to inventory
+            if hasattr(self, 'inventory'):
+                self.inventory.add_item(item, auto_equip=False)
             return item
         elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
             slot_attr = f'equipped_{slot}'
@@ -212,6 +270,14 @@ class Actor:
         # Combat/effects hooks
         self.weapon: Any = None
         self.offhand: Any = None  # For dual wielding
+        
+        # Equipment slots - Initialize all supported equipment attributes
+        self.equipped_body: Any = None
+        self.equipped_helmet: Any = None
+        self.equipped_feet: Any = None
+        self.equipped_cloak: Any = None
+        self.ring: Any = None
+        
         self.stat_bonus_ids: List[str] = []
         self.passive_ids: List[str] = []
         self.skill_effect_ids: List[str] = []
@@ -554,34 +620,39 @@ class Actor:
     @log_exception
     def equip_weapon(self, weapon: Any):
         """Equip the given weapon on this actor."""
-        # Remove weapon from inventory if it's there
-        if hasattr(self, 'inventory') and hasattr(self.inventory, 'items') and weapon in self.inventory.items:
-            self.inventory.remove_item(weapon)
+        try:
+            # Remove weapon from inventory if it's there
+            if hasattr(self, 'inventory') and hasattr(self.inventory, 'items') and weapon in self.inventory.items:
+                self.inventory.remove_item(weapon)
+                
+            # Unequip current weapon first
+            if self.weapon:
+                self._unequip_weapon()
             
-        # Unequip current weapon first
-        if self.weapon:
-            self._unequip_weapon()
-        
-        # Merge weapon stats into base_stats
-        if hasattr(weapon, 'stats'):
-            for stat_name, bonus in weapon.stats.items():
-                current_value = self.base_stats.get(stat_name, 0.0)
-                self.base_stats[stat_name] = current_value + bonus
-        
-        # Add weapon effect IDs
-        if hasattr(weapon, 'effect_ids'):
-            self.skill_effect_ids.extend(weapon.effect_ids)
-        
-        self.weapon = weapon
-        
-        character_logger.info(f"{self.name} equipped weapon {weapon.id}.")
-        
-        # If it's a two-handed weapon, unequip offhand
-        if hasattr(weapon, 'two_handed') and weapon.two_handed:
-            self.unequip_offhand()
-        
-        # Update stats after equipping
-        self.update_stats()
+            # Merge weapon stats into base_stats
+            if hasattr(weapon, 'stats'):
+                for stat_name, bonus in weapon.stats.items():
+                    current_value = self.base_stats.get(stat_name, 0.0)
+                    self.base_stats[stat_name] = current_value + bonus
+            
+            # Add weapon effect IDs
+            if hasattr(weapon, 'effect_ids'):
+                self.skill_effect_ids.extend(weapon.effect_ids)
+            
+            self.weapon = weapon
+            
+            character_logger.info(f"{self.name} equipped weapon {weapon.id}.")
+            
+            # If it's a two-handed weapon, unequip offhand
+            if hasattr(weapon, 'two_handed') and weapon.two_handed:
+                self.unequip_offhand()
+            
+            # Update stats after equipping
+            self.update_stats()
+            return True
+        except Exception as e:
+            character_logger.error(f"Failed to equip weapon {weapon}: {e}")
+            return False
 
     def _unequip_weapon(self):
         """Helper to unequip current weapon and remove its bonuses."""

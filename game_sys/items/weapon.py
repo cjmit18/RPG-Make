@@ -96,12 +96,9 @@ class OffhandWeapon(Weapon):
         return self.base_damage * self.damage_reduction
 
     def apply(self, user: Any, target: Any = None) -> None:
-        """Equip as offhand weapon."""
-        if hasattr(user, 'equip_offhand'):
-            user.equip_offhand(self)
-        else:
-            # Fallback to regular equipment
-            super().apply(user, target)
+        """Equip as offhand weapon using integrated equipment service."""
+        # Use the parent Equipment.apply() method which routes through equipment service
+        super().apply(user, target)
 
     def __str__(self) -> str:
         """String representation for debugging."""
@@ -144,11 +141,10 @@ class TwoHandedWeapon(Weapon):
         self.two_handed = True
 
     def apply(self, user: Any, target: Any = None) -> None:
-        """Equip as two-handed weapon, unequipping offhand if present."""
+        """Equip as two-handed weapon using integrated equipment service."""
+        # Use the parent Equipment.apply() method which routes through equipment service
+        # The equipment manager will handle unequipping offhand automatically for two-handed weapons
         super().apply(user, target)
-        # Unequip offhand when wielding a two-handed weapon
-        if hasattr(user, 'unequip_offhand'):
-            user.unequip_offhand()
 
     def __str__(self) -> str:
         """String representation for debugging."""

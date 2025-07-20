@@ -75,13 +75,12 @@ class JobManager:
                 try:
                     item = ItemFactory.create(item_id)
                     if item:
-                        # Auto-equip equipment, add consumables to inventory
-                        if isinstance(item, Equipment):
-                            item.apply(actor)  # Merges stats & effects, equips
-                        else:
-                            actor.inventory.add_item(item)  # Consumables
+                        # Add all items to inventory with auto_equip=True for equipment
+                        # The inventory system will handle auto-equipping equipment items
+                        auto_equip = hasattr(item, 'slot') and item.slot != 'consumable'
+                        actor.inventory.add_item(item, auto_equip=auto_equip)
                         character_logger.debug(
-                            f"Added item {item_id} to {actor.name}"
+                            f"Added item {item_id} to {actor.name} (auto_equip={auto_equip})"
                         )
                     else:
                         character_logger.warning(
@@ -92,6 +91,40 @@ class JobManager:
                         f"Error creating item {item_id} for {actor.name}: {e}"
                     )
                     # Continue with other items instead of failing completely
+
+        # Grant job passives
+        job_passives = job_def.get("passives", [])
+        if job_passives:
+            # Initialize passive_ids if it doesn't exist
+            if not hasattr(actor, 'passive_ids'):
+                actor.passive_ids = []
+            
+            # Add job passives to actor's passive list
+            for passive_id in job_passives:
+                if passive_id not in actor.passive_ids:
+                    actor.passive_ids.append(passive_id)
+                    character_logger.debug(
+                        f"Added job passive '{passive_id}' to {actor.name}"
+                    )
+            
+            # Register passives with PassiveManager
+            try:
+                from game_sys.skills.passive_manager import PassiveManager
+                PassiveManager.register_actor(actor)
+                character_logger.debug(
+                    f"Registered {len(job_passives)} job passives for {actor.name}"
+                )
+                
+                # Trigger spawn event for job passives
+                from game_sys.hooks.hooks_setup import emit, ON_CHARACTER_CREATED
+                emit(ON_CHARACTER_CREATED, actor=actor)
+                character_logger.debug(
+                    f"Emitted character created event for job passives on {actor.name}"
+                )
+            except Exception as e:
+                character_logger.error(
+                    f"Failed to register job passives for {actor.name}: {e}"
+                )
         
         character_logger.info(
             f"Job '{job_id}' assigned to {actor.name} successfully"

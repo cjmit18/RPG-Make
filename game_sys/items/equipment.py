@@ -44,9 +44,35 @@ class Equipment(Item):
 
     def apply(self, user: Any, target: Any = None) -> None:
         """
-        Equip this item on the user.
-        Delegates to actor's equip methods for weapon/offhand slots,
-        or sets the slot directly for armor pieces.
+        Equip this item on the user using the equipment service.
+        
+        This method now delegates to the equipment service for consistent
+        dual-wield logic and conflict resolution.
+        """
+        try:
+            # Import here to avoid circular imports
+            from game_sys.items.equipment_service import equipment_service
+            
+            # Use the equipment service for smart equipment logic
+            success, message = equipment_service.equip_item(user, self)
+            
+            if not success:
+                # Log the failure but don't raise exception for backward compatibility
+                from game_sys.logging import get_logger
+                logger = get_logger(__name__)
+                logger.warning(f"Equipment failed for {self.name}: {message}")
+                
+        except Exception as e:
+            # Fallback to legacy direct equipment for compatibility
+            self._legacy_apply(user, target)
+            
+    def _legacy_apply(self, user: Any, target: Any = None) -> None:
+        """
+        Legacy equipment method for backward compatibility.
+        """
+    def _legacy_apply(self, user: Any, target: Any = None) -> None:
+        """
+        Legacy equipment method for backward compatibility.
         """
         # Delegate to actor's equip methods for weapon/offhand slots
         if self.slot == "weapon":

@@ -540,7 +540,7 @@ class CombatEngine:
         from game_sys.config.config_manager import ConfigManager
         cfg = ConfigManager()
         # Use critical_chance_default as the config default
-        base_crit_chance = cfg.get('constants.derived_stats.critical_chance', 0.01)
+        base_crit_chance = cfg.get('constants.derived_stats.critical_chance_default', 0.01)
         # Ensure base_crit_chance is a float
         if not isinstance(base_crit_chance, (int, float)):
             base_crit_chance = 0.01
@@ -597,7 +597,11 @@ class CombatEngine:
         if should_use_spell_path:
             print("DEBUG: Using SPELL DAMAGE PATH")
             # Get the spell_id from the actor's pending_spell
-            spell_id = getattr(attacker, 'pending_spell', 'fireball')
+            spell_id = getattr(attacker, 'pending_spell', None)
+            if spell_id is None:
+                # If no spell ID is set, this is an error condition
+                print("ERROR: No pending_spell found on actor, cannot cast spell")
+                return DamagePacket(attacker, defender, 0, "UNKNOWN_SPELL")
             print(f"DEBUG: Spell ID from actor: {spell_id}")
             # Load the actual spell to get its base_power and damage_type
             base_power = 1  # Default if we can't load the spell

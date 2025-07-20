@@ -204,7 +204,7 @@ class EffectFactory:
         # Damage type bonuses
         if len(parts) >= 3 and parts[1] == "damage":
             amount = float(parts[2])
-            damage_types = ["physical", "magical", "fire", "cold", "lightning", "poison", "holy", "dark"]
+            damage_types = ["physical", "magic", "fire", "cold", "lightning", "poison", "holy", "dark"]
             if etype in damage_types:
                 stat_name = f"{etype}_damage"
                 effects_logger.debug(f"Creating {stat_name} bonus: +{amount}")
@@ -325,6 +325,40 @@ class EffectFactory:
                 effects_logger.debug(f"Creating damage reflection: +{amount}%")
                 cls = EffectRegistry._registry.get("equipment_stat")
                 return cls(stat_name="damage_reflection", amount=amount) if cls else NullEffect()
+
+        # Special effect patterns
+        if len(parts) >= 2:
+            # Heal effects
+            if etype == "heal":
+                amount = float(parts[1])
+                effects_logger.debug(f"Creating heal effect: +{amount} HP")
+                cls = EffectRegistry._registry.get("heal")
+                return cls(amount=amount) if cls else NullEffect()
+            
+            # Restore effects  
+            elif etype == "restore":
+                if len(parts) >= 3:
+                    resource = parts[1]
+                    amount = float(parts[2])
+                    effects_logger.debug(f"Creating restore {resource}: +{amount}")
+                    cls = EffectRegistry._registry.get("equipment_stat")
+                    return cls(stat_name=f"restore_{resource}", amount=amount) if cls else NullEffect()
+            
+            # Damage type bonuses with _damage suffix
+            elif etype.endswith("_damage") and len(parts) >= 2:
+                damage_type = etype[:-7]  # Remove "_damage" suffix
+                amount = float(parts[1])
+                effects_logger.debug(f"Creating {damage_type} damage bonus: +{amount}")
+                cls = EffectRegistry._registry.get("equipment_stat")
+                return cls(stat_name=f"{damage_type}_damage", amount=amount) if cls else NullEffect()
+            
+            # Simple bonus effects (grip_bonus_10 -> grip with value 10)
+            elif "_" in eid and not any(keyword in eid for keyword in ['boost', 'regen', 'resist', 'chance', 'damage', 'reduction']):
+                base_name = "_".join(parts[:-1])
+                amount = float(parts[-1])
+                effects_logger.debug(f"Creating {base_name} bonus: +{amount}")
+                cls = EffectRegistry._registry.get("equipment_stat")
+                return cls(stat_name=base_name, amount=amount) if cls else NullEffect()
 
         # Status effects
         status_effects = {

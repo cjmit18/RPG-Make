@@ -55,10 +55,8 @@ class CharacterFactory:
         ctype = data.get('type', 'player').lower()
         character_logger.debug(f"Creating {ctype} from template: {template_id}")
         
-        # Always ensure agility is present in base_stats
+        # Base stats from template, overridden by any provided in overrides
         base_stats = dict(data.get('base_stats', {}))
-        if 'agility' not in base_stats:
-            base_stats['agility'] = 0
         if ctype == 'enemy':
             actor = Enemy(
                 name=data.get('display_name', template_id),
@@ -199,12 +197,22 @@ class CharacterFactory:
                 )
 
         # 6) Register passives (if any) so they hook into events immediately
-        actor.passive_ids = data.get('passives', [])
+        # Merge template passives with any existing passives (e.g., from job assignment)
+        template_passives = data.get('passives', [])
+        if not hasattr(actor, 'passive_ids'):
+            actor.passive_ids = []
+        
+        # Add template passives that aren't already present
+        for passive_id in template_passives:
+            if passive_id not in actor.passive_ids:
+                actor.passive_ids.append(passive_id)
+                character_logger.debug(f"Added template passive '{passive_id}' to {actor.name}")
+        
         if actor.passive_ids:
             PassiveManager.register_actor(actor)
             character_logger.debug(
-                f"Registered {len(actor.passive_ids)} passives for "
-                f"{actor.name}"
+                f"Registered {len(actor.passive_ids)} total passives for "
+                f"{actor.name}: {actor.passive_ids}"
             )
             
             # Trigger spawn event for passives

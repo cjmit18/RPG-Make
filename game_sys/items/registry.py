@@ -10,6 +10,7 @@ from game_sys.items.consumable import Consumable
 from game_sys.items.material import Material
 from game_sys.items.weapon import Weapon, OffhandWeapon, TwoHandedWeapon
 from game_sys.items.armor import Armor, Shield
+from game_sys.items.accessory import Accessory
 from game_sys.items.enchantment import Enchantment
 
 
@@ -35,6 +36,7 @@ ItemRegistry.register('material', Material)
 ItemRegistry.register('weapon', Weapon)
 ItemRegistry.register('two_handed_weapon', TwoHandedWeapon)
 ItemRegistry.register('armor', Armor)
+ItemRegistry.register('accessory', Accessory)
 ItemRegistry.register('enchantment', Enchantment)
 ItemRegistry.register('offhand_weapon', OffhandWeapon)
 ItemRegistry.register('shield', Shield)

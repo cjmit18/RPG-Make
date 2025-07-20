@@ -1,10 +1,17 @@
-# RPG Game Engine - AI Coding Assistant Instructions
+# RPG Game Engine - GitHub Copilot Instructions
 
 ## Project Documentation Structure
 
 **CRITICAL**: Always consult these directories before implementing features:
 
-### 📁 `docs/` - Technical Documentation
+### 📁 `.github/` - GitHub Copilot Integration
+- **COPILOT.md** - Comprehensive architecture and pattern guidelines  
+- **plan.md** - Checklist-driven development workflow
+- **memory_bank/** - Knowledge repository with patterns, decisions, lessons
+- **cross_reference.md** - Documentation cross-examination system
+- **activecontext.md** - Current session state tracking
+
+### 📁 `docs/` - Technical Documentation  
 - **Architecture guides** - System design and integration patterns
 - **Implementation summaries** - Completed feature documentation
 - **Testing guides** - Comprehensive testing strategies
@@ -21,7 +28,12 @@
 - **Configuration examples** showing best practices
 - **Examples**: `config_usage_example.py`
 
-**WORKFLOW**: When implementing any feature, first check `docs/` for architecture guidance, then `instructions/` for implementation steps, then `examples/` for code patterns.
+**WORKFLOW**: 
+1. Check `.github/COPILOT.md` for architecture patterns
+2. Review `.github/memory_bank/` for similar implementations
+3. Consult `docs/` for technical specifications
+4. Check `instructions/` for step-by-step guidance
+5. Reference `examples/` for code patterns
 
 ## Architecture Overview
 

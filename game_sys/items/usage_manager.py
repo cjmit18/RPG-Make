@@ -184,50 +184,32 @@ class ItemUsageManager:
         )
     
     def _handle_equipment(self, actor: Actor, item: Any) -> ItemUsageResult:
-        """Handle equipping items."""
-        item_type = getattr(item, 'item_type', 'unknown')
-        
-        # Determine slot based on item type
-        if item_type == 'weapon':
-            slot = 'weapon'
-        elif item_type == 'armor':
-            slot = 'equipped_body'  # Using the demo's naming convention
-        elif item_type == 'offhand':
-            slot = 'offhand'
-        elif item_type == 'accessory':
-            slot = 'accessory'
-        else:
+        """Handle equipping items using the equipment service."""
+        try:
+            # Import here to avoid circular imports
+            from game_sys.items.equipment_service import equipment_service
+            
+            # Use the equipment service for smart equipment logic
+            success, message = equipment_service.equip_item(actor, item)
+            
+            if success:
+                return ItemUsageResult(
+                    True,
+                    message,
+                    effects_applied=getattr(item, 'effect_ids', [])
+                )
+            else:
+                return ItemUsageResult(
+                    False,
+                    message
+                )
+                
+        except Exception as e:
+            item_logger.error(f"Equipment error: {e}")
             return ItemUsageResult(
                 False,
-                f"Cannot equip item of type {item_type}"
+                f"Equipment failed: {e}"
             )
-        
-        # Store current item
-        old_item = None
-        if hasattr(actor, slot):
-            old_item = getattr(actor, slot)
-            
-        # Equip new item
-        setattr(actor, slot, item)
-        
-        # If there was an old item, add it back to inventory
-        if old_item and hasattr(actor, 'inventory'):
-            actor.inventory.add_item(old_item)
-            
-        # Remove equipped item from inventory
-        if hasattr(actor, 'inventory'):
-            actor.inventory.remove_item(item)
-            
-        # Update actor stats
-        if hasattr(actor, 'update_stats'):
-            actor.update_stats()
-        
-        # Return result
-        result_msg = f"Equipped {item.name}"
-        if old_item:
-            result_msg += f" (replaced {old_item.name})"
-            
-        return ItemUsageResult(True, result_msg)
 
 
 # Singleton instance

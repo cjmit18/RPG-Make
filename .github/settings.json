@@ -1,0 +1,62 @@
+{
+  "copilot": {
+    "preferences": {
+      "architecture": {
+        "service_layer": true,
+        "factory_pattern": true,
+        "configuration_driven": true,
+        "dependency_injection": true
+      },
+      "code_style": {
+        "type_hints": true,
+        "docstrings": true,
+        "error_handling": true,
+        "logging": true
+      },
+      "patterns": {
+        "ui_service_separation": true,
+        "json_configuration": true,
+        "hook_system": true,
+        "registry_pattern": true
+      }
+    },
+    "guidelines": {
+      "business_logic": "Always use service classes for business logic",
+      "object_creation": "Use existing factories for object creation",
+      "configuration": "Use ConfigManager for all configuration access",
+      "ui_integration": "UI should only call service methods, no direct manipulation",
+      "error_handling": "Include comprehensive exception handling",
+      "testing": "Write tests for service layer, validate in demo"
+    },
+    "anti_patterns": {
+      "direct_manipulation": "Avoid direct object manipulation from UI",
+      "hardcoded_values": "Never hardcode configuration values",
+      "business_logic_in_ui": "No business logic in UI components",
+      "bypassing_factories": "Don't create objects without using factories",
+      "missing_error_handling": "Always include try/catch for service calls"
+    }
+  },
+  "project_context": {
+    "type": "RPG Game Engine",
+    "language": "Python",
+    "ui_framework": "Tkinter",
+    "architecture": "Service Layer with Factory Pattern",
+    "configuration": "JSON-driven with ConfigManager",
+    "testing": "Pytest with demo integration"
+  },
+  "file_associations": {
+    "service_classes": "game_sys/*/",
+    "factories": "game_sys/*/factories/",
+    "configuration": "game_sys/config/",
+    "ui_components": "demo.py, ui/",
+    "tests": "tests/",
+    "documentation": "docs/, .github/"
+  },
+  "quality_requirements": {
+    "linting": "flake8 compliance required",
+    "type_checking": "mypy validation required",
+    "testing": "Service layer unit tests required",
+    "documentation": "Docstrings and comments required",
+    "demo_integration": "All features must work in demo.py"
+  }
+}

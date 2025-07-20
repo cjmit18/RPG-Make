@@ -52,9 +52,9 @@
       "name": "Leather Armor",
       "description": "Lightweight body armor.",
       "slot": "body",
+      "defense": 5,
       "level_requirement": 2,
       "stats": {
-        "defense": 5,
         "dexterity": 1,
         "evasion": 0.03,
         "resilience": 0.02
@@ -75,12 +75,12 @@
       "resilience": 0.04
     },
     "iron_dagger": {
-      "type": "offhand_weapon",
+      "type": "weapon",
       "name": "Iron Dagger",
       "description": "A small, quick blade perfect for dual wielding.",
       "base_damage": 6,
       "damage_type": "PHYSICAL",
-      "slot": "offhand",
+      "slot": "weapon",
       "slot_restriction": "either_hand",
       "effect_ids": [],
       "dual_wield": true,
@@ -106,9 +106,7 @@
       "name": "Basic Clothes",
       "description": "Simple clothing providing minimal protection.",
       "slot": "body",
-      "stats": {
-        "defense": 1
-      },
+      "defense": 1,
       "effect_ids": []
     },
     "apprentice_staff": {
@@ -116,8 +114,8 @@
       "name": "Apprentice Staff",
       "description": "A basic staff for beginning mages.",
       "base_damage": 5,
-      "damage_type": "MAGICAL",
-      "slot": "two_handed",
+      "damage_type": "MAGIC",
+      "slot": "weapon",
       "effect_ids": [
         "mana_boost_5"
       ]
@@ -127,24 +125,24 @@
       "name": "Arcane Staff",
       "description": "A powerful staff crackling with arcane energy.",
       "base_damage": 12,
-      "damage_type": "MAGICAL",
-      "slot": "two_handed",
+      "damage_type": "MAGIC",
+      "slot": "weapon",
       "stats": {
-        "spell_power": 12,
+        "magic_power": 12,
         "focus": 4
       },
       "effect_ids": [
         "mana_boost_10",
-        "spell_power_15"
+        "magic_power_15"
       ]
     },
     "mage_robes": {
       "type": "armor",
       "name": "Mage Robes",
-      "description": "Comfortable robes that enhance magical abilities.",
+      "description": "Comfortable robes that enhance magic abilities.",
       "slot": "body",
+      "defense": 2,
       "stats": {
-        "defense": 2,
         "intelligence": 2
       },
       "effect_ids": [
@@ -156,20 +154,20 @@
       "name": "Archmage Robes",
       "description": "Luxurious robes infused with powerful enchantments.",
       "slot": "body",
+      "defense": 4,
       "stats": {
-        "defense": 4,
         "intelligence": 5,
         "wisdom": 3
       },
       "effect_ids": [
         "mana_regen_5",
-        "spell_power_10"
+        "magic_power_10"
       ]
     },
     "spell_focus": {
       "type": "shield",
       "name": "Spell Focus",
-      "description": "A magical focus that aids in spellcasting.",
+      "description": "A MAGIC focus that aids in spellcasting.",
       "defense": 0,
       "slot": "offhand",
       "slot_restriction": "offhand_only",
@@ -186,16 +184,22 @@
       "base_damage": 15,
       "damage_type": "PHYSICAL",
       "slot": "weapon",
-      "effect_ids": []
+      "stats": {
+        "strength": 2,
+        "constitution": 1
+      },
+      "effect_ids": [
+        "armor_penetration_10"
+      ]
     },
     "dragon_scale_armor": {
       "type": "armor",
       "name": "Dragon Scale Armor",
       "description": "Armor made from dragon scales, providing exceptional protection against all elements.",
       "slot": "body",
+      "defense": 30,
       "level_requirement": 30,
       "stats": {
-        "defense": 30,
         "strength": 5,
         "constitution": 5
       },
@@ -224,17 +228,17 @@
     "ring_of_power": {
       "type": "accessory",
       "name": "Ring of Power",
-      "description": "A magical ring that enhances all abilities.",
+      "description": "A MAGIC ring that enhances all abilities.",
       "defense": 0,
       "slot": "ring",
       "stats": {
         "intelligence": 5,
         "wisdom": 3,
         "focus": 3,
-        "spell_power": 8
+        "magic_power": 8
       },
       "effect_ids": [
-        "spell_power_15",
+        "magic_power_15",
         "mana_regen_3",
         "crit_boost_0.0001"
       ]
@@ -281,7 +285,7 @@
     "arcane_focus": {
       "type": "shield",
       "name": "Arcane Focus",
-      "description": "A magical focus that reduces spell costs and increases penetration.",
+      "description": "A MAGIC focus that reduces spell costs and increases penetration.",
       "defense": 2,
       "slot": "offhand",
       "slot_restriction": "offhand_only",
@@ -300,9 +304,9 @@
       "name": "Thornmail Armor",
       "description": "Spiked armor that damages attackers and provides resistances.",
       "slot": "body",
+      "defense": 8,
       "stats": {
         "constitution": 6,
-        "defense": 8,
         "resilience": 0.10
       },
       "effect_ids": [
@@ -332,9 +336,9 @@
       "name": "Orc Leather Armor",
       "description": "Rough leather armor crafted by orc warriors.",
       "slot": "body",
+      "defense": 3,
       "stats": {
-        "constitution": 2,
-        "defense": 3
+        "constitution": 2
       },
       "effect_ids": []
     },
@@ -342,11 +346,12 @@
       "type": "shield",
       "name": "Orc Shield",
       "description": "A crude but effective shield made from wood and metal.",
-      "block_chance": 0.15,
+      "defense": 4,
       "slot": "offhand",
+      "dual_wield": true,
+      "block_chance": 0.15,
       "stats": {
-        "constitution": 3,
-        "defense": 4
+        "constitution": 3
       },
       "effect_ids": []
     },
@@ -382,6 +387,85 @@
         "poison_damage_5"
       ]
     },
+    "ice_wand": {
+      "type": "weapon",
+      "name": "Ice Wand",
+      "description": "A crystalline wand that channels ice magic.",
+      "base_damage": 8,
+      "damage_type": "ICE",
+      "slot": "weapon",
+      "stats": {
+        "intelligence": 3,
+        "wisdom": 2
+      },
+      "effect_ids": [
+        "cold_damage_5"
+      ]
+    },
+    "lightning_rod": {
+      "type": "weapon",
+      "name": "Lightning Rod",
+      "description": "A metal rod that crackles with electrical energy.",
+      "base_damage": 10,
+      "damage_type": "LIGHTNING",
+      "slot": "weapon",
+      "two_handed": true,
+      "stats": {
+        "intelligence": 4,
+        "focus": 3
+      },
+      "effect_ids": [
+        "lightning_damage_20"
+      ]
+    },
+    "poison_blade": {
+      "type": "weapon",
+      "name": "Poison Blade",
+      "description": "A blade coated with deadly toxins.",
+      "base_damage": 12,
+      "damage_type": "POISON",
+      "slot": "weapon",
+      "dual_wield": true,
+      "stats": {
+        "dexterity": 3,
+        "attack": 2
+      },
+      "effect_ids": [
+        "poison_damage_15"
+      ]
+    },
+    "holy_mace": {
+      "type": "weapon",
+      "name": "Holy Mace",
+      "description": "A blessed mace that radiates divine energy.",
+      "base_damage": 16,
+      "damage_type": "HOLY",
+      "slot": "weapon",
+      "level_requirement": 10,
+      "stats": {
+        "wisdom": 4,
+        "constitution": 2
+      },
+      "effect_ids": [
+        "holy_damage_200"
+      ]
+    },
+    "shadow_dagger": {
+      "type": "weapon",
+      "name": "Shadow Dagger",
+      "description": "A dagger forged from pure darkness.",
+      "base_damage": 11,
+      "damage_type": "DARK",
+      "slot": "weapon",
+      "dual_wield": true,
+      "stats": {
+        "dexterity": 5,
+        "luck": 2
+      },
+      "effect_ids": [
+        "crit_boost_10"
+      ]
+    },
     "dragon_scale": {
       "type": "material",
       "name": "Dragon Scale",
@@ -395,9 +479,9 @@
       "name": "Crude Armor",
       "description": "Basic armor offering minimal protection.",
       "slot": "body",
+      "defense": 2,
       "stats": {
-        "constitution": 1,
-        "defense": 2
+        "constitution": 1
       },
       "effect_ids": []
     },
@@ -452,6 +536,51 @@
       "consumable": false,
       "price": 5,
       "effect_ids": []
+    },
+    "steel_helmet": {
+      "type": "armor",
+      "name": "Steel Helmet",
+      "description": "A sturdy helmet that protects the head from harm.",
+      "defense": 6,
+      "slot": "helmet",
+      "level_requirement": 5,
+      "stats": {
+        "constitution": 2,
+        "resilience": 0.05
+      },
+      "effect_ids": [
+        "head_protection_50"
+      ]
+    },
+    "chain_gauntlets": {
+      "type": "armor",
+      "name": "Chain Gauntlets",
+      "description": "Chainmail gloves that provide protection without hindering dexterity.",
+      "defense": 2,
+      "slot": "gloves",
+      "stats": {
+        "defense": 2,
+        "dexterity": 1,
+        "attack": 1
+      },
+      "effect_ids": [
+        "grip_bonus_10"
+      ]
+    },
+    "mana_crystal_amulet": {
+      "type": "accessory",
+      "name": "Mana Crystal Amulet",
+      "description": "An amulet containing a pure mana crystal.",
+      "slot": "neck",
+      "stats": {
+        "intelligence": 3,
+        "mana_regen": 2,
+        "magic_power": 5
+      },
+      "effect_ids": [
+        "mana_boost_25",
+        "cold_resist_15"
+      ]
     }
   }
 }

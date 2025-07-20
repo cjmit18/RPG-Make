@@ -299,7 +299,65 @@ class InstantManaEffect(Effect):
             f"({target.current_mana}/{target.max_mana})"
         )
         return f"Restored {actual_restore} mana"
+    
+class InstantStaminaEffect(Effect):
+    def __init__(self, amount: float, **kwargs):
+        super().__init__(id=f"instant_stamina_{amount}")
+        self.amount = amount
+        effects_logger.debug(f"Created InstantStaminaEffect with amount: {amount}")
 
+    @log_exception
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if not hasattr(target, 'current_stamina') or not hasattr(target, 'max_stamina'):
+            effects_logger.warning(
+                f"Cannot restore stamina to target {target}, missing stamina attributes"
+            )
+            return "Cannot restore stamina to target"
+            
+        old_stamina = target.current_stamina
+        target.current_stamina = min(
+            target.max_stamina,
+            target.current_stamina + self.amount
+        )
+        actual_restore = target.current_stamina - old_stamina
+        
+        effects_logger.info(
+            f"Restored stamina to {target.name} for {actual_restore}/{self.amount} " 
+            f"({target.current_stamina}/{target.max_stamina})"
+        )
+        return f"Restored {actual_restore} stamina"
+
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        return self.apply(caster, target, combat_engine)
+
+
+class RestorationEffect(Effect):
+    async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        if hasattr(self, 'on_pre_apply_async') and callable(getattr(self, 'on_pre_apply_async')):
+            await self.on_pre_apply_async(caster, target)
+        result = self.apply(caster, target, combat_engine)
+        if hasattr(self, 'on_post_apply_async') and callable(getattr(self, 'on_post_apply_async')):
+            await self.on_post_apply_async(caster, target, result)
+        return result
+    """
+    Instantly restores all resources (health, mana and stamina) to the target.
+    """
+    def __init__(self, health_amount: float, mana_amount: float, stamina_amount: float, **kwargs):
+        super().__init__(id=f"restoration_{health_amount}_{mana_amount}_{stamina_amount}")
+        self.health_amount = health_amount
+        self.mana_amount = mana_amount
+        self.stamina_amount = stamina_amount
+        effects_logger.debug(f"Created RestorationEffect with health: {health_amount}, mana: {mana_amount}, stamina: {stamina_amount}")
+
+    @log_exception
+    def apply(self, caster: Any, target: Any, combat_engine: Any = None) -> str:
+        heal_effect = HealEffect(self.health_amount)
+        mana_effect = InstantManaEffect(self.mana_amount)
+        stamina_effect = InstantStaminaEffect(self.stamina_amount)
+        heal_result = heal_effect.apply(caster, target, combat_engine)
+        mana_result = mana_effect.apply(caster, target, combat_engine)
+        stamina_result = stamina_effect.apply(caster, target, combat_engine)
+        return f"{heal_result}; {mana_result}; {stamina_result}"
 
 class ResourceDrainEffect(Effect):
     async def apply_async(self, caster: Any, target: Any, combat_engine: Any = None) -> str:

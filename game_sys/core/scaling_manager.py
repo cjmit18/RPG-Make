@@ -178,7 +178,7 @@ class ScalingManager:
         'parry_chance': 'agility',
         'resilience': 'constitution',
         'focus': 'wisdom',
-        'initiative': 'agility'
+        'initiative': 'agility',
     }
     
     @classmethod
@@ -273,6 +273,10 @@ class ScalingManager:
                     item = getattr(actor, slot_attr)
                     if item:
                         equipped_items.append(item)
+            
+            # Ring slot
+            if hasattr(actor, 'equipped_ring') and actor.equipped_ring:
+                equipped_items.append(actor.equipped_ring)
             
             # Apply effects from all equipped items
             for item in equipped_items:
@@ -463,7 +467,13 @@ class ScalingManager:
         
         # Cap damage to a percentage of target's max health based on level difference
         level_diff = max(0, attacker_level - getattr(defender, 'level', 1))
-        max_percent_damage = min(0.50, 0.25 + (level_diff * 0.05))  # 25% base, +5% per level diff, max 80%
+        weak = packet.defender.weaknesses.get(packet.damage_type, 0.0)
+        if weak < 0.5:
+            import random
+            # Randomize max percent damage for low weakness to avoid predictability
+            max_percent_damage = min(random.uniform(0.50, 0.80), 0.25 + (level_diff * 0.05))  # 50-80% or 25% + 5% per level diff
+        else:
+            max_percent_damage = min(1.0, 0.50 + (level_diff * 0.05)) # 50% + 5% per level diff, up to 100%
         damage_cap = target_max_health * max_percent_damage
         
         # Apply damage cap if damage is unreasonably high

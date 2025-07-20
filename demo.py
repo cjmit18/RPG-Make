@@ -8,12 +8,36 @@ A basic demo for the game engine with integrated logging and tabbed interface.
 
 import tkinter as tk
 from tkinter import ttk
+from typing import Dict, Any, Optional, List, Union
 import time
 import random
 import math
 import os
 import sys
 import json
+
+# Import interface definitions for type safety
+try:
+    from interfaces.game_interfaces import (
+        CombatControllerInterface, CharacterControllerInterface,
+        InventoryControllerInterface, ComboControllerInterface,
+        DemoEventHandlerInterface, DisplayManagerInterface,
+        GameStateManagerInterface, UIServiceProtocol,
+        ActionResult, CharacterData, CombatResult
+    )
+except ImportError:
+    # Fallback for development - create stub interfaces
+    class CombatControllerInterface: pass
+    class CharacterControllerInterface: pass
+    class InventoryControllerInterface: pass
+    class ComboControllerInterface: pass
+    class DemoEventHandlerInterface: pass
+    class DisplayManagerInterface: pass
+    class GameStateManagerInterface: pass
+    class UIServiceProtocol: pass
+    ActionResult = Dict[str, Any]
+    CharacterData = Dict[str, Any]
+    CombatResult = Dict[str, Any]
 
 
 # Import logging system
@@ -22,19 +46,31 @@ from logs.logs import get_logger, setup_logging
 # Import hooks system
 from game_sys.hooks.hooks_setup import emit, on, ON_COMBO_TRIGGERED, ON_COMBO_FINISHED
 
+# Import observer pattern for Task #5 implementation
+try:
+    from interfaces import GameEventType, UIObserver, GameEventPublisher
+    OBSERVER_PATTERN_AVAILABLE = True
+except ImportError:
+    # Fallback if observer pattern not available
+    GameEventType = None
+    UIObserver = None
+    GameEventPublisher = None
+    OBSERVER_PATTERN_AVAILABLE = False
+
 # Set up logging
 setup_logging()
 logger = get_logger("simple_demo")
 
 # Import game system
-
-
+from game_sys.core.grades import Grade
+from game_sys.core.rarity import Rarity
 from game_sys.character.character_factory import create_character
 from game_sys.character.character_service import (
     create_character_with_random_stats
 )
 from game_sys.combat.combat_service import CombatService
 from game_sys.config.property_loader import PropertyLoader
+from game_sys.managers.equipment_manager import equipment_manager
 
 try:
 
@@ -47,7 +83,269 @@ except ImportError:
     SPELLS_AVAILABLE = True
     ENCHANTING_AVAILABLE = True
 
-class SimpleGameDemo:
+
+# ============================================================================
+# CONTROLLER WRAPPER CLASSES - Task #2 Implementation
+# ============================================================================
+
+class CombatController(CombatControllerInterface):
+    """Controller for combat-related operations with consistent UI integration."""
+    
+    def __init__(self, combat_service: Optional[Any] = None, ui_service: Optional[UIServiceProtocol] = None) -> None:
+        """Initialize combat controller with service and UI integration."""
+        super().__init__(ui_service)
+        self.service = combat_service
+    
+    def set_ui_callback(self, callback: callable) -> None:
+        """Set callback for UI updates (fallback if no UI service)."""
+        self._ui_callback = callback
+    
+    def _log_message(self, message: str, tag: str = "info") -> None:
+        """Helper to log messages via UI service or callback."""
+        if self.ui_service and hasattr(self.ui_service, 'log_message'):
+            self.ui_service.log_message(message, tag)
+        elif hasattr(self, '_ui_callback') and self._ui_callback:
+            self._ui_callback(message, tag)
+    
+    def perform_attack(self, attacker: Any, target: Any, weapon: Optional[Any] = None) -> ActionResult:
+        """Perform attack with UI integration."""
+        if not self.service:
+            return {'success': False, 'message': 'No combat service available', 'damage': 0, 'defeated': False, 'loot': []}
+        
+        result = self.service.perform_attack(attacker, target, weapon)
+        
+        if result['success']:
+            weapon_info = f" with {weapon.name}" if weapon else ""
+            damage_msg = (f"{attacker.name} attacks {target.name}{weapon_info} "
+                         f"for {result['damage']:.0f} damage!")
+            self._log_message(damage_msg, "combat")
+            
+            # Display resistance/weakness messages
+            if result.get('resistance_messages'):
+                for message in result['resistance_messages']:
+                    self._log_message(message, "combat")
+        else:
+            self._log_message(f"Attack failed: {result['message']}", "combat")
+        
+        return result
+    
+    def apply_healing(self, caster: Any, target: Any, amount: int) -> ActionResult:
+        """Apply healing with UI integration."""
+        if not self.service:
+            return {'success': False, 'message': 'No combat service available', 'healing': 0}
+        
+        result = self.service.apply_healing(caster, target, amount)
+        
+        if result['success']:
+            self._log_message(f"{target.name} is healed for {result['healing']:.0f} health!", "heal")
+        else:
+            self._log_message(f"Healing failed: {result['message']}", "combat")
+        
+        return result
+    
+    def cast_spell_at_target(self, caster: Any, target: Any, spell_name: str, **kwargs) -> ActionResult:
+        """Cast spell with UI integration."""
+        if not self.service:
+            return {'success': False, 'message': 'No combat service available', 'damage': 0, 'defeated': False, 'loot': []}
+        
+        # Fix parameter order - service expects (caster, spell_id, target)
+        result = self.service.cast_spell_at_target(caster, spell_name, target, **kwargs)
+        
+        if result['success']:
+            self._log_message(f"{caster.name} casts {spell_name} at {target.name}!", "combat")
+            if result.get('damage', 0) > 0:
+                self._log_message(f"Deals {result['damage']:.0f} damage!", "combat")
+        else:
+            self._log_message(f"Spell failed: {result['message']}", "combat")
+        
+        return result
+
+
+class CharacterController(CharacterControllerInterface):
+    """Controller for character-related operations with consistent UI integration."""
+    
+    def __init__(self, ui_service: Optional[UIServiceProtocol] = None) -> None:
+        """Initialize character controller with UI integration."""
+        super().__init__(ui_service)
+    
+    def set_ui_callback(self, callback: callable) -> None:
+        """Set callback for UI updates (fallback if no UI service)."""
+        self._ui_callback = callback
+    
+    def _log_message(self, message: str, tag: str = "info") -> None:
+        """Helper to log messages via UI service or callback."""
+        if self.ui_service and hasattr(self.ui_service, 'log_message'):
+            self.ui_service.log_message(message, tag)
+        elif hasattr(self, '_ui_callback') and self._ui_callback:
+            self._ui_callback(message, tag)
+    
+    def level_up_character(self, character: Any) -> bool:
+        """Level up character with UI integration."""
+        if not character:
+            self._log_message("No character available for level up!", "combat")
+            return False
+        
+        old_level = character.level
+        
+        # Use leveling manager if available
+        if hasattr(character, 'leveling_manager'):
+            if hasattr(character.leveling_manager, 'gain_experience'):
+                character.leveling_manager.gain_experience(
+                    character, 
+                    character.leveling_manager._xp_for_next_level(character.level)
+                )
+            else:
+                character.level += 1
+            
+            # Check if level actually increased
+            if character.level > old_level:
+                points_gained = character.level - old_level
+                if hasattr(character.leveling_manager, 'get_stat_points_per_level'):
+                    points_per_level = character.leveling_manager.get_stat_points_per_level(character.level)
+                else:
+                    points_per_level = 3
+                total_points = points_gained * points_per_level
+                
+                if hasattr(character.leveling_manager, 'add_stat_points'):
+                    character.leveling_manager.add_stat_points(character, total_points)
+                
+                msg = f"Level up! Now level {character.level} (+{total_points} stat points)!"
+                self._log_message(msg, "info")
+                return True
+        else:
+            # Fallback for characters without leveling manager
+            character.level += 1
+            msg = f"Level up! Now level {character.level}!"
+            self._log_message(msg, "info")
+            return True
+        
+        return False
+    
+    def allocate_stat_point(self, character: Any, stat_name: str) -> bool:
+        """Allocate stat point with UI integration."""
+        if not character or not hasattr(character, 'leveling_manager'):
+            self._log_message("Cannot allocate stat points - no leveling manager!", "combat")
+            return False
+        
+        success = character.leveling_manager.allocate_stat_points(character, {stat_name: 1})
+        
+        if success:
+            self._log_message(f"Allocated 1 point to {stat_name}!", "info")
+        else:
+            self._log_message(f"Failed to allocate point to {stat_name}!", "combat")
+        
+        return success
+
+
+class InventoryController(InventoryControllerInterface):
+    """Controller for inventory-related operations with consistent UI integration."""
+    
+    def __init__(self, ui_service: Optional[UIServiceProtocol] = None) -> None:
+        """Initialize inventory controller with UI integration."""
+        super().__init__(ui_service)
+    
+    def set_ui_callback(self, callback: callable) -> None:
+        """Set callback for UI updates (fallback if no UI service)."""
+        self._ui_callback = callback
+    
+    def _log_message(self, message: str, tag: str = "info") -> None:
+        """Helper to log messages via UI service or callback."""
+        if self.ui_service and hasattr(self.ui_service, 'log_message'):
+            self.ui_service.log_message(message, tag)
+        elif hasattr(self, '_ui_callback') and self._ui_callback:
+            self._ui_callback(message, tag)
+    
+    def use_item(self, character: Any, item: Any) -> bool:
+        """Use item with UI integration."""
+        if not character or not item:
+            self._log_message("Cannot use item - missing character or item!", "combat")
+            return False
+        
+        # Use inventory system's usage manager
+        if hasattr(character, 'inventory') and hasattr(character.inventory, 'usage_manager'):
+            result = character.inventory.usage_manager.use_item(character, item)
+            
+            if result.get('success', False):
+                self._log_message(f"Used {item.name}! {result.get('message', '')}", "info")
+                return True
+            else:
+                self._log_message(f"Failed to use {item.name}: {result.get('message', 'Unknown error')}", "combat")
+                return False
+        else:
+            self._log_message("No inventory system available!", "combat")
+            return False
+    
+    def equip_item(self, character: Any, item: Any) -> bool:
+        """Equip item with UI integration."""
+        if not character or not item:
+            self._log_message("Cannot equip item - missing character or item!", "combat")
+            return False
+        
+        # Use smart equipping if available
+        if hasattr(character, 'equip_item_smart'):
+            success = character.equip_item_smart(item)
+        elif hasattr(character, 'equip_item'):
+            success = character.equip_item(item)
+        else:
+            self._log_message("No equipment system available!", "combat")
+            return False
+        
+        if success:
+            self._log_message(f"Equipped {item.name}!", "info")
+        else:
+            self._log_message(f"Failed to equip {item.name}!", "combat")
+        
+        return success
+
+
+class ComboController(ComboControllerInterface):
+    """Controller for combo-related operations with consistent UI integration."""
+    
+    def __init__(self, combo_manager: Optional[Any] = None, ui_service: Optional[UIServiceProtocol] = None) -> None:
+        """Initialize combo controller with service and UI integration."""
+        super().__init__(ui_service)
+        self.combo_manager = combo_manager
+    
+    def set_ui_callback(self, callback: callable) -> None:
+        """Set callback for UI updates (fallback if no UI service)."""
+        self._ui_callback = callback
+    
+    def _log_message(self, message: str, tag: str = "info") -> None:
+        """Helper to log messages via UI service or callback."""
+        if self.ui_service and hasattr(self.ui_service, 'log_message'):
+            self.ui_service.log_message(message, tag)
+        elif hasattr(self, '_ui_callback') and self._ui_callback:
+            self._ui_callback(message, tag)
+    
+    def record_spell_cast(self, caster: Any, spell_name: str) -> Optional[Dict[str, Any]]:
+        """Record spell cast for combo tracking with UI integration."""
+        if not self.combo_manager:
+            return None
+        
+        result = self.combo_manager.record_cast(caster, spell_name)
+        
+        if result and result.get('combo_triggered'):
+            combo_name = result.get('combo_name', 'Unknown Combo')
+            self._log_message(f"Combo Activated: {combo_name}!", "info")
+        
+        return result
+    
+    def check_combo_sequences(self, character, sequence):
+        """Check if sequence matches any combos with UI integration."""
+        if not self.combo_manager:
+            return None
+        
+        # This would be implemented based on your combo system
+        # For now, return None as placeholder
+        return None
+
+
+# ============================================================================
+# MAIN DEMO CLASS
+# ============================================================================
+
+class SimpleGameDemo(DemoEventHandlerInterface, DisplayManagerInterface, GameStateManagerInterface):
+    """Main demo class implementing multiple interfaces for type safety."""
     def check_and_apply_combo_bonus(self):
         """Check if the current combo sequence matches any defined combo and apply its bonus."""
         if not hasattr(self, 'combo_sequence') or not self.combo_sequence:
@@ -101,8 +399,8 @@ class SimpleGameDemo:
             self.log_message(f"Load failed: {e}", "combat")
     """A simple game demo with logging and tabbed UI."""
 
-    def __init__(self):
-        """Initialize the demo."""
+    def __init__(self) -> None:
+        """Initialize the demo with type-safe interface compliance."""
         logger.info("Initializing Simple Game Demo")
         
         # --- Startup validation and logging ---
@@ -158,6 +456,19 @@ class SimpleGameDemo:
         self.root.title("Simple Game Demo")
         self.root.geometry("900x700")
 
+        # Initialize UI service for selective delegation (using existing window)
+        try:
+            from ui.demo_ui import DemoUI
+            self.ui_service = DemoUI(root=self.root)
+            self.ui_service.set_log_callback(self._log_to_console)
+            logger.info("UI service initialized with existing window")
+        except ImportError as e:
+            logger.warning(f"UI service not available: {e}")
+            self.ui_service = None
+
+        # Initialize controller classes for Task #2 implementation
+        self._initialize_controllers()
+
         # Set up UI
         self.setup_ui()
 
@@ -169,6 +480,92 @@ class SimpleGameDemo:
 
         logger.info("Demo initialized")
 
+    def _initialize_controllers(self):
+        """Initialize controller wrapper classes for game logic separation."""
+        logger.info("Initializing controller classes...")
+        
+        # Initialize combat service (will be set up properly in setup_game_state)
+        self.combat_service = None
+        
+        # Initialize controller classes with UI service integration
+        self.combat_controller = CombatController(
+            combat_service=None,  # Will be set later
+            ui_service=self.ui_service
+        )
+        self.character_controller = CharacterController(ui_service=self.ui_service)
+        self.inventory_controller = InventoryController(ui_service=self.ui_service)
+        self.combo_controller = ComboController(
+            combo_manager=None,  # Will be set later if available
+            ui_service=self.ui_service
+        )
+        
+        # Initialize Observer Pattern for Task #5 implementation
+        self._initialize_observer_pattern()
+        
+        logger.info("Controllers initialized with observer pattern integration")
+        # Set up fallback UI callbacks if no UI service
+        if not self.ui_service:
+            self.combat_controller.set_ui_callback(self.log_message)
+            self.character_controller.set_ui_callback(self.log_message)
+            self.inventory_controller.set_ui_callback(self.log_message)
+            self.combo_controller.set_ui_callback(self.log_message)
+        
+        logger.info("Controller classes initialized")
+
+    def _initialize_observer_pattern(self):
+        """Initialize observer pattern for Task #5 implementation."""
+        if not OBSERVER_PATTERN_AVAILABLE:
+            logger.warning("Observer pattern not available - skipping initialization")
+            self.ui_observer = None
+            return
+        
+        try:
+            # Create UI observer and connect it to the demo UI service
+            self.ui_observer = UIObserver(self.ui_service)
+            
+            # The UI observer is now automatically subscribed to relevant events
+            # and will handle UI updates when events are published
+            
+            logger.info("🔍 Observer pattern initialized successfully")
+            if hasattr(self, 'log_message'):
+                # This will be available after setup_ui, so we'll log it later
+                pass
+            else:
+                # Store message to log after UI setup
+                self._pending_observer_message = "🔍 Observer pattern ready for event-driven UI updates"
+                
+        except Exception as e:
+            logger.error(f"Failed to initialize observer pattern: {e}")
+            self.ui_observer = None
+
+    def _wire_controllers(self):
+        """Wire controller classes with actual service instances."""
+        logger.info("Wiring controllers with services...")
+        
+        # Wire combat controller with combat service
+        if self.combat_service:
+            self.combat_controller.service = self.combat_service
+            logger.info("Combat controller wired with CombatService")
+        
+        # Wire combo controller with combo manager if available
+        try:
+            from game_sys.magic.combo import ComboManager
+            combo_manager = ComboManager()
+            self.combo_controller.combo_manager = combo_manager
+            logger.info("Combo controller wired with ComboManager")
+        except ImportError as e:
+            logger.debug(f"ComboManager not available: {e}")
+        
+        logger.info("Controllers wired successfully")
+
+    def _log_to_console(self, message: str, tag: str = "info") -> None:
+        """Helper method for UI service to log to console."""
+        if hasattr(self, 'log'):
+            timestamp = time.strftime("%H:%M:%S")
+            self.log.insert(tk.END, f"[{timestamp}] ", "info")
+            self.log.insert(tk.END, f"{message}\n", tag)
+            self.log.see(tk.END)
+
     def setup_ui(self):
         """Set up the user interface with tabs."""
         logger.info("Setting up tabbed UI")
@@ -176,6 +573,25 @@ class SimpleGameDemo:
         # Create main frame
         self.main_frame = tk.Frame(self.root, bg="black")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Configure progress bar styles for combo system
+        style = ttk.Style()
+        
+        # Combo tab progress bar style
+        style.configure("Combo.Horizontal.TProgressbar",
+                       background='#4CAF50',  # Green color
+                       troughcolor='#333333',  # Dark trough
+                       borderwidth=1,
+                       lightcolor='#4CAF50',
+                       darkcolor='#2E7D32')
+                       
+        # Combat tab progress bar style  
+        style.configure("Combat.Horizontal.TProgressbar",
+                       background='#FF9800',  # Orange color
+                       troughcolor='#333333',  # Dark trough
+                       borderwidth=1,
+                       lightcolor='#FF9800',
+                       darkcolor='#E65100')
 
         # Create tab control
         self.tab_control = ttk.Notebook(self.main_frame)
@@ -212,29 +628,30 @@ class SimpleGameDemo:
         # Bind tab change event to update displays
         self.tab_control.bind('<<NotebookTabChanged>>', self.on_tab_changed)
 
-        # Set up the Stats tab
-        self.setup_stats_tab()
-
-        # Set up the Combat tab
-        self.setup_combat_tab()
-
-        # Set up the Inventory tab
-        self.setup_inventory_tab()
-
-        # Set up the Leveling tab
-        self.setup_leveling_tab()  # Set up leveling tab
-
-        # Set up the Enchanting tab
-        self.setup_enchanting_tab()  # Set up enchanting tab
-
-        # Set up the Progression tab
-        self.setup_progression_tab()  # Set up progression tab
-
-        # Set up the Combo tab
-        self.setup_combo_tab()
-
-        # Set up the Settings tab
-        self.setup_settings_tab()
+        # Set up all tabs using UI service if available
+        if hasattr(self, 'ui_service') and self.ui_service:
+            # Create tabs in UI service
+            self.ui_service.tabs = {
+                'stats': self.stats_tab,
+                'combat': self.combat_tab,
+                'inventory': self.inventory_tab,
+                'leveling': self.leveling_tab,
+                'enchanting': self.enchanting_tab,
+                'progression': self.progression_tab,
+                'combo': self.combo_tab,
+                'settings': self.settings_tab
+            }
+            # Set up all tabs via service
+            setup_result = self.ui_service.setup_all_tabs()
+            if setup_result.get('success', False):
+                self.log_message(f"UI Service: {setup_result['message']}")
+            else:
+                self.log_message(f"UI Service setup failed: {setup_result.get('error', 'Unknown error')}")
+                # Fallback to local setup
+                self.setup_all_tabs()
+        else:
+            # Fallback to local setup method
+            self.setup_all_tabs()
 
         # Create log area
         self.log_frame = tk.Frame(self.root, bg="black")
@@ -247,6 +664,144 @@ class SimpleGameDemo:
         self.log.tag_configure("info", foreground="cyan")
         self.log.tag_configure("combat", foreground="red")
         self.log.tag_configure("heal", foreground="green")
+
+        # Pass widget references to UI service for selective delegation
+        if hasattr(self, 'ui_service') and self.ui_service:
+            widget_refs = {
+                'basic_info': getattr(self, 'basic_info', None),
+                'detailed_stats': getattr(self, 'detailed_stats', None),
+                'enemy_info': getattr(self, 'enemy_info', None),
+                'status_effects_display': getattr(self, 'status_effects_display', None),
+                'log': self.log
+            }
+            # Filter out None values
+            widget_refs = {k: v for k, v in widget_refs.items() if v is not None}
+            self.ui_service.set_external_widgets(widget_refs)
+            
+            # Get widget references back from UI service
+            self._get_ui_service_widgets()
+            
+            # Register callbacks for all UI actions
+            self._register_ui_callbacks()
+
+    def _register_ui_callbacks(self):
+        """Register all UI callbacks with the UI service."""
+        if not hasattr(self, 'ui_service') or not self.ui_service:
+            return
+            
+        # Combat tab callbacks (matching ui/demo_ui.py combat_buttons)
+        self.ui_service.register_callback('attack', self.on_attack_button_clicked)
+        self.ui_service.register_callback('heal', self.on_heal_button_clicked)
+        self.ui_service.register_callback('spawn_enemy', self.on_spawn_enemy_button_clicked)
+        self.ui_service.register_callback('cast_fireball', self.on_fireball_button_clicked)  # Note: cast_fireball, not fireball
+        self.ui_service.register_callback('cast_ice_shard', self.on_ice_shard_button_clicked)  # Note: cast_ice_shard, not ice_shard
+        self.ui_service.register_callback('test_dual_wield', self.test_dual_wield)
+        self.ui_service.register_callback('tick_status_effects', self.tick_status_effects)
+        
+        # Stats tab callbacks (matching ui/demo_ui.py button_configs)
+        self.ui_service.register_callback('view_inventory', self.view_inventory)
+        self.ui_service.register_callback('level_up', self.on_level_up_button_clicked)
+        self.ui_service.register_callback('equip_gear', self.equip_gear)  # Map to existing equip_gear method
+        self.ui_service.register_callback('restore_health', self.restore_health)
+        self.ui_service.register_callback('restore_mana', self.restore_mana)
+        self.ui_service.register_callback('restore_stamina', self.restore_stamina)
+        self.ui_service.register_callback('restore_all_resources', self.restore_all_resources)  # Use existing method
+        self.ui_service.register_callback('save_game', self.save_game)
+        self.ui_service.register_callback('load_game', self.load_game)
+        
+        # Additional character callbacks
+        self.ui_service.register_callback('detailed_character_view', self._detailed_character_view_placeholder)
+        self.ui_service.register_callback('reload_game', self.reload_game)
+        
+        # Equipment callbacks
+        self.ui_service.register_callback('inspect_equipment', self._inspect_equipment_placeholder)
+        self.ui_service.register_callback('quick_equip_best', self.equip_gear)  # Map to existing equip_gear
+        self.ui_service.register_callback('optimize_defense', self._optimize_defense_placeholder)
+        
+        # Inventory tab callbacks (matching ui/demo_ui.py inventory_buttons)
+        self.ui_service.register_callback('use_item', self.on_use_item_button_clicked)
+        self.ui_service.register_callback('equip_item', lambda: self._equip_selected_item())
+        self.ui_service.register_callback('drop_item', lambda: self._drop_selected_item())
+        self.ui_service.register_callback('create_item', self._create_item_placeholder)
+        self.ui_service.register_callback('add_random_item', self._add_random_item_placeholder)
+        self.ui_service.register_callback('unequip_weapon', lambda: self.unequip_item('weapon'))
+        self.ui_service.register_callback('unequip_armor', lambda: self.unequip_item('body'))
+        self.ui_service.register_callback('unequip_offhand', lambda: self.unequip_item('offhand'))
+        self.ui_service.register_callback('unequip_ring', lambda: self.unequip_item('ring'))
+        
+        # Additional unequip callbacks for equipment slots
+        self.ui_service.register_callback('unequip_equipped_helmet', lambda: self.unequip_item('helmet'))
+        self.ui_service.register_callback('unequip_equipped_cloak', lambda: self.unequip_item('cloak'))
+        self.ui_service.register_callback('unequip_equipped_body', lambda: self.unequip_item('body'))
+        self.ui_service.register_callback('unequip_equipped_feet', lambda: self.unequip_item('feet'))
+        self.ui_service.register_callback('unequip_equipped_ring', lambda: self.unequip_item('ring'))
+        
+        # Leveling tab callbacks (matching ui/demo_ui.py leveling_buttons)
+        self.ui_service.register_callback('allocate_stat_point', self._allocate_stat_point_placeholder)
+        self.ui_service.register_callback('reset_all_stats', self._reset_all_stats_placeholder)
+        self.ui_service.register_callback('view_character_build', self._detailed_character_view_placeholder)
+        self.ui_service.register_callback('save_character_build', self._save_character_build_placeholder)
+
+    def _equip_selected_item(self):
+        """Equip currently selected item from inventory."""
+        self.log_message("Equip selected item - placeholder implementation", "info")
+
+    def _drop_selected_item(self):
+        """Drop currently selected item from inventory."""
+        self.log_message("Drop selected item - placeholder implementation", "info")
+
+    def _create_item_placeholder(self):
+        """Create item - placeholder implementation."""
+        self.log_message("Create item - feature not yet implemented", "info")
+
+    def _add_random_item_placeholder(self):
+        """Add random item - placeholder implementation."""
+        self.log_message("Add random item - feature not yet implemented", "info")
+
+    def _allocate_stat_point_placeholder(self):
+        """Allocate stat point - placeholder implementation."""
+        self.log_message("Allocate stat point - feature not yet implemented", "info")
+
+    def _reset_all_stats_placeholder(self):
+        """Reset all stats - placeholder implementation."""
+        self.log_message("Reset all stats - feature not yet implemented", "info")
+
+    def _save_character_build_placeholder(self):
+        """Save character build - placeholder implementation."""
+        self.log_message("Save character build - feature not yet implemented", "info")
+
+    def _get_ui_service_widgets(self):
+        """Get widget references from the UI service for local use."""
+        if not hasattr(self, 'ui_service') or not self.ui_service:
+            return
+            
+        # Get widget references from UI service
+        if hasattr(self.ui_service, 'widgets'):
+            # Combat tab widgets
+            self.canvas = self.ui_service.widgets.get('canvas', None)
+            self.enemy_info = self.ui_service.widgets.get('enemy_info', None)
+            
+            # Combo widgets (for tracking spells and combo updates)
+            combo_status_label = self.ui_service.widgets.get('combo_status_label', None)
+            combo_sequence_label = self.ui_service.widgets.get('combo_sequence_label', None) 
+            combo_progress = self.ui_service.widgets.get('combo_progress', None)
+            combo_list = self.ui_service.widgets.get('combo_list', None)
+            
+            # Combat combo widgets (from combat tab's combo indicator)
+            combat_combo_sequence = self.ui_service.widgets.get('combat_combo_sequence', None)
+            combat_combo_progress = self.ui_service.widgets.get('combat_combo_progress', None)
+            
+            # Log successful widget retrieval
+            if self.canvas:
+                self.log_message("Canvas widget retrieved from UI service", "info")
+            if self.enemy_info:
+                self.log_message("Enemy info widget retrieved from UI service", "info")
+            if combo_sequence_label:
+                self.log_message("Combo sequence widgets retrieved from UI service", "info")
+            if combat_combo_sequence:
+                self.log_message("Combat combo widgets retrieved from UI service", "info")
+        else:
+            self.log_message("Warning: UI service widgets not available", "info")
 
     def setup_combo_hooks(self):
         """Set up combo system hooks for real-time updates."""
@@ -294,10 +849,21 @@ class SimpleGameDemo:
         self.combo_sequence_label = tk.Label(combo_tab, text="Current Combo: -", font=("Arial", 12), fg="white", bg="black")
         self.combo_sequence_label.pack(pady=(5, 10))
 
-        # Combo progress bar
-        self.combo_progress_var = tk.DoubleVar()
-        self.combo_progress = tk.Scale(combo_tab, variable=self.combo_progress_var, from_=0, to=100, orient=tk.HORIZONTAL, length=300, showvalue=0, fg="green", troughcolor="#222", sliderrelief=tk.FLAT)
-        self.combo_progress.pack(pady=(0, 10))
+        # Combo progress bar - use a proper progress bar
+        progress_frame = tk.Frame(combo_tab, bg="black")
+        progress_frame.pack(pady=(0, 10))
+        
+        progress_label = tk.Label(progress_frame, text="Combo Timer:", font=("Arial", 10), fg="white", bg="black")
+        progress_label.pack()
+        
+        self.combo_progress = ttk.Progressbar(
+            progress_frame, 
+            mode='determinate', 
+            length=300, 
+            style='Combo.Horizontal.TProgressbar'
+        )
+        self.combo_progress.pack(pady=5)
+        self.combo_progress['maximum'] = 100
 
         # Combo status bar
         status_frame = tk.Frame(combo_tab, bg="black")
@@ -355,10 +921,24 @@ class SimpleGameDemo:
 
     def update_combo_tab(self):
         """Update the combo tab display with current sequence and progress."""
+        # Check if combo tab widgets exist (either from UI service or local setup)
+        if not (hasattr(self, 'combo_sequence_label') or 
+                (hasattr(self, 'ui_service') and self.ui_service and 
+                 hasattr(self.ui_service, 'widgets'))):
+            # Combo tab not set up yet, skip update
+            return
+            
         # Update current combo sequence
         seq = self.combo_sequence if hasattr(self, "combo_sequence") else []
         seq_str = " > ".join(seq) if seq else "-"
-        self.combo_sequence_label.config(text=f"Current Combo: {seq_str}")
+        
+        # Try to update combo sequence label (UI service first, then local)
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets') and 
+            'combo_sequence_label' in self.ui_service.widgets):
+            self.ui_service.widgets['combo_sequence_label'].config(text=seq_str)
+        elif hasattr(self, 'combo_sequence_label'):
+            self.combo_sequence_label.config(text=f"Current Combo: {seq_str}")
 
         # Update progress bar
         pct = 0
@@ -366,49 +946,119 @@ class SimpleGameDemo:
         if hasattr(self, "combo_timer") and hasattr(self, "combo_window") and self.combo_window > 0:
             timer_val = self.combo_timer
             pct = max(0, min(100, int(100 * self.combo_timer / self.combo_window)))
-        self.combo_progress_var.set(pct)
         
-        # Update status bar
-        if hasattr(self, 'combo_status_label'):
-            if seq:
-                status = "Building Combo" if pct > 0 else "Combo Ready"
-                color = "orange" if pct > 0 else "green"
-            else:
-                status = "Ready"
-                color = "green"
+        # Update the progress bar (UI service first, then local)
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets') and 
+            'combo_progress' in self.ui_service.widgets):
+            self.ui_service.widgets['combo_progress']['value'] = pct
+        elif hasattr(self, 'combo_progress'):
+            self.combo_progress['value'] = pct
+        
+        # Update status bar (UI service first, then local)
+        if seq:
+            status = "Building Combo" if pct > 0 else "Combo Ready"
+            color = "orange" if pct > 0 else "green"
+        else:
+            status = "Ready"
+            color = "green"
+            
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets') and 
+            'combo_status_label' in self.ui_service.widgets):
+            self.ui_service.widgets['combo_status_label'].config(text=status, fg=color)
+        elif hasattr(self, 'combo_status_label'):
             self.combo_status_label.config(text=f"Status: {status}", fg=color)
         
-        if hasattr(self, 'combo_timer_label'):
+        # Update timer display if available
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets') and 
+            'combo_timer_label' in self.ui_service.widgets):
+            self.ui_service.widgets['combo_timer_label'].config(text=f"Timer: {timer_val:.1f}s")
+        elif hasattr(self, 'combo_timer_label'):
             self.combo_timer_label.config(text=f"Timer: {timer_val:.1f}s")
             
         # Update combat tab combo visuals
         self.update_combat_combo_display(seq, pct, timer_val)
 
-        # If a combo is selected, show details
-        selection = self.combos_listbox.curselection()
-        if selection and isinstance(self.combos_data, list) and selection[0] < len(self.combos_data):
-            idx = selection[0]
-            combo = self.combos_data[idx]
-            if isinstance(combo, dict):
-                details = (
-                    f"Name: {combo.get('name', '-') }\n"
-                    f"Sequence: {', '.join(combo.get('sequence', []))}\n"
-                    f"Timing Window: {combo.get('window', '-')}\n"
-                    f"Cost: {combo.get('cost', '-')}\n"
-                    f"Effects: {combo.get('effects', '-')}\n"
-                    f"Requirements: {combo.get('requirements', '-')}\n"
-                )
-            else:
-                details = str(combo)
-            self.combo_details.config(state="normal")
-            self.combo_details.delete(1.0, tk.END)
-            self.combo_details.insert(tk.END, details)
-            self.combo_details.config(state="disabled")
-        else:
-            self.combo_details.config(state="normal")
-            self.combo_details.delete(1.0, tk.END)
-            self.combo_details.insert(tk.END, "Select a combo to view details.")
-            self.combo_details.config(state="disabled")
+        # Update combo details (if available)
+        self._update_combo_details()
+
+    def _update_combo_details(self):
+        """Update combo details display with proper widget access."""
+        # Get combo list/listbox and details widgets
+        combo_list_widget = None
+        combo_details_widget = None
+        
+        # Try UI service widgets first
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets')):
+            combo_list_widget = self.ui_service.widgets.get('combo_list')
+            # UI service doesn't seem to have combo_details, so we may not need this part
+        
+        # Fallback to local widgets
+        if not combo_list_widget and hasattr(self, 'combos_listbox'):
+            combo_list_widget = self.combos_listbox
+        if not combo_details_widget and hasattr(self, 'combo_details'):
+            combo_details_widget = self.combo_details
+            
+        # Update combo list/listbox with available combos if we have data
+        if combo_list_widget and hasattr(self, 'combos_data') and isinstance(self.combos_data, list):
+            # Check if it's a Text widget (UI service) or Listbox (local)
+            if hasattr(combo_list_widget, 'delete') and hasattr(combo_list_widget, 'insert'):
+                # Text widget - clear and populate
+                try:
+                    combo_list_widget.config(state="normal")
+                    combo_list_widget.delete(1.0, 'end')
+                    
+                    combo_text = "Available Combos:\n" + "="*30 + "\n\n"
+                    for i, combo in enumerate(self.combos_data):
+                        if isinstance(combo, dict):
+                            name = combo.get('name', f'Combo {i+1}')
+                            sequence = combo.get('sequence', [])
+                            effects = combo.get('effects', 'Unknown')
+                            combo_text += f"{i+1}. {name}\n"
+                            combo_text += f"   Sequence: {' > '.join(sequence)}\n"
+                            combo_text += f"   Effects: {effects}\n\n"
+                        else:
+                            combo_text += f"{i+1}. {str(combo)}\n\n"
+                    
+                    combo_list_widget.insert(1.0, combo_text)
+                    combo_list_widget.config(state="disabled")
+                except tk.TclError:
+                    # Widget access failed, skip
+                    pass
+                    
+        # Update combo details for selected combo (only if we have local widgets)
+        if hasattr(self, 'combos_listbox') and hasattr(self, 'combo_details'):
+            try:
+                selection = self.combos_listbox.curselection()
+                if selection and isinstance(self.combos_data, list) and selection[0] < len(self.combos_data):
+                    idx = selection[0]
+                    combo = self.combos_data[idx]
+                    if isinstance(combo, dict):
+                        details = (
+                            f"Name: {combo.get('name', '-')}\n"
+                            f"Sequence: {', '.join(combo.get('sequence', []))}\n"
+                            f"Timing Window: {combo.get('window', '-')}\n"
+                            f"Cost: {combo.get('cost', '-')}\n"
+                            f"Effects: {combo.get('effects', '-')}\n"
+                            f"Requirements: {combo.get('requirements', '-')}\n"
+                        )
+                    else:
+                        details = str(combo)
+                    self.combo_details.config(state="normal")
+                    self.combo_details.delete(1.0, tk.END)
+                    self.combo_details.insert(tk.END, details)
+                    self.combo_details.config(state="disabled")
+                else:
+                    self.combo_details.config(state="normal")
+                    self.combo_details.delete(1.0, tk.END)
+                    self.combo_details.insert(tk.END, "Select a combo to view details.")
+                    self.combo_details.config(state="disabled")
+            except (AttributeError, IndexError, tk.TclError):
+                # Widget access failed or selection invalid, skip
+                pass
 
     def on_combo_select(self, event):
         """Handle selection of a combo in the listbox."""
@@ -418,37 +1068,60 @@ class SimpleGameDemo:
 
     def update_combat_combo_display(self, seq, pct, timer_val):
         """Update combo visuals in the combat tab."""
-        if not hasattr(self, 'combat_combo_sequence'):
-            return
-            
-        # Update sequence display
-        seq_text = " > ".join(seq[-3:]) if seq else "Ready"  # Show last 3 spells
-        if len(seq) > 3:
-            seq_text = "..." + seq_text
-        self.combat_combo_sequence.config(text=seq_text)
+        # Check if combat combo widgets exist (either from UI service or local setup)
+        combat_combo_sequence = None
+        combat_combo_progress = None
         
-        # Update color based on sequence length
-        if len(seq) >= 2:
-            self.combat_combo_sequence.config(fg="orange")
-        elif len(seq) == 1:
-            self.combat_combo_sequence.config(fg="yellow")
-        else:
-            self.combat_combo_sequence.config(fg="green")
+        # Try to get widgets from UI service first
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets')):
+            combat_combo_sequence = self.ui_service.widgets.get('combat_combo_sequence')
+            combat_combo_progress = self.ui_service.widgets.get('combat_combo_progress')
+        
+        # Fallback to local widgets
+        if not combat_combo_sequence and hasattr(self, 'combat_combo_sequence'):
+            combat_combo_sequence = self.combat_combo_sequence
+        if not combat_combo_progress and hasattr(self, 'combat_combo_progress'):
+            combat_combo_progress = self.combat_combo_progress
             
-        # Update progress bar
-        if hasattr(self, 'combat_combo_progress'):
-            self.combat_combo_progress.delete("all")
-            width = self.combat_combo_progress.winfo_width()
-            if width > 1:  # Only draw if widget is rendered
-                # Background
-                self.combat_combo_progress.create_rectangle(0, 0, width, 20, 
-                                                          fill="#333", outline="")
-                # Progress
-                if pct > 0:
+        # Update sequence display if available
+        if combat_combo_sequence:
+            seq_text = " > ".join(seq[-3:]) if seq else "Ready"  # Show last 3 spells
+            if len(seq) > 3:
+                seq_text = "..." + seq_text
+            combat_combo_sequence.config(text=seq_text)
+            
+            # Update color based on sequence length
+            if len(seq) >= 2:
+                combat_combo_sequence.config(fg="orange")
+            elif len(seq) == 1:
+                combat_combo_sequence.config(fg="yellow")
+            else:
+                combat_combo_sequence.config(fg="green")
+                
+        # Update progress bar if available
+        if combat_combo_progress:
+            # Check if it's a Canvas (from UI service) or Progressbar (local)
+            if hasattr(combat_combo_progress, 'create_rectangle'):
+                # It's a Canvas - draw progress bar
+                combat_combo_progress.delete("progress_bar")  # Clear existing
+                width = combat_combo_progress.winfo_width()
+                height = combat_combo_progress.winfo_height()
+                if width > 1 and height > 1:  # Make sure canvas is properly sized
                     progress_width = int(width * pct / 100)
-                    color = "#ff4444" if pct > 80 else "#ffaa00" if pct > 50 else "#44ff44"
-                    self.combat_combo_progress.create_rectangle(0, 0, progress_width, 20, 
-                                                              fill=color, outline="")
+                    if progress_width > 0:
+                        color = "#4CAF50" if pct < 75 else "#FF9800"  # Green to orange
+                        combat_combo_progress.create_rectangle(
+                            0, 0, progress_width, height,
+                            fill=color, tags="progress_bar", outline=""
+                        )
+            else:
+                # It's a Progressbar - set value
+                try:
+                    combat_combo_progress['value'] = pct
+                except tk.TclError:
+                    # Widget doesn't support value property, skip
+                    pass
 
     def track_spell_cast(self, spell_id):
         """Track a spell cast for combo building."""
@@ -479,124 +1152,264 @@ class SimpleGameDemo:
         """Start/continue the combo timer countdown."""
         if hasattr(self, 'combo_timer') and self.combo_timer > 0:
             self.combo_timer -= 0.1
+            # Update displays during countdown
+            self.update_combo_tab()
             self.root.after(100, self.start_combo_timer)  # Update every 100ms
-            if self.combo_timer <= 0:
-                # Timer expired, clear sequence
+        else:
+            # Timer expired, clear sequence
+            if hasattr(self, 'combo_sequence'):
                 self.combo_sequence = []
                 self.update_combo_tab()
 
     def setup_stats_tab(self):
-        """Set up the character stats tab."""
-        # Left side: Character portrait and basic info
-        left_frame = tk.Frame(self.stats_tab, bg="black")
-        left_frame.pack(
-            side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10
-        )
+        """Set up the enhanced character stats tab with detailed equipment info."""
+        # Create main container with better organization
+        main_container = tk.Frame(self.stats_tab, bg="black")
+        main_container.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Character portrait area
-        portrait_frame = tk.Frame(
-            left_frame, bg="dark gray", width=200, height=200
-        )
-        portrait_frame.pack(pady=10)
+        # === TOP SECTION: Character Overview ===
+        top_frame = tk.Frame(main_container, bg="black")
+        top_frame.pack(fill=tk.X, pady=(0, 10))
+
+        # Left: Character portrait and basic info
+        left_frame = tk.Frame(top_frame, bg="black")
+        left_frame.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 10))
+
+        # Enhanced Character portrait area
+        portrait_frame = tk.Frame(left_frame, bg="dark gray", width=180, height=180)
+        portrait_frame.pack(pady=5)
         portrait_frame.pack_propagate(False)
 
+        # Character portrait with border
+        portrait_inner = tk.Frame(portrait_frame, bg="gray", width=170, height=170)
+        portrait_inner.pack(expand=True, pady=5, padx=5)
+        
         portrait_label = tk.Label(
-            portrait_frame,
-            text="Character Portrait",
-            bg="dark gray",
-            fg="white"
+            portrait_inner,
+            text="🎭\nCharacter\nPortrait",
+            bg="gray",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            justify=tk.CENTER
         )
         portrait_label.pack(expand=True)
 
-        # Character details
-        self.basic_info = tk.Text(
-            left_frame,
-            width=25,
-            height=8,
-            bg="light gray",
-            state="disabled"
-        )
-        self.basic_info.pack(fill=tk.X, pady=10)
+        # Enhanced Character basic info
+        basic_info_frame = tk.Frame(left_frame, bg="black")
+        basic_info_frame.pack(fill=tk.BOTH, expand=True, pady=5)
 
-        # Status effects display
-        status_frame = tk.Frame(left_frame, bg="black")
-        status_frame.pack(fill=tk.X, pady=5)
-        
-        status_title = tk.Label(status_frame, text="Active Effects", font=("Arial", 12, "bold"), fg="cyan", bg="black")
+        basic_info_title = tk.Label(
+            basic_info_frame,
+            text="📊 Character Overview",
+            font=("Arial", 11, "bold"),
+            fg="cyan",
+            bg="black"
+        )
+        basic_info_title.pack()
+
+        self.basic_info = tk.Text(
+            basic_info_frame,
+            width=28,
+            height=14,
+            bg="#2c3e50",
+            fg="white",
+            font=("Consolas", 9),
+            state="disabled",
+            wrap=tk.WORD,
+            relief=tk.GROOVE,
+            bd=2
+        )
+        self.basic_info.pack(fill=tk.BOTH, expand=True, pady=5)
+
+        # === RIGHT: Status Effects Display ===
+        right_frame = tk.Frame(top_frame, bg="black")
+        right_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(10, 0))
+
+        status_title = tk.Label(
+            right_frame,
+            text="✨ Active Effects",
+            font=("Arial", 11, "bold"),
+            fg="gold",
+            bg="black"
+        )
         status_title.pack()
         
         self.status_effects_display = tk.Text(
-            status_frame,
-            width=25,
-            height=4,
-            bg="dark gray",
-            fg="white",
-            state="disabled"
-        )
-        self.status_effects_display.pack(fill=tk.X, pady=5)
-
-        # Right side: Detailed stats
-        right_frame = tk.Frame(self.stats_tab, bg="black")
-        right_frame.pack(
-            side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10
-        )
-
-        # Detailed character info
-        self.detailed_stats = tk.Text(
             right_frame,
-            width=30,
-            height=20,
-            bg="light gray",
-            state="disabled"
+            width=25,
+            height=14,
+            bg="#34495e",
+            fg="lightyellow",
+            font=("Consolas", 9),
+            state="disabled",
+            wrap=tk.WORD,
+            relief=tk.GROOVE,
+            bd=2
         )
-        self.detailed_stats.pack(fill=tk.BOTH, expand=True)
+        self.status_effects_display.pack(fill=tk.BOTH, expand=True, pady=5)
 
-        # Bottom: Character actions
-        button_frame = tk.Frame(self.stats_tab, bg="#222")
-        button_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        # === MIDDLE SECTION: Detailed Stats and Equipment ===
+        middle_frame = tk.Frame(main_container, bg="black")
+        middle_frame.pack(fill=tk.BOTH, expand=True, pady=5)
 
-        # Improved button style
-        button_style = {
-            'bg': '#444',
-            'fg': 'white',
-            'activebackground': '#666',
-            'activeforeground': 'cyan',
-            'font': ("Segoe UI", 11, "bold"),
-            'relief': tk.RAISED,
-            'bd': 2,
-            'width': 14,
-            'height': 2
-        }
+        # Left: Detailed Statistics
+        stats_frame = tk.Frame(middle_frame, bg="black")
+        stats_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
 
-        stat_buttons = [
-            ("View Inventory", self.view_inventory, "#5bc0de"),
-            ("Level Up", self.level_up, "#5cb85c"),
-            ("Equip Gear", self.equip_gear, "#f0ad4e"),
-            ("Restore Health", self.restore_health, "#d9534f"),
-            ("Restore Mana", self.restore_mana, "#5bc0de"),
-            ("Restore Stamina", self.restore_stamina, "#f7e359"),
-            ("Restore All", self.restore_all_resources, "#337ab7"),
-            ("Save Game", self.save_game, "#0275d8"),
-            ("Load Game", self.load_game, "#5cb85c"),
+        stats_title = tk.Label(
+            stats_frame,
+            text="📈 Detailed Statistics",
+            font=("Arial", 11, "bold"),
+            fg="lightgreen",
+            bg="black"
+        )
+        stats_title.pack()
+
+        self.detailed_stats = tk.Text(
+            stats_frame,
+            width=45,
+            height=18,
+            bg="#1e1e1e",
+            fg="lightgray",
+            font=("Consolas", 9),
+            state="disabled",
+            wrap=tk.WORD,
+            relief=tk.GROOVE,
+            bd=2
+        )
+        self.detailed_stats.pack(fill=tk.BOTH, expand=True, pady=5)
+
+        # Right: Equipment Manager
+        equipment_frame = tk.Frame(middle_frame, bg="black")
+        equipment_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(5, 0))
+
+        equipment_title = tk.Label(
+            equipment_frame,
+            text="⚔️ Equipment Manager",
+            font=("Arial", 11, "bold"),
+            fg="orange",
+            bg="black"
+        )
+        equipment_title.pack()
+
+        # Equipment slots visual display
+        self.equipment_slots_frame = tk.Frame(equipment_frame, bg="#2c3e50", relief=tk.GROOVE, bd=2)
+        self.equipment_slots_frame.pack(fill=tk.X, pady=5, padx=5)
+        
+        self._create_equipment_slots_display()
+
+        # Equipment actions
+        eq_actions_frame = tk.Frame(equipment_frame, bg="black")
+        eq_actions_frame.pack(fill=tk.X, pady=5)
+
+        eq_buttons = [
+            ("🔍 Inspect Gear", self._inspect_equipment_placeholder, "#3498db"),
+            ("⚔️ Quick Equip", self.equip_gear, "#e74c3c"),
+            ("🛡️ Optimize Defense", self._optimize_defense_placeholder, "#2ecc71"),
+            ("🎒 Manage Inventory", self.view_inventory, "#9b59b6")
         ]
 
+        for text, command, color in eq_buttons:
+            btn = tk.Button(
+                eq_actions_frame,
+                text=text,
+                command=command,
+                bg=color,
+                fg="white",
+                font=("Arial", 9, "bold"),
+                relief=tk.RAISED,
+                bd=1,
+                width=18
+            )
+            btn.pack(pady=2, fill=tk.X)
 
-        # Use a grid layout for better button visibility and wrapping
-        max_cols = 3
-        for idx, (text, command, color) in enumerate(stat_buttons):
-            row = idx // max_cols
-            col = idx % max_cols
-            btn = tk.Button(button_frame, text=text, command=command, **button_style)
-            btn.configure(bg=color)
-            btn.grid(row=row, column=col, padx=6, pady=6, sticky="nsew")
+        # === BOTTOM SECTION: Action Buttons ===
+        bottom_frame = tk.Frame(main_container, bg="black")
+        bottom_frame.pack(fill=tk.X, pady=(10, 0))
 
-        # Make columns expand equally
-        for col in range(max_cols):
-            button_frame.grid_columnconfigure(col, weight=1)
+        # Enhanced button grid with better organization
+        button_grid_frame = tk.Frame(bottom_frame, bg="black")
+        button_grid_frame.pack()
 
-        # Add a visual separator
-        sep = tk.Frame(self.stats_tab, height=2, bd=1, relief=tk.SUNKEN, bg="#444")
-        sep.pack(fill=tk.X, padx=10, pady=(0, 10), side=tk.BOTTOM)
+        # Character Management Buttons
+        char_buttons = [
+            ("📊 View Stats", self.detailed_character_view, "#3498db"),
+            ("⬆️ Level Up", self.on_level_up_button_clicked, "#2ecc71"),
+            ("🎒 Inventory", self.view_inventory, "#9b59b6"),
+        ]
+
+        # Resource Management Buttons  
+        resource_buttons = [
+            ("❤️ Restore HP", self.restore_health, "#e74c3c"),
+            ("💧 Restore MP", self.restore_mana, "#3498db"),
+            ("⚡ Restore SP", self.restore_stamina, "#f39c12"),
+        ]
+
+        # System Buttons
+        system_buttons = [
+            ("💾 Save Game", self.save_game, "#34495e"),
+            ("📁 Load Game", self.load_game, "#2ecc71"),
+            ("🔄 Reload", self.reload_game, "#95a5a6"),
+        ]
+
+        # Create button sections
+        self._create_button_section(button_grid_frame, "Character", char_buttons, 0)
+        self._create_button_section(button_grid_frame, "Resources", resource_buttons, 1)
+        self._create_button_section(button_grid_frame, "System", system_buttons, 2)
+
+    def _create_equipment_slots_display(self):
+        """Create visual equipment slots display."""
+        # Clear existing widgets
+        for widget in self.equipment_slots_frame.winfo_children():
+            widget.destroy()
+
+        # Create equipment slot layout
+        slots_data = [
+            ("⛑️", "Helmet", "equipped_helmet"),
+            ("🎭", "Cloak", "equipped_cloak"),
+            ("👕", "Armor", "equipped_body"),
+            ("⚔️", "Weapon", "weapon"),
+            ("🛡️", "Offhand", "offhand"),
+            ("👢", "Boots", "equipped_feet"),
+            ("💍", "Ring", "equipped_ring"),
+        ]
+
+        # Create grid layout for equipment slots
+        for i, (icon, name, attr) in enumerate(slots_data):
+            row = i // 2
+            col = i % 2
+            
+            slot_frame = tk.Frame(self.equipment_slots_frame, bg="#34495e", relief=tk.RAISED, bd=1)
+            slot_frame.grid(row=row, column=col, padx=2, pady=2, sticky="ew")
+            
+            # Configure column weights
+            self.equipment_slots_frame.grid_columnconfigure(col, weight=1)
+            
+            icon_label = tk.Label(slot_frame, text=icon, font=("Arial", 14), bg="#34495e", fg="white")
+            icon_label.grid(row=0, column=0, padx=2)
+            
+            text_frame = tk.Frame(slot_frame, bg="#34495e")
+            text_frame.grid(row=0, column=1, padx=2, sticky="w")
+            
+            name_label = tk.Label(text_frame, text=name, font=("Arial", 8, "bold"), bg="#34495e", fg="lightgray")
+            name_label.pack(anchor="w")
+            
+            # This will be updated with actual equipment
+            item_label = tk.Label(text_frame, text="(Empty)", font=("Arial", 8), bg="#34495e", fg="gray")
+            item_label.pack(anchor="w")
+            
+            # Store references for updating
+            setattr(self, f"slot_{attr}_label", item_label)
+
+
+
+
+
+
+
+
+
+
 
     def setup_combat_tab(self):
         """Set up the combat tab with improved layout and visuals."""
@@ -631,9 +1444,14 @@ class SimpleGameDemo:
                                             fg="green", bg="#1a1a1a")
         self.combat_combo_sequence.pack(pady=2)
         
-        self.combat_combo_progress = tk.Canvas(combo_indicator, height=20, bg="#333", 
-                                             highlightthickness=0)
+        # Use a proper progress bar instead of canvas
+        self.combat_combo_progress = ttk.Progressbar(
+            combo_indicator, 
+            mode='determinate', 
+            style='Combat.Horizontal.TProgressbar'
+        )
         self.combat_combo_progress.pack(fill=tk.X, padx=5, pady=2)
+        self.combat_combo_progress['maximum'] = 100
         
         # Enemy info panel
         self.enemy_info = tk.Text(
@@ -655,12 +1473,13 @@ class SimpleGameDemo:
 
         # Create styled combat buttons
         combat_buttons = [
-            ("Attack", self.attack, "#d9534f"),
-            ("Heal", self.heal, "#5cb85c"),
-            ("Spawn Enemy", self.spawn_enemy, "#f0ad4e"),
-            ("Cast Fireball", self.cast_fireball, "#ff7043"),
-            ("Cast Ice Shard", self.cast_ice_shard, "#42a5f5"),
+            ("Attack", self.on_attack_button_clicked, "#d9534f"),
+            ("Heal", self.on_heal_button_clicked, "#5cb85c"),
+            ("Spawn Enemy", self.on_spawn_enemy_button_clicked, "#f0ad4e"),
+            ("Cast Fireball", self.on_fireball_button_clicked, "#ff7043"),
+            ("Cast Ice Shard", self.on_ice_shard_button_clicked, "#42a5f5"),
             ("Test Dual Wield", self.test_dual_wield, "#9c27b0"),
+            ("Quick Equipment", self.test_equipment_quick, "#ff6600"),
             ("Tick Status", self.tick_status_effects, "#bdb76b")
         ]
         for idx, (text, command, color) in enumerate(combat_buttons):
@@ -687,6 +1506,15 @@ class SimpleGameDemo:
             message: The message to log
             tag: The text tag for formatting
         """
+        # Try to use UI service first, fallback to direct console log
+        if hasattr(self, 'ui_service') and self.ui_service:
+            result = self.ui_service.log_message(message, tag)
+            if result.get('success', False):
+                # Also log to logger
+                logger.info(message)
+                return
+        
+        # Fallback to original implementation
         timestamp = time.strftime("%H:%M:%S")
         self.log.insert(tk.END, f"[{timestamp}] ", "info")
         self.log.insert(tk.END, f"{message}\n", tag)
@@ -698,6 +1526,11 @@ class SimpleGameDemo:
     def setup_game_state(self):
         """Set up the initial game state."""
         logger.info("Setting up game state")
+
+        # Log pending observer message if available
+        if hasattr(self, '_pending_observer_message'):
+            self.log_message(self._pending_observer_message, "info")
+            delattr(self, '_pending_observer_message')
 
         # Initialize AI system first
         ai_controller = None
@@ -722,13 +1555,22 @@ class SimpleGameDemo:
         else:
             self.ai_controller = None
 
+        # Wire up controller classes with actual services
+        self._wire_controllers()
+
         # Create player character
         from game_sys.character.leveling_manager import LevelingManager
+        from game_sys.config.config_manager import ConfigManager
+        
+        # Get grade constants from config
+        cfg = ConfigManager()
+        grade_list = cfg.get('defaults.grades', ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"])
+        
         # Create player character with specific grade and rarity
-        # Grade 5 = SIX (0-indexed), and LEGENDARY rarity should give stat boosts
+        # Using grade index 0 (ONE) for starting character
         self.player = create_character(
             template_id="hero",
-            level=1, grade=0, rarity="COMMON"
+            level=1, grade=0, rarity="COMMON"  # grade 0 = ONE from config
         )
         logger.info(f"Created player: {self.player.name}")
         self.log_message(f"Welcome, {self.player.name}!")
@@ -752,7 +1594,7 @@ class SimpleGameDemo:
 
         # Create enemy with random stats
         self.enemy = create_character(
-            "dragon", level= 50, grade=0, rarity="COMMON"
+            "dragon", level=50, grade=0, rarity="COMMON"  # grade 0 = ONE from config
         )
         if self.enemy:
             # Enable AI for the enemy
@@ -764,10 +1606,12 @@ class SimpleGameDemo:
                     self.log_message("Failed to enable AI for enemy", "combat")
 
             # Display enemy info with grade and rarity
+            enemy_grade = getattr(self.enemy, 'grade', 0)
+            enemy_grade_display = self._get_grade_display(enemy_grade)
             enemy_info = (
                 f"A {self.enemy.name} appears! "
                 f"(Level {getattr(self.enemy, 'level', 100)}, "
-                f"Grade {getattr(self.enemy, 'grade', 7)+1}, "
+                f"Grade {enemy_grade_display}, "
                 f"Rarity {getattr(self.enemy, 'rarity', 'DIVINE')})"
             )
             if self.ai_enabled:
@@ -790,264 +1634,849 @@ class SimpleGameDemo:
             self.update_leveling_display()
 
     def update_char_info(self):
-        """Update the character info displays."""
+        """Update the character info displays with comprehensive details."""
         if not hasattr(self, 'player') or not self.player:
             return
 
-        # Enable text widgets for updating
-        self.basic_info.config(state="normal")
-        self.detailed_stats.config(state="normal")
-        if hasattr(self, 'status_effects_display'):
-            self.status_effects_display.config(state="normal")
+        # Always use enhanced implementation for better character display
+        # The UI service basic implementation is too limited
+        self._update_character_display_enhanced()
 
-        # Clear current text
-        self.basic_info.delete(1.0, tk.END)
-        self.detailed_stats.delete(1.0, tk.END)
-        if hasattr(self, 'status_effects_display'):
-            self.status_effects_display.delete(1.0, tk.END)
-
-        # Build basic character info text
-        basic_info = f"Name: {self.player.name}\n"
-        basic_info += f"Level: {self.player.level}\n"
+    def _update_character_display_enhanced(self):
+        """Enhanced character display implementation."""
+        # Get widgets from UI service or use local widgets
+        basic_info_widget = None
+        detailed_stats_widget = None
+        status_effects_widget = None
         
-        # Add grade and rarity if available, display grade name if possible
-        grade_display = None
-        if hasattr(self.player, 'grade'):
-            grade_val = self.player.grade
-            try:
-                from game_sys.config.config_manager import ConfigManager
-                cfg = ConfigManager()
-                grade_list = cfg.get('defaults.grades', ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"])
-                if isinstance(grade_val, int) and 0 <= grade_val < len(grade_list):
-                    grade_display = grade_list[grade_val]
-                else:
-                    grade_display = str(grade_val)
-            except Exception:
-                grade_display = str(grade_val)
-            basic_info += f"Grade: {grade_display}\n"
-        if hasattr(self.player, 'rarity'):
-            basic_info += f"Rarity: {self.player.rarity}\n"
-            
-        health_val = f"{self.player.current_health:.2f}/"
-        health_val += f"{self.player.max_health:.2f}"
-        basic_info += f"Health: {health_val}\n"
-
-        # Insert basic text
-        self.basic_info.insert(tk.END, basic_info)
-
-        # Build detailed character info
-        detailed_info = f"== {self.player.name} ==\n"
-        detailed_info += f"Level: {self.player.level}\n"
+        # Try UI service widgets first
+        if (hasattr(self, 'ui_service') and self.ui_service and 
+            hasattr(self.ui_service, 'widgets')):
+            basic_info_widget = self.ui_service.widgets.get('basic_info')
+            detailed_stats_widget = self.ui_service.widgets.get('detailed_stats') 
+            status_effects_widget = self.ui_service.widgets.get('status_effects_display')
         
-        # Add grade and rarity to detailed view as well
-        if hasattr(self.player, 'grade'):
-            grade_val = self.player.grade
+        # Fallback to local widgets
+        if not basic_info_widget and hasattr(self, 'basic_info'):
+            basic_info_widget = self.basic_info
+        if not detailed_stats_widget and hasattr(self, 'detailed_stats'):
+            detailed_stats_widget = self.detailed_stats
+        if not status_effects_widget and hasattr(self, 'status_effects_display'):
+            status_effects_widget = self.status_effects_display
+
+        # Update basic info if widget available
+        if basic_info_widget:
             try:
-                from game_sys.config.config_manager import ConfigManager
-                cfg = ConfigManager()
-                grade_list = cfg.get('defaults.grades', [])
-                if isinstance(grade_val, int) and 0 <= grade_val < len(grade_list):
-                    grade_display = grade_list[grade_val]
-                else:
-                    grade_display = str(grade_val)
-            except Exception:
-                grade_display = str(grade_val)
-            detailed_info += f"Grade: {grade_display}\n"
-        if hasattr(self.player, 'rarity'):
-            detailed_info += f"Rarity: {self.player.rarity}\n"
+                basic_info_widget.config(state="normal")
+                basic_info_widget.delete(1.0, tk.END)
+                basic_info = self._build_basic_character_info()
+                basic_info_widget.insert(tk.END, basic_info)
+                basic_info_widget.config(state="disabled")
+            except tk.TclError:
+                # Widget might not support these operations
+                pass
+
+        # Update detailed stats if widget available
+        if detailed_stats_widget:
+            try:
+                detailed_stats_widget.config(state="normal")
+                detailed_stats_widget.delete(1.0, tk.END)
+                detailed_info = self._build_detailed_character_info()
+                detailed_stats_widget.insert(tk.END, detailed_info)
+                detailed_stats_widget.config(state="disabled")
+            except tk.TclError:
+                # Widget might not support these operations
+                pass
+
+        # Update status effects if widget available
+        if status_effects_widget:
+            try:
+                status_effects_widget.config(state="normal")
+                status_effects_widget.delete(1.0, tk.END)
+                status_info = self._build_status_effects_info()
+                status_effects_widget.insert(tk.END, status_info)
+                status_effects_widget.config(state="disabled")
+            except tk.TclError:
+                # Widget might not support these operations
+                pass
+
+        # Update equipment display if available
+        if hasattr(self, 'ui_service') and self.ui_service:
+            self.ui_service.update_equipment_slots(self.player)
+
+    def _update_performance_metrics(self):
+        """Update combat effectiveness and equipment coverage metrics."""
+        if not hasattr(self, 'player') or not self.player:
+            return
             
-        detailed_info += f"Health: {health_val}\n"
-
-        # Show all available base stats
-        detailed_info += "\n=== BASE STATS ===\n"
-        if hasattr(self.player, 'base_stats') and isinstance(self.player.base_stats, dict):
-            from game_sys.config.config_manager import ConfigManager
-            cfg = ConfigManager()
-            stats_defaults = cfg.get('constants.stats_defaults', {})
-            # Filter out non-stat meta keys and tidy formatting
-            meta_keys = {"grade", "rarity", "skip_default_job", "max_targets", "level", "defense", "accuracy", "initiative", "magic_power", "parry_chance"}
-            core_stats = []
-            for raw_key, raw_val in sorted(self.player.base_stats.items()):
-                key = str(raw_key).strip()
-                if key in meta_keys or key.startswith("_") or key.lower() == "level":
-                    continue
-                core_stats.append((key, raw_val))
-
-            # Build output, showing effective values when they differ
-            for stat_name, base_val in core_stats:
-                stat_key = stat_name.lower()
-                display_name = stat_key.replace("_", " ").title()
-                try:
-                    if hasattr(self.player, "get_stat"):
-                        effective_val = float(self.player.get_stat(stat_key))
-                    else:
-                        effective_val = float(base_val)
-                except Exception:
-                    effective_val = base_val
-
-                # Special-case magic power: if base is tiny (<=1) but effective bigger, prefer effective
-                if stat_key == "magic_power" and effective_val > base_val:
-                    shown_val = effective_val
+        try:
+            # Calculate Attack Rating
+            attack_rating = self._calculate_attack_rating()
+            max_attack = 100  # Reasonable maximum for display
+            attack_percent = min(attack_rating / max_attack, 1.0)
+            
+            # Update attack rating bar
+            if hasattr(self, 'attack_rating_bar'):
+                self.attack_rating_bar.delete("all")
+                bar_width = 100
+                fill_width = int(bar_width * attack_percent)
+                
+                # Background bar
+                self.attack_rating_bar.create_rectangle(0, 2, bar_width, 10, fill="gray20", outline="")
+                
+                # Fill bar with color based on rating
+                if attack_percent > 0.7:
+                    fill_color = "#27ae60"  # Green for high
+                elif attack_percent > 0.4:
+                    fill_color = "#f39c12"  # Orange for medium
                 else:
-                    shown_val = base_val
+                    fill_color = "#e74c3c"  # Red for low
+                    
+                if fill_width > 0:
+                    self.attack_rating_bar.create_rectangle(0, 2, fill_width, 10, fill=fill_color, outline="")
+                    
+            # Update attack rating label
+            if hasattr(self, 'attack_rating_label'):
+                self.attack_rating_label.config(text=f"{attack_rating:.0f}")
+            
+            # Calculate Defense Rating
+            defense_rating = self._calculate_defense_rating()
+            max_defense = 50  # Reasonable maximum for display
+            defense_percent = min(defense_rating / max_defense, 1.0)
+            
+            # Update defense rating bar
+            if hasattr(self, 'defense_rating_bar'):
+                self.defense_rating_bar.delete("all")
+                fill_width = int(bar_width * defense_percent)
+                
+                # Background bar
+                self.defense_rating_bar.create_rectangle(0, 2, bar_width, 10, fill="gray20", outline="")
+                
+                # Fill bar with color
+                if defense_percent > 0.7:
+                    fill_color = "#3498db"  # Blue for high defense
+                elif defense_percent > 0.4:
+                    fill_color = "#f39c12"  # Orange for medium
+                else:
+                    fill_color = "#e74c3c"  # Red for low
+                    
+                if fill_width > 0:
+                    self.defense_rating_bar.create_rectangle(0, 2, fill_width, 10, fill=fill_color, outline="")
+                    
+            # Update defense rating label
+            if hasattr(self, 'defense_rating_label'):
+                self.defense_rating_label.config(text=f"{defense_rating:.0f}")
+                
+            # Calculate Equipment Coverage
+            coverage_count, total_slots = self._calculate_equipment_coverage()
+            coverage_percent = coverage_count / total_slots if total_slots > 0 else 0
+            
+            # Update equipment coverage bar
+            if hasattr(self, 'coverage_progress'):
+                self.coverage_progress.delete("all")
+                bar_width = 120
+                fill_width = int(bar_width * coverage_percent)
+                
+                # Background
+                self.coverage_progress.create_rectangle(1, 2, bar_width-1, 13, fill="gray20", outline="gray")
+                
+                # Fill based on coverage
+                if coverage_percent > 0.8:
+                    fill_color = "#27ae60"  # Green for well-equipped
+                elif coverage_percent > 0.5:
+                    fill_color = "#f39c12"  # Orange for partial
+                else:
+                    fill_color = "#e74c3c"  # Red for poorly equipped
+                    
+                if fill_width > 1:
+                    self.coverage_progress.create_rectangle(1, 2, fill_width, 13, fill=fill_color, outline="")
+                    
+            # Update coverage label
+            if hasattr(self, 'coverage_label'):
+                self.coverage_label.config(text=f"{coverage_count}/{total_slots} slots")
+                
+        except Exception as e:
+            # Silently handle any errors to avoid breaking the UI
+            pass
 
-                # If effective differs noticeably, show both
-                detailed_info += f"  {display_name}: {effective_val:.2f}\n"
+    def _update_build_recommendations(self):
+        """Update character build recommendations based on current equipment and stats."""
+        if not hasattr(self, 'player') or not self.player:
+            return
+            
+        if not hasattr(self, 'build_recommendations'):
+            return
+            
+        try:
+            self.build_recommendations.config(state="normal")
+            self.build_recommendations.delete(1.0, tk.END)
+            
+            recommendations = self._analyze_character_build()
+            self.build_recommendations.insert(tk.END, recommendations)
+            self.build_recommendations.config(state="disabled")
+            
+        except Exception:
+            pass
 
-        # Show all derived/combat stats, grouped by category
+    def _calculate_attack_rating(self):
+        """Calculate overall attack rating for the character."""
+        total_attack = 0
+        
+        # Primary weapon damage
+        weapon = getattr(self.player, 'weapon', None)
+        if weapon and hasattr(weapon, 'base_damage'):
+            total_attack += weapon.base_damage
+            
+        # Offhand weapon damage (with dual-wield penalty)
+        offhand = getattr(self.player, 'offhand', None)
+        if offhand and hasattr(offhand, 'base_damage'):
+            total_attack += offhand.base_damage * 0.75  # Dual-wield penalty
+            
+        # Strength/stat modifiers if available
         if hasattr(self.player, 'get_stat'):
-            # --- Offensive Stats ---
-            detailed_info += "\n=== OFFENSIVE STATS ===\n"
-            offensive_stats = [
-                ('Attack', 'attack'),
-                ('Magic Power', 'magic_power'),
-                ('Physical Damage', 'physical_damage'),
-                ('Critical Chance', 'critical_chance'),
-                ('Parry Chance', 'parry_chance'),
-                ('Initiative', 'initiative'),
-                ('Speed', 'speed'),
-            ]
-            for display_name, stat_name in offensive_stats:
-                try:
-                    value = self.player.get_stat(stat_name)
-                    if 'chance' in stat_name:
-                        detailed_info += f"  {display_name}: {float(value):.1%}\n"
-                    else:
-                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
-                except Exception:
-                    detailed_info += f"  {display_name}: N/A\n"
-
-            # --- Defensive Stats ---
-            detailed_info += "\n=== DEFENSIVE STATS ===\n"
-            # Revert to simple defense display (no formula breakdown)
             try:
-                defense_val = self.player.get_stat('defense')
-                detailed_info += f"  Defense: {defense_val:.2f}\n"
-            except Exception:
-                detailed_info += "  Defense: N/A\n"
-            defensive_stats = [
-                ('Block Chance', 'block_chance'),
-                ('Dodge Chance', 'dodge_chance'),
-                ('Magic Resistance', 'magic_resistance'),
-                ('Damage Reduction', 'damage_reduction'),
-            ]
-            for display_name, stat_name in defensive_stats:
-                try:
-                    value = self.player.get_stat(stat_name)
-                    if 'chance' in stat_name:
-                        detailed_info += f"  {display_name}: {float(value):.1%}\n"
-                    else:
-                        detailed_info += f"  {display_name}: {float(value):.2f}\n"
-                except Exception:
-                    detailed_info += f"  {display_name}: N/A\n"
+                strength = self.player.get_stat('strength')
+                total_attack += strength * 0.5  # Strength contributes to attack
+            except:
+                pass
+                
+        return max(total_attack, 1)  # Minimum of 1 for unarmed
 
-            # --- Regeneration Stats ---
-            detailed_info += "\n=== REGENERATION ===\n"
-            regen_stats = ['health_regeneration', 'mana_regeneration', 'stamina_regeneration']
-            for stat_name in regen_stats:
-                try:
-                    value = self.player.get_stat(stat_name)
-                except Exception:
-                    value = None
-                display_name = stat_name.replace('_', ' ').title()
-                try:
-                    if value is None:
-                        detailed_info += f"  {display_name}: N/A\n"
-                    else:
-                        detailed_info += f"  {display_name}: {float(value):.3f}/sec\n"
-                except (ValueError, TypeError):
-                    detailed_info += f"  {display_name}: {value}\n"
-        # Resource Stats (Derived)
-        detailed_info += "\n=== RESOURCE STATS ===\n"
-        resource_stats = [
-            ('health', 'max_health', 'current_health'),
-            ('mana', 'max_mana', 'current_mana'),
-            ('stamina', 'max_stamina', 'current_stamina')
-        ]
-        for base_stat, max_attr, current_attr in resource_stats:
-            if hasattr(self.player, 'get_stat'):
-                max_val = self.player.get_stat(base_stat)
-                current_val = getattr(self.player, current_attr, max_val)
-                display_name = base_stat.replace('_', ' ').title()
-                detailed_info += f"  {display_name}: {current_val:.0f}/{max_val:.0f}\n"
+    def _calculate_defense_rating(self):
+        """Calculate overall defense rating for the character."""
+        total_defense = 0
+        
+        # Armor defense values
+        armor_slots = ['equipped_body', 'equipped_helmet', 'equipped_feet', 'equipped_cloak']
+        for slot in armor_slots:
+            item = getattr(self.player, slot, None)
+            if item and hasattr(item, 'defense'):
+                total_defense += item.defense
+                
+        # Shield defense
+        offhand = getattr(self.player, 'offhand', None)
+        if offhand and hasattr(offhand, 'defense'):
+            total_defense += offhand.defense
+            
+        # Constitution modifier if available
+        if hasattr(self.player, 'get_stat'):
+            try:
+                constitution = self.player.get_stat('constitution')
+                total_defense += constitution * 0.2  # Constitution contributes to defense
+            except:
+                pass
+                
+        return total_defense
 
-        # Defensive Stats (Derived)
-        detailed_info += "\n=== DEFENSIVE STATS ===\n"
-        defensive_stats = ['dodge_chance', 'block_chance', 'magic_resistance', 'damage_reduction']
-        for stat_name in defensive_stats:
-            if hasattr(self.player, 'get_stat'):
-                value = self.player.get_stat(stat_name)
-                display_name = stat_name.replace('_', ' ').title()
-                if 'chance' in stat_name:
-                    detailed_info += f"  {display_name}: {value:.1%}\n"
+    def _calculate_equipment_coverage(self):
+        """Calculate how many equipment slots are filled."""
+        equipment_slots = ['weapon', 'offhand', 'equipped_body', 'equipped_helmet', 
+                          'equipped_feet', 'equipped_cloak', 'equipped_ring']
+        
+        equipped_count = 0
+        for slot in equipment_slots:
+            if hasattr(self.player, slot) and getattr(self.player, slot, None) is not None:
+                equipped_count += 1
+                
+        return equipped_count, len(equipment_slots)
+
+    def _analyze_character_build(self):
+        """Analyze character build and provide recommendations."""
+        analysis = "BUILD ANALYSIS\n"
+        analysis += "─" * 15 + "\n\n"
+        
+        # Fighting Style Analysis
+        weapon = getattr(self.player, 'weapon', None)
+        offhand = getattr(self.player, 'offhand', None)
+        
+        if weapon and offhand and hasattr(offhand, 'base_damage'):
+            analysis += "Style: Dual Wielder\n"
+            analysis += "✓ High DPS potential\n"
+            analysis += "⚠ Needs accuracy gear\n\n"
+        elif weapon and offhand and hasattr(offhand, 'defense'):
+            analysis += "Style: Sword & Board\n"
+            analysis += "✓ Balanced fighter\n"
+            analysis += "✓ Good survivability\n\n"
+        elif weapon and getattr(weapon, 'two_handed', False):
+            analysis += "Style: Two-Handed\n"
+            analysis += "✓ Maximum damage\n"
+            analysis += "⚠ No shield defense\n\n"
+        else:
+            analysis += "Style: Basic Fighter\n"
+            analysis += "⚠ Needs better gear\n\n"
+            
+        # Equipment Recommendations
+        coverage_count, total_slots = self._calculate_equipment_coverage()
+        
+        if coverage_count < total_slots // 2:
+            analysis += "PRIORITY: Get more gear!\n"
+            analysis += f"Only {coverage_count}/{total_slots} equipped\n\n"
+            
+        # Missing equipment analysis
+        missing_slots = []
+        essential_slots = [('weapon', 'Weapon'), ('equipped_body', 'Armor')]
+        
+        for slot, name in essential_slots:
+            if not getattr(self.player, slot, None):
+                missing_slots.append(name)
+                
+        if missing_slots:
+            analysis += "MISSING ESSENTIALS:\n"
+            for item in missing_slots:
+                analysis += f"• {item}\n"
+            analysis += "\n"
+            
+        # Stat recommendations
+        attack_rating = self._calculate_attack_rating()
+        defense_rating = self._calculate_defense_rating()
+        
+        if attack_rating < 10:
+            analysis += "⚠ Low attack power\n"
+        if defense_rating < 5:
+            analysis += "⚠ Very vulnerable\n"
+            
+        # Build strengths
+        if attack_rating > 30:
+            analysis += "✓ Strong offense\n"
+        if defense_rating > 15:
+            analysis += "✓ Good defense\n"
+            
+        return analysis
+
+    def _update_quick_stats_bars(self):
+        """Update the quick HP/MP bars in the portrait area."""
+        if not hasattr(self, 'player') or not self.player:
+            return
+            
+        try:
+            # Update HP bar
+            if hasattr(self, 'hp_bar') and hasattr(self, 'hp_label'):
+                current_hp = getattr(self.player, 'current_health', 0)
+                max_hp = getattr(self.player, 'max_health', 1)
+                hp_percent = current_hp / max_hp if max_hp > 0 else 0
+                
+                self.hp_bar.delete("all")
+                bar_width = 100
+                fill_width = int(bar_width * hp_percent)
+                
+                # Background
+                self.hp_bar.create_rectangle(0, 0, bar_width, 8, fill="gray20", outline="")
+                
+                # HP fill - color changes based on health percentage
+                if hp_percent > 0.6:
+                    hp_color = "#27ae60"  # Green
+                elif hp_percent > 0.3:
+                    hp_color = "#f39c12"  # Orange
                 else:
-                    detailed_info += f"  {display_name}: {value:.2f}\n"
+                    hp_color = "#e74c3c"  # Red
+                    
+                if fill_width > 0:
+                    self.hp_bar.create_rectangle(0, 0, fill_width, 8, fill=hp_color, outline="")
+                    
+                # Update HP label
+                self.hp_label.config(text=f"{current_hp:.0f}/{max_hp:.0f}")
+                
+            # Update MP bar
+            if hasattr(self, 'mp_bar') and hasattr(self, 'mp_label'):
+                current_mp = getattr(self.player, 'current_mana', 0)
+                max_mp = getattr(self.player, 'max_mana', 1)
+                mp_percent = current_mp / max_mp if max_mp > 0 else 0
+                
+                self.mp_bar.delete("all")
+                fill_width = int(bar_width * mp_percent)
+                
+                # Background
+                self.mp_bar.create_rectangle(0, 0, bar_width, 8, fill="gray20", outline="")
+                
+                # MP fill - always blue
+                if fill_width > 0:
+                    self.mp_bar.create_rectangle(0, 0, fill_width, 8, fill="#3498db", outline="")
+                    
+                # Update MP label
+                self.mp_label.config(text=f"{current_mp:.0f}/{max_mp:.0f}")
+                
+        except Exception:
+            pass
 
-        # Regeneration Stats (Derived)
-        detailed_info += "\n=== REGENERATION ===\n"
-        regen_stats = ['health_regeneration', 'mana_regeneration', 'stamina_regeneration']
-        for stat_name in regen_stats:
-            if hasattr(self.player, 'get_stat'):
-                value = self.player.get_stat(stat_name)
-                display_name = stat_name.replace('_', ' ').title()
-                detailed_info += f"  {display_name}: {value:.3f}/sec\n"
+    def _get_grade_display(self, grade):
+        """Convert grade to display format using Grade enum."""
+        if grade is None:
+            return "Unknown"
+        
+        # Handle Grade enum values - use enum name instead of Roman numerals
+        if isinstance(grade, Grade):
+            return grade.name
+        
+        # Handle integer indices (0-indexed)
+        if isinstance(grade, int):
+            grade_list = [Grade.ONE, Grade.TWO, Grade.THREE, Grade.FOUR, Grade.FIVE, Grade.SIX, Grade.SEVEN]
+            if 0 <= grade < len(grade_list):
+                return grade_list[grade].name
+            return f"Grade {grade + 1}"  # fallback
+        
+        # Handle string names
+        if isinstance(grade, str):
+            try:
+                grade_enum = Grade[grade.upper()]
+                return grade_enum.name
+            except KeyError:
+                return grade.upper()  # fallback to original string
+        
+        return str(grade)
 
-        # Special Stats
-        detailed_info += "\n=== SPECIAL STATS ===\n"
-        special_stats = ['critical_chance', 'luck_factor', 'physical_damage']
-        for stat_name in special_stats:
-            if hasattr(self.player, 'get_stat'):
-                value = self.player.get_stat(stat_name)
-                display_name = stat_name.replace('_', ' ').title()
-                if 'chance' in stat_name:
-                    detailed_info += f"  {display_name}: {value:.1%}\n"
-                else:
-                    detailed_info += f"  {display_name}: {value:.2f}\n"
+    def _get_rarity_display(self, rarity):
+        """Convert rarity to display format using Rarity enum."""
+        if rarity is None:
+            return "Unknown"
+        
+        # Handle Rarity enum values
+        if isinstance(rarity, Rarity):
+            return rarity.name.title()
+        
+        # Handle string names
+        if isinstance(rarity, str):
+            try:
+                rarity_enum = Rarity[rarity.upper()]
+                return rarity_enum.name.title()
+            except KeyError:
+                return rarity.title()
+        
+        return str(rarity)
 
-        # Add equipment if available
-        detailed_info += "\n=== EQUIPMENT ===\n"
+    def _build_basic_character_info(self):
+        """Build enhanced basic character information."""
+        info = f"╔═ {self.player.name} ═╗\n"
+        
+        # Core Identity
+        info += f"Level: {self.player.level}"
+        if hasattr(self.player, 'experience') and hasattr(self.player, 'next_level_xp'):
+            info += f" ({self.player.experience}/{self.player.next_level_xp} XP)\n"
+        else:
+            info += "\n"
+            
+        # Grade and Rarity with enhanced display
+        if hasattr(self.player, 'grade'):
+            grade_display = self._get_grade_display(self.player.grade)
+            info += f"Grade: {grade_display}\n"
+        if hasattr(self.player, 'rarity'):
+            info += f"Rarity: {self.player.rarity}\n"
+
+        # Enhanced Resource Display
+        info += "\n── VITALS ──\n"
+        info += f"HP: {self.player.current_health:.0f}/{self.player.max_health:.0f}\n"
+        
+        if hasattr(self.player, 'current_mana') and hasattr(self.player, 'max_mana'):
+            info += f"MP: {self.player.current_mana:.0f}/{self.player.max_mana:.0f}\n"
+        
+        if hasattr(self.player, 'current_stamina') and hasattr(self.player, 'max_stamina'):
+            info += f"SP: {self.player.current_stamina:.0f}/{self.player.max_stamina:.0f}\n"
+
+        # Combat Summary
+        info += "\n── COMBAT ──\n"
         weapon = getattr(self.player, 'weapon', None)
         if weapon:
-            detailed_info += f"  Weapon: {weapon.name}\n"
+            base_damage = getattr(weapon, 'base_damage', 0)
+            damage_type = getattr(weapon, 'damage_type', 'PHYSICAL')
+            info += f"ATK: {base_damage} ({damage_type})\n"
         else:
-            detailed_info += "  Weapon: (None)\n"
+            info += f"ATK: Unarmed (0)\n"
 
-        offhand = getattr(self.player, 'offhand', None)
-        if offhand:
-            detailed_info += f"  Offhand: {offhand.name}\n"
-        else:
-            detailed_info += "  Offhand: (None)\n"
-
+        # Defense calculation
+        total_defense = 0
         body_armor = getattr(self.player, 'equipped_body', None)
         if body_armor:
-            detailed_info += f"  Body: {body_armor.name}\n"
-        else:
-            detailed_info += "  Body: (None)\n"
+            defense = getattr(body_armor, 'defense', 0)
+            total_defense += defense
+            
+        info += f"DEF: {total_defense}\n"
 
-        # Add inventory if available
-        detailed_info += "\nInventory:\n"
+        #Magic Power
+        magic_power = getattr(self.player, 'get_stat', lambda x: 0)('magic_power')
+        if magic_power:
+            info += f"MGK PWR: {magic_power:.0f}\n"
+
+        # Equipment Summary
+        info += "\n── GEAR ──\n"
+        equipped_count = 0
+        if weapon:
+            equipped_count += 1
+        if getattr(self.player, 'offhand', None):
+            equipped_count += 1
+        if body_armor:
+            equipped_count += 1
+            
+        info += f"Equipped: {equipped_count}/6 slots\n"
+        
+        return info
+
+    def _build_detailed_character_info(self):
+        """Build comprehensive detailed character information."""
+        info = f"╔════════════════════════╗\n"
+        info += f"║    {self.player.name:^18}    ║\n"
+        info += f"╚════════════════════════╝\n\n"
+
+        # Core Statistics with calculations
+        info += "╔═══ CORE ATTRIBUTES ═══╗\n"
+        if hasattr(self.player, 'base_stats') and isinstance(self.player.base_stats, dict):
+            core_stats = self._get_core_stats()
+            for stat_name, base_val, effective_val in core_stats:
+                display_name = stat_name.replace("_", " ").title()
+                if abs(effective_val - base_val) > 0.01:  # Show both if different
+                    info += f"  {display_name:.<12}: {effective_val:.0f}\n"
+                else:
+                    info += f"  {display_name:.<12}: {effective_val:.0f}\n"
+
+        # Enhanced Equipment Section
+        info += "\n╔═══ EQUIPMENT DETAILS ═══╗\n"
+        info += self._build_equipment_details()
+
+        # Combat Statistics
+        info += "\n╔═══ COMBAT ANALYSIS ═══╗\n"
+        info += self._build_combat_analysis()
+
+        # Resistance and Weaknesses
+        if hasattr(self.player, 'resistances') and self.player.resistances:
+            info += "\n╔═══ RESISTANCES ═══╗\n"
+            for damage_type, value in self.player.resistances.items():
+                info += f"{damage_type}: {value:.1%} reduction\n"
+
+        if hasattr(self.player, 'weaknesses') and self.player.weaknesses:
+            info += "\n╔═══ WEAKNESSES ═══╗\n"
+            for damage_type, value in self.player.weaknesses.items():
+                info += f"{damage_type}: +{value:.1%} damage taken\n"
+
+        # Inventory Summary
+        info += "\n╔═══ INVENTORY ═══╗\n"
         if hasattr(self.player, 'inventory'):
             items = self.player.inventory.list_items()
             if items:
-                detailed_info += f"Items ({len(items)}):\n"
-                for item in items[:5]:  # Show first 5 items
-                    detailed_info += f"  - {item.name}\n"
-                if len(items) > 5:
-                    detailed_info += f"  ... and {len(items) - 5} more\n"
+                # Categorize items
+                weapons = [i for i in items if getattr(i, 'slot', '') in ['weapon', 'two_handed']]
+                armor = [i for i in items if getattr(i, 'slot', '') in ['body', 'helmet', 'feet']]
+                consumables = [i for i in items if getattr(i, 'slot', '') == 'consumable']
+                others = [i for i in items if i not in weapons + armor + consumables]
+                
+                info += f"Total Items: {len(items)}\n"
+                if weapons:
+                    info += f" Weapons: {len(weapons)}\n"
+                if armor:
+                    info += f" Armor: {len(armor)}\n"
+                if consumables:
+                    info += f"Consumables: {len(consumables)}\n"
+                if others:
+                    info += f"Other: {len(others)}\n"
+
+                info += "\n  Recent Items:\n"
+                for item in items[-3:]:  # Show last 3 items
+                    item_type = getattr(item, 'slot', 'misc')
+                    icon = self._get_item_icon(item_type)
+                    info += f"    {icon} {item.name}\n"
             else:
-                detailed_info += "Empty inventory\n"
+                info += "Inventory: Empty\n"
         else:
-            detailed_info += "(No inventory system)"
+            info += "No inventory system available\n"
 
-        # Insert detailed text
-        self.detailed_stats.insert(tk.END, detailed_info)
+        return info
 
-        # Disable text widgets to make them read-only
-        self.basic_info.config(state="disabled")
-        self.detailed_stats.config(state="disabled")
+    def _build_equipment_details(self):
+        """Build detailed equipment information with stats."""
+        info = ""
+        
+        # Weapon Details
+        weapon = getattr(self.player, 'weapon', None)
+        if weapon:
+            info += f"  ⚔️  Weapon: {weapon.name}\n"
+            if hasattr(weapon, 'base_damage'):
+                damage_type = getattr(weapon, 'damage_type', 'PHYSICAL')
+                info += f"      💥 Damage: {weapon.base_damage} ({damage_type})\n"
+            if hasattr(weapon, 'stats') and weapon.stats:
+                info += f"      📊 Bonuses: {self._format_item_stats(weapon.stats)}\n"
+            if hasattr(weapon, 'enchantments') and weapon.enchantments:
+                info += f"      ✨ Enchantments: {len(weapon.enchantments)}\n"
+        else:
+            info += "  ⚔️  Weapon: (None)\n"
+
+        # Offhand Details
+        offhand = getattr(self.player, 'offhand', None)
+        if offhand:
+            info += f"  🛡️  Offhand: {offhand.name}\n"
+            if hasattr(offhand, 'defense'):
+                info += f"      🛡️  Defense: {offhand.defense}\n"
+            elif hasattr(offhand, 'base_damage'):
+                damage_type = getattr(offhand, 'damage_type', 'PHYSICAL')
+                info += f"      💥 Damage: {offhand.base_damage} ({damage_type})\n"
+            if hasattr(offhand, 'block_chance'):
+                info += f"      🚫 Block: {offhand.block_chance:.1%}\n"
+            if hasattr(offhand, 'stats') and offhand.stats:
+                info += f"      📊 Bonuses: {self._format_item_stats(offhand.stats)}\n"
+        else:
+            info += "  🛡️  Offhand: (None)\n"
+
+        # Body Armor Details
+        body_armor = getattr(self.player, 'equipped_body', None)
+        if body_armor:
+            info += f"  🛡️  Armor: {body_armor.name}\n"
+            if hasattr(body_armor, 'defense'):
+                info += f"      🛡️  Defense: {body_armor.defense}\n"
+            if hasattr(body_armor, 'stats') and body_armor.stats:
+                info += f"      📊 Bonuses: {self._format_item_stats(body_armor.stats)}\n"
+        else:
+            info += "  🛡️  Armor: (None)\n"
+
+        # Additional Slots
+        for slot_name, display_name, icon in [
+            ('equipped_helmet', 'Helmet', '⛑️'),
+            ('equipped_feet', 'Boots', '👢'),
+            ('equipped_cloak', 'Cloak', '🎭'),
+            ('equipped_ring', 'Ring', '💍')
+        ]:
+            item = getattr(self.player, slot_name, None)
+            if item:
+                info += f"  {icon} {display_name}: {item.name}\n"
+                if hasattr(item, 'stats') and item.stats:
+                    info += f"      📊 Bonuses: {self._format_item_stats(item.stats)}\n"
+
+        # Dual-Wield Status
+        dual_wield_info = self._get_dual_wield_status()
+        if dual_wield_info:
+            info += f"\n  ⚡ Status: {dual_wield_info}\n"
+            
+        return info
+
+    def _build_combat_analysis(self):
+        """Build detailed combat statistics analysis using scaled stats."""
+        info = ""
+        
+        # Display combat stats directly from the scaler
+        if hasattr(self.player, 'get_stat'):
+            try:
+                # Attack/damage stats
+                attack = self.player.get_stat('attack')
+                info += f"Attack: {attack:.1f}\n"
+            except:
+                info += f"Attack: N/A\n"
+                
+            try:
+                # Defense stats
+                defense = self.player.get_stat('defense')
+                info += f"Defense: {defense:.1f}\n"
+            except:
+                info += f"Defense: N/A\n"
+                
+            try:
+                # Critical hit chance
+                crit_chance = self.player.get_stat('critical_chance')
+                info += f"Crit Chance: {crit_chance:.1%}\n"
+            except:
+                pass
+                
+            try:
+                # Block chance
+                block_chance = self.player.get_stat('block_chance')
+                info += f"Block Chance: {block_chance:.1%}\n"
+            except:
+                pass
+                
+            try:
+                # Additional combat stats if available
+                accuracy = self.player.get_stat('accuracy')
+                info += f"Accuracy: {accuracy:.1f}\n"
+            except:
+                pass
+                
+            try:
+                dodge_chance = self.player.get_stat('dodge_chance')
+                info += f"Dodge: {dodge_chance:.1%}\n"
+            except:
+                pass
+        else:
+            info += "Combat stats not available\n"
+
+        return info
+
+    def _build_status_effects_info(self):
+        """Build active status effects information."""
+        if not hasattr(self.player, 'status_effects') or not self.player.status_effects:
+            return "No active effects"
+            
+        info = "═══ ACTIVE EFFECTS ═══\n"
+        for effect_id, effect_data in self.player.status_effects.items():
+            effect_name = effect_id.replace('_', ' ').title()
+            duration = effect_data.get('duration', 'Permanent')
+            if isinstance(duration, (int, float)) and duration > 0:
+                info += f"✨ {effect_name} ({duration:.0f}s)\n"
+            else:
+                info += f"✨ {effect_name}\n"
+                
+            # Show effect details if available
+            if 'stat' in effect_data and 'amount' in effect_data:
+                stat_name = effect_data['stat'].replace('_', ' ').title()
+                amount = effect_data['amount']
+                sign = '+' if amount > 0 else ''
+                info += f"{stat_name}: {sign}{amount}\n"
+                
+        return info
+
+    def _get_core_stats(self):
+        """Get comprehensive statistics organized in categories with effective values."""
+        stats = []
+        if not hasattr(self.player, 'base_stats'):
+            return stats
+            
+        # Primary attributes that should always be shown first
+        primary_stats = ['strength', 'dexterity', 'intelligence', 'wisdom', 'constitution',
+                        'vitality', 'agility', 'luck', 'focus']
+        
+        # Combat-related stats
+        combat_stats = ['accuracy', 'critical_chance', 'speed',
+                       'defense', 'magic_defense', 'dodge_chance', 'parry_chance', 'block_chance']
+        
+        # Derived/calculated stats  
+        derived_stats = ['max_health', 'max_mana', 'max_stamina', 'health_regen', 'mana_regen', 'stamina_regen',
+                        'initiative', 'speed', 'carrying_capacity']
+        
+        # Stats to exclude from display (meta information)
+        meta_keys = {"grade", "rarity", "skip_default_job", "max_targets", "level"}
+        
+        def add_stat_if_available(stat_name, category_prefix=""):
+            """Helper to add a stat if it's available."""
+            # Check base_stats first
+            base_val = None
+            if hasattr(self.player, 'base_stats') and stat_name in self.player.base_stats:
+                base_val = self.player.base_stats[stat_name]
+            # Check direct attributes
+            elif hasattr(self.player, stat_name):
+                base_val = getattr(self.player, stat_name)
+            else:
+                return False  # Stat not available
+                
+            try:
+                # For derived stats like max_health, max_mana, etc., prefer direct attributes over get_stat
+                # as get_stat may not be properly configured for derived stats
+                if stat_name in ['max_health', 'max_mana', 'max_stamina', 'health_regen', 'mana_regen', 'stamina_regen']:
+                    if hasattr(self.player, stat_name):
+                        effective_val = getattr(self.player, stat_name)
+                    elif hasattr(self.player, 'get_stat'):
+                        effective_val = self.player.get_stat(stat_name)
+                    else:
+                        effective_val = base_val
+                else:
+                    # For other stats, use get_stat method if available
+                    if hasattr(self.player, 'get_stat'):
+                        effective_val = self.player.get_stat(stat_name)
+                    else:
+                        effective_val = base_val
+                    
+                display_name = category_prefix + stat_name
+                stats.append((display_name, base_val, effective_val))
+                return True
+            except Exception:
+                # Fallback to base value
+                display_name = category_prefix + stat_name
+                stats.append((display_name, base_val, base_val))
+                return True
+        
+        # Add primary stats first
+        for stat_name in primary_stats:
+            add_stat_if_available(stat_name)
+                
+        # Add combat stats
+        for stat_name in combat_stats:
+            add_stat_if_available(stat_name)
+            
+        # Add derived stats  
+        for stat_name in derived_stats:
+            add_stat_if_available(stat_name)
+        
+        # Add any additional stats from base_stats that weren't covered
+        if hasattr(self.player, 'base_stats') and isinstance(self.player.base_stats, dict):
+            covered_stats = set(primary_stats + combat_stats + derived_stats)
+            
+            for stat_name, base_val in sorted(self.player.base_stats.items()):
+                if (stat_name not in covered_stats and 
+                    stat_name not in meta_keys and 
+                    not stat_name.startswith("_")):
+                    add_stat_if_available(stat_name)
+                    
+        return stats
+
+
+
+    def _format_item_stats(self, stats_dict):
+        """Format item stats for display."""
+        if not stats_dict:
+            return "None"
+            
+        formatted = []
+        for stat, value in stats_dict.items():
+            stat_name = stat.replace('_', ' ').title()
+            sign = '+' if value > 0 else ''
+            formatted.append(f"{stat_name} {sign}{value}")
+            
+        return ', '.join(formatted)
+
+    def _get_item_icon(self, item_type):
+        """Get icon for item type."""
+        icons = {
+            'weapon': '⚔️',
+            'two_handed': '🗡️',
+            'armor': '🛡️',
+            'body': '👕',
+            'helmet': '⛑️',
+            'feet': '👢',
+            'consumable': '🧪',
+            'accessory': '💎',
+            'material': '🔨',
+            'offhand': '🛡️',
+        }
+        return icons.get(item_type, '📦')
+
+    def _get_dual_wield_status(self):
+        """Get dual-wield status information."""
+        try:
+            return equipment_manager.get_dual_wield_status_info(self.player)
+        except:
+            weapon = getattr(self.player, 'weapon', None)
+            offhand = getattr(self.player, 'offhand', None)
+            
+            if weapon and offhand:
+                if getattr(offhand, 'base_damage', 0) > 0:  # Weapon in offhand
+                    return "Dual Wielding"
+                else:
+                    return "Weapon + Shield"
+            elif weapon and getattr(weapon, 'two_handed', False):
+                return "Two-Handed Weapon"
+            elif weapon:
+                return "Single Weapon"
+            else:
+                return "Unarmed"
 
     def update_enemy_info(self):
         """Update the enemy info display."""
+        
+        # Try to use UI service for enemy display if available
+        if hasattr(self, 'ui_service') and self.ui_service and hasattr(self, 'enemy') and self.enemy:
+            try:
+                # Prepare enemy data for UI service
+                enemy_data = {
+                    'name': self.enemy.name,
+                    'level': getattr(self.enemy, 'level', 'Unknown'),
+                    'current_health': getattr(self.enemy, 'current_health', 0),
+                    'max_health': getattr(self.enemy, 'max_health', 1),
+                    'enemy': self.enemy  # Pass the full enemy object
+                }
+                
+                # Try to delegate to UI service
+                result = self.ui_service.update_enemy_display(enemy_data)
+                if result.get('success', False):
+                    logger.info("Enemy display updated via UI service")
+                    return
+                else:
+                    logger.debug(f"UI service enemy update failed: {result.get('message', 'Unknown error')}")
+            except Exception as e:
+                logger.debug(f"UI service enemy update error: {e}")
+        
+        # Fallback to original implementation
         # Enable text widget for updating
         self.enemy_info.config(state="normal")
 
@@ -1102,19 +2531,6 @@ class SimpleGameDemo:
                     value = self.enemy.base_stats[stat]
                     display_name = stat.replace('_', ' ').title()
                     info += f"  {display_name}: {value:.2f}\n"
-        
-        # Add COMBAT STATS section if get_stat method is available
-        if hasattr(self.enemy, 'get_stat'):
-            info += "\n=== COMBAT STATS ===\n"
-            combat_stats = ['attack', 'defense', 'speed', 'magic_power', 'critical_chance', 'dodge_chance']
-            
-            for stat in combat_stats:
-                try:
-                    value = self.enemy.get_stat(stat)
-                    display_name = stat.replace('_', ' ').title()
-                    info += f"  {display_name}: {value:.1f}\n"
-                except:
-                    pass
 
         # Add resistances and weaknesses
         if hasattr(self.enemy, 'resistances') and self.enemy.resistances:
@@ -1149,75 +2565,13 @@ class SimpleGameDemo:
             self.log_message("No inventory system available!")
 
     def level_up(self):
-        """Level up the character."""
+        """Level up the character using character controller."""
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player character available!")
             return
 
-        old_level = self.player.level
-
-        # Use leveling manager if available
-        if hasattr(self.player, 'leveling_manager'):
-            # Level up through the leveling manager - use gain_experience instead of level_up
-            if hasattr(self.player.leveling_manager, 'gain_experience'):
-                self.player.leveling_manager.gain_experience(self.player, self.player.leveling_manager._xp_for_next_level(self.player.level))
-            else:
-                self.player.level += 1
-
-            # Check if level actually increased
-            if self.player.level > old_level:
-                # Award stat points for the level up (config-driven)
-                points_gained = self.player.level - old_level
-                if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
-                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player.level)
-                else:
-                    points_per_level = 3
-                total_points = points_gained * points_per_level
-                if hasattr(self.player.leveling_manager, 'add_stat_points'):
-                    self.player.leveling_manager.add_stat_points(
-                        self.player,
-                        total_points
-                    )
-                msg = f"Level up! Now level {self.player.level} (+{total_points} stat points)!"
-                self.log_message(msg, "info")
-            else:
-                self.player.level += 1
-                if hasattr(self.player.leveling_manager, 'get_stat_points_per_level'):
-                    points_per_level = self.player.leveling_manager.get_stat_points_per_level(self.player)
-                else:
-                    points_per_level = 4
-                if hasattr(self.player.leveling_manager, 'add_stat_points'):
-                    self.player.leveling_manager.add_stat_points(self.player, points_per_level)
-                msg = f"Level up! Now level {self.player.level} (+{points_per_level} stat points)!"
-                self.log_message(msg, "info")
-        else:
-            # Fallback: manual level up
-            self.player.level += 1
-
-            # Increase base stats manually
-            if hasattr(self.player, 'base_stats'):
-                stat_increases = {
-                    'attack': 2,
-                    'defense': 2,
-                    'speed': 1,
-                    'health': 15,
-                    'mana': 8,
-                    'stamina': 5,
-                    'magic_power': 2,
-                    'intelligence': 2,
-                    'strength': 2,
-                    'dexterity': 1,
-                    'vitality': 2,
-                    'wisdom': 1,
-                    'constitution': 2,
-                    'luck': 1
-                }
-                for stat, increase in stat_increases.items():
-                    if stat in self.player.base_stats:
-                        self.player.base_stats[stat] += increase
-
-            msg = f"Level up! You are now level {self.player.level}!"
-            self.log_message(msg, "info")
+        # Use character controller for level up
+        success = self.character_controller.level_up_character(self.player)
 
         # Force stat recalculation
         if hasattr(self.player, 'update_stats'):
@@ -1251,123 +2605,19 @@ class SimpleGameDemo:
         self.update_equipment_display()
 
     def cast_fireball(self):
-        """Cast fireball spell at the enemy."""
-        if not SPELLS_AVAILABLE:
-            self.log_message("Spell system not available!", "combat")
-            return
-
-        if not hasattr(self, 'player') or not self.player:
-            self.log_message("No player character available!")
-            return
-
-        if not hasattr(self, 'enemy') or not self.enemy:
-            self.log_message("No enemy to target!", "combat")
-            return
-
-        # Track combo sequence
-        self.track_spell_cast("fireball")
-        
-        # Use combat service to cast the spell
-        result = self.combat_service.cast_spell_at_target(
-            self.player, "fireball", self.enemy
-        )
-        
-        if result['success']:
-            # Log the spell cast
-            spell_msg = (f"{self.player.name} casts Fireball for "
-                        f"{result['damage']:.0f} FIRE damage!")
-            self.log_message(spell_msg, "combat")
-            
-            # Display resistance/weakness messages from combat engine
-            if result.get('resistance_messages'):
-                for message in result['resistance_messages']:
-                    self.log_message(message, "combat")
-            
-            # Log effects if any were applied
-            if result.get('effects_applied'):
-                for effect in result['effects_applied']:
-                    self.log_message(f"Applied {effect} effect!", "combat")
-            
-            # Create visual effect
-            self.create_particles(450, 200, "orange", 25)
-            
-            # Handle enemy defeat and loot
-            if result['defeated']:
-                self.log_message(f"{self.enemy.name} is defeated by fire magic!", "combat")
-                
-                # Display loot if any was generated
-                if result['loot']:
-                    loot_names = [item.name for item in result['loot']]
-                    loot_msg = f"Loot obtained: {', '.join(loot_names)}"
-                    self.log_message(loot_msg, "info")
-                
-                self.enemy = None
-        else:
-            self.log_message(result['message'], "combat")
-
-        # Update displays
-        self.update_char_info()
-        self.update_enemy_info()
-        self.draw_game_state()
+        """Legacy method - use on_fireball_button_clicked() instead."""
+        return self.on_fireball_button_clicked()
 
     def cast_ice_shard(self):
-        """Cast ice shard spell at the enemy."""
-        if not SPELLS_AVAILABLE:
-            self.log_message("Spell system not available!", "combat")
-            return
-
-        if not hasattr(self, 'player') or not self.player:
-            self.log_message("No player character available!")
-            return
-
-        if not hasattr(self, 'enemy') or not self.enemy:
-            self.log_message("No enemy to target!", "combat")
-            return
-
-        # Track combo sequence
-        self.track_spell_cast("ice_shard")
-        
-        # Use combat service to cast ice shard
-        result = self.combat_service.cast_spell_at_target(self.player, "ice_shard", self.enemy)
-        
-        if result['success']:
-            # Log spell cast
-            self.log_message(result['message'], "combat")
-            
-            # Display resistance/weakness messages from combat engine
-            if result.get('resistance_messages'):
-                for message in result['resistance_messages']:
-                    self.log_message(message, "combat")
-            
-            # Display effects applied
-            if result.get('effects_applied'):
-                for effect_msg in result['effects_applied']:
-                    self.log_message(effect_msg, "combat")
-            
-            # Create visual effect
-            self.create_particles(450, 200, "cyan", 20)
-            
-            # Handle enemy defeat and loot
-            if result['defeated']:
-                enemy_name = self.enemy.name
-                self.log_message(f"{enemy_name} is frozen solid and defeated!", "combat")
-                
-                # Display loot if any
-                if result['loot']:
-                    loot_names = [getattr(item, 'name', str(item)) for item in result['loot']]
-                    self.log_message(f"Loot found: {', '.join(loot_names)}", "loot")
-                
-                self.enemy = None
-        else:
-            self.log_message(result['message'], "combat")
-
-        # Update displays
-        self.update_char_info()
-        self.update_enemy_info()
-        self.draw_game_state()
+        """Legacy method - use on_ice_shard_button_clicked() instead."""
+        return self.on_ice_shard_button_clicked()
 
     def draw_game_state(self):
         """Draw the current game state on the canvas."""
+        # Safety check - canvas might not exist during initialization
+        if not hasattr(self, 'canvas') or not self.canvas:
+            return
+            
         # Clear canvas
         self.canvas.delete("all")
 
@@ -1602,8 +2852,12 @@ class SimpleGameDemo:
         # Start animation
         update_particles()
 
-    def attack(self):
-        """Attack the enemy."""
+    # ============================================================================
+    # EVENT HANDLER METHODS - Task #3 Implementation
+    # ============================================================================
+
+    def on_attack_button_clicked(self):
+        """Handle attack button click - delegate to combat controller."""
         if not hasattr(self, 'player') or not self.player:
             logger.warning("No player to attack with")
             return
@@ -1612,77 +2866,156 @@ class SimpleGameDemo:
             self.log_message("No enemy to attack!", "combat")
             return
 
-        # Use combat service to perform the attack
-        result = self.combat_service.perform_attack(
+        # Delegate to combat controller
+        result = self.combat_controller.perform_attack(
             self.player, self.enemy, self.player.weapon
         )
 
         if result['success']:
-            # Log the attack result
-            weapon_info = ""
-            if hasattr(self.player, 'weapon') and self.player.weapon:
-                weapon_info = f" with {self.player.weapon.name}"
-            damage_msg = (f"{self.player.name} attacks {self.enemy.name}{weapon_info} "
-                         f"for {result['damage']:.0f} damage!")
-            self.log_message(damage_msg, "combat")
-
-            # Display resistance/weakness messages from combat engine
-            if result.get('resistance_messages'):
-                for message in result['resistance_messages']:
-                    self.log_message(message, "combat")
-
-            # Create visual effect
+            # Visual effects only
             self.create_particles(450, 200, "red", 15)
 
             # Handle enemy defeat and loot
             if result['defeated']:
-                self.log_message(f"{self.enemy.name} is defeated!", "combat")
                 if result['loot']:
                     loot_names = [item.name for item in result['loot']]
                     loot_msg = f"Loot obtained: {', '.join(loot_names)}"
                     self.log_message(loot_msg, "info")
                 self.enemy = None
             else:
-                # If enemy is still alive and AI is enabled, let AI take its turn
+                # AI turn processing
                 if self.ai_enabled and self.ai_controller and self.enemy:
                     try:
                         self.ai_controller.process_ai_turn(self.enemy, self.player, 0.0)
                     except Exception as e:
                         logger.warning(f"AI turn failed: {e}")
-        else:
-            # Attack failed
-            self.log_message(f"Attack failed: {result['message']}", "combat")
 
         # Update displays
-        self.update_enemy_info()
-        self.draw_game_state()
+        self._refresh_combat_displays()
 
-    def heal(self):
-        """Heal the player."""
+    def on_heal_button_clicked(self):
+        """Handle heal button click - delegate to combat controller."""
         if not hasattr(self, 'player') or not self.player:
             logger.warning("No player to heal")
             return
 
-        # Use combat service for healing
-        heal_amount = random.randint(5, 15)
-        result = self.combat_service.apply_healing(
-            self.player, self.player, heal_amount
-        )
+        # Delegate to combat controller
+        heal_amount = random.randint(self.player.current_health, self.player.max_health)
+        self.combat_controller.apply_healing(self.player, self.player, heal_amount)
         
-        if result['success']:
-            self.log_message(f"You are healed for {result['healing']:.0f} health!", "heal")
-        else:
-            self.log_message(f"Healing failed: {result['message']}", "combat")
-
-        # Create visual effect
+        # Visual effects only
         self.create_particles(150, 200, "green", 15)
 
         # Update displays
-        self.update_char_info()
-        self.draw_game_state()
+        self._refresh_combat_displays()
 
-    def spawn_enemy(self):
-        """Spawn a new enemy."""
+    def on_fireball_button_clicked(self):
+        """Handle fireball button click - delegate to combat controller."""
+        if not SPELLS_AVAILABLE:
+            self.log_message("Spell system not available!", "combat")
+            return
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!")
+            return
+        if not hasattr(self, 'enemy') or not self.enemy:
+            self.log_message("No enemy to target!", "combat")
+            return
+
+        # Track combo sequence first
+        self.track_spell_cast("fireball")
+        
+        # Delegate to combat controller with proper spell name
+        try:
+            result = self.combat_controller.cast_spell_at_target(
+                self.player, self.enemy, "fireball"
+            )
+            
+            if result['success']:
+                # Visual effects only
+                self.create_particles(450, 200, "orange", 25)
+                
+                # Handle enemy defeat and loot
+                if result['defeated']:
+                    if result['loot']:
+                        loot_names = [item.name for item in result['loot']]
+                        loot_msg = f"Loot obtained: {', '.join(loot_names)}"
+                        self.log_message(loot_msg, "info")
+                    self.enemy = None
+            else:
+                self.log_message("Fireball spell failed!", "combat")
+                
+        except Exception as e:
+            logger.error(f"Error casting fireball: {e}")
+            self.log_message(f"Fireball spell error: {e}", "combat")
+
+        # Update displays
+        self._refresh_combat_displays()
+
+    def on_ice_shard_button_clicked(self):
+        """Handle ice shard button click - delegate to combat controller."""
+        if not SPELLS_AVAILABLE:
+            self.log_message("Spell system not available!", "combat")
+            return
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!")
+            return
+        if not hasattr(self, 'enemy') or not self.enemy:
+            self.log_message("No enemy to target!", "combat")
+            return
+
+        # Track combo sequence first
+        self.track_spell_cast("ice_shard")
+        
+        # Delegate to combat controller with proper spell name
+        try:
+            result = self.combat_controller.cast_spell_at_target(
+                self.player, self.enemy, "ice_shard"
+            )
+            
+            if result['success']:
+                # Visual effects only
+                self.create_particles(450, 200, "cyan", 20)
+                
+                # Handle enemy defeat and loot
+                if result['defeated']:
+                    if result['loot']:
+                        loot_names = [getattr(item, 'name', str(item)) for item in result['loot']]
+                        self.log_message(f"Loot found: {', '.join(loot_names)}", "loot")
+                    self.enemy = None
+            else:
+                self.log_message("Ice shard spell failed!", "combat")
+                
+        except Exception as e:
+            logger.error(f"Error casting ice shard: {e}")
+            self.log_message(f"Ice shard spell error: {e}", "combat")
+
+        # Update displays
+        self._refresh_combat_displays()
+
+    def on_level_up_button_clicked(self):
+        """Handle level up button click - delegate to character controller."""
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!")
+            return
+
+        # Delegate to character controller
+        self.character_controller.level_up_character(self.player)
+
+        # Force stat recalculation and full restore
+        if hasattr(self.player, 'update_stats'):
+            self.player.update_stats()
+        if hasattr(self.player, 'max_health'):
+            self.player.current_health = self.player.max_health
+        if hasattr(self.player, 'max_mana'):
+            self.player.current_mana = self.player.max_mana
+        if hasattr(self.player, 'max_stamina'):
+            self.player.current_stamina = self.player.max_stamina
+
+        # Update displays
+        self._refresh_character_displays()
+
+    def on_spawn_enemy_button_clicked(self):
+        """Handle spawn enemy button click."""
         enemy_types = ["goblin", "orc", "dragon"]
         enemy_type = random.choice(enemy_types)
 
@@ -1702,44 +3035,168 @@ class SimpleGameDemo:
         if self.enemy:
             logger.info(f"Created enemy: {self.enemy.name}")
             
-            # Display enemy info with grade and rarity
+            # Display enemy info
             enemy_info = (f"A {self.enemy.name} appears! "
                          f"(Level {self.enemy.level}, "
                          f"Grade {self.enemy.grade}, "
                          f"Rarity {self.enemy.rarity})")
             self.log_message(enemy_info, "combat")
 
-            # Create visual effect
-            self.create_particles(450, 200, "blue", 15)
-
-            # Display resistances/weaknesses if the enemy has any
-            if hasattr(self.enemy, 'resistances') and self.enemy.resistances:
-                resistance_info = []
-                for damage_type, value in self.enemy.resistances.items():
-                    resistance_info.append(f"{damage_type.name} ({int(value*100)}%)")
-                
-                if resistance_info:
-                    msg = f"{self.enemy.name} resists: {', '.join(resistance_info)}"
-                    self.log_message(msg, "combat")
-                    
-            if hasattr(self.enemy, 'weaknesses') and self.enemy.weaknesses:
-                weakness_info = []
-                for damage_type, value in self.enemy.weaknesses.items():
-                    weakness_info.append(f"{damage_type.name} ({int(value*100)}%)")
-                
-                if weakness_info:
-                    msg = f"{self.enemy.name} is weak to: {', '.join(weakness_info)}"
-                    self.log_message(msg, "combat")
-
+            # Visual effect
+            self.create_particles(450, 200, "purple", 20)
+            
             # Update displays
-            self.update_enemy_info()
-            self.draw_game_state()
-        else:
-            logger.error(f"Failed to create {enemy_type}")
-            self.log_message(f"Failed to spawn {enemy_type}!", "combat")
+            self._refresh_combat_displays()
+
+    def on_use_item_button_clicked(self):
+        """Handle use item button click - delegate to inventory controller."""
+        selection = self.inventory_listbox.curselection()
+        if not selection:
+            self.log_message("Please select an item to use", "info")
+            return
+
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!", "combat")
+            return
+
+        if not hasattr(self.player, 'inventory'):
+            self.log_message("No inventory system available!", "combat")
+            return
+
+        try:
+            items = self.player.inventory.list_items()
+            if selection[0] < len(items):
+                item = items[selection[0]]
+                
+                # Delegate to inventory controller
+                success = self.inventory_controller.use_item(self.player, item)
+                
+                if success:
+                    # Update displays after successful use
+                    self._refresh_inventory_displays()
+                    
+        except Exception as e:
+            self.log_message(f"Error using item: {e}", "combat")
+
+    def on_allocate_stat_button_clicked(self, stat_name: str):
+        """Handle stat allocation button click - delegate to character controller."""
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!", "combat")
+            return
+
+        # Delegate to character controller
+        success = self.character_controller.allocate_stat_point(self.player, stat_name)
+        
+        if success:
+            # Update displays
+            self._refresh_character_displays()
+
+    # ============================================================================
+    # DISPLAY REFRESH HELPERS - Task #3 Implementation
+    # ============================================================================
+
+    def _refresh_combat_displays(self):
+        """Refresh all combat-related displays."""
+        self.update_combat_related_displays()
+
+    def _refresh_character_displays(self):
+        """Refresh all character-related displays."""
+        self.update_character_related_displays()
+
+    def _refresh_inventory_displays(self):
+        """Refresh all inventory-related displays."""
+        self.update_inventory_related_displays()
+
+    # ============================================================================
+    # UI SETUP CONSOLIDATION - Task #3 Phase 2
+    # ============================================================================
+
+    def setup_all_tabs(self):
+        """Fallback tab setup method - delegates to UI service if not already handled."""
+        # This is a fallback - UI service should have already handled tab setup
+        self.log_message("Warning: Using fallback tab setup instead of UI service", "info")
+        
+        # Only set up the tabs that are not handled by UI service
+        try:
+            # These are handled locally since they have complex widget references
+            self.setup_stats_tab()
+            self.setup_combat_tab()
+            
+            # Log that other tabs should be handled by UI service
+            self.log_message("Other tabs should be handled by UI service", "info")
+        except Exception as e:
+            self.log_message(f"Fallback tab setup failed: {e}", "combat")
+
+    # ============================================================================
+    # DISPLAY MANAGER PATTERN - Task #3 Phase 3
+    # ============================================================================
+
+    def update_all_displays(self):
+        """Master display update method - updates all relevant displays."""
+        self.update_char_info()
+        self.update_enemy_info()
+        self.update_inventory_display()
+        self.update_equipment_display()
+        self.update_progression_display()
+        self.update_leveling_display()
+        self.draw_game_state()
+
+    def update_character_related_displays(self):
+        """Update displays related to character changes."""
+        self.update_char_info()
+        self.update_progression_display()
+        self.update_leveling_display()
+
+    def update_combat_related_displays(self):
+        """Update displays related to combat changes."""
+        self.update_char_info()
+        self.update_enemy_info()
+        self.draw_game_state()
+
+    def update_inventory_related_displays(self):
+        """Update displays related to inventory changes."""
+        self.update_inventory_display()
+        self.update_equipment_display()
+        self.update_char_info()
+
+    # ============================================================================
+    # LEGACY METHODS - To be replaced with event handlers
+    # ============================================================================
+
+    def attack(self):
+        """Legacy method - use on_attack_button_clicked() instead."""
+        return self.on_attack_button_clicked()
+
+    def heal(self):
+        """Legacy method - use on_heal_button_clicked() instead."""
+        return self.on_heal_button_clicked()
+
+    def cast_fireball(self):
+        """Legacy method - use on_fireball_button_clicked() instead."""
+        return self.on_fireball_button_clicked()
+
+    def cast_ice_shard(self):
+        """Legacy method - use on_ice_shard_button_clicked() instead."""
+        return self.on_ice_shard_button_clicked()
+
+    def level_up(self):
+        """Legacy method - use on_level_up_button_clicked() instead."""
+        return self.on_level_up_button_clicked()
+
+    def use_selected_item(self):
+        """Legacy method - use on_use_item_button_clicked() instead."""
+        return self.on_use_item_button_clicked()
+
+    def spawn_enemy(self):
+        """Legacy method - use on_spawn_enemy_button_clicked() instead."""
+        return self.on_spawn_enemy_button_clicked()
+
+    # ============================================================================
+    # END LEGACY METHODS
+    # ============================================================================
 
     def test_dual_wield(self):
-        """Test dual wielding functionality."""
+        """Test comprehensive dual wielding functionality with enhanced system."""
         if not hasattr(self, 'player') or not self.player:
             self.log_message("No player available for dual wield test!", "combat")
             return
@@ -1747,79 +3204,99 @@ class SimpleGameDemo:
         try:
             from game_sys.items.factory import ItemFactory
             
-            self.log_message("=== Dual Wield Test ===", "info")
+            self.log_message("=== Enhanced Dual Wield System Test ===", "info")
             
-            # Check current equipment
-            current_weapon = getattr(self.player, 'weapon', None)
-            current_offhand = getattr(self.player, 'offhand', None)
+            # Show current equipment status
+            current_status = equipment_manager.get_dual_wield_status_info(self.player)
+            self.log_message(f"Current Status: {current_status}", "info")
             
-            self.log_message(f"Current weapon: {current_weapon.name if current_weapon else 'None'}", "info")
-            self.log_message(f"Current offhand: {current_offhand.name if current_offhand else 'None'}", "info")
+            # Test 1: Create and demonstrate dual-wieldable weapons
+            self.log_message("\n--- Test 1: Dual-Wieldable Weapons ---", "info")
+            main_dagger = ItemFactory.create('iron_dagger')
+            offhand_dagger = ItemFactory.create('dagger')
+            dragon_tooth_dagger = ItemFactory.create('dragon_tooth_dagger')
             
-            # Try to equip dual-wieldable weapons
-            try:
-                # Create two daggers for dual wielding
-                main_dagger = ItemFactory.create('iron_dagger')
-                offhand_dagger = ItemFactory.create('iron_dagger')
+            if main_dagger:
+                self.log_message(f"Created: {main_dagger.name} (dual_wield: {getattr(main_dagger, 'dual_wield', False)})", "info")
+                # Add to inventory and try to equip
+                self.player.inventory.add_item(main_dagger)
                 
-                # Check if items were created successfully
-                if not main_dagger or not offhand_dagger:
-                    self.log_message("Failed to create dual-wield weapons", "combat")
-                    return
+            if offhand_dagger:
+                self.log_message(f"Created: {offhand_dagger.name} (dual_wield: {getattr(offhand_dagger, 'dual_wield', False)})", "info")
+                self.player.inventory.add_item(offhand_dagger)
                 
-                # Check dual_wield property
-                main_dual_wield = getattr(main_dagger, 'dual_wield', False)
-                offhand_dual_wield = getattr(offhand_dagger, 'dual_wield', False)
+            # Test 2: Two-handed weapons
+            self.log_message("\n--- Test 2: Two-Handed Weapons ---", "info")
+            fire_staff = ItemFactory.create('fire_staff')
+            arcane_staff = ItemFactory.create('arcane_staff')
+            
+            if fire_staff:
+                self.log_message(f"Created: {fire_staff.name} (two_handed: {getattr(fire_staff, 'two_handed', False)})", "info")
+                self.player.inventory.add_item(fire_staff)
                 
-                self.log_message(f"Main dagger dual_wield: {main_dual_wield}", "info")
-                self.log_message(f"Offhand dagger dual_wield: {offhand_dual_wield}", "info")
-                
-                if not main_dual_wield or not offhand_dual_wield:
-                    self.log_message("Warning: Daggers may not be configured for dual wielding", "combat")
-                
-                # Try to equip main hand weapon
-                success = self.player.equip_weapon(main_dagger)
-                if success:
-                    self.log_message(f"✓ Equipped {main_dagger.name} in main hand", "info")
-                else:
-                    self.log_message(f"✗ Failed to equip {main_dagger.name} in main hand", "combat")
-                    return
-                
-                # Try to equip offhand weapon
-                success = self.player.equip_offhand(offhand_dagger)
-                if success:
-                    self.log_message(f"✓ Equipped {offhand_dagger.name} in offhand", "info")
-                    self.log_message("✓ Dual wielding setup complete!", "info")
-                    
-                    # Show dual wield stats
-                    main_attack = getattr(main_dagger, 'attack', 0)
-                    offhand_attack = getattr(offhand_dagger, 'attack', 0)
-                    total_attack = main_attack + offhand_attack
-                    
-                    self.log_message(f"Main hand attack: {main_attack}", "info")
-                    self.log_message(f"Offhand attack: {offhand_attack}", "info") 
-                    self.log_message(f"Combined attack power: {total_attack}", "info")
-                    
-                    # Test combat with dual wielding
-                    if hasattr(self, 'enemy') and self.enemy:
-                        self.log_message("Testing dual wield attack...", "info")
-                        self.attack()
-                    else:
-                        self.log_message("Spawn an enemy to test dual wield combat!", "info")
-                        
-                else:
-                    self.log_message(f"✗ Failed to equip {offhand_dagger.name} in offhand", "combat")
-                    
-            except Exception as e:
-                self.log_message(f"Error creating dual wield weapons: {e}", "combat")
+            # Test 3: Shield/Focus items  
+            self.log_message("\n--- Test 3: Shields and Focuses ---", "info")
+            wooden_shield = ItemFactory.create('wooden_shield')
+            spell_focus = ItemFactory.create('spell_focus')
+            arcane_focus = ItemFactory.create('arcane_focus')
+            
+            for item in [wooden_shield, spell_focus, arcane_focus]:
+                if item:
+                    restriction = getattr(item, 'slot_restriction', 'none')
+                    dual_wield = getattr(item, 'dual_wield', False)
+                    self.log_message(f"Created: {item.name} (restriction: {restriction}, dual_wield: {dual_wield})", "info")
+                    self.player.inventory.add_item(item)
+            
+            # Update displays to show new inventory
+            self.update_inventory_display()
+            self.update_equipment_display()
+            
+            self.log_message("\n=== Dual Wield Test Complete ===", "info")
+            self.log_message("Try equipping different combinations in the Inventory tab to see the enhanced logic!", "info")
+            self.log_message("- Iron Dagger + Dagger = Dual wielding", "info")
+            self.log_message("- Fire Staff = Two-handed (clears both slots)", "info")
+            self.log_message("- Wooden Shield = Offhand-only item", "info")
+            self.log_message("- Enhanced error messages will guide you!", "info")
                 
         except Exception as e:
-            self.log_message(f"Dual wield test failed: {e}", "combat")
+            self.log_message(f"Dual wield test error: {e}", "combat")
             logger.error(f"Dual wield test error: {e}")
         
         # Update displays
         self.update_char_info()
         self.draw_game_state()
+
+    def test_equipment_quick(self):
+        """Quick test to create and equip some basic items."""
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player available for equipment test!", "combat")
+            return
+
+        try:
+            from game_sys.items.factory import ItemFactory
+            
+            self.log_message("=== Quick Equipment Test ===", "info")
+            
+            # Test simple armor equipping
+            leather_armor = ItemFactory.create('leather_armor')
+            if leather_armor:
+                self.log_message(f"Created {leather_armor.name}, slot: {getattr(leather_armor, 'slot', 'NONE')}", "info")
+                self.player.inventory.add_item(leather_armor)
+                
+            # Test weapon equipping
+            iron_sword = ItemFactory.create('iron_sword')
+            if iron_sword:
+                self.log_message(f"Created {iron_sword.name}, slot: {getattr(iron_sword, 'slot', 'NONE')}", "info")
+                self.player.inventory.add_item(iron_sword)
+                
+            # Update displays
+            self.update_inventory_display()
+            self.log_message("Items added to inventory. Try equipping them in the Inventory tab!", "info")
+                
+        except Exception as e:
+            self.log_message(f"Quick equipment test error: {e}", "combat")
+        
+        self.update_char_info()
 
     def quit(self):
         """Quit the demo."""
@@ -1926,7 +3403,7 @@ class SimpleGameDemo:
         middle_inv_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=20)
 
         inventory_buttons = [
-            ("Use Item", self.use_selected_item),
+            ("Use Item", self.on_use_item_button_clicked),
             ("Equip Item", self.equip_selected_item),
             ("Drop Item", self.drop_selected_item),
             ("", None),  # Spacer
@@ -1936,6 +3413,7 @@ class SimpleGameDemo:
             ("Unequip Weapon", lambda: self.unequip_item("weapon")),
             ("Unequip Armor", lambda: self.unequip_item("body")),
             ("Unequip Offhand", lambda: self.unequip_item("offhand")),
+            ("Unequip Ring", lambda: self.unequip_item("ring")),
         ]
 
         for text, command in inventory_buttons:
@@ -2182,14 +3660,13 @@ class SimpleGameDemo:
             item.uuid = str(uuid.uuid4())
 
             # Add item to player's inventory
-            self.player.inventory.add_item(item)
-
+            self.player.inventory.add_item(item, auto_equip=False)
             display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
             msg = f"Created and added {display_name} (UUID: {item.uuid}) to inventory!"
             self.log_message(msg, "info")
 
             # Update inventory display
-            self.update_inventory_display()
+            self.update_inventory_related_displays()
         except Exception as e:
             self.log_message(f"Error creating item: {e}", "combat")
 
@@ -2212,7 +3689,7 @@ class SimpleGameDemo:
         self.create_and_add_item(item_id)
 
     def use_selected_item(self):
-        """Use the selected inventory item."""
+        """Use the selected inventory item via inventory controller."""
         selection = self.inventory_listbox.curselection()
         if not selection:
             self.log_message("Please select an item to use", "info")
@@ -2230,68 +3707,24 @@ class SimpleGameDemo:
             items = self.player.inventory.list_items()
             if selection[0] < len(items):
                 item = items[selection[0]]
-                display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
-
-                # Check if item is consumable or has active abilities
-                is_consumable = (
-                    (hasattr(item, 'consumable') and item.consumable) or
-                    (hasattr(item, 'item_type') and item.item_type == 'consumable') or
-                    'potion' in display_name.lower()
-                )
-
-                has_active_ability = (
-                    hasattr(item, 'use_action') or
-                    hasattr(item, 'active_ability') or
-                    hasattr(item, 'skill_id') or
-                    hasattr(item, 'enchant_id')
-                )
-
-                if is_consumable or has_active_ability:
-                    # Use the item
-                    if hasattr(item, 'use_action'):
-                        # Item has a use action method
-                        item.use_action(self.player)
-                        msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})!"
-                    elif is_consumable:
-                        # Basic consumable (e.g., health potion)
-                        if 'health' in display_name.lower():
-                            heal_amount = getattr(item, 'heal_amount', 25)
-                            old_health = self.player.current_health
-                            new_health = min(
-                                self.player.current_health + heal_amount,
-                                self.player.max_health
-                            )
-                            self.player.current_health = new_health
-                            actual_heal = new_health - old_health
-                            heal_val = f"+{actual_heal:.1f}HP"
-                            heal_msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})! {heal_val}"
-                            msg = heal_msg
-                        else:
-                            msg = f"Used {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})! (simulated effect)"
-                    else:
-                        msg = f"Activated {display_name} (UUID: {getattr(item, 'uuid', 'N/A')})!"
-
-                    self.log_message(msg, "heal")
-
-                    # Remove consumable items from inventory
-                    if is_consumable:
-                        self.player.inventory.remove_item(item)
-
+                
+                # Use inventory controller to handle item usage
+                success = self.inventory_controller.use_item(self.player, item)
+                
+                if success:
+                    # Update displays after successful use
                     self.update_inventory_display()
                     self.update_char_info()
-                else:
-                    msg = f"Cannot use {display_name} (UUID: {getattr(item, 'uuid', 'N/A')}) - not consumable or usable"
-                    self.log_message(msg, "info")
+                    
         except Exception as e:
             self.log_message(f"Error using item: {e}", "combat")
 
     def equip_selected_item(self):
-        """Equip the selected item by UUID with proper slot validation and inventory manager integration."""
+        """Equip the selected item using the enhanced equipment manager."""
         
         if not ITEMS_AVAILABLE:
             self.log_message("Items system not available!", "combat")
             return
-        from game_sys.logging import inventory_logger
 
         selection = self.inventory_listbox.curselection()
         if not selection:
@@ -2315,184 +3748,12 @@ class SimpleGameDemo:
                 
             item = items[selection[0]]
             display_name = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
-            item_uuid = getattr(item, 'uuid', None)
-            slot = getattr(item, 'slot', None)
             
-            if not slot:
-                self.log_message(f"Cannot equip {display_name} - no equipment slot defined", "combat")
-                return
-                
-            # Check if slot is available based on equipment type
-            slot_available = False
-            conflict_message = None
+            # Use the enhanced equipment manager for all equipment logic
+            success, message = equipment_manager.equip_item_with_smart_logic(self.player, item)
             
-            if slot == 'weapon':
-                current_weapon = getattr(self.player, 'weapon', None)
-                current_offhand = getattr(self.player, 'offhand', None)
-                
-                # Check if weapon slot is available
-                if current_weapon is None:
-                    slot_available = True
-                else:
-                    # Weapon slot occupied - check if it's a dual-wield scenario
-                    if (hasattr(item, 'dual_wield') and item.dual_wield and 
-                        hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield and
-                        current_offhand is None):
-                        # Both weapons are dual-wieldable and offhand is free
-                        # Move current weapon to offhand and equip new weapon in main hand
-                        slot_available = True
-                        self.log_message(f"Moving {current_weapon.name} to offhand to make room for {display_name}", "info")
-                    else:
-                        slot_available = False
-                        weapon_name = getattr(current_weapon, 'name', str(current_weapon))
-                        if hasattr(item, 'dual_wield') and item.dual_wield:
-                            if not (hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield):
-                                conflict_message = f"Cannot dual-wield: {weapon_name} is not dual-wieldable"
-                            elif current_offhand is not None:
-                                offhand_name = getattr(current_offhand, 'name', str(current_offhand))
-                                conflict_message = f"Cannot dual-wield: offhand occupied by {offhand_name}"
-                            else:
-                                conflict_message = f"Weapon slot occupied by {weapon_name}"
-                        else:
-                            conflict_message = f"Weapon slot occupied by {weapon_name}"
-                    
-            elif slot == 'offhand':
-                current_offhand = getattr(self.player, 'offhand', None)
-                current_weapon = getattr(self.player, 'weapon', None)
-                
-                # Special dual-wield logic
-                if hasattr(item, 'dual_wield') and item.dual_wield:
-                    # Dual-wield items can go in offhand if main hand is empty or also dual-wield
-                    if current_weapon is None or (hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield):
-                        slot_available = current_offhand is None
-                        if not slot_available:
-                            offhand_name = getattr(current_offhand, 'name', str(current_offhand))
-                            conflict_message = f"Offhand slot occupied by {offhand_name}"
-                    else:
-                        weapon_name = getattr(current_weapon, 'name', str(current_weapon))
-                        slot_available = False
-                        conflict_message = f"Cannot dual-wield: main weapon {weapon_name} is not dual-wieldable"
-                else:
-                    # Regular offhand item (shield, focus, etc.)
-                    slot_available = current_offhand is None
-                    if not slot_available:
-                        offhand_name = getattr(current_offhand, 'name', str(current_offhand))
-                        conflict_message = f"Offhand slot occupied by {offhand_name}"
-                        
-            elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']:
-                slot_attr = f'equipped_{slot}'
-                current_item = getattr(self.player, slot_attr, None)
-                slot_available = current_item is None
-                if not slot_available:
-                    item_name = getattr(current_item, 'name', str(current_item))
-                    conflict_message = f"{slot.title()} slot occupied by {item_name}"
-            else:
-                slot_available = False
-                conflict_message = f"Unknown equipment slot: {slot}"
-                
-            if not slot_available:
-                self.log_message(f"Cannot equip {display_name}: {conflict_message}", "combat")
-                self.log_message("Use unequip buttons first to free up slots", "info")
-                return
-                
-            # Attempt to equip using UUID-based method if available
-            equipped_successfully = False
-            weapon_moved_to_offhand = False
-            
-            # Check if we need to move current weapon to offhand for dual-wield
-            if (slot == 'weapon' and slot_available and 
-                hasattr(item, 'dual_wield') and item.dual_wield and
-                getattr(self.player, 'weapon', None) is not None and
-                getattr(self.player, 'offhand', None) is None):
-                
-                current_weapon = self.player.weapon
-                if hasattr(current_weapon, 'dual_wield') and current_weapon.dual_wield:
-                    # Move current weapon to offhand first
-                    if hasattr(self.player, 'equip_offhand'):
-                        try:
-                            # Unequip current weapon without adding to inventory
-                            self.player.weapon = None
-                            # Equip it to offhand
-                            self.player.equip_offhand(current_weapon)
-                            weapon_moved_to_offhand = True
-                            self.log_message(f"Moved {current_weapon.name} to offhand for dual-wielding", "info")
-                        except Exception as e:
-                            self.log_message(f"Failed to move weapon to offhand: {e}", "combat")
-                            # Restore weapon if move failed
-                            self.player.weapon = current_weapon
-                            slot_available = False
-            
-            if slot_available and hasattr(self.player, 'equip_item_by_uuid') and item_uuid:
-                # Preferred: Use UUID-based equipment
-                success = self.player.equip_item_by_uuid(item_uuid)
-                if success:
-                    if weapon_moved_to_offhand:
-                        self.log_message(f"Equipped {display_name} (UUID: {item_uuid}) - moved previous weapon to offhand for dual-wielding", "info")
-                    else:
-                        self.log_message(f"Equipped {display_name} (UUID: {item_uuid})", "info")
-                    equipped_successfully = True
-                    
-                    # Remove item from inventory after successful equipment
-                    removal_success = self.player.inventory.remove_item(item)
-                    if not removal_success:
-                        inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
-                else:
-                    self.log_message(f"Failed to equip {display_name} by UUID", "combat")
-                    
-            elif hasattr(self.player, 'equip_item') and item_uuid:
-                # Alternative: Generic equip_item method with UUID
-                success = self.player.equip_item(item_uuid)
-                if success:
-                    self.log_message(f"Equipped {display_name} (UUID: {item_uuid})", "info")
-                    equipped_successfully = True
-                    
-                    # Remove item from inventory after successful equipment
-                    removal_success = self.player.inventory.remove_item(item)
-                    if not removal_success:
-                        inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
-                else:
-                    self.log_message(f"Failed to equip {display_name} by UUID", "combat")
-                    
-            else:
-                # Fallback: Direct slot-based equipment (legacy support)
-                try:
-                    if slot == 'weapon' and hasattr(self.player, 'equip_weapon'):
-                        self.player.equip_weapon(item)
-                        equipped_successfully = True
-                    elif slot == 'offhand' and hasattr(self.player, 'equip_offhand'):
-                        self.player.equip_offhand(item)
-                        equipped_successfully = True
-                    elif slot in ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak'] and hasattr(self.player, 'equip_armor'):
-                        self.player.equip_armor(item)
-                        equipped_successfully = True
-                    else:
-                        self.log_message(f"No equipment method available for slot: {slot}", "combat")
-                        
-                    if equipped_successfully:
-                        uuid_text = f" (UUID: {item_uuid})" if item_uuid else ""
-                        if weapon_moved_to_offhand:
-                            self.log_message(f"Equipped {display_name}{uuid_text} using fallback method (moved previous weapon to offhand for dual-wielding)", "info")
-                        else:
-                            self.log_message(f"Equipped {display_name}{uuid_text} using fallback method", "info")
-                        
-                        # Remove item from inventory after successful equipment
-                        removal_success = self.player.inventory.remove_item(item)
-                        if not removal_success:
-                            inventory_logger.warning(f"Failed to remove {display_name} from inventory after equipping")
-                        
-                except Exception as e:
-                    self.log_message(f"Fallback equipment failed: {e}", "combat")
-                    
-            # Update displays if equipment was successful
-            if equipped_successfully:
-                # Force stat recalculation to apply equipment bonuses
-                if hasattr(self.player, 'update_stats'):
-                    self.player.update_stats()
-                    
-                # Update all relevant displays
-                self.update_inventory_display()
-                self.update_equipment_display()
-                self.update_char_info()
+            if success:
+                self.log_message(message, "info")
                 
                 # Show equipment stats if available
                 if hasattr(item, 'stats') and item.stats:
@@ -2505,12 +3766,16 @@ class SimpleGameDemo:
                             
                     if stat_bonuses:
                         self.log_message(f"Equipment bonuses: {', '.join(stat_bonuses)}", "info")
+                
+                # Update all relevant displays
+                self.update_inventory_display()
+                self.update_equipment_display()
+                self.update_char_info()
             else:
-                self.log_message(f"Failed to equip {display_name}", "combat")
+                self.log_message(message, "combat")
                 
         except Exception as e:
             self.log_message(f"Error equipping item: {e}", "combat")
-            # Log additional debug info
             logger.error(f"Equipment error details: {e}")
             import traceback
             logger.error(traceback.format_exc())
@@ -2545,123 +3810,257 @@ class SimpleGameDemo:
             self.log_message(f"Error dropping item: {e}", "combat")
 
     def update_inventory_display(self):
-        """Update the inventory display. Use display name, not item id."""
-        if not hasattr(self, 'inventory_listbox'):
-            return
-
-        # Clear current display
-        self.inventory_listbox.delete(0, tk.END)
-
-        if not hasattr(self, 'player') or not self.player:
-            self.inventory_listbox.insert(tk.END, "No player available")
-            return
-
-        if not hasattr(self.player, 'inventory'):
-            self.inventory_listbox.insert(tk.END, "No inventory system")
-            return
-
-        try:
-            # Get inventory items
-            items = self.player.inventory.list_items()
-
-            # Get list of currently equipped items to filter out
-            equipped_items = set()
-
-            # Check for equipped weapon
-            if hasattr(self.player, 'weapon') and self.player.weapon:
-                equipped_items.add(self.player.weapon)
-
-            # Check for equipped offhand
-            if hasattr(self.player, 'offhand') and self.player.offhand:
-                equipped_items.add(self.player.offhand)
-
-            # Check for equipped armor pieces
-            armor_slots = ['body', 'helmet', 'legs', 'feet', 'gloves', 'boots', 'cloak']
-            for slot in armor_slots:
-                slot_attr = f'equipped_{slot}'
-                if hasattr(self.player, slot_attr):
-                    equipped_item = getattr(self.player, slot_attr)
-                    if equipped_item:
-                        equipped_items.add(equipped_item)
-
-            # Filter out equipped items from inventory display
-            unequipped_items = [item for item in items if item not in equipped_items]
-
-            if not unequipped_items:
-                self.inventory_listbox.insert(tk.END, "(Empty)")
-                self.inventory_listbox.insert(tk.END, "")
-                self.inventory_listbox.insert(tk.END, "Note: Starting equipment")
-                self.inventory_listbox.insert(tk.END, "is automatically equipped")
-                self.inventory_listbox.insert(tk.END, "and shown in equipment")
-            else:
-                for item in unequipped_items:
-                    # Prefer display_name, fallback to name, then id
-                    display_text = getattr(item, 'display_name', None) or getattr(item, 'name', None) or getattr(item, 'id', str(item))
-                    self.inventory_listbox.insert(tk.END, display_text)
-        except Exception as e:
-            self.inventory_listbox.insert(tk.END, f"Error: {e}")
+        """Update the inventory display - delegates to UI service only."""
+        if hasattr(self, 'ui_service') and self.ui_service:
+            return self.ui_service.update_inventory_display({'player': self.player})
+        else:
+            self.log_message("UI service not available for inventory display", "info")
 
     def update_equipment_display(self):
-        """Update the equipment display."""
-        if not hasattr(self, 'equipment_display'):
-            return
+        """Update the equipment display - delegates to UI service only."""
+        if hasattr(self, 'ui_service') and self.ui_service:
+            return self.ui_service.update_equipment_display({'player': self.player})
+        else:
+            self.log_message("UI service not available for equipment display", "info")
 
-        # Enable text widget for updating
-        self.equipment_display.config(state="normal")
-
-        # Clear current display
-        self.equipment_display.delete(1.0, tk.END)
-
-        if not hasattr(self, 'player') or not self.player:
-            self.equipment_display.insert(tk.END, "No player available")
-            self.equipment_display.config(state="disabled")
-            return
-
-        if not hasattr(self.player, 'inventory'):
-            self.equipment_display.insert(tk.END, "No inventory system")
-            self.equipment_display.config(state="disabled")
-            return
-
+    def _update_equipment_slot_display(self):
+        """Update the visual equipment slot displays."""
         try:
-            # Show equipped items
-            equipment_text = "== Equipped Items ==\n"
-
-            # Check for weapon
-            weapon = getattr(self.player, 'weapon', None)
-            if weapon:
-                equipment_text += f"Weapon: {weapon.name}\n"
-            else:
-                equipment_text += "Weapon: (None)\n"
-
-            # Check for body armor
-            body = getattr(self.player, 'equipped_body', None)
-            if body:
-                equipment_text += f"Body: {body.name}\n"
-            else:
-                equipment_text += "Body: (None)\n"
-
-            # Check for helmet
-            helmet = getattr(self.player, 'equipped_helmet', None)
-            if helmet:
-                equipment_text += f"Helmet: {helmet.name}\n"
-            else:
-                equipment_text += "Helmet: (None)\n"
-
-            # Check for shield/offhand
-            offhand = getattr(self.player, 'offhand', None)
-            if not offhand:
-                offhand = getattr(self.player, 'equipped_offhand', None)
-            if offhand:
-                equipment_text += f"Offhand: {offhand.name}\n"
-            else:
-                equipment_text += "Offhand: (None)\n"
-
-            self.equipment_display.insert(tk.END, equipment_text)
+            slots_data = [
+                ("equipped_helmet", "helmet"),
+                ("equipped_cloak", "cloak"), 
+                ("equipped_body", "body"),
+                ("weapon", "weapon"),
+                ("offhand", "offhand"),
+                ("equipped_feet", "feet"),
+                ("equipped_ring", "ring")
+            ]
+            
+            for attr_name, slot_type in slots_data:
+                label_attr = f"slot_{attr_name}_label"
+                if hasattr(self, label_attr):
+                    label = getattr(self, label_attr)
+                    item = getattr(self.player, attr_name, None)
+                    
+                    if item:
+                        # Show item name with truncation if needed
+                        item_name = item.name
+                        if len(item_name) > 15:
+                            item_name = item_name[:12] + "..."
+                        label.config(text=item_name, fg="lightgreen")
+                    else:
+                        label.config(text="(Empty)", fg="gray")
+                        
         except Exception as e:
-            self.equipment_display.insert(tk.END, f"Error: {e}")
+            logger.debug(f"Error updating equipment slot display: {e}")
 
-        # Disable text widget to make it read-only
-        self.equipment_display.config(state="disabled")
+    def _check_equipment_slot_availability(self, item, slot):
+        """
+        Enhanced equipment slot checking with comprehensive dual-wield logic.
+        
+        Returns:
+            tuple: (slot_available: bool, conflict_message: str or None)
+        """
+        current_weapon = getattr(self.player, 'weapon', None)
+        current_offhand = getattr(self.player, 'offhand', None)
+        item_name = getattr(item, 'name', str(item))
+        
+        if slot == 'weapon':
+            return self._check_weapon_slot_availability(item, item_name, current_weapon, current_offhand)
+        elif slot == 'offhand':
+            return self._check_offhand_slot_availability(item, item_name, current_weapon, current_offhand)
+        elif slot == 'two_handed':
+            return self._check_two_handed_slot_availability(item, item_name, current_weapon, current_offhand)
+        else:
+            # Regular armor/accessory slots
+            slot_attr = f'equipped_{slot}' if slot != 'ring' else 'ring'
+            current_item = getattr(self.player, slot_attr, None)
+            if current_item is None:
+                return True, None
+            else:
+                current_name = getattr(current_item, 'name', str(current_item))
+                return False, f"{slot.title()} slot occupied by {current_name}"
+
+    def _check_weapon_slot_availability(self, item, item_name, current_weapon, current_offhand):
+        """Check weapon slot availability with dual-wield logic."""
+        is_item_dual = getattr(item, 'dual_wield', False)
+        is_item_two_handed = getattr(item, 'two_handed', False)
+        
+        # Two-handed weapons need both slots free
+        if is_item_two_handed:
+            if current_weapon is None and current_offhand is None:
+                return True, None
+            else:
+                conflicts = []
+                if current_weapon: 
+                    conflicts.append(f"weapon ({current_weapon.name})")
+                if current_offhand: 
+                    conflicts.append(f"offhand ({current_offhand.name})")
+                return False, f"Two-handed weapon requires both hands free. Currently occupied: {', '.join(conflicts)}"
+        
+        # No weapon equipped - always available
+        if current_weapon is None:
+            return True, None
+        
+        # Weapon slot occupied - analyze dual-wield possibilities
+        current_weapon_dual = getattr(current_weapon, 'dual_wield', False)
+        current_weapon_two_handed = getattr(current_weapon, 'two_handed', False)
+        current_weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+        
+        # Current weapon is two-handed - cannot dual-wield
+        if current_weapon_two_handed:
+            return False, f"Cannot equip {item_name}: {current_weapon_name} is two-handed and cannot be dual-wielded"
+        
+        # Both weapons can dual-wield and offhand is free
+        if is_item_dual and current_weapon_dual and current_offhand is None:
+            self.log_message(f"Auto-moving {current_weapon_name} to offhand for dual-wielding with {item_name}", "info")
+            return True, None
+        
+        # Generate appropriate conflict messages
+        if is_item_dual:
+            if not current_weapon_dual:
+                return False, f"Cannot dual-wield: {current_weapon_name} is not dual-wieldable"
+            elif current_offhand is not None:
+                offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+                return False, f"Cannot dual-wield: offhand occupied by {offhand_name}. Unequip first."
+            else:
+                return False, f"Weapon slot occupied by {current_weapon_name}"
+        else:
+            return False, f"Weapon slot occupied by {current_weapon_name}. Unequip first."
+
+    def _check_offhand_slot_availability(self, item, item_name, current_weapon, current_offhand):
+        """Check offhand slot availability with dual-wield logic."""
+        is_item_dual = getattr(item, 'dual_wield', False)
+        slot_restriction = getattr(item, 'slot_restriction', None)
+        
+        # Offhand slot occupied
+        if current_offhand is not None:
+            offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+            return False, f"Offhand slot occupied by {offhand_name}. Unequip first."
+        
+        # Check slot restrictions
+        if slot_restriction == 'offhand_only':
+            # Item can only go in offhand (shields, focuses, etc.)
+            if current_weapon and getattr(current_weapon, 'two_handed', False):
+                weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+                return False, f"Cannot equip {item_name}: {weapon_name} is two-handed and requires both hands"
+            return True, None
+        
+        # Item can dual-wield
+        if is_item_dual:
+            if current_weapon is None:
+                return True, None
+            elif getattr(current_weapon, 'dual_wield', False):
+                return True, None
+            elif getattr(current_weapon, 'two_handed', False):
+                weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+                return False, f"Cannot dual-wield: {weapon_name} is two-handed"
+            else:
+                weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+                return False, f"Cannot dual-wield: {weapon_name} is not dual-wieldable"
+        
+        # Regular offhand item
+        return True, None
+
+    def _check_two_handed_slot_availability(self, item, item_name, current_weapon, current_offhand):
+        """Check availability for two-handed weapons."""
+        conflicts = []
+        if current_weapon:
+            weapon_name = getattr(current_weapon, 'name', str(current_weapon))
+            conflicts.append(f"weapon ({weapon_name})")
+        if current_offhand:
+            offhand_name = getattr(current_offhand, 'name', str(current_offhand))
+            conflicts.append(f"offhand ({offhand_name})")
+        
+        if conflicts:
+            return False, f"Two-handed weapon requires both hands free. Currently occupied: {', '.join(conflicts)}"
+        else:
+            return True, None
+
+    def _suggest_dual_wield_alternative(self, item, slot):
+        """Suggest alternative actions for dual-wield scenarios."""
+        current_weapon = getattr(self.player, 'weapon', None)
+        current_offhand = getattr(self.player, 'offhand', None)
+        is_item_dual = getattr(item, 'dual_wield', False)
+        is_item_two_handed = getattr(item, 'two_handed', False)
+        
+        suggestions = []
+        
+        if is_item_two_handed:
+            if current_weapon:
+                suggestions.append("Unequip your main weapon")
+            if current_offhand:
+                suggestions.append("Unequip your offhand item")
+            if suggestions:
+                return f"Two-handed weapon needs both hands free. {' and '.join(suggestions)}."
+        
+        if slot == 'weapon' and is_item_dual and current_weapon:
+            current_weapon_dual = getattr(current_weapon, 'dual_wield', False)
+            current_weapon_two_handed = getattr(current_weapon, 'two_handed', False)
+            
+            if current_weapon_two_handed:
+                return "Unequip your two-handed weapon first."
+            elif current_weapon_dual and current_offhand is not None:
+                offhand_name = getattr(current_offhand, 'name', 'offhand item')
+                return f"Unequip {offhand_name} first to make room for dual-wielding."
+            elif not current_weapon_dual:
+                weapon_name = getattr(current_weapon, 'name', 'main weapon')
+                return f"Unequip {weapon_name} first (not dual-wieldable)."
+        
+        elif slot == 'offhand':
+            if is_item_dual and current_weapon:
+                current_weapon_dual = getattr(current_weapon, 'dual_wield', False)
+                current_weapon_two_handed = getattr(current_weapon, 'two_handed', False)
+                
+                if current_weapon_two_handed:
+                    weapon_name = getattr(current_weapon, 'name', 'weapon')
+                    return f"Unequip {weapon_name} first (two-handed weapons use both hands)."
+                elif not current_weapon_dual:
+                    weapon_name = getattr(current_weapon, 'name', 'main weapon')
+                    return f"Equip a dual-wieldable weapon first (current: {weapon_name})."
+                    
+            if current_offhand:
+                offhand_name = getattr(current_offhand, 'name', 'offhand item')
+                return f"Unequip {offhand_name} first."
+        
+        return "Try unequipping conflicting items first."
+
+    def _get_dual_wield_status_info(self):
+        """Get current dual-wield status for display."""
+        current_weapon = getattr(self.player, 'weapon', None)
+        current_offhand = getattr(self.player, 'offhand', None)
+        
+        if not current_weapon and not current_offhand:
+            return "Empty hands - ready for any weapon"
+        
+        weapon_name = getattr(current_weapon, 'name', 'Unknown') if current_weapon else None
+        offhand_name = getattr(current_offhand, 'name', 'Unknown') if current_offhand else None
+        
+        status_parts = []
+        
+        if current_weapon:
+            weapon_two_handed = getattr(current_weapon, 'two_handed', False)
+            weapon_dual = getattr(current_weapon, 'dual_wield', False)
+            
+            if weapon_two_handed:
+                status_parts.append(f"Two-handed: {weapon_name}")
+            elif weapon_dual:
+                status_parts.append(f"Dual-wieldable: {weapon_name}")
+            else:
+                status_parts.append(f"Single weapon: {weapon_name}")
+        
+        if current_offhand:
+            offhand_dual = getattr(current_offhand, 'dual_wield', False)
+            slot_restriction = getattr(current_offhand, 'slot_restriction', None)
+            
+            if offhand_dual:
+                status_parts.append(f"Dual-wielding: {offhand_name}")
+            elif slot_restriction == 'offhand_only':
+                status_parts.append(f"Shield/Focus: {offhand_name}")
+            else:
+                status_parts.append(f"Offhand: {offhand_name}")
+        
+        return " | ".join(status_parts)
 
     def unequip_item(self, slot):
         """Unequip an item from the specified slot using UUID if possible."""
@@ -2790,6 +4189,84 @@ class SimpleGameDemo:
             self.update_char_info()
         else:
             self.log_message("No resources to restore!", "error")
+
+    def _detailed_character_view_placeholder(self):
+        """Placeholder method for detailed character view."""
+        self.log_message("Detailed character view - Feature coming soon!", "info")
+
+    def _inspect_equipment_placeholder(self):
+        """Show detailed equipment information."""
+        if not hasattr(self, 'player') or not self.player:
+            self.log_message("No player character available!", "info")
+            return
+            
+        # Switch to inventory tab where equipment can be viewed
+        if hasattr(self, 'tab_control') and hasattr(self, 'inventory_tab'):
+            self.tab_control.select(self.inventory_tab)
+            self.log_message("Switched to Inventory tab to view equipment details", "info")
+        else:
+            # Show equipment summary in log
+            weapon = getattr(self.player, 'weapon', None)
+            offhand = getattr(self.player, 'offhand', None)  
+            body_armor = getattr(self.player, 'equipped_body', None)
+            
+            equipment_info = "=== EQUIPMENT INSPECTION ===\n"
+            if weapon:
+                equipment_info += f"⚔️ Weapon: {weapon.name}\n"
+                if hasattr(weapon, 'base_damage'):
+                    equipment_info += f"   Damage: {weapon.base_damage}\n"
+            else:
+                equipment_info += "⚔️ Weapon: (None)\n"
+                
+            if offhand:
+                equipment_info += f"🛡️ Offhand: {offhand.name}\n"
+                if hasattr(offhand, 'defense'):
+                    equipment_info += f"   Defense: {offhand.defense}\n"
+                elif hasattr(offhand, 'base_damage'):
+                    equipment_info += f"   Damage: {offhand.base_damage}\n"
+            else:
+                equipment_info += "🛡️ Offhand: (None)\n"
+                
+            if body_armor:
+                equipment_info += f"🛡️ Armor: {body_armor.name}\n"
+                if hasattr(body_armor, 'defense'):
+                    equipment_info += f"   Defense: {body_armor.defense}\n"
+            else:
+                equipment_info += "🛡️ Armor: (None)\n"
+                
+            self.log_message(equipment_info, "info")
+
+    def _optimize_defense_placeholder(self):
+        """Placeholder method for defense optimization.""" 
+        self.log_message("Defense optimization - Feature coming soon!", "info")
+
+    def _equip_selected_item(self):
+        """Wrapper for equipping selected item."""
+        return self.equip_selected_item()
+
+    def _drop_selected_item(self):
+        """Wrapper for dropping selected item."""
+        return self.drop_selected_item()
+
+    def _create_item_placeholder(self):
+        """Placeholder for create item functionality."""
+        self.create_item_dialog()
+
+    def _add_random_item_placeholder(self):
+        """Placeholder for add random item functionality."""
+        self.add_random_item()
+
+    def _allocate_stat_point_placeholder(self):
+        """Placeholder for stat point allocation."""
+        self.log_message("Stat allocation - Use the leveling tab instead", "info")
+
+    def _reset_all_stats_placeholder(self):
+        """Placeholder for resetting stats."""
+        self.log_message("Reset stats - Feature coming soon!", "info")
+
+    def _save_character_build_placeholder(self):
+        """Placeholder for saving character build."""
+        self.log_message("Save character build - Feature coming soon!", "info")
 
     def tick_status_effects(self):
         """Manually tick status effects for demonstration."""
@@ -3085,14 +4562,25 @@ class SimpleGameDemo:
             # Learn the first available skill
             skill_id = available_for_learning[0]
             self.player.known_skills.append(skill_id)
-            requirements_text = ", ".join([f"{k}: {v}" for k, v in skill_requirements[skill_id].items()])
-            self.log_message(f"Learned skill: {skill_id}! (Required: {requirements_text})", "info")
-
-            # Update progression display
-            self.update_progression_display()
+            
+            # 🎯 OBSERVER PATTERN ENHANCEMENT (Task #5):
+            # Use event-driven UI updates instead of manual updates
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                # Publish skill learned event - UI observer handles the rest automatically
+                GameEventPublisher.publish_skill_learned(skill_id, source=self)
+            else:
+                # Fallback to manual UI updates for compatibility
+                requirements_text = ", ".join([f"{k}: {v}" for k, v in skill_requirements[skill_id].items()])
+                self.log_message(f"Learned skill: {skill_id}! (Required: {requirements_text})", "info")
+                # Update progression display
+                self.update_progression_display()
 
         except Exception as e:
-            self.log_message(f"Error learning skill: {e}", "error")
+            # 🎯 OBSERVER PATTERN ENHANCEMENT: Event-driven error handling
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                GameEventPublisher.publish_error(f"Error learning skill: {e}", source=self)
+            else:
+                self.log_message(f"Error learning skill: {e}", "error")
 
     def learn_spell_dialog(self):
         """Dialog to learn a spell if requirements are met."""
@@ -3133,14 +4621,28 @@ class SimpleGameDemo:
             # Learn the first available spell
             spell_id = available_for_learning[0]
             self.player.known_spells.append(spell_id)
-            requirements_text = ", ".join([f"{k}: {v}" for k, v in spell_requirements[spell_id].items()])
-            self.log_message(f"Learned spell: {spell_id}! (Required: {requirements_text})", "info")
-
-            # Update progression display
-            self.update_progression_display()
+            
+            # 🎯 OBSERVER PATTERN ENHANCEMENT (Task #5):
+            # Use event-driven UI updates instead of manual updates
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                # Publish spell learned event - UI observer will automatically:
+                # 1. Update progression display
+                # 2. Log the learning message with proper formatting  
+                # 3. Handle any errors gracefully
+                GameEventPublisher.publish_spell_learned(spell_id, source=self)
+            else:
+                # Fallback to manual UI updates for compatibility
+                requirements_text = ", ".join([f"{k}: {v}" for k, v in spell_requirements[spell_id].items()])
+                self.log_message(f"Learned spell: {spell_id}! (Required: {requirements_text})", "info")
+                # Update progression display
+                self.update_progression_display()
 
         except Exception as e:
-            self.log_message(f"Error learning spell: {e}", "error")
+            # 🎯 OBSERVER PATTERN ENHANCEMENT: Event-driven error handling
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                GameEventPublisher.publish_error(f"Error learning spell: {e}", source=self)
+            else:
+                self.log_message(f"Error learning spell: {e}", "error")
 
     def learn_enchant_dialog(self):
         """Dialog to learn an enchantment if requirements are met."""
@@ -3161,10 +4663,22 @@ class SimpleGameDemo:
             # For demo, learn the first available enchantment
             enchant_id = unlearned_enchants[0]
             self.player.known_enchantments.append(enchant_id)
-            self.log_message(f"Learned enchantment: {enchant_id}!", "info")
+            
+            # 🎯 OBSERVER PATTERN ENHANCEMENT (Task #5):
+            # Use event-driven UI updates instead of manual updates
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                # Publish enchantment learned event
+                GameEventPublisher.publish_enchantment_learned(enchant_id, source=self)
+            else:
+                # Fallback to manual UI updates
+                self.log_message(f"Learned enchantment: {enchant_id}!", "info")
 
         except Exception as e:
-            self.log_message(f"Error learning enchantment: {e}", "error")
+            # 🎯 OBSERVER PATTERN ENHANCEMENT: Event-driven error handling
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                GameEventPublisher.publish_error(f"Error learning enchantment: {e}", source=self)
+            else:
+                self.log_message(f"Error learning enchantment: {e}", "error")
 
     def setup_enchanting_tab(self):
         """Set up the enchanting and spell management tab."""
@@ -3624,7 +5138,7 @@ class SimpleGameDemo:
                         elif 'lightning' in enchant_id:
                             # Lightning enchants add lightning damage and attack speed
                             item.stats['lightning_damage'] = item.stats.get('lightning_damage', 0) + 4
-                            item.stats['attack_speed'] = item.stats.get('attack_speed', 0) + 0.15
+                            item.stats['speed'] = item.stats.get('speed', 0) + 0.15
                             from game_sys.core.damage_types import DamageType
                             from game_sys.core.damage_type_utils import get_damage_type_by_name
                             item.damage_type = get_damage_type_by_name("LIGHTNING")
@@ -3844,146 +5358,11 @@ class SimpleGameDemo:
             pass
 
     def update_progression_display(self):
-        """Update all progression displays with current data."""
-        if not hasattr(self, 'player') or not self.player:
-            return
-
-        try:
-            # Update level and XP info
-            if hasattr(self, 'level_label'):
-                level_text = f"Level: {getattr(self.player, 'level', 1)}"
-                if hasattr(self.player, 'leveling_manager'):
-                    current_xp = getattr(self.player.leveling_manager, 'current_experience', 0)
-                    # Use a simple XP calculation for next level
-                    needed_xp = self.player.level * 100
-                    level_text += f" (XP: {current_xp}/{needed_xp})"
-                self.level_label.config(text=level_text)
-
-            # Update stat points
-            if hasattr(self, 'stat_points_label') and hasattr(self.player, 'leveling_manager'):
-                available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
-                self.stat_points_label.config(text=f"Available Stat Points: {available_points}")
-
-            # Update skills lists
-            if hasattr(self, 'available_skills_listbox'):
-                self.available_skills_listbox.delete(0, tk.END)
-                if hasattr(self.player, 'leveling_manager'):
-                    available_skills = self.player.leveling_manager.get_available_skills_for_level(self.player)
-                    for skill in available_skills:
-                        self.available_skills_listbox.insert(tk.END, skill)
-
-            if hasattr(self, 'learned_skills_listbox'):
-                self.learned_skills_listbox.delete(0, tk.END)
-                if hasattr(self.player, 'leveling_manager'):
-                    # Add learned skills if available
-                    learned = self.player.leveling_manager.get_learned_skills(self.player)
-                    for skill in learned:
-                        self.learned_skills_listbox.insert(tk.END, skill)
-
-            # Update spells lists
-            if hasattr(self, 'available_spells_listbox'):
-                self.available_spells_listbox.delete(0, tk.END)
-                if hasattr(self.player, 'leveling_manager'):
-                    available_spells = self.player.leveling_manager.get_available_spells_for_level(self.player)
-                    for spell in available_spells:
-                        self.available_spells_listbox.insert(tk.END, spell)
-
-            if hasattr(self, 'learned_spells_listbox'):
-                self.learned_spells_listbox.delete(0, tk.END)
-                if hasattr(self.player, 'leveling_manager'):
-                    # Add learned spells if available
-                    learned = self.player.leveling_manager.get_learned_spells(self.player)
-                    for spell in learned:
-                        self.learned_spells_listbox.insert(tk.END, spell)
-
-            # Update items list - show items that can be crafted/found at current level
-            if hasattr(self, 'unlocked_items_listbox'):
-                self.unlocked_items_listbox.delete(0, tk.END)
-
-                # Define items by level requirement
-                items_by_level = {
-                    1: ["wooden_stick", "basic_clothes", "potion_health"],
-                    2: ["leather_armor", "potion_mana", "wooden_shield"],
-                    3: ["iron_sword", "iron_dagger", "apprentice_staff"],
-                    4: ["mage_robes", "spell_focus", "boots_of_speed"],
-                    5: ["arcane_staff", "archmage_robes", "vampiric_blade"],
-                    10: ["ring_of_power", "cloak_of_fortune", "thornmail_armor"],
-                    15: ["orc_axe", "arcane_focus"],
-                    25: ["dragon_claw", "dragon_scale_armor"]
-                }
-
-                # Show all items available up to current level
-                for level in sorted(items_by_level.keys()):
-                    if self.player.level >= level:
-                        for item_id in items_by_level[level]:
-                            self.unlocked_items_listbox.insert(tk.END, f"Lv{level}: {item_id}")
-                    else:
-                        # Show next level items as locked
-                        for item_id in items_by_level[level]:
-                            self.unlocked_items_listbox.insert(tk.END, f"[LOCKED] Lv{level}: {item_id}")
-                        break  # Only show next level, not all future levels
-
-            # Update progression info
-            if hasattr(self, 'progression_info'):
-                self.progression_info.config(state="normal")
-                self.progression_info.delete(1.0, tk.END)
-
-                info_text = f"Character: {self.player.name}\n"
-                info_text += f"Level: {self.player.level}\n"
-
-                # Show what's available at next level
-                current_level = self.player.level
-                info_text += f"\nNext Level ({current_level + 1}) Unlocks:\n"
-
-                # Skills
-                skill_requirements = {
-                    "power_attack": {"level": 2, "strength": 15},
-                    "defensive_stance": {"level": 3, "constitution": 12},
-                    "quick_strike": {"level": 4, "dexterity": 18},
-                    "berserker_rage": {"level": 5, "strength": 20, "constitution": 15}
-                }
-
-                skills_next = [skill for skill, req in skill_requirements.items()
-                              if req["level"] == current_level + 1]
-                if skills_next:
-                    info_text += f"  Skills: {', '.join(skills_next)}\n"
-
-                # Spells
-                spell_requirements = {
-                    "magic_missile": {"level": 1, "intelligence": 10},
-                    "heal": {"level": 2, "wisdom": 12},
-                    "fireball": {"level": 3, "intelligence": 15},
-                    "ice_shard": {"level": 4, "intelligence": 18},
-                    "lightning_bolt": {"level": 5, "intelligence": 20, "wisdom": 15}
-                }
-
-                spells_next = [spell for spell, req in spell_requirements.items()
-                              if req["level"] == current_level + 1]
-                if spells_next:
-                    info_text += f"  Spells: {', '.join(spells_next)}\n"
-
-                # Items
-                items_by_level = {
-                    2: ["leather_armor", "potion_mana", "wooden_shield"],
-                    3: ["iron_sword", "iron_dagger", "apprentice_staff"],
-                    4: ["mage_robes", "spell_focus", "boots_of_speed"],
-                    5: ["arcane_staff", "archmage_robes", "vampiric_blade"],
-                    10: ["ring_of_power", "cloak_of_fortune", "thornmail_armor"],
-                    15: ["orc_axe", "arcane_focus"],
-                    25: ["dragon_claw", "dragon_scale_armor"]
-                }
-
-                if current_level + 1 in items_by_level:
-                    items_next = items_by_level[current_level + 1]
-                    info_text += f"  Items: {', '.join(items_next[:3])}\n"
-                    if len(items_next) > 3:
-                        info_text += f"     ... and {len(items_next) - 3} more\n"
-
-                self.progression_info.insert(tk.END, info_text)
-                self.progression_info.config(state="disabled")
-
-        except Exception as e:
-            self.log_message(f"Error updating progression display: {e}", "combat")
+        """Update progression display - delegates to UI service only."""
+        if hasattr(self, 'ui_service') and self.ui_service:
+            return self.ui_service.update_progression_display({'player': self.player})
+        else:
+            self.log_message("UI service not available for progression display", "info")
 
     def reset_stat_points(self):
         """Reset all allocated stat points for the player."""
@@ -4057,26 +5436,39 @@ class SimpleGameDemo:
 
         try:
             xp_amount = 100  # Test XP amount
+            old_level = getattr(self.player, 'level', 1)
+            old_xp = getattr(self.player, 'experience', 0)
 
             # Use leveling manager if available
             if hasattr(self.player, 'leveling_manager'):
-                old_level = self.player.level
                 leveled_up = self.player.leveling_manager.gain_experience(
                     self.player,
                     xp_amount
                 )
 
-                if leveled_up:
-                    level_diff = self.player.level - old_level
-                    msg = f"Gained {xp_amount} XP and leveled up {level_diff} time(s)! Level {self.player.level}"
-                    self.log_message(msg, "info")
+                # 🎯 OBSERVER PATTERN ENHANCEMENT (Task #5):
+                # Publish XP and level change events
+                if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                    # Publish XP change event
+                    new_xp = getattr(self.player, 'experience', old_xp)
+                    GameEventPublisher.publish_stat_change('experience', old_xp, new_xp, source=self)
                     
-                    # Calculate new available stat points
-                    available = self.player.leveling_manager.calculate_stat_points_available(self.player)
-                    self.log_message(f"You now have {available} stat points to allocate!", "info")
+                    # If level up occurred, publish level up event
+                    if leveled_up:
+                        GameEventPublisher.publish_level_up(self.player.level, source=self)
                 else:
-                    msg = f"Gained {xp_amount} XP (no level up)"
-                    self.log_message(msg, "info")
+                    # Fallback to manual logging
+                    if leveled_up:
+                        level_diff = self.player.level - old_level
+                        msg = f"Gained {xp_amount} XP and leveled up {level_diff} time(s)! Level {self.player.level}"
+                        self.log_message(msg, "info")
+                        
+                        # Calculate new available stat points
+                        available = self.player.leveling_manager.calculate_stat_points_available(self.player)
+                        self.log_message(f"You now have {available} stat points to allocate!", "info")
+                    else:
+                        msg = f"Gained {xp_amount} XP (no level up)"
+                        self.log_message(msg, "info")
             else:
                 # Manual XP gain fallback
                 if not hasattr(self.player, 'experience'):
@@ -4084,28 +5476,41 @@ class SimpleGameDemo:
                 if not hasattr(self.player, 'level'):
                     self.player.level = 1
 
-                old_level = self.player.level
                 self.player.experience += xp_amount
                 
                 # Simple level up check
                 xp_needed = self.player.level * 100
+                leveled_up = False
                 if self.player.experience >= xp_needed:
                     self.player.level += 1
                     self.player.experience -= xp_needed
-                    
-                    # Stat points are handled by leveling_manager
-                    msg = f"Gained {xp_amount} XP and leveled up! Level {self.player.level}"
-                    self.log_message(msg, "info")
-                else:
-                    msg = f"Gained {xp_amount} XP!"
-                    self.log_message(msg, "info")
+                    leveled_up = True
 
-            # Update displays
-            self.update_char_info()
-            self.update_leveling_display()
+                # 🎯 OBSERVER PATTERN ENHANCEMENT: Publish events for manual XP gain too
+                if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                    GameEventPublisher.publish_stat_change('experience', old_xp, self.player.experience, source=self)
+                    if leveled_up:
+                        GameEventPublisher.publish_level_up(self.player.level, source=self)
+                else:
+                    # Fallback to manual logging
+                    if leveled_up:
+                        msg = f"Gained {xp_amount} XP and leveled up! Level {self.player.level}"
+                        self.log_message(msg, "info")
+                    else:
+                        msg = f"Gained {xp_amount} XP!"
+                        self.log_message(msg, "info")
+
+            # 🎯 OBSERVER PATTERN: Only manual display updates if observer not available
+            if not OBSERVER_PATTERN_AVAILABLE:
+                self.update_char_info()
+                self.update_leveling_display()
 
         except Exception as e:
-            self.log_message(f"Error gaining XP: {e}", "combat")
+            # 🎯 OBSERVER PATTERN ENHANCEMENT: Event-driven error handling
+            if OBSERVER_PATTERN_AVAILABLE and GameEventPublisher:
+                GameEventPublisher.publish_error(f"Error gaining XP: {e}", source=self)
+            else:
+                self.log_message(f"Error gaining XP: {e}", "combat")
 
     def allocate_stat_point(self, stat_name):
         """Allocate a stat point to the specified stat."""
@@ -4146,175 +5551,26 @@ class SimpleGameDemo:
             self.log_message(f"Error allocating stat point: {e}", "combat")
 
     def update_leveling_display(self):
-        """Update the leveling tab display."""
+        """Update the leveling tab display - delegates to UI service."""
+        # Always use UI service first since demo UI controls UI
+        if hasattr(self, 'ui_service') and self.ui_service:
+            result = self.ui_service.update_leveling_display({'player': self.player})
+            if result.get('success', False):
+                return
+
+        # Minimal fallback implementation for backwards compatibility
         if not hasattr(self, 'player') or not self.player:
             return
 
         try:
-            # Update available stat points display
+            # Update available stat points display only
             if hasattr(self, 'available_points_label'):
                 if hasattr(self.player, 'leveling_manager'):
                     available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
                     self.available_points_label.config(text=str(available_points))
                 else:
                     self.available_points_label.config(text="0")
-
-            # Update allocatable stats display
-            if hasattr(self, 'allocatable_stats_text'):
-                self.allocatable_stats_text.config(state="normal")
-                self.allocatable_stats_text.delete(1.0, tk.END)
-
-                # --- Character Info Section ---
-                char_info = f"== {self.player.name} ==\n"
-                char_info += f"Level: {self.player.level}\n"
-                if hasattr(self.player, 'grade_name'):
-                    char_info += f"Grade: {self.player.grade_name}\n"
-                elif hasattr(self.player, 'grade'):
-                    char_info += f"Grade: {self.player.grade}\n"
-                if hasattr(self.player, 'rarity'):
-                    char_info += f"Rarity: {self.player.rarity}\n"
-                health_val = f"{getattr(self.player, 'current_health', 0):.2f}/"
-                health_val += f"{getattr(self.player, 'max_health', 0):.2f}"
-                char_info += f"Health: {health_val}\n"
-
-                # --- Base Stats Section ---
-                rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility']
-                if not hasattr(self.player, 'base_stats') or not isinstance(self.player.base_stats, dict):
-                    self.player.base_stats = {stat: 10 for stat in rpg_stats}
-                else:
-                    for stat in rpg_stats:
-                        if stat not in self.player.base_stats:
-                            self.player.base_stats[stat] = 10
-                char_info += "\n=== BASE STATS ===\n"
-                for stat_name in rpg_stats:
-                    value = self.player.base_stats[stat_name]
-                    display_name = stat_name.replace('_', ' ').title()
-                    char_info += f"  {display_name}: {value:.2f}\n"
-
-                # --- Combat Stats (Derived) ---
-                char_info += "\n=== COMBAT STATS ===\n"
-                combat_stats = ['attack', 'defense', 'speed', 'magic_power']
-                for stat_name in combat_stats:
-                    if hasattr(self.player, 'get_stat'):
-                        value = self.player.get_stat(stat_name)
-                        display_name = stat_name.replace('_', ' ').title()
-                        char_info += f"  {display_name}: {value:.1f}\n"
-
-                # --- Resource Stats (Derived) ---
-                char_info += "\n=== RESOURCE STATS ===\n"
-                resource_stats = [
-                    ('health', 'max_health', 'current_health'),
-                    ('mana', 'max_mana', 'current_mana'),
-                    ('stamina', 'max_stamina', 'current_stamina')
-                ]
-                for base_stat, max_attr, current_attr in resource_stats:
-                    if hasattr(self.player, 'get_stat'):
-                        max_val = self.player.get_stat(base_stat)
-                        current_val = getattr(self.player, current_attr, max_val)
-                        display_name = base_stat.replace('_', ' ').title()
-                        char_info += f"  {display_name}: {current_val:.0f}/{max_val:.0f}\n"
-
-                # --- Defensive Stats (Derived) ---
-                char_info += "\n=== DEFENSIVE STATS ===\n"
-                defensive_stats = ['dodge_chance', 'block_chance', 'magic_resistance', 'damage_reduction']
-                for stat_name in defensive_stats:
-                    if hasattr(self.player, 'get_stat'):
-                        value = self.player.get_stat(stat_name)
-                        display_name = stat_name.replace('_', ' ').title()
-                        if 'chance' in stat_name:
-                            char_info += f"  {display_name}: {value:.1%}\n"
-                        else:
-                            char_info += f"  {display_name}: {value:.2f}\n"
-
-                # --- Regeneration Stats (Derived) ---
-                char_info += "\n=== REGENERATION ===\n"
-                regen_stats = ['health_regeneration', 'mana_regeneration', 'stamina_regeneration']
-                for stat_name in regen_stats:
-                    if hasattr(self.player, 'get_stat'):
-                        value = self.player.get_stat(stat_name)
-                        display_name = stat_name.replace('_', ' ').title()
-                        char_info += f"  {display_name}: {value:.3f}/sec\n"
-
-                # --- Special Stats ---
-                char_info += "\n=== SPECIAL STATS ===\n"
-                special_stats = ['critical_chance', 'luck_factor', 'physical_damage']
-                for stat_name in special_stats:
-                    if hasattr(self.player, 'get_stat'):
-                        value = self.player.get_stat(stat_name)
-                        display_name = stat_name.replace('_', ' ').title()
-                        if 'chance' in stat_name:
-                            char_info += f"  {display_name}: {value:.1%}\n"
-                        else:
-                            char_info += f"  {display_name}: {value:.2f}\n"
-
-                # --- Equipment Section ---
-                char_info += "\n=== EQUIPMENT ===\n"
-                weapon = getattr(self.player, 'weapon', None)
-                if weapon:
-                    char_info += f"  Weapon: {weapon.name}\n"
-                else:
-                    char_info += "  Weapon: (None)\n"
-                offhand = getattr(self.player, 'offhand', None)
-                if offhand:
-                    char_info += f"  Offhand: {offhand.name}\n"
-                else:
-                    char_info += "  Offhand: (None)\n"
-                body_armor = getattr(self.player, 'equipped_body', None)
-                if body_armor:
-                    char_info += f"  Body: {body_armor.name}\n"
-                else:
-                    char_info += "  Body: (None)\n"
-
-                # --- Inventory Section ---
-                char_info += "\nInventory:\n"
-                if hasattr(self.player, 'inventory'):
-                    try:
-                        items = self.player.inventory.list_items()
-                    except Exception:
-                        items = []
-                    if items:
-                        char_info += f"Items ({len(items)}):\n"
-                        for item in items[:5]:
-                            item_name = getattr(item, 'name', str(item))
-                            char_info += f"  - {item_name}\n"
-                        if len(items) > 5:
-                            char_info += f"  ... and {len(items) - 5} more\n"
-                    else:
-                        char_info += "Empty inventory\n"
-                else:
-                    char_info += "(No inventory system)"
-
-                self.allocatable_stats_text.insert(tk.END, char_info)
-                self.allocatable_stats_text.config(state="disabled")
-
-            # Update stat buttons values and enable/disable based on available points
-            if hasattr(self, 'stat_buttons') and hasattr(self.player, 'base_stats'):
-                # Get available points for button state
-                if hasattr(self.player, 'leveling_manager'):
-                    available_points = self.player.leveling_manager.calculate_stat_points_available(self.player)
-                else:
-                    available_points = 0
-                # Update values for ALL stats that have buttons
-                for stat, base_value in self.player.base_stats.items():
-                    value_label_key = f"{stat}_value"
-                    if value_label_key in self.stat_buttons:
-                        # Show effective value if different from base value
-                        if hasattr(self.player, 'get_stat'):
-                            effective_value = self.player.get_stat(stat)
-                            if abs(base_value - effective_value) > 0.01:
-                                # Show both base → effective
-                                self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}→{effective_value:.1f}")
-                            else:
-                                self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}")
-                        else:
-                            self.stat_buttons[value_label_key].config(text=f"{base_value:.1f}")
-                        # Enable/disable allocation buttons based on available points
-                        if stat in self.stat_buttons:
-                            btn = self.stat_buttons[stat]
-                            if available_points > 0:
-                                btn.config(state="normal", bg="green")
-                            else:
-                                btn.config(state="disabled", bg="gray")
+                    
         except Exception as e:
             self.log_message(f"Error updating leveling display: {e}", "combat")
 

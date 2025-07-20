@@ -11,9 +11,11 @@ from game_sys.effects.extensions import (
     StatusEffect,
     StatBonusEffect,
     InstantManaEffect,
+    InstantStaminaEffect,
     ResourceDrainEffect,
     EquipmentStatEffect,
-    RegenerationEffect
+    RegenerationEffect,
+    RestorationEffect
 )
 from game_sys.effects.damage_mod import (
     FlatDamageMod,

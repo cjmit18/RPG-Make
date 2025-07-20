@@ -14,9 +14,10 @@
       },
       "skill_list": [],
       "spell_list": [],
+      "passives": [],
       "starting_items": [
         {"item_id": "basic_clothes", "quantity": 1},
-        {"item_id": "iron_sword", "quantity": 1}
+        {"item_id": "wooden_stick", "quantity": 1}
       ]
     },
     "warrior": {
@@ -33,6 +34,7 @@
       },
       "skill_list": ["cleave", "pierce"],
       "spell_list": [],
+      "passives": ["berserker_rage"],
       "starting_items": [
         {"item_id": "iron_sword", "quantity": 1},
         {"item_id": "leather_armor", "quantity": 1},
@@ -53,6 +55,7 @@
       },
       "skill_list": [],
       "spell_list": ["fireball", "ice_shard"],
+      "passives": ["battle_meditation"],
       "starting_items": [
         {"item_id": "apprentice_staff", "quantity": 1},
         {"item_id": "mage_robes", "quantity": 1},
@@ -96,6 +99,7 @@
       },
       "skill_list": ["sneak_attack", "dodge"],
       "spell_list": [],
+      "passives": ["endless_sprint"],
       "starting_items": [
         {"item_id": "iron_dagger", "quantity": 1},
         {"item_id": "leather_armor", "quantity": 1},

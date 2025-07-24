@@ -35,6 +35,15 @@ class GameEventType(Enum):
     PLAYER_STAMINA_CHANGED = "player_stamina_changed"
     PLAYER_XP_GAINED = "player_xp_gained"
     
+    # Character Creation Events
+    CHARACTER_CREATED = "character_created"
+    CHARACTER_FINALIZED = "character_finalized"
+    CHARACTER_SAVED = "character_saved"
+    CHARACTER_LOADED = "character_loaded"
+    TEMPLATE_SELECTED = "template_selected"
+    STATS_ALLOCATED = "stats_allocated"
+    CHARACTER_RESET = "character_reset"
+    
     # Combat Events
     COMBAT_STARTED = "combat_started"
     COMBAT_ENDED = "combat_ended"

@@ -253,7 +253,8 @@ class EffectFactory:
                 cls = EffectRegistry._registry.get("equipment_stat")
                 return cls(stat_name=stat_name, amount=amount) if cls else NullEffect()
 
-        # Vampiric and lifesteal effects  
+        # Vampiric and lifesteal effects example: 
+        # life_steal_X or mana_steal_X
         if len(parts) >= 3:
             if etype == "life" and parts[1] == "steal":
                 amount = float(parts[2])
@@ -266,7 +267,8 @@ class EffectFactory:
                 cls = EffectRegistry._registry.get("equipment_stat")
                 return cls(stat_name="mana_steal", amount=amount) if cls else NullEffect()
 
-        # Cooldown and resource cost reduction
+        # Cooldown and resource cost reduction example:
+        # cooldown_reduction_X
         if len(parts) >= 3 and parts[1] == "reduction":
             amount = float(parts[2])
             reduction_map = {
@@ -280,7 +282,8 @@ class EffectFactory:
                 cls = EffectRegistry._registry.get("equipment_stat")
                 return cls(stat_name=stat_name, amount=amount) if cls else NullEffect()
 
-        # Experience and luck bonuses
+        # Experience and luck bonuses example:
+        # exp_bonus_X or magic_find_X
         if len(parts) >= 3:
             if etype == "exp" and parts[1] == "bonus":
                 amount = float(parts[2])

@@ -10,6 +10,7 @@ Core architectural documentation and project overview
 - **AI_ARCHITECTURE.md** - AI system architecture and design patterns
 - **FINAL_PROJECT_SUMMARY.md** - Comprehensive project summary and achievements
 - **PROJECT_STATUS_COMPLETE.md** - Current project status and completion tracking
+- **PROJECT_STATUS_JULY_2025.md** - Latest project status and development updates ✨
 - **RPG_Engine_Master_TODO_List.md** - Master task list and progress tracking
 
 ### 🔧 [02-systems/](./02-systems/)
@@ -18,14 +19,17 @@ Core system documentation and implementation guides
 - **CONFIG_SYSTEM_README.md** - Configuration management system
 - **UI_SYSTEM_README.md** - User interface architecture
 - **UI_LOGGING_README.md** - UI logging and debugging system
+- **UI_SERVICE_MIGRATION_SUMMARY.md** - UI service layer migration documentation ✨
 - **DEMO_README.md** - Main demo application guide
 - **AI_IMPLEMENTATION_COMPLETE.md** - AI system implementation details
 - **EFFECT_SYSTEM_IMPLEMENTATION.md** - Effect system architecture
 
 ### ⚡ [03-features/](./03-features/)
 Game feature documentation and implementation
+- **DUAL_WIELD_SYSTEM_DOCUMENTATION.md** - Dual wielding system implementation and mechanics ✨
 - **ELEMENTAL_SYSTEM.md** - Elemental damage and resistance system
 - **ENCHANTING_IMPROVEMENTS.md** - Enchantment system enhancements
+- **EXPANDED_STATS_SUMMARY.md** - Expanded character statistics system ✨
 - **INVENTORY_FIXES_README.md** - Inventory management improvements
 - **LOOT_REFACTORING.md** - Loot generation and distribution
 - **RPG_STATS_IMPLEMENTATION_SUMMARY.md** - RPG statistics implementation
@@ -49,6 +53,7 @@ Maintenance, cleanup, and refactoring documentation
 - **COMPREHENSIVE_FIXES_SUMMARY.md** - Summary of all fixes and improvements
 - **COMPREHENSIVE_REVIEW_COMPLETE.md** - Complete code review results
 - **CONFIG_CONSOLIDATION_SUMMARY.md** - Configuration consolidation results
+- **DOCUMENTATION_ORGANIZATION_COMPLETE.md** - Documentation organization completion status ✨
 - **JSON_REFACTORING.md** - JSON data refactoring documentation
 
 ### ✅ [06-completed-tasks/](./06-completed-tasks/)

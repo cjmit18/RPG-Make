@@ -2112,7 +2112,7 @@ class SimpleGameDemo(DemoEventHandlerInterface, DisplayManagerInterface, GameSta
     def _build_detailed_character_info(self):
         """Build comprehensive detailed character information."""
         info = f"╔════════════════════════╗\n"
-        info += f"║    {self.player.name:^18}    ║\n"
+        info += f"║    {self.player.name:^18}  ║\n"
         info += f"╚════════════════════════╝\n\n"
 
         # Core Statistics with calculations
@@ -5645,9 +5645,9 @@ def main():
         if 'logger' in globals():
             logger.exception(f"Error in demo: {e}")
 
-        # Also print to console for immediate visibility
+        # Also use proper console logging for immediate visibility
         import traceback
-        print(f"ERROR: {e}")
+        console_logger.error(f"ERROR: {e}")
         traceback.print_exc()
         raise
 

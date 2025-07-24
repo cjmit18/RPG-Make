@@ -41,6 +41,13 @@ class UIObserver(AbstractObserver):
             GameEventType.PLAYER_MANA_CHANGED,
             GameEventType.PLAYER_STAMINA_CHANGED,
             GameEventType.PLAYER_XP_GAINED,
+            GameEventType.CHARACTER_CREATED,
+            GameEventType.CHARACTER_FINALIZED,
+            GameEventType.CHARACTER_SAVED,
+            GameEventType.CHARACTER_LOADED,
+            GameEventType.TEMPLATE_SELECTED,
+            GameEventType.STATS_ALLOCATED,
+            GameEventType.CHARACTER_RESET,
             GameEventType.INVENTORY_CHANGED,
             GameEventType.ITEM_EQUIPPED,
             GameEventType.ITEM_UNEQUIPPED,
@@ -86,6 +93,13 @@ class UIObserver(AbstractObserver):
         if EventFilter.is_character_event(event_type):
             self._handle_character_event(event_type, data)
         
+        # Character Creation Events
+        elif event_type in [GameEventType.CHARACTER_CREATED, GameEventType.CHARACTER_FINALIZED, 
+                           GameEventType.CHARACTER_SAVED, GameEventType.CHARACTER_LOADED,
+                           GameEventType.TEMPLATE_SELECTED, GameEventType.STATS_ALLOCATED,
+                           GameEventType.CHARACTER_RESET]:
+            self._handle_character_creation_event(event_type, data)
+        
         # Inventory Events
         elif EventFilter.is_inventory_event(event_type):
             self._handle_inventory_event(event_type, data)
@@ -121,6 +135,39 @@ class UIObserver(AbstractObserver):
             if hasattr(self.ui_service, 'log_message'):
                 level = data.get('level', 'Unknown')
                 self.ui_service.log_message(f"🎉 Level Up! You are now level {level}!", "info")
+    
+    def _handle_character_creation_event(self, event_type: GameEventType, data: Dict[str, Any]) -> None:
+        """Handle character creation-related events."""
+        if not self.ui_service:
+            return
+            
+        # Update character display for most character creation events
+        if hasattr(self.ui_service, 'update_character_display'):
+            self.ui_service.update_character_display()
+        
+        # Log specific character creation actions
+        if hasattr(self.ui_service, 'log_message'):
+            if event_type == GameEventType.CHARACTER_CREATED:
+                character_name = data.get('character_name', 'Unknown Character')
+                self.ui_service.log_message(f"👤 Character Created: {character_name}", "info")
+            elif event_type == GameEventType.CHARACTER_FINALIZED:
+                character_name = data.get('character_name', 'Unknown Character')
+                self.ui_service.log_message(f"✅ Character Finalized: {character_name}", "success")
+            elif event_type == GameEventType.CHARACTER_SAVED:
+                save_name = data.get('save_name', 'Unknown Save')
+                self.ui_service.log_message(f"💾 Character Saved: {save_name}", "info")
+            elif event_type == GameEventType.CHARACTER_LOADED:
+                save_name = data.get('save_name', 'Unknown Save')
+                self.ui_service.log_message(f"📂 Character Loaded: {save_name}", "info")
+            elif event_type == GameEventType.TEMPLATE_SELECTED:
+                template_name = data.get('template_name', 'Unknown Template')
+                self.ui_service.log_message(f"📋 Template Selected: {template_name}", "info")
+            elif event_type == GameEventType.STATS_ALLOCATED:
+                stat_name = data.get('stat_name', 'Unknown Stat')
+                amount = data.get('amount', 1)
+                self.ui_service.log_message(f"📊 Stat Allocated: +{amount} {stat_name.capitalize()}", "info")
+            elif event_type == GameEventType.CHARACTER_RESET:
+                self.ui_service.log_message(f"🔄 Character Stats Reset", "info")
     
     def _handle_inventory_event(self, event_type: GameEventType, data: Dict[str, Any]) -> None:
         """Handle inventory-related events."""
@@ -308,6 +355,92 @@ class GameEventPublisher:
                 'message': message,
                 'type': error_type
             },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_character_created(character_name: str, template_id: str = None, source=None) -> None:
+        """Publish a character created event."""
+        event = GameEvent(
+            GameEventType.CHARACTER_CREATED,
+            {
+                'character_name': character_name,
+                'template_id': template_id
+            },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_character_finalized(character_name: str, source=None) -> None:
+        """Publish a character finalized event."""
+        event = GameEvent(
+            GameEventType.CHARACTER_FINALIZED,
+            {'character_name': character_name},
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_character_saved(character_name: str, save_name: str, source=None) -> None:
+        """Publish a character saved event."""
+        event = GameEvent(
+            GameEventType.CHARACTER_SAVED,
+            {
+                'character_name': character_name,
+                'save_name': save_name
+            },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_character_loaded(character_name: str, save_name: str, source=None) -> None:
+        """Publish a character loaded event."""
+        event = GameEvent(
+            GameEventType.CHARACTER_LOADED,
+            {
+                'character_name': character_name,
+                'save_name': save_name
+            },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_template_selected(template_id: str, template_name: str = None, source=None) -> None:
+        """Publish a template selected event."""
+        event = GameEvent(
+            GameEventType.TEMPLATE_SELECTED,
+            {
+                'template_id': template_id,
+                'template_name': template_name or template_id
+            },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_stats_allocated(character_name: str, stat_name: str, amount: int = 1, source=None) -> None:
+        """Publish a stats allocated event."""
+        event = GameEvent(
+            GameEventType.STATS_ALLOCATED,
+            {
+                'character_name': character_name,
+                'stat_name': stat_name,
+                'amount': amount
+            },
+            source
+        )
+        event_manager.publish(event)
+    
+    @staticmethod
+    def publish_character_reset(character_name: str = None, source=None) -> None:
+        """Publish a character reset event."""
+        event = GameEvent(
+            GameEventType.CHARACTER_RESET,
+            {'character_name': character_name},
             source
         )
         event_manager.publish(event)

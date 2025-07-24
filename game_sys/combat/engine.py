@@ -308,33 +308,33 @@ class CombatEngine:
         # Get max_targets with fallback to 1
         try:
             max_targets = int(attacker.get_stat("max_targets"))
-            print(f"DEBUG: Got max_targets={max_targets} for {attacker.name}")
+            combat_logger.debug(f"Got max_targets={max_targets} for {attacker.name}")
         except (AttributeError, KeyError, ValueError):
             max_targets = 1
-            print(f"DEBUG: Using fallback max_targets=1 for {attacker.name}")
+            combat_logger.debug(f"Using fallback max_targets=1 for {attacker.name}")
         
         # Ensure max_targets is at least 1 (critical fix for targeting)
         max_targets = max(1, max_targets)
-        print(f"DEBUG: Final max_targets={max_targets} for {attacker.name}")
+        combat_logger.debug(f"Final max_targets={max_targets} for {attacker.name}")
         valid_targets = []
         
         # Filter targets more robustly
-        print(f"DEBUG: Filtering {len(targets)} targets with max {max_targets}")
+        combat_logger.debug(f"Filtering {len(targets)} targets with max {max_targets}")
         for target in targets[:max_targets]:
-            print(f"DEBUG: Checking target: {target.name if target else 'None'}")
-            print(f"  target exists: {target is not None}")
-            print(f"  has is_alive: {hasattr(target, 'is_alive') if target else False}")
-            print(f"  is alive: {target.is_alive() if target and hasattr(target, 'is_alive') else 'N/A'}")
-            print(f"  not attacker: {target != attacker if target else 'N/A'}")
+            combat_logger.debug(f"Checking target: {target.name if target else 'None'}")
+            combat_logger.debug(f"  target exists: {target is not None}")
+            combat_logger.debug(f"  has is_alive: {hasattr(target, 'is_alive') if target else False}")
+            combat_logger.debug(f"  is alive: {target.is_alive() if target and hasattr(target, 'is_alive') else 'N/A'}")
+            combat_logger.debug(f"  not attacker: {target != attacker if target else 'N/A'}")
             
             if (target and
                     hasattr(target, 'is_alive') and
                     target.is_alive() and
                     target != attacker):  # Don't allow self-attack
                 valid_targets.append(target)
-                print("  -> VALID TARGET")
+                combat_logger.debug("  -> VALID TARGET")
             else:
-                print("  -> INVALID TARGET")
+                combat_logger.debug("  -> INVALID TARGET")
 
         if not valid_targets:
             return CombatOutcome(
@@ -417,8 +417,8 @@ class CombatEngine:
         defender_block = stat_with_variance(block_base, 0.1)
         defender_resilience = stat_with_variance(resilience_base, 0.1)
 
-        print(
-            f"DEBUG: Modern hit_chance = (accuracy={attacker_accuracy:.3f}, "
+        combat_logger.debug(
+            f"Modern hit_chance = (accuracy={attacker_accuracy:.3f}, "
             f"dodge={defender_dodge:.3f})"
         )
         # Clamp: min 0.05, max 0.95, base 0.85 offset for typical RPG feel
@@ -428,7 +428,7 @@ class CombatEngine:
         )
 
         # Evasion: attacker_accuracy vs defender_evasion (with variance)
-        print(f"DEBUG: Evasion check - accuracy={attacker_accuracy:.3f}, evasion={defender_evasion:.3f}")
+        combat_logger.debug(f"Evasion check - accuracy={attacker_accuracy:.3f}, evasion={defender_evasion:.3f}")
         if attacker_accuracy < defender_evasion:
             attack_event = AttackEvent(
                 event_type=CombatEventType.ATTACK_DODGED,
@@ -459,7 +459,7 @@ class CombatEngine:
         out.add_event(attack_event)
 
         # miss? (accuracy vs dodge)
-        print(f"DEBUG: Hit check - accuracy={attacker_accuracy}, dodge={defender_dodge}, hit_chance={hit_chance}")
+        combat_logger.debug(f"Hit check - accuracy={attacker_accuracy}, dodge={defender_dodge}, hit_chance={hit_chance}")
         if attacker_accuracy < defender_dodge:
             attack_event.was_hit = False
             attack_event.final_damage = 0.0  # No damage on miss
@@ -473,7 +473,7 @@ class CombatEngine:
             return out
 
         # block? (accuracy vs block)
-        print(f"DEBUG: Checking if {defender.name} can block... accuracy={attacker_accuracy}, block={defender_block}")
+        combat_logger.debug(f"Checking if {defender.name} can block... accuracy={attacker_accuracy}, block={defender_block}")
         has_offhand = (
             hasattr(defender, 'offhand') and defender.offhand is not None
         )
@@ -482,17 +482,17 @@ class CombatEngine:
             if has_offhand else 'None'
         )
         block_chance_stat = defender_block
-        print(f"DEBUG: Has offhand: {has_offhand}, Offhand: {offhand_name}")
-        print(f"DEBUG: Block chance stat: {block_chance_stat}")
+        combat_logger.debug(f"Has offhand: {has_offhand}, Offhand: {offhand_name}")
+        combat_logger.debug(f"Block chance stat: {block_chance_stat}")
         if has_offhand and hasattr(defender.offhand, 'block_chance'):
-            print(
-                f"DEBUG: Offhand block chance: "
+            combat_logger.debug(
+                f"Offhand block chance: "
                 f"{defender.offhand.block_chance}"
             )
         if def_cp.can_block() and attacker_accuracy < defender_block:
-            print("DEBUG: Attack was BLOCKED!")
+            combat_logger.debug("Attack was BLOCKED!")
             # Parry check after block triggers (accuracy vs parry)
-            print(f"DEBUG: Parry check - accuracy={attacker_accuracy}, parry={defender_parry}")
+            combat_logger.debug(f"Parry check - accuracy={attacker_accuracy}, parry={defender_parry}")
             if attacker_accuracy < defender_parry:
                 # Parry successful
                 parry_event = CombatEvent(
@@ -583,26 +583,26 @@ class CombatEngine:
             except Exception as e:
                 combat_logger.warning(f"Could not assign 'empty_hands' weapon in _attack_vs_single_internal: {e}")
         
-        print("DEBUG: Combat path decision:")
-        print(f"  has_spell_state: {has_spell_state}")
-        print(f"  spell_state_value: {spell_state_value}")
-        print(f"  has_pending_spell: {has_pending_spell}")
-        print(f"  pending_spell_value: {pending_spell_value}")
-        print(f"  has_job_id: {has_job_id}")
-        print(f"  job_id_value: {job_id_value}")
-        print(f"  is_mage: {is_mage}")
-        print(f"  is_weapon_attack: {is_weapon_attack}")
-        print(f"  USING SPELL PATH: {should_use_spell_path}")
+        combat_logger.debug("Combat path decision:")
+        combat_logger.debug(f"  has_spell_state: {has_spell_state}")
+        combat_logger.debug(f"  spell_state_value: {spell_state_value}")
+        combat_logger.debug(f"  has_pending_spell: {has_pending_spell}")
+        combat_logger.debug(f"  pending_spell_value: {pending_spell_value}")
+        combat_logger.debug(f"  has_job_id: {has_job_id}")
+        combat_logger.debug(f"  job_id_value: {job_id_value}")
+        combat_logger.debug(f"  is_mage: {is_mage}")
+        combat_logger.debug(f"  is_weapon_attack: {is_weapon_attack}")
+        combat_logger.debug(f"  USING SPELL PATH: {should_use_spell_path}")
         
         if should_use_spell_path:
-            print("DEBUG: Using SPELL DAMAGE PATH")
+            combat_logger.debug("Using SPELL DAMAGE PATH")
             # Get the spell_id from the actor's pending_spell
             spell_id = getattr(attacker, 'pending_spell', None)
             if spell_id is None:
                 # If no spell ID is set, this is an error condition
-                print("ERROR: No pending_spell found on actor, cannot cast spell")
+                combat_logger.error("No pending_spell found on actor, cannot cast spell")
                 return DamagePacket(attacker, defender, 0, "UNKNOWN_SPELL")
-            print(f"DEBUG: Spell ID from actor: {spell_id}")
+            combat_logger.debug(f"Spell ID from actor: {spell_id}")
             # Load the actual spell to get its base_power and damage_type
             base_power = 1  # Default if we can't load the spell
             spell_damage_type = None
@@ -612,16 +612,16 @@ class CombatEngine:
                 if spell:
                     base_power = spell.base_power
                     spell_damage_type = getattr(spell, 'damage_type', None)
-                    print(f"DEBUG: Loaded spell {spell_id} with base_power: {base_power} and damage_type: {spell_damage_type}")
+                    combat_logger.debug(f"Loaded spell {spell_id} with base_power: {base_power} and damage_type: {spell_damage_type}")
             except Exception as e:
-                print(f"DEBUG: Error loading spell: {e}")
+                combat_logger.debug(f"Error loading spell: {e}")
             # Apply intelligence and magic power enhancement formula:
             magic_power = attacker.get_stat('magic_power') or 1.0
             enhanced_power = base_power + magic_power
-            print("DEBUG:magic power enhancement formula:")
-            print(f"  Base power: {base_power}")
-            print(f"  Magic Power: {magic_power}")
-            print(f"  Enhanced power: {enhanced_power}")
+            combat_logger.debug("magic power enhancement formula:")
+            combat_logger.debug(f"  Base power: {base_power}")
+            combat_logger.debug(f"  Magic Power: {magic_power}")
+            combat_logger.debug(f"  Enhanced power: {enhanced_power}")
             # Always use the spell's damage_type if available, else fallback to MAGIC
             if spell_damage_type is None:
                 from game_sys.core.damage_types import DamageType
@@ -648,13 +648,13 @@ class CombatEngine:
             combat_logger.debug(f"Spell crit roll: {spell_crit_roll:.3f} vs chance: {spell_crit_chance:.3f}")
             damage_packet = spell_packet
         elif weapon:
-            print("DEBUG: Using WEAPON DAMAGE PATH")
+            combat_logger.debug("Using WEAPON DAMAGE PATH")
             damage_packet = DamagePacket.from_weapon_attack(
                 attacker, defender, weapon
             )
         else:
             # Fallback to old calculation
-            print("DEBUG: Using FALLBACK INTELLIGENCE DAMAGE")
+            combat_logger.debug("Using FALLBACK INTELLIGENCE DAMAGE")
             # Fallback: use a flat, low base damage (not based on intelligence)
             fallback_base_damage = 1.0  # You can tune this value for balance
             spell_packet = DamagePacket.from_spell_cast(
@@ -664,7 +664,7 @@ class CombatEngine:
             damage_packet = spell_packet
         
         base_dmg = ScalingManager.compute_damage_from_packet(damage_packet)
-        print(f"DEBUG: ScalingManager returned base damage: {base_dmg}")
+        combat_logger.debug(f"ScalingManager returned base damage: {base_dmg}")
 
         # Focus: increases spell crit chance (now handled above)
         # Resilience: reduces critical hit multiplier
@@ -704,8 +704,8 @@ class CombatEngine:
                 outgoing=True
             )
             final_dmg *= outgoing_multiplier
-            print(
-                f"DEBUG: Applied outgoing damage multiplier: "
+            combat_logger.debug(
+                f"Applied outgoing damage multiplier: "
                 f"{outgoing_multiplier}"
             )
         
@@ -714,8 +714,8 @@ class CombatEngine:
                 outgoing=False
             )
             final_dmg *= incoming_multiplier
-            print(
-                f"DEBUG: Applied incoming damage multiplier: "
+            combat_logger.debug(
+                f"Applied incoming damage multiplier: "
                 f"{incoming_multiplier}"
             )
 
@@ -724,9 +724,9 @@ class CombatEngine:
         damage_type = getattr(damage_packet, 'damage_type', None)
         debug_msg = (f"DEBUG: Applying {final_dmg} damage to {defender.name} "
                      f"with damage type: {damage_type}")
-        print(debug_msg)
+        combat_logger.debug(debug_msg)
         hp_left = defender.take_damage(final_dmg, attacker, damage_type)
-        print(f"DEBUG: {defender.name} has {hp_left} HP remaining")
+        combat_logger.debug(f"{defender.name} has {hp_left} HP remaining")
         
         # Update the attack event with base and final damage
         attack_event.base_damage = base_dmg  # Pre-crit damage

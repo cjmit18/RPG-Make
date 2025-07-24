@@ -1,14 +1,32 @@
 #!/usr/bin/env python3
 """
-UI Package Initialization
-========================
+User Interface Package
+=====================
 
-This package contains UI components for the game system.
-Main UI functionality is provided through DemoUI.
+UI components, services, and controllers for the RPG engine.
+
+Core Components:
+- Demo UI service for main application interface
+- Character creation UI components
+- Combat interface elements
+- Administrative panel UI
+
+Features:
+- Modern tkinter-based interface
+- Responsive layout management
+- Event-driven architecture
+- Custom UI components and widgets
+- Theme and styling support
 """
 
-# Import the main UI component that's actually used
-from .demo_ui import DemoUI
+try:
+    from .demo_ui import DemoUI
+    from .character_creation_ui import CharacterCreationUI
+except ImportError:
+    DemoUI = None
+    CharacterCreationUI = None
 
-# Expose at package level
-__all__ = ['DemoUI']
+__all__ = [
+    "DemoUI",
+    "CharacterCreationUI"
+]

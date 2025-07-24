@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Type, Any
 
 from logs.logs import get_logger
 from .base_widget import BaseWidget
-from .event_types import UIEvent, UIEventType
+from ..game_sys.hooks.event_types import UIEvent, UIEventType
 from .animation import animation_manager
 from .theme import theme_manager
 

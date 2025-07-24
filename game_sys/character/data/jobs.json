@@ -129,20 +129,18 @@
     "dragon": {
       "name": "Dragon",
       "base_stat_mods": {
-        "strength": 18,
-        "dexterity": 8,
-        "vitality": 15,
-        "intelligence": 8,
-        "wisdom": 6,
-        "constitution": 14,
-        "luck": 4,
-        "agility": 8
+        "strength": 0,
+        "dexterity": 0,
+        "vitality": 0,
+        "intelligence": 0,
+        "wisdom": 0,
+        "constitution": 0,
+        "luck": 0,
+        "agility": 0
       },
       "skill_list": ["fire_breath", "tail_sweep"],
       "spell_list": ["dragon_roar"],
       "starting_items": [
-        {"item_id": "dragon_scale_armor", "quantity": 1},
-        {"item_id": "dragon_claw", "quantity": 1}
       ]
     },
     "goblin": {

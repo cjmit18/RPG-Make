@@ -10,11 +10,12 @@
       "wisdom": 10,
       "constitution": 10,
       "luck": 10,
-      "agility": 10
+      "agility": 10,
+      "charisma": 10
     },
     "gold": { "min": 10, "max": 20 },
     "level": { "start": 1, "start_xp": 0 },
-    "grade": 3,
+    "grade": 2,
     "rarity": "RARE",
     "weakness": {},
     "resistance": {},
@@ -34,7 +35,8 @@
       "wisdom": 10,
       "constitution": 7,
       "luck": 8,
-      "agility": 8
+      "agility": 8,
+      "charisma": 9
     },
     "gold": { "min": 15, "max": 30 },
     "level": { "start": 1, "start_xp": 0 },
@@ -58,7 +60,8 @@
       "wisdom": 5,
       "constitution": 12,
       "luck": 7,
-      "agility": 7
+      "agility": 7,
+      "charisma": 8
     },
     "gold": { "min": 5, "max": 15 },
     "level": { "start": 1, "start_xp": 0 },
@@ -82,7 +85,8 @@
       "wisdom": 2,
       "constitution": 2,
       "luck": 2,
-      "agility": 2
+      "agility": 2,
+      "charisma": 2
     },
     "gold": { "min": 1, "max": 5 },
     "level": { "start": 3, "start_xp": 0 },
@@ -106,7 +110,8 @@
       "wisdom": 3,
       "constitution": 9,
       "luck": 5,
-      "agility": 7
+      "agility": 7,
+      "charisma": 3
     },
     "gold": { "min": 5, "max": 10 },
     "level": { "start": 4, "start_xp": 0 },
@@ -130,10 +135,11 @@
       "wisdom": 12,
       "constitution": 20,
       "luck": 10,
-      "agility": 18
+      "agility": 18,
+      "charisma": 16
     },
     "gold": { "min": 50, "max": 100 },
-    "level": { "start": 5, "start_xp": 0 },
+    "level": { "start": 50, "start_xp": 0 },
     "grade": 5,
     "rarity": "DIVINE",
     "weakness": {"ICE": 0.5},
@@ -154,7 +160,8 @@
       "wisdom": 2,
       "constitution": 3,
       "luck": 3,
-      "agility": 6
+      "agility": 6,
+      "charisma": 1
     },
     "gold": { "min": 2, "max": 6 },
     "level": { "start": 1, "start_xp": 0 },
@@ -178,7 +185,8 @@
       "wisdom": 2,
       "constitution": 6,
       "luck": 4,
-      "agility": 10
+      "agility": 10,
+      "charisma": 4
     },
     "gold": { "min": 3, "max": 8 },
     "level": { "start": 1, "start_xp": 0 },
@@ -202,7 +210,8 @@
       "wisdom": 4,
       "constitution": 8,
       "luck": 8,
-      "agility": 14
+      "agility": 14,
+      "charisma": 11
     },
     "gold": { "min": 8, "max": 25 },
     "level": { "start": 1, "start_xp": 0 },

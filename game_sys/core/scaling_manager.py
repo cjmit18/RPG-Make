@@ -74,6 +74,7 @@ class ScalingManager:
         constitution_boost_mult = cfg.get('constants.combat.constitution_multiplier', 0.5)
         luck_boost_mult = cfg.get('constants.combat.luck_multiplier', 0.5)
         agility_boost_mult = cfg.get('constants.combat.agility_multiplier', 1)
+        charisma_boost_mult = cfg.get('constants.combat.charisma_multiplier', 1)
 
         # Validate the multiplier value
         if not isinstance(strength_boost_mult, (int, float)):
@@ -116,6 +117,11 @@ class ScalingManager:
                 f"Invalid agility_multiplier: {agility_boost_mult}, using default 1"
             )
             agility_boost_mult = 1
+        if not isinstance(charisma_boost_mult, (int, float)):
+            scaling_logger.error(
+                f"Invalid charisma_multiplier: {charisma_boost_mult}, using default 1"
+            )
+            charisma_boost_mult = 1
             
         # Calculate the boost 
         strength_boost = int(level * multiplier * strength_boost_mult)
@@ -126,6 +132,7 @@ class ScalingManager:
         constitution_boost = int(level * multiplier * constitution_boost_mult)
         luck_boost = int(level * multiplier * luck_boost_mult)
         agility_boost = int(level * multiplier * agility_boost_mult)
+        charisma_boost = int(level * multiplier * charisma_boost_mult)
         boost = {
             'strength': strength_boost,
             'dexterity': dexterity_boost,
@@ -134,7 +141,8 @@ class ScalingManager:
             'wisdom': wisdom_boost,
             'constitution': constitution_boost,
             'luck': luck_boost,
-            'agility': agility_boost
+            'agility': agility_boost,
+            'charisma': charisma_boost
         }
         if hasattr(enemy, 'base_stats'):
             for stat, value in boost.items():
@@ -153,32 +161,45 @@ class ScalingManager:
     then applies grade & rarity multipliers, and finally weaknesses.
     """
 
+    # Mapping of derived stats to their base stats, organized by category
     _derived_map = {
+        # --- Combat stats ---
         'attack': 'strength',
         'defense': 'vitality',
-        'speed': 'agility',
-        'dodge_chance': 'agility',
-        'block_chance': 'strength',
-        'magic_resistance': 'wisdom',
         'physical_damage': 'strength',
+        'magic_power': 'intelligence',
+        'magic_resistance': 'wisdom',
         'damage_reduction': 'vitality',
-        'mana_regeneration': 'wisdom',
-        'health_regeneration': 'vitality',
-        'stamina_regeneration': 'constitution',
-        'critical_chance': 'dexterity',
-        'luck_factor': 'luck',
-        # Resource stats derived from traditional RPG stats
+
+        # --- Resource stats ---
         'health': 'vitality',
         'mana': 'wisdom',
         'stamina': 'constitution',
-        'magic_power': 'intelligence',
-        # Modernized derived stats
+
+        # --- Regeneration stats ---
+        'health_regeneration': 'vitality',
+        'mana_regeneration': 'wisdom',
+        'stamina_regeneration': 'constitution',
+
+        # --- Chance-based stats ---
+        'critical_chance': 'dexterity',
+        'parry_chance': 'agility',
+        'block_chance': 'strength',
+        'dodge_chance': 'agility',
+        'luck_factor': 'luck',
+
+        # --- Utility & secondary stats ---
+        'speed': 'agility',
         'accuracy': 'dexterity',
         'evasion': 'agility',
-        'parry_chance': 'agility',
+        'initiative': 'agility',
         'resilience': 'constitution',
         'focus': 'wisdom',
-        'initiative': 'agility',
+
+        # --- Social/leadership stats ---
+        'leadership': 'charisma',
+        'social_influence': 'charisma',
+        'negotiation_bonus': 'charisma',
     }
     
     @classmethod
@@ -629,7 +650,7 @@ class ScalingManager:
             return
             
         # Filter to only base RPG stats (not derived stats like attack, defense, etc.)
-        base_rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility']
+        base_rpg_stats = ['strength', 'dexterity', 'vitality', 'intelligence', 'wisdom', 'constitution', 'luck', 'agility', 'charisma']
         filtered_stats = [stat for stat in allocatable_stats if stat in base_rpg_stats]
         
         if not filtered_stats:

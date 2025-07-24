@@ -112,6 +112,7 @@ class LevelingManager:
             'constitution',
             'luck',
             'agility',
+            'charisma',
         ]
         
 
@@ -264,7 +265,8 @@ class LevelingManager:
             'intelligence': 'Boosts mana pool and spell damage',
             'wisdom': 'Improves mana regeneration and spell resistance',
             'constitution': 'Increases stamina and resistance to effects',
-            'luck': 'Improves critical hit chance and rare item find rate'
+            'luck': 'Improves critical hit chance and rare item find rate',
+            'charisma': 'Enhances negotiation, leadership, and social interactions'
         }
     
     def get_stat_impact(self, stat_name: str) -> Dict[str, float]:
@@ -301,6 +303,11 @@ class LevelingManager:
             'luck': {
                 'critical_chance': 0.001,
                 'item_find': 0.01
+            },
+            'charisma': {
+                'leadership': 0.02,
+                'social_influence': 0.05,
+                'negotiation_bonus': 0.01
             }
         }
         

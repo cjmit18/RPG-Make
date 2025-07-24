@@ -1,0 +1,42 @@
+{
+  "Valiant Hero": {
+    "name": "Valiant Hero",
+    "original_name": "Valiant Hero",
+    "template_id": "hero",
+    "save_name": "Valiant Hero",
+    "created_date": "2025-07-23T22:28:55.887085",
+    "character_data": "{\"name\": \"Valiant Hero\", \"base_stats\": {\"magic_power\": 0.0, \"max_targets\": 0.0, \"strength\": 10, \"dexterity\": 11, \"vitality\": 11, \"intelligence\": 10, \"wisdom\": 10, \"constitution\": 11, \"luck\": 10, \"charisma\": 10, \"agility\": 10, \"_skip_default_job\": true, \"level\": 1, \"grade\": 2, \"rarity\": \"UNCOMMON\"}, \"level\": 1, \"xp\": 0.0, \"current_health\": 143.0416, \"current_mana\": 143.0416, \"current_stamina\": 143.0416, \"grade\": 2, \"rarity\": \"UNCOMMON\", \"gold\": 0, \"position\": [0.0, 0.0], \"facing_vector\": [1.0, 0.0], \"team\": \"neutral\", \"statuses\": [], \"skills\": [], \"inventory\": []}"
+  },
+  "1": {
+    "name": "Valiant Hero",
+    "original_name": "Valiant Hero",
+    "template_id": "dragon",
+    "save_name": "1",
+    "created_date": "2025-07-23T05:15:34.478592",
+    "character_data": "{\"name\": \"Valiant Hero\", \"base_stats\": {\"magic_power\": 0.0, \"max_targets\": 0.0, \"strength\": 25, \"dexterity\": 18, \"vitality\": 22, \"intelligence\": 15, \"wisdom\": 12, \"constitution\": 20, \"luck\": 10, \"charisma\": 16, \"agility\": 18, \"_skip_default_job\": true, \"level\": 1, \"grade\": 1, \"rarity\": \"COMMON\"}, \"level\": 1, \"xp\": 0.0, \"current_health\": 24.200000000000003, \"current_mana\": 24.200000000000003, \"current_stamina\": 24.200000000000003, \"grade\": 1, \"rarity\": \"COMMON\", \"gold\": 0, \"position\": [0.0, 0.0], \"facing_vector\": [1.0, 0.0], \"team\": \"neutral\", \"statuses\": [], \"skills\": [], \"inventory\": []}"
+  },
+  "mage": {
+    "name": "Valiant Hero",
+    "original_name": "Valiant Hero",
+    "template_id": "warrior",
+    "save_name": "mage",
+    "created_date": "2025-07-23T04:59:42.726030",
+    "character_data": "{\"name\": \"Valiant Hero\", \"base_stats\": {\"magic_power\": 0.0, \"max_targets\": 0.0, \"strength\": 12, \"dexterity\": 10, \"vitality\": 10, \"intelligence\": 10, \"wisdom\": 10, \"constitution\": 10, \"luck\": 10, \"charisma\": 10, \"agility\": 10, \"_skip_default_job\": true, \"level\": 1, \"grade\": 1, \"rarity\": \"COMMON\"}, \"level\": 1, \"xp\": 0.0, \"current_health\": 121.00000000000001, \"current_mana\": 121.00000000000001, \"current_stamina\": 121.00000000000001, \"grade\": 1, \"rarity\": \"COMMON\", \"gold\": 0, \"position\": [0.0, 0.0], \"facing_vector\": [1.0, 0.0], \"team\": \"neutral\", \"statuses\": [], \"skills\": [], \"inventory\": []}"
+  },
+  "Arcane Mage": {
+    "name": "Arcane Mage",
+    "original_name": "Arcane Mage",
+    "template_id": "mage",
+    "save_name": "Arcane Mage",
+    "created_date": "2025-07-23T22:48:24.559879",
+    "character_data": "{\"name\": \"Arcane Mage\", \"base_stats\": {\"magic_power\": 0.0, \"max_targets\": 0.0, \"strength\": 8, \"dexterity\": 11, \"vitality\": 10, \"intelligence\": 22, \"wisdom\": 16, \"constitution\": 9, \"luck\": 12, \"charisma\": 9, \"agility\": 11, \"_skip_default_job\": true, \"level\": 1, \"grade\": 0, \"rarity\": \"UNCOMMON\"}, \"level\": 1, \"xp\": 0.0, \"current_health\": 70.0, \"current_mana\": 100.0, \"current_stamina\": 97.344, \"grade\": 0, \"rarity\": \"UNCOMMON\", \"gold\": 0, \"position\": [0.0, 0.0], \"facing_vector\": [1.0, 0.0], \"team\": \"neutral\", \"statuses\": [\"resource_drain_mana_2.0_9999\", \"resource_drain_health_1_9999\"], \"skills\": [\"mana_boost_5\", \"mana_regen_2\"], \"inventory\": [{\"id\": \"spell_focus\", \"quantity\": 1, \"enchantments\": []}, {\"id\": \"potion_health\", \"quantity\": 1}, {\"id\": \"potion_health\", \"quantity\": 1}, {\"id\": \"potion_health\", \"quantity\": 1}]}"
+  },
+  "Strong Warrior": {
+    "name": "Strong Warrior",
+    "original_name": "Strong Warrior",
+    "template_id": "warrior",
+    "save_name": "Strong Warrior",
+    "created_date": "2025-07-23T22:50:56.930863",
+    "character_data": "{\"name\": \"Strong Warrior\", \"base_stats\": {\"magic_power\": 0.0, \"max_targets\": 0.0, \"strength\": 25, \"dexterity\": 14, \"vitality\": 19, \"intelligence\": 8, \"wisdom\": 6, \"constitution\": 17, \"luck\": 9, \"charisma\": 8, \"agility\": 12, \"_skip_default_job\": true, \"level\": 1, \"grade\": 1, \"rarity\": \"COMMON\", \"evasion\": 0.03, \"resilience\": 0.02, \"block_chance\": 0.15}, \"level\": 1, \"xp\": 0.0, \"current_health\": 130.0, \"current_mana\": 50.0, \"current_stamina\": 205.70000000000005, \"grade\": 1, \"rarity\": \"COMMON\", \"gold\": 0, \"position\": [0.0, 0.0], \"facing_vector\": [1.0, 0.0], \"team\": \"neutral\", \"statuses\": [\"resource_drain_mana_2.0_9999\", \"resource_drain_health_1_9999\"], \"skills\": [\"flat_5\"], \"inventory\": []}"
+  }
+}

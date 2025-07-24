@@ -68,6 +68,7 @@
       "constitution_multiplier": 2.0,
       "luck_multiplier": 1.0,
       "agility_multiplier": 1.5,
+      "charisma_multiplier": 1.2,
       "stamina_costs": {
         "attack": 5,
         "dodge": 8,
@@ -100,7 +101,10 @@
       "resilience": 1.2,
       "spell_power": 1.5,
       "focus": 1.2,
-      "initiative": 0.5
+      "initiative": 0.5,
+      "leadership": 1.0,
+      "social_influence": 0.5,
+      "negotiation_bonus": 0.02
     },
     "stats_defaults": {
       "magic_power": 0.0,
@@ -111,7 +115,8 @@
       "intelligence": 0.0,
       "wisdom": 0.0,
       "constitution": 0.0,
-      "luck": 0.0
+      "luck": 0.0,
+      "charisma": 0.0
     },
     "leveling": {
       "max_level": 100,
@@ -203,9 +208,7 @@
       "HOLY",
       "DARK",
       "MAGIC"
-    ],
-    "xp_formula": "level * 100",
-    "stat_points_per_level": 3
+    ]
   },
   "randomness": {
     "seed": null,

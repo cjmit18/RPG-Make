@@ -10,6 +10,10 @@ import time
 from enum import Enum, auto
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+from game_sys.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class EasingType(Enum):
     """Enum defining animation easing functions."""
@@ -137,7 +141,7 @@ class Animation:
             try:
                 callback()
             except Exception as e:
-                print(f"Error in animation completion callback: {e}")
+                logger.error(f"Error in animation completion callback: {e}")
 
 
 class PropertyAnimation(Animation):
@@ -223,7 +227,7 @@ class PropertyAnimation(Animation):
         try:
             setattr(self.target, self.property_name, value)
         except Exception as e:
-            print(f"Error setting property {self.property_name}: {e}")
+            logger.error(f"Error setting property {self.property_name}: {e}")
 
 
 class SequenceAnimation(Animation):

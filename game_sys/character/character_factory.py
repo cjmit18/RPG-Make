@@ -115,7 +115,7 @@ class CharacterFactory:
             actor.level = overrides['level']
             character_logger.debug(f"Set level to {actor.level} for {actor.name}")
 
-        # 3) Determine grade (numeric) - use override if provided
+        # 3) Determine grade (numeric) - use override if provided, otherwise use template constraint
         if 'grade' in overrides:
             actor.grade = overrides['grade']
             # Try to find the corresponding grade name
@@ -135,31 +135,49 @@ class CharacterFactory:
                 setattr(actor, 'grade_name', f"GRADE_{actor.grade}")
             character_logger.debug(f"Used override grade {actor.grade} ({getattr(actor, 'grade_name')}) for {actor.name}")
         else:
-            # Generate random grade
+            # Generate random grade based on template constraint
             grades = cfg.get('defaults.grades', [])
-            if grades:
-                grade_weights = [
-                    cfg.get('randomness.grade_weights', {}).get(g, 0.0) 
-                    for g in grades
-                ]
-                grade_name = random.choices(grades, grade_weights, k=1)[0]
-                setattr(actor, 'grade_name', grade_name)
-                actor.grade = grades.index(grade_name)  # Store as 0-indexed
-                character_logger.debug(f"Assigned random grade {actor.grade} ({grade_name}) to {actor.name}")
+            template_max_grade = data.get('grade', 0)  # Template grade is the maximum allowed
+            
+            if grades and template_max_grade > 0:
+                # Random grade from 0 to template_max_grade-1 (so grade 3 means 0,1,2 -> ONE,TWO,THREE)
+                max_grade_index = min(template_max_grade - 1, len(grades) - 1)
+                actor.grade = random.randint(0, max_grade_index)
+                setattr(actor, 'grade_name', grades[actor.grade])
+                character_logger.debug(f"Assigned random grade {actor.grade} ({grades[actor.grade]}) to {actor.name} (max from template: {template_max_grade})")
             else:
                 actor.grade = 0
                 setattr(actor, 'grade_name', "ONE")
 
-        # 4) Determine rarity (string) - use override if provided
+        # 4) Determine rarity (string) - use override if provided, otherwise use template constraint
         if 'rarity' in overrides:
             actor.rarity = overrides['rarity']
             character_logger.debug(f"Used override rarity '{actor.rarity}' for {actor.name}")
         else:
-            # Generate random rarity
-            rarities = list(cfg.get('randomness.rarity_weights', {}).keys())
-            rarity_weights = list(cfg.get('randomness.rarity_weights', {}).values())
-            actor.rarity = random.choices(rarities, rarity_weights, k=1)[0]
-            character_logger.debug(f"Assigned random rarity '{actor.rarity}' to {actor.name}")
+            # Generate random rarity based on template constraint
+            rarities = cfg.get('defaults.rarities', [])
+            template_max_rarity = data.get('rarity', 'COMMON')  # Template rarity is the maximum allowed
+            
+            if rarities and template_max_rarity in rarities:
+                # Find the index of the max rarity in the list
+                max_rarity_index = rarities.index(template_max_rarity)
+                # Select random rarity from COMMON up to the template max
+                available_rarities = rarities[:max_rarity_index + 1]
+                
+                # Use weighted selection (higher rarities are less likely)
+                weights = [0.60, 0.25, 0.10, 0.04, 0.008, 0.002, 0.0005]  # Decreasing probabilities
+                rarity_weights = weights[:len(available_rarities)]
+                
+                # Normalize weights
+                total_weight = sum(rarity_weights)
+                if total_weight > 0:
+                    rarity_weights = [w / total_weight for w in rarity_weights]
+                
+                actor.rarity = random.choices(available_rarities, rarity_weights, k=1)[0]
+                character_logger.debug(f"Assigned random rarity '{actor.rarity}' to {actor.name} (max from template: {template_max_rarity})")
+            else:
+                actor.rarity = 'COMMON'
+                character_logger.debug(f"Used fallback rarity 'COMMON' for {actor.name}")
 
         # 5) Load weaknesses and resistances from template
         from game_sys.core.damage_types import DamageType

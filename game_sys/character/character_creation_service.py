@@ -394,8 +394,28 @@ class CharacterCreationService:
             available_stat_points=self.config.default_stat_points
         )
         
+        # Set up event handlers
+        self._setup_event_handlers()
+        
         self.logger.info("CharacterCreationService initialized with dependency injection")
     
+    def _setup_event_handlers(self) -> None:
+        """Set up event handlers for game events."""
+        from game_sys.hooks.hooks_setup import on, ON_LEVEL_UP
+        on(ON_LEVEL_UP, self._on_stat_points_updated)
+    
+    def _on_stat_points_updated(self, actor, new_level=None, **kwargs) -> None:
+        """Handle stat points update events."""
+        try:
+            # Check if this is the current character
+            if actor and actor == self._state.current_character:
+                # Recalculate available stat points
+                new_stat_points = self._leveling_manager.calculate_stat_points_available(actor)
+                self._state = self._state.with_stat_points(new_stat_points)
+                self.logger.info(f"Updated stat points to {new_stat_points} for character level {actor.level}")
+        except Exception as e:
+            self.logger.error(f"Error handling stat points update: {e}")
+
     # ===== PUBLIC API =====
     
     @property
@@ -630,7 +650,14 @@ class CharacterCreationService:
             result = self._stat_service.reset_stat_allocation(self._state.current_character, template_data)
             
             if result['success']:
-                self._state = self._state.with_stat_points(self._get_default_stat_points())
+                # Recalculate available stat points based on character's current level
+                if self._state.current_character:
+                    new_stat_points = self._leveling_manager.calculate_stat_points_available(self._state.current_character)
+                    self._state = self._state.with_stat_points(new_stat_points)
+                    self.logger.info(f"Reset stats - available points updated to {new_stat_points} for level {self._state.current_character.level}")
+                else:
+                    # Fallback to default if no character
+                    self._state = self._state.with_stat_points(self._get_default_stat_points())
                 
                 # Notify observers
                 self._notify_character_reset()
@@ -781,11 +808,16 @@ class CharacterCreationService:
     def get_points_display_info(self) -> Dict[str, Any]:
         """Get points display information."""
         try:
+            # Calculate allocated points from character's actual spent points
+            allocated_points = 0
+            if self._state.current_character:
+                allocated_points = getattr(self._state.current_character, 'spent_stat_points', 0)
+            
             return {
                 'success': True,
                 'available_points': self._state.available_stat_points,
                 'infinite_mode': self._state.infinite_stat_points,
-                'allocated_points': self.config.default_stat_points - self._state.available_stat_points,
+                'allocated_points': allocated_points,
                 'message': "Points display info retrieved successfully"
             }
         except Exception as e:
@@ -1210,7 +1242,7 @@ class CharacterCreationService:
         """Delete a character from the library."""
         try:
             if hasattr(self, '_library_service'):
-                result = self._library_service.delete_saved_character(save_name)
+                result = self._library_service.delete_character(save_name)
                 return {
                     'success': result.get('success', False),
                     'message': result.get('message', f'Character {save_name} deleted')

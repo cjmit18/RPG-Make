@@ -187,8 +187,8 @@ class CharacterService:
             return 'COMMON'
             
         # Define weights (higher index = lower probability)
-        # Common: 60%, Uncommon: 20%, Rare: 10%, Epic: 5%, etc.
-        base_weights = [0.60, 0.20, 0.10, 0.05, 0.03, 0.015, 0.005]
+        # Common: 60%, Uncommon: 20%, Rare: 10%, Epic: 5%, Legendary: 3%, Mythic: 1.5%, Divine: 0.5%
+        base_weights = [0.60, 0.20, 0.10, 0.05, 0.03, 0.015, 0.001]
         
         # Only consider rarities up to the max index
         available_rarities = self.rarities[:max_rarity_index + 1]

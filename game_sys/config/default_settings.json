@@ -120,9 +120,23 @@
     },
     "leveling": {
       "max_level": 100,
+      "formula_type": "exponential_smooth",
       "xp_base": 100,
       "xp_exponent": 2.0,
-      "stat_points_per_level": 3
+      "stat_points_per_level": 3,
+      
+      "growth_factor": 1.15,
+      "level_modifier": 0.05,
+      
+      "poly_coefficient": 25,
+      "poly_power": 2.2,
+      
+      "linear_levels": 10,
+      "linear_increment": 50,
+      "exp_base": 1.12,
+      
+      "log_multiplier": 200,
+      "log_base": 2.0
     },
     "grade": {
       "stat_multiplier": {

@@ -1,0 +1,37 @@
+{
+  "export_timestamp": "2025-07-24T21:39:46.187609",
+  "current_state": {
+    "initialized": false,
+    "current_tab": null,
+    "character_count": 0,
+    "combat_count": 0,
+    "features_accessed": [],
+    "errors": [],
+    "start_time": null,
+    "last_activity": null
+  },
+  "usage_statistics": {
+    "total_sessions": 1,
+    "completed_sessions": 1,
+    "total_characters_created": 0,
+    "total_combat_sessions": 0,
+    "unique_features_accessed": 0,
+    "total_errors": 0,
+    "features_accessed": [],
+    "average_session_duration_seconds": 0.002002
+  },
+  "session_history": [
+    {
+      "session_id": "demo_20250724_213928",
+      "start_time": "2025-07-24T21:39:28.689313",
+      "end_time": "2025-07-24T21:39:28.691315",
+      "character_created": true,
+      "combat_sessions": 1,
+      "features_used": [
+        "character_creation"
+      ],
+      "errors_encountered": 0,
+      "duration_seconds": 0.002002
+    }
+  ]
+}

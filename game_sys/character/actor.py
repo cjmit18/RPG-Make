@@ -237,8 +237,8 @@ class Actor:
         self.last_hit_damage: float = 0.0
         self.killed_by: Optional[Actor] = None
         self.kills: List[Actor] = []
-        self.team = 'neutral'  # 'player', 'enemy', 'neutral'
-        
+        self.team = None  # Default team, can be overridden by subclasses
+
         # Spell and skill tracking
         self.pending_spell: Optional[str] = None  # Track currently casting
         self._spell_state: bool = False  # Flag for spell execution
@@ -1154,7 +1154,6 @@ class Player(Actor):
         self.learning = LearningSystem(self)
         self.experience = 0
         self.spent_stat_points = 0
-
         # Only assign default job if no job assignment will happen later
         # Character factory will handle job assignment for template-based creation
         if not overrides.get('_skip_default_job', False):

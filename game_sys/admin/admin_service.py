@@ -17,6 +17,7 @@ This service handles:
 
 from typing import Dict, Any
 from game_sys.logging import get_logger
+from game_sys.character.leveling_manager import LevelingManager
 
 
 class AdminService:
@@ -27,6 +28,9 @@ class AdminService:
         self.logger = get_logger(__name__)
         self.admin_mode = False
         self.infinite_stat_points = False
+        
+        # Initialize leveling manager for proper stat point calculations
+        self.leveling_manager = LevelingManager()
         
         # Admin configuration
         self.max_level = 100
@@ -211,7 +215,7 @@ class AdminService:
     
     def set_character_level(self, character: Any, level: int) -> Dict[str, Any]:
         """
-        Set character level (admin cheat).
+        Set character level (admin cheat) using proper level-up system.
         
         Args:
             character: Character object to modify
@@ -233,18 +237,63 @@ class AdminService:
             
             old_level = getattr(character, 'level', 1)
             
-            # Set the level
-            character.level = level
+            if level == old_level:
+                return {
+                    'success': True,
+                    'old_level': old_level,
+                    'new_level': level,
+                    'available_stat_points': self.leveling_manager.calculate_stat_points_available(character),
+                    'message': f"Character is already level {level}"
+                }
             
-            # Update character stats to reflect level changes
-            character.update_stats()
+            # Initialize character attributes if they don't exist
+            if not hasattr(character, 'level'):
+                character.level = 1
+            if not hasattr(character, 'experience'):
+                character.experience = 0
+            if not hasattr(character, 'spent_stat_points'):
+                character.spent_stat_points = 0
             
-            self.logger.info(f"Changed character level from {old_level} to {level}")
+            levels_to_gain = level - old_level
+            
+            if levels_to_gain > 0:
+                # Use proper experience-based leveling system instead of direct level_up()
+                # Calculate total XP needed to reach target level
+                target_xp = self.leveling_manager.get_total_xp_for_level(level)
+                current_xp = getattr(character, 'experience', 0)
+                xp_to_add = max(0, target_xp - current_xp)
+                
+                if xp_to_add > 0:
+                    # Use the experience gain system which properly handles level-ups, hooks, and stat points
+                    self.leveling_manager.gain_experience(character, xp_to_add)
+                
+                self.logger.info(f"Admin leveled character from {old_level} to {level} via experience system")
+            else:
+                # Level down (set level directly and recalculate)
+                # This is a cheat so we allow going backwards
+                character.level = level
+                
+                # Reset experience to match the new level
+                if hasattr(character, 'experience'):
+                    # Set experience to the minimum for this level
+                    character.experience = sum(self.leveling_manager._xp_for_next_level(i) for i in range(1, level))
+                
+                # Update stats to reflect level changes
+                if hasattr(character, 'update_stats'):
+                    character.update_stats()
+                    
+                self.logger.info(f"Set character level from {old_level} to {level} (level down)")
+            
+            # Get final available points after level changes
+            available_points = self.leveling_manager.calculate_stat_points_available(character)
+            
             return {
                 'success': True,
                 'old_level': old_level,
                 'new_level': level,
-                'message': f"Character level changed from {old_level} to {level}"
+                'levels_gained': levels_to_gain,
+                'available_stat_points': available_points,
+                'message': f"Character level changed from {old_level} to {level} using proper level-up system. Available stat points: {available_points}"
             }
             
         except Exception as e:
@@ -253,6 +302,120 @@ class AdminService:
                 'success': False,
                 'error': str(e),
                 'message': 'Failed to set character level'
+            }
+    
+    def level_up_character_to_level(self, character: Any, target_level: int) -> Dict[str, Any]:
+        """
+        Level up character to a specific level using experience gain (most proper method).
+        
+        Args:
+            character: Character object to modify
+            target_level: Target level to reach
+            
+        Returns:
+            Result dictionary with level up status
+        """
+        try:
+            if not self.admin_mode:
+                raise ValueError("Admin mode must be enabled to use cheats")
+            
+            if not character:
+                raise ValueError("No character provided")
+            
+            # Validate level range
+            if target_level < 1 or target_level > self.max_level:
+                raise ValueError(f"Level must be between 1-{self.max_level}")
+            
+            old_level = getattr(character, 'level', 1)
+            
+            if target_level <= old_level:
+                return {
+                    'success': False,
+                    'message': f"Target level {target_level} must be higher than current level {old_level}. Use set_character_level for level down."
+                }
+            
+            # Initialize character attributes if they don't exist
+            if not hasattr(character, 'level'):
+                character.level = 1
+            if not hasattr(character, 'experience'):
+                character.experience = 0
+            
+            # Calculate experience needed to reach target level
+            current_xp = getattr(character, 'experience', 0)
+            current_level = getattr(character, 'level', 1)
+            
+            # Calculate XP needed step by step from current level to target level
+            xp_to_add = 0
+            for level in range(current_level, target_level):
+                xp_to_add += self.leveling_manager._xp_for_next_level(level)
+            
+            # Debug logging to see what we're calculating
+            self.logger.info(f"Character at level {current_level} with {current_xp} XP, needs {xp_to_add} more XP to reach level {target_level}")
+            
+            if xp_to_add > 0:
+                # Use the proper experience gain system which handles level-ups and stat points
+                self.leveling_manager.gain_experience(character, xp_to_add)
+            
+            new_level = getattr(character, 'level', old_level)
+            available_points = self.leveling_manager.calculate_stat_points_available(character)
+            
+            self.logger.info(f"Leveled up character from {old_level} to {new_level} using experience gain system")
+            
+            return {
+                'success': True,
+                'old_level': old_level,
+                'new_level': new_level,
+                'levels_gained': new_level - old_level,
+                'experience_gained': xp_to_add,
+                'available_stat_points': available_points,
+                'message': f"Character leveled up from {old_level} to {new_level} via experience gain. Available stat points: {available_points}"
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Failed to level up character: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'message': 'Failed to level up character'
+            }
+    
+    def get_character_stat_points_info(self, character: Any) -> Dict[str, Any]:
+        """
+        Get detailed stat point information for a character.
+        
+        Args:
+            character: Character object to examine
+            
+        Returns:
+            Dictionary with stat point information
+        """
+        try:
+            if not character:
+                return {'error': 'No character provided'}
+            
+            level = getattr(character, 'level', 1)
+            spent_points = getattr(character, 'spent_stat_points', 0)
+            available_points = self.leveling_manager.calculate_stat_points_available(character)
+            points_per_level = self.leveling_manager.get_stat_points_per_level(character)
+            # Characters start with base points at level 1, then gain points_per_level for each additional level
+            total_points = points_per_level + (level - 1) * points_per_level
+            
+            return {
+                'success': True,
+                'level': level,
+                'points_per_level': points_per_level,
+                'total_points_earned': total_points,
+                'spent_points': spent_points,
+                'available_points': available_points,
+                'message': f"Level {level}: {available_points}/{total_points} stat points available"
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Failed to get stat points info: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'message': 'Failed to get stat points information'
             }
     
     def add_stat_points(self, amount: int = 10) -> Dict[str, Any]:

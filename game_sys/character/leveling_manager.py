@@ -39,28 +39,117 @@ class LevelingManager:
         character_logger.info(f"{getattr(actor, 'name', repr(actor))} gained {amount} XP (total: {actor.experience})")
         emit_with_hooks(ON_EXPERIENCE_GAINED, actor=actor, amount=amount)
 
-        # Check for level up
-        xp_for_next_level = self._xp_for_next_level(actor.level)
-        while actor.experience >= xp_for_next_level:
-            # Pre-level up hook
-            emit_with_hooks(ON_PRELEVEL_UP, actor=actor, new_level=actor.level + 1)
+        # Check for level up using cumulative XP thresholds
+        while True:
+            # Calculate total XP needed to reach the next level
+            next_level_total_xp = self.get_total_xp_for_level(actor.level + 1)
+            
+            if actor.experience >= next_level_total_xp:
+                # Pre-level up hook
+                emit_with_hooks(ON_PRELEVEL_UP, actor=actor, new_level=actor.level + 1)
 
-            actor.level += 1
-            character_logger.info(f"{getattr(actor, 'name', repr(actor))} leveled up to level {actor.level}!")
-            emit_with_hooks(ON_LEVEL_UP, actor=actor, new_level=actor.level)
+                actor.level += 1
+                character_logger.info(f"{getattr(actor, 'name', repr(actor))} leveled up to level {actor.level}!")
+                emit_with_hooks(ON_LEVEL_UP, actor=actor, new_level=actor.level)
 
-            # Post-level up hook
-            emit_with_hooks(ON_POSTLEVEL_UP, actor=actor, new_level=actor.level)
-
-            # Recalculate XP needed for next level
-            xp_for_next_level = self._xp_for_next_level(actor.level)
+                # Post-level up hook
+                emit_with_hooks(ON_POSTLEVEL_UP, actor=actor, new_level=actor.level)
+            else:
+                break  # No more level ups possible
         
     def _xp_for_next_level(self, level):
+        """Calculate XP needed to reach the next level."""
         cfg = ConfigManager()
-        base_xp = cfg.get('constants.leveling.xp_base', 100)
-        exponent = cfg.get('constants.leveling.xp_exponent', 1.0)
-        return int(base_xp * (level ** int(exponent)))
+        
+        # Get formula type from config (allows switching between formulas)
+        formula_type = cfg.get('constants.leveling.formula_type', 'exponential_smooth')
+        
+        if formula_type == 'exponential_smooth':
+            # Smooth exponential growth with configurable parameters
+            base_xp = cfg.get('constants.leveling.xp_base', 100)
+            growth_factor = cfg.get('constants.leveling.growth_factor', 1.15)
+            level_modifier = cfg.get('constants.leveling.level_modifier', 0.05)
+            
+            # Formula: base * (growth_factor ^ level) * (1 + level * level_modifier)
+            xp_needed = base_xp * (growth_factor ** level) * (1 + level * level_modifier)
+            return int(xp_needed)
+            
+        elif formula_type == 'polynomial':
+            # Polynomial growth - more predictable than exponential
+            base_xp = cfg.get('constants.leveling.xp_base', 100)
+            poly_coefficient = cfg.get('constants.leveling.poly_coefficient', 25)
+            poly_power = cfg.get('constants.leveling.poly_power', 2.2)
+            
+            # Formula: base + (coefficient * level^power)
+            xp_needed = base_xp + (poly_coefficient * (level ** poly_power))
+            return int(xp_needed)
+            
+        elif formula_type == 'hybrid':
+            # Hybrid approach - linear early game, exponential late game
+            base_xp = cfg.get('constants.leveling.xp_base', 100)
+            linear_levels = cfg.get('constants.leveling.linear_levels', 10)
+            linear_increment = cfg.get('constants.leveling.linear_increment', 50)
+            exp_base = cfg.get('constants.leveling.exp_base', 1.12)
+            
+            if level <= linear_levels:
+                # Linear growth for early levels
+                xp_needed = base_xp + (level * linear_increment)
+            else:
+                # Exponential growth for higher levels
+                linear_total = base_xp + (linear_levels * linear_increment)
+                exp_levels = level - linear_levels
+                xp_needed = linear_total * (exp_base ** exp_levels)
+            return int(xp_needed)
+            
+        elif formula_type == 'logarithmic':
+            # Logarithmic scaling - slower growth at higher levels
+            import math
+            base_xp = cfg.get('constants.leveling.xp_base', 100)
+            log_multiplier = cfg.get('constants.leveling.log_multiplier', 200)
+            log_base = cfg.get('constants.leveling.log_base', 2.0)
+            
+            # Formula: base + (multiplier * log(level + 1, base))
+            xp_needed = base_xp + (log_multiplier * math.log(level + 1, log_base))
+            return int(xp_needed)
+            
+        else:
+            # Fallback to original exponential formula
+            base_xp = cfg.get('constants.leveling.xp_base', 100)
+            exponent = cfg.get('constants.leveling.xp_exponent', 1.0)
+            return int(base_xp * (level ** int(exponent)))
 
+    def get_total_xp_for_level(self, target_level):
+        """Calculate total XP needed to reach a specific level from level 1."""
+        total_xp = 0
+        for level in range(1, target_level):
+            total_xp += self._xp_for_next_level(level)
+        return total_xp
+
+    def get_xp_progress_info(self, actor):
+        """Get detailed XP progression information for the actor."""
+        current_level = getattr(actor, 'level', 1)
+        current_xp = getattr(actor, 'experience', 0)
+        
+        # XP needed for current level and next level
+        xp_for_current = self.get_total_xp_for_level(current_level)
+        xp_for_next = self.get_total_xp_for_level(current_level + 1)
+        xp_needed_for_next = self._xp_for_next_level(current_level)
+        
+        # Progress within current level
+        xp_in_current_level = current_xp - xp_for_current
+        progress_percent = (xp_in_current_level / xp_needed_for_next) * 100 if xp_needed_for_next > 0 else 0
+        
+        return {
+            'current_level': current_level,
+            'current_xp': current_xp,
+            'xp_for_current_level': xp_for_current,
+            'xp_for_next_level': xp_for_next,
+            'xp_needed_for_next': xp_needed_for_next,
+            'xp_in_current_level': xp_in_current_level,
+            'progress_percent': min(100.0, max(0.0, progress_percent)),
+            'xp_remaining': max(0, xp_needed_for_next - xp_in_current_level)
+        }
+    
     def reset_stat_points(self, actor):
         """Reset all allocated stat points for the actor."""
         if not hasattr(actor, 'base_stats'):
@@ -114,6 +203,44 @@ class LevelingManager:
             'agility',
             'charisma',
         ]
+        
+        # Set up event handlers for proper level up integration
+        self._setup_event_handlers()
+        
+    def _setup_event_handlers(self):
+        """Set up event handlers for level up events."""
+        from game_sys.hooks.hooks_setup import on
+        
+        # Register handler for level up events to manage stat points
+        on(ON_LEVEL_UP, self._on_level_up)
+        character_logger.info("LevelingManager event handlers registered")
+        
+    def _on_level_up(self, actor, new_level, **kwargs):
+        """
+        Handle level up events by ensuring stat points are properly tracked.
+        This is called automatically when a character levels up via experience gain.
+        """
+        try:
+            # Ensure the character has the spent_stat_points attribute
+            if not hasattr(actor, 'spent_stat_points'):
+                actor.spent_stat_points = 0
+                
+            # Log the level up for stat point calculation
+            points_per_level = self.get_stat_points_per_level(actor)
+            available_points = self.calculate_stat_points_available(actor)
+            
+            character_logger.info(
+                f"{getattr(actor, 'name', 'Character')} reached level {new_level} - "
+                f"Available stat points: {available_points} "
+                f"(+{points_per_level} from this level)"
+            )
+            
+            # Emit event for UI updates or other systems
+            from game_sys.hooks.hooks_setup import emit
+            emit('stat_points_updated', actor=actor, available_points=available_points)
+            
+        except Exception as e:
+            character_logger.error(f"Error in level up handler: {e}")
         
 
     def get_stat_points_per_level(self, actor=None):
@@ -195,11 +322,13 @@ class LevelingManager:
         """
         Calculate how many stat points an actor should have available.
         Uses the current config value for stat points per level.
+        Characters start with base points at level 1, then gain more with each level.
         """
         if not hasattr(actor, 'level'):
             return 0
         points_per_level = self.get_stat_points_per_level(actor)
-        total_points = (actor.level - 1) * points_per_level
+        # Characters start with base points at level 1, then gain points_per_level for each additional level
+        total_points = points_per_level + (actor.level - 1) * points_per_level
         spent_points = getattr(actor, 'spent_stat_points', 0)
         return max(0, total_points - spent_points)
     

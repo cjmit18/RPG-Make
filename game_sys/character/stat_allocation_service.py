@@ -86,6 +86,11 @@ class StatAllocationService:
             else:
                 # Update the base stat directly
                 character.base_stats[stat_name] = new_base_value
+            
+            # Track spent stat points (important for UI display)
+            if not hasattr(character, 'spent_stat_points'):
+                character.spent_stat_points = 0
+            character.spent_stat_points += amount
                 
             character.update_stats()  # Refresh derived stats
             
@@ -150,6 +155,9 @@ class StatAllocationService:
             # Reset each stat to its base template value
             for stat_name, base_value in base_stats.items():
                 character.base_stats[stat_name] = base_value
+            
+            # Reset spent stat points to 0 since we're going back to base template values
+            character.spent_stat_points = 0
             
             # Restore preserved attributes
             character.grade = current_grade

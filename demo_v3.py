@@ -19,6 +19,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import threading
 import time
+import sys
+import os
+import gc
 from typing import Dict, Any, Optional, List, Callable
 from datetime import datetime
 from dataclasses import dataclass
@@ -590,6 +593,7 @@ class RPGEngineDemoV3:
         
         # Admin section
         menu.add_command(label="🔧 Admin Panel", command=self._show_admin_panel)
+        menu.add_command(label="🔑 Toggle Admin Mode", command=self._toggle_admin_mode)
         menu.add_separator()
         
         # Character management
@@ -698,6 +702,42 @@ class RPGEngineDemoV3:
             self.logger.error(f"Admin panel error: {e}")
             messagebox.showerror("Error", f"Could not open admin panel: {e}")
     
+    def _toggle_admin_mode(self) -> None:
+        """Toggle admin mode for character editing."""
+        try:
+            admin_service = getattr(self.character_service, '_admin_service', None)
+            if not admin_service:
+                messagebox.showerror("Toggle Admin Mode", "Admin service not available")
+                return
+            
+            # Get current status to show proper message
+            current_status = admin_service.get_admin_status()
+            currently_enabled = False
+            if current_status.get('success'):
+                currently_enabled = current_status.get('status', {}).get('admin_mode', False)
+            
+            # Toggle admin mode
+            result = admin_service.toggle_admin_mode()
+            
+            if result.get('success'):
+                new_status = result.get('admin_mode', False)
+                if new_status:
+                    messagebox.showinfo("Admin Mode", "Admin mode has been ENABLED!\n\nYou can now use character editing features.")
+                    self.update_status("Admin mode enabled - Character editing unlocked")
+                    self.logger.info("Admin mode enabled by user")
+                else:
+                    messagebox.showinfo("Admin Mode", "Admin mode has been DISABLED.\n\nCharacter editing features are now locked.")
+                    self.update_status("Admin mode disabled - Character editing locked")
+                    self.logger.info("Admin mode disabled by user")
+            else:
+                error_msg = result.get('message', 'Failed to toggle admin mode')
+                messagebox.showerror("Toggle Admin Mode", f"Failed to toggle admin mode: {error_msg}")
+                self.logger.error(f"Failed to toggle admin mode: {error_msg}")
+                
+        except Exception as e:
+            self.logger.error(f"Toggle admin mode error: {e}")
+            messagebox.showerror("Error", f"Could not toggle admin mode: {e}")
+    
     def _show_debug_info(self) -> None:
         """Show debug information dialog."""
         try:
@@ -716,7 +756,35 @@ class RPGEngineDemoV3:
                 debug_info.append(f"Level: {getattr(self.current_character, 'level', 'N/A')}")
                 debug_info.append(f"Grade: {getattr(self.current_character, 'grade', 'N/A')} ({getattr(self.current_character, 'grade_name', 'N/A')})")
                 debug_info.append(f"Rarity: {getattr(self.current_character, 'rarity', 'N/A')}")
-                debug_info.append(f"Type: {getattr(self.current_character, 'type', 'N/A')}")
+                
+                # Determine character type properly
+                char_type = "Unknown"
+                # Check class name first (most reliable)
+                if self.current_character.__class__.__name__ == 'Player':
+                    char_type = "Player"
+                elif self.current_character.__class__.__name__ == 'NPC':
+                    char_type = "NPC"
+                elif self.current_character.__class__.__name__ == 'Enemy':
+                    char_type = "Enemy"
+                # Then check is_player attribute
+                elif hasattr(self.current_character, 'is_player'):
+                    is_player_attr = getattr(self.current_character, 'is_player')
+                    if callable(is_player_attr) and is_player_attr():
+                        char_type = "Player"
+                    elif is_player_attr is True:
+                        char_type = "Player"
+                # Finally check team attribute as fallback
+                elif hasattr(self.current_character, 'team'):
+                    team = getattr(self.current_character, 'team', 'Unknown')
+                    if team == 'player':
+                        char_type = "Player"
+                    elif team == 'enemy':
+                        char_type = "Enemy"
+                    else:
+                        char_type = team.title() if team else "Unknown"
+                
+                debug_info.append(f"Type: {char_type}")
+                debug_info.append(f"Class: {self.current_character.__class__.__name__}")
             
             debug_text = "\n".join(debug_info)
             
@@ -814,6 +882,17 @@ class RPGEngineDemoV3:
             # Character Editing Frame
             edit_frame = ttk.LabelFrame(basic_frame, text="Character Editor")
             edit_frame.pack(fill=tk.X, padx=5, pady=5)
+            
+            # Admin mode enabler
+            admin_frame = tk.Frame(edit_frame)
+            admin_frame.pack(fill=tk.X, padx=5, pady=5)
+            tk.Label(admin_frame, text="Admin Mode:", font=("Arial", 10, "bold"), fg="#c0392b").pack(side=tk.LEFT)
+            tk.Button(admin_frame, text="🔑 Toggle Admin Mode", 
+                     command=self._toggle_admin_mode, bg="#3498db", fg="white").pack(side=tk.LEFT, padx=10)
+            
+            # Separator
+            separator = tk.Frame(edit_frame, height=2, bg="#bdc3c7")
+            separator.pack(fill=tk.X, padx=5, pady=5)
             
             # Level editor
             level_frame = tk.Frame(edit_frame)
@@ -1043,10 +1122,10 @@ class RPGEngineDemoV3:
                 return
             
             # Ensure admin mode is enabled before attempting to use admin functions
-            if hasattr(admin_service, 'enable_admin_mode'):
-                admin_service.enable_admin_mode()
-            elif hasattr(admin_service, 'set_admin_mode'):
-                admin_service.set_admin_mode(True)
+            status = admin_service.get_admin_status()
+            if not status.get('success') or not status.get('status', {}).get('admin_mode', False):
+                messagebox.showerror("Set Level", "Admin mode must be enabled first!\n\nPlease click 'Toggle Admin Mode' from the Admin/Debug menu.")
+                return
             
             if hasattr(admin_service, "set_character_level"):
                 result = admin_service.set_character_level(self.current_character, level)
@@ -1082,6 +1161,12 @@ class RPGEngineDemoV3:
                 messagebox.showerror("Set Grade", "Admin service not available")
                 return
             
+            # Ensure admin mode is enabled before attempting to use admin functions
+            status = admin_service.get_admin_status()
+            if not status.get('success') or not status.get('status', {}).get('admin_mode', False):
+                messagebox.showerror("Set Grade", "Admin mode must be enabled first!\n\nPlease click 'Toggle Admin Mode' from the Admin/Debug menu.")
+                return
+            
             result = admin_service.set_character_grade(self.current_character, grade)
             
             if result.get('success'):
@@ -1090,7 +1175,8 @@ class RPGEngineDemoV3:
                 # Refresh current tab
                 self._refresh_current_tab()
             else:
-                messagebox.showerror("Set Grade", result.get('message', 'Failed to set grade'))
+                error_msg = result.get('message', 'Failed to set grade')
+                messagebox.showerror("Set Grade", error_msg)
                 
         except ValueError as e:
             messagebox.showerror("Set Grade", str(e))
@@ -1110,6 +1196,12 @@ class RPGEngineDemoV3:
                 messagebox.showerror("Set Rarity", "Admin service not available")
                 return
             
+            # Ensure admin mode is enabled before attempting to use admin functions
+            status = admin_service.get_admin_status()
+            if not status.get('success') or not status.get('status', {}).get('admin_mode', False):
+                messagebox.showerror("Set Rarity", "Admin mode must be enabled first!\n\nPlease click 'Toggle Admin Mode' from the Admin/Debug menu.")
+                return
+            
             result = admin_service.set_character_rarity(self.current_character, rarity)
             
             if result.get('success'):
@@ -1118,7 +1210,8 @@ class RPGEngineDemoV3:
                 # Refresh current tab
                 self._refresh_current_tab()
             else:
-                messagebox.showerror("Set Rarity", result.get('message', 'Failed to set rarity'))
+                error_msg = result.get('message', 'Failed to set rarity')
+                messagebox.showerror("Set Rarity", error_msg)
                 
         except ValueError as e:
             messagebox.showerror("Set Rarity", str(e))
@@ -1139,7 +1232,34 @@ class RPGEngineDemoV3:
             info.append(f"Level: {getattr(char, 'level', 'N/A')}")
             info.append(f"Grade: {getattr(char, 'grade', 'N/A')} ({getattr(char, 'grade_name', 'N/A')})")
             info.append(f"Rarity: {getattr(char, 'rarity', 'N/A')}")
-            info.append(f"Type: {getattr(char, 'type', 'N/A')}")
+            
+            # Determine character type properly
+            char_type = "Unknown"
+            # Check class name first (most reliable)
+            if char.__class__.__name__ == 'Player':
+                char_type = "Player"
+            elif char.__class__.__name__ == 'NPC':
+                char_type = "NPC"
+            elif char.__class__.__name__ == 'Enemy':
+                char_type = "Enemy"
+            # Then check is_player attribute
+            elif hasattr(char, 'is_player'):
+                is_player_attr = getattr(char, 'is_player')
+                if callable(is_player_attr) and is_player_attr():
+                    char_type = "Player"
+                elif is_player_attr is True:
+                    char_type = "Player"
+            # Finally check team attribute as fallback
+            elif hasattr(char, 'team'):
+                team = getattr(char, 'team', 'Unknown')
+                if team == 'player':
+                    char_type = "Player"
+                elif team == 'enemy':
+                    char_type = "Enemy"
+                else:
+                    char_type = team.title() if team else "Unknown"
+            
+            info.append(f"Type: {char_type}")
             
             # Base stats
             if hasattr(char, 'stats'):
@@ -1196,11 +1316,49 @@ class RPGEngineDemoV3:
             info_frame.pack(fill=tk.X, pady=5)
             
             tk.Label(info_frame, text=f"Name: {self.current_character.name}", font=("Arial", 12, "bold")).pack(anchor=tk.W, padx=5, pady=2)
-            tk.Label(info_frame, text=f"Type: {getattr(self.current_character, 'type', 'N/A')}").pack(anchor=tk.W, padx=5)
+            
+            # Determine character type properly
+            char_type = "Unknown"
+            # Check class name first (most reliable)
+            if self.current_character.__class__.__name__ == 'Player':
+                char_type = "Player"
+            elif self.current_character.__class__.__name__ == 'NPC':
+                char_type = "NPC"
+            elif self.current_character.__class__.__name__ == 'Enemy':
+                char_type = "Enemy"
+            # Then check is_player attribute
+            elif hasattr(self.current_character, 'is_player'):
+                is_player_attr = getattr(self.current_character, 'is_player')
+                if callable(is_player_attr) and is_player_attr():
+                    char_type = "Player"
+                elif is_player_attr is True:
+                    char_type = "Player"
+            # Finally check team attribute as fallback
+            elif hasattr(self.current_character, 'team'):
+                team = getattr(self.current_character, 'team', 'Unknown')
+                if team == 'player':
+                    char_type = "Player"
+                elif team == 'enemy':
+                    char_type = "Enemy"
+                else:
+                    char_type = team.title() if team else "Unknown"
+            
+            tk.Label(info_frame, text=f"Type: {char_type}").pack(anchor=tk.W, padx=5)
             
             # Quick edit frame
             edit_frame = ttk.LabelFrame(main_frame, text="Quick Edit")
             edit_frame.pack(fill=tk.X, pady=5)
+            
+            # Admin mode enabler
+            admin_frame = tk.Frame(edit_frame)
+            admin_frame.pack(fill=tk.X, padx=5, pady=5)
+            tk.Label(admin_frame, text="Admin Mode:", font=("Arial", 10, "bold"), fg="#c0392b").pack(side=tk.LEFT)
+            tk.Button(admin_frame, text="🔑 Toggle Admin Mode", 
+                     command=self._toggle_admin_mode, bg="#3498db", fg="white").pack(side=tk.LEFT, padx=10)
+            
+            # Separator
+            separator = tk.Frame(edit_frame, height=2, bg="#bdc3c7")
+            separator.pack(fill=tk.X, padx=5, pady=5)
             
             # Level
             level_frame = tk.Frame(edit_frame)

@@ -563,7 +563,7 @@ class CharacterWorkshop:
             # Generate template info with ranges for random generation
             info_lines = [
                 f"=== TEMPLATE: {template_data.get('display_name', 'Unknown')} ===",
-                f"Type: {template_data.get('type', 'Unknown')}",
+                f"Type: {template_data.get('team', 'Unknown')}",
                 "",
                 "=== POSSIBLE RANGES ===",
                 "(Values show ranges for randomly generated characters)",
@@ -1149,26 +1149,6 @@ class CharacterWorkshop:
             
             # Gather debug info
             debug_info = f"""Debug Information
-{'='*40}
-Character Object Type: {type(character).__name__}
-Character ID: {getattr(character, 'id', 'None')}
-Template ID: {character.template_id}
-Current Level: {character.level}
-Experience: {getattr(character, 'experience', 'N/A')}
-
-Memory Address: {hex(id(character))}
-Dictionary Keys: {list(character.__dict__.keys()) if hasattr(character, '__dict__') else 'No __dict__'}
-
-Services Status:
-- Character Service: {type(self.character_service).__name__}
-- Current Character: {'Loaded' if self.character_service.current_character else 'None'}
-
-Config:
-- Show Preview: {self.config.show_preview}
-- Show Library Buttons: {self.config.show_library_buttons}
-- Show Admin Buttons: {self.config.show_admin_buttons}
-- Auto Preview: {self.config.auto_preview}
-- Compact Mode: {self.config.compact_mode}
 """
             
             # Create debug window
@@ -1187,11 +1167,11 @@ Config:
             text_widget.configure(state=tk.DISABLED)
             
             self._trigger_status_update("Debug info displayed")
-            
+        
         except Exception as e:
             self.logger.error(f"Debug info error: {e}")
             messagebox.showerror("Debug Error", f"Failed to show debug info: {e}")
-    
+
     # Admin command methods
     def _admin_set_level(self, level_str: str) -> None:
         """Set character level (admin command)."""
@@ -1207,27 +1187,27 @@ Config:
             
         except ValueError:
             messagebox.showerror("Invalid Input", "Level must be a number")
-    
+
     def _admin_max_stats(self) -> None:
         """Max all character stats (admin command)."""
         messagebox.showinfo("Admin Command", "Max all stats (placeholder)")
         self._trigger_status_update("Admin: Maxed all stats")
-    
+
     def _admin_heal_full(self) -> None:
         """Restore full health (admin command)."""
         messagebox.showinfo("Admin Command", "Full heal (placeholder)")
         self._trigger_status_update("Admin: Full heal applied")
-    
+
     def _admin_grant_skills(self) -> None:
         """Grant all skills (admin command)."""
         messagebox.showinfo("Admin Command", "Grant all skills (placeholder)")
         self._trigger_status_update("Admin: All skills granted")
-    
+
     def _admin_give_best_gear(self) -> None:
         """Give best equipment (admin command)."""
         messagebox.showinfo("Admin Command", "Give best gear (placeholder)")
         self._trigger_status_update("Admin: Best gear equipped")
-    
+
     def _admin_clear_gear(self) -> None:
         """Clear all equipment (admin command)."""
         messagebox.showinfo("Admin Command", "Clear all gear (placeholder)")

@@ -1,0 +1,113 @@
+{
+  "export_timestamp": "2025-07-24T21:44:45.823905",
+  "version_info": {
+    "demo_service": {
+      "version": "1.0.0",
+      "build_date": "2025-07-24",
+      "features": {
+        "session_tracking": true,
+        "analytics": true,
+        "feature_usage_tracking": true,
+        "error_tracking": true,
+        "event_callbacks": true,
+        "data_export": true,
+        "persistence": true,
+        "save_directory_management": true
+      }
+    },
+    "engine": {
+      "version": "0.1.0",
+      "build_date": "2025-07-24",
+      "status": "Alpha"
+    },
+    "compatibility": {
+      "min_engine_version": "0.1.0",
+      "tested_with": "0.1.0"
+    }
+  },
+  "current_state": {
+    "initialized": false,
+    "current_tab": null,
+    "character_count": 0,
+    "combat_count": 0,
+    "features_accessed": [],
+    "errors": [],
+    "start_time": null,
+    "last_activity": null,
+    "version_info": {
+      "demo_service": {
+        "version": "1.0.0",
+        "build_date": "2025-07-24",
+        "features": {
+          "session_tracking": true,
+          "analytics": true,
+          "feature_usage_tracking": true,
+          "error_tracking": true,
+          "event_callbacks": true,
+          "data_export": true,
+          "persistence": true,
+          "save_directory_management": true
+        }
+      },
+      "engine": {
+        "version": "0.1.0",
+        "build_date": "2025-07-24",
+        "status": "Alpha"
+      },
+      "compatibility": {
+        "min_engine_version": "0.1.0",
+        "tested_with": "0.1.0"
+      }
+    }
+  },
+  "usage_statistics": {
+    "total_sessions": 3,
+    "completed_sessions": 3,
+    "total_characters_created": 0,
+    "total_combat_sessions": 0,
+    "unique_features_accessed": 0,
+    "total_errors": 0,
+    "features_accessed": [],
+    "average_session_duration_seconds": 23.015970333333332
+  },
+  "session_history": [
+    {
+      "session_id": "demo_20250724_213928",
+      "start_time": "2025-07-24T21:39:28.689313",
+      "end_time": "2025-07-24T21:39:28.691315",
+      "character_created": true,
+      "combat_sessions": 1,
+      "features_used": [
+        "character_creation"
+      ],
+      "errors_encountered": 0,
+      "duration_seconds": 0.002002,
+      "engine_version": "0.1.0",
+      "service_version": "1.0.0"
+    },
+    {
+      "session_id": "demo_20250724_214319",
+      "start_time": "2025-07-24T21:43:19.834153",
+      "end_time": "2025-07-24T21:44:28.879561",
+      "character_created": false,
+      "combat_sessions": 0,
+      "features_used": [],
+      "errors_encountered": 0,
+      "duration_seconds": 69.045408,
+      "engine_version": "0.1.0",
+      "service_version": "1.0.0"
+    },
+    {
+      "session_id": "demo_20250724_214430",
+      "start_time": "2025-07-24T21:44:30.895709",
+      "end_time": "2025-07-24T21:44:30.896210",
+      "character_created": true,
+      "combat_sessions": 0,
+      "features_used": [],
+      "errors_encountered": 0,
+      "duration_seconds": 0.000501,
+      "engine_version": "0.1.0",
+      "service_version": "1.0.0"
+    }
+  ]
+}

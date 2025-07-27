@@ -2,16 +2,16 @@ name: Demo Tests
 
 on:
   push:
-    branches: [ main, testing_center, develop ]
+    branches: [ main, testing_center, develop, Test3 ]
   pull_request:
-    branches: [ main, testing_center, develop ]
+    branches: [ main, testing_center, develop, Test3 ]
 
 jobs:
   demo-validation:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
@@ -24,29 +24,34 @@ jobs:
         pip install pytest pytest-asyncio
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         # Install GUI dependencies for headless testing
-        pip install xvfb-run || echo "xvfb-run not needed"
-        
-    - name: Install system dependencies
-      run: |
         sudo apt-get update
         sudo apt-get install -y xvfb
         
-    - name: Validate demo imports
+    - name: Validate async engine demo imports
       run: |
         python -c "
-        # Test demo imports without GUI
-        import os, sys
+        # Test new async engine demo imports
+        import os
         os.environ['DISPLAY'] = ':99'
         
-        # Test core demo dependencies
         try:
-            from game_sys.config.config_manager import ConfigManager
-            from game_sys.character.character_factory import create_character
-            from game_sys.combat.combat_service import CombatService
-            print('✅ Core demo dependencies import successfully')
+            # Test core async engine imports
+            from rpg_engine import AsyncGameEngine, ServiceContainer, EventBus
+            from rpg_engine.ui.ui_system import AsyncUIManager
+            print('✅ Async engine demo dependencies import successfully')
+            
+            # Test demo applications exist
+            import os
+            assert os.path.exists('engine_demo.py'), 'engine_demo.py not found'
+            assert os.path.exists('simple_ui_test.py'), 'simple_ui_test.py not found'
+            assert os.path.exists('test_engine.py'), 'test_engine.py not found'
+            print('✅ All demo files exist')
+            
         except Exception as e:
-            print(f'❌ Demo dependency import failed: {e}')
+            print(f'❌ Async engine demo import failed: {e}')
+            import sys
             sys.exit(1)
+        "
             
         # Test UI service components
         try:

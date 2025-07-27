@@ -1,0 +1,70 @@
+name: 📚 Documentation Issue
+description: Report an issue with documentation or request documentation improvements
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the RPG Engine documentation! Clear documentation is essential for the project.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation is this about?
+      options:
+        - README.md
+        - API Documentation
+        - Architecture Guide
+        - Getting Started Guide
+        - Tutorial/Examples
+        - Code Comments
+        - Configuration Guide
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of documentation issue is this?
+      options:
+        - Missing Documentation
+        - Incorrect Information
+        - Outdated Content
+        - Unclear Instructions
+        - Typo/Grammar
+        - Broken Links
+        - Missing Examples
+        - Request for New Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the documentation issue or improvement needed
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where is this documentation located? (file path, URL, etc.)
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve this documentation?
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to help fix this documentation issue

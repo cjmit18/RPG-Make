@@ -2,19 +2,19 @@ name: Python Tests
 
 on:
   push:
-    branches: [ main, testing_center, develop ]
+    branches: [ main, testing_center, develop, Test3 ]
   pull_request:
-    branches: [ main, testing_center, develop ]
+    branches: [ main, testing_center, develop, Test3 ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: ["3.11", "3.12"]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -27,26 +27,36 @@ jobs:
         pip install pytest pytest-asyncio
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         
-    - name: Run core system tests
+    - name: Test async engine core imports
       run: |
-        # Test basic imports and core functionality
-        python -c "import game_sys.config.config_manager; print('✅ Config system imports successfully')"
-        python -c "import game_sys.character.character_factory; print('✅ Character system imports successfully')" 
-        python -c "import game_sys.combat.combat_service; print('✅ Combat system imports successfully')"
-        python -c "import game_sys.magic.spell_system; print('✅ Magic system imports successfully')"
-        python -c "import game_sys.items.item_factory; print('✅ Item system imports successfully')"
+        # Test new async engine imports
+        python -c "import rpg_engine; print('✅ Main engine package imports successfully')"
+        python -c "from rpg_engine.core.engine import AsyncGameEngine; print('✅ Async game engine imports successfully')" 
+        python -c "from rpg_engine.core.service_container import ServiceContainer; print('✅ Service container imports successfully')"
+        python -c "from rpg_engine.core.event_bus import EventBus; print('✅ Event bus imports successfully')"
+        python -c "from rpg_engine.ui.ui_system import AsyncUIManager; print('✅ UI system imports successfully')"
         
-    - name: Run configuration tests
+    - name: Run async engine initialization tests
       run: |
         python -c "
-        from game_sys.config.config_manager import ConfigManager
-        cfg = ConfigManager()
-        assert cfg.get('constants.combat.strength_multiplier') is not None
-        assert cfg.get('defaults.grades') is not None
-        print('✅ Configuration validation passed')
+        import asyncio
+        from rpg_engine.core.service_container import ServiceContainer
+        from rpg_engine.core.event_bus import EventBus
+        from rpg_engine.core.engine import AsyncGameEngine
+        
+        async def test_engine():
+            container = ServiceContainer()
+            event_bus = EventBus()
+            await container.register_singleton(EventBus, event_bus)
+            engine = AsyncGameEngine(container)
+            await engine.initialize_async()
+            print('✅ Async engine initialization test passed')
+            await engine.shutdown_async()
+        
+        asyncio.run(test_engine())
         "
         
-    - name: Run character creation tests
+    - name: Run service container tests
       run: |
         python -c "
         from game_sys.character.character_factory import create_character

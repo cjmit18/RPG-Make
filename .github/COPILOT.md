@@ -1,55 +1,53 @@
-# COPILOT.md
+# COPILOT.md - RPG Engine v2.0 Async-First Architecture
 
-This file provides guidance to GitHub Copilot when working with code in this repository.
+This file provides guidance to GitHub Copilot when working with the new async-first RPG engine codebase.
 
-## 🎯 Project Status: STABLE & OPERATIONAL ✅
+## 🎮 **Engine Overview**
 
-**All 6 Major Architectural Tasks Implemented:**
-1. ✅ **UI Management** - Enhanced service delegation with interactive equipment slots
-2. ✅ **Game Logic Controllers** - Interface-compliant wrappers  
-3. ✅ **Method Count Reduction** - Event-driven consolidation
-4. ✅ **Clear Interfaces** - Type-safe contracts (200+ lines)
-5. ✅ **Observer Pattern** - Event-driven UI updates with full integration
-6. ✅ **Items System** - Complete 42-item database with smart auto-equipping
+This is a **modern async-first RPG engine** built from scratch with:
+- **AsyncGameEngine** - Main orchestrator with async game loop
+- **ServiceContainer** - Dependency injection with lifecycle management
+- **EventBus** - Strongly-typed event system with middleware
+- **AsyncUIManager** - Interactive UI with cross-thread communication
 
-**Recent Critical Fixes (July 23, 2025):**
-- ✅ **ServiceResult Compatibility** - Fixed "'ServiceResult' object is not subscriptable" errors
-- ✅ **Character Creation System** - Fully functional stat allocation and template selection
-- ✅ **UI Integration** - Character stats properly displayed next to allocation buttons
-- ✅ **Service Layer Consistency** - All methods return standardized dictionary format
-- ✅ **Documentation Updates** - Current project state and fixes documented
-
-**Previous Achievements (July 2025):**
-- ✅ **Documentation Organization** - All documentation properly organized in docs/ folder structure
-- ✅ **Enhanced UI Service** - Interactive equipment slots with performance metrics
-- ✅ **Clean Architecture** - Proper service layer separation maintained
-- ✅ **Project Structure** - Clean root directory with organized documentation
-
-## Common Commands
-
-### Testing
-```bash
-# Run comprehensive test suite
-python tests/test_comprehensive.py
-python tests/run_all_tests.py
-
-# Run observer pattern integration test
-python test_observer_integration.py
-
-# Run automated pytest tests
-pytest --maxfail=1 --disable-warnings -q
-pytest --cov=game_sys  # With coverage
-
-# Run Windows batch test with UI
-run_comprehensive_test_updated.bat
-```
+## 🚀 **Common Commands**
 
 ### Demo Applications
 ```bash
-python demo.py           # Main tabbed demo with EVENT-DRIVEN UI updates
-python playground.py     # Engine feature showcase and testing
+# Comprehensive interactive demo (recommended)
+python engine_demo.py
 
-# Test observer integration in demo:
+# Simple UI test
+python simple_ui_test.py
+
+# Unit tests
+python test_engine.py
+```
+
+### Testing & Verification
+```bash
+# Test core engine functionality
+python -c "from rpg_engine import AsyncGameEngine, ServiceContainer, EventBus; print('✅ Engine imports work')"
+
+# Run async engine initialization test
+python -c "
+import asyncio
+from rpg_engine.core.service_container import ServiceContainer
+from rpg_engine.core.event_bus import EventBus
+from rpg_engine.core.engine import AsyncGameEngine
+
+async def test():
+    container = ServiceContainer()
+    event_bus = EventBus()
+    await container.register_singleton(EventBus, event_bus)
+    engine = AsyncGameEngine(container)
+    await engine.initialize_async()
+    print('✅ Engine initialized')
+    await engine.shutdown_async()
+
+asyncio.run(test())
+"
+```
 # 1. Run demo.py
 # 2. Go to Leveling tab
 # 3. Try 'Learn Skill', 'Learn Spell', 'Gain XP (Test)'

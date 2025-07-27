@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/cjmit18/RPG-Make/discussions
+    about: Ask questions, share ideas, or discuss the RPG Engine with the community
+  - name: 📖 Documentation
+    url: https://github.com/cjmit18/RPG-Make/blob/main/README.md
+    about: Read the complete documentation and guides
+  - name: 🎮 Demo & Examples
+    url: https://github.com/cjmit18/RPG-Make/blob/main/engine_demo.py
+    about: Check out the comprehensive demo application

@@ -1,0 +1,211 @@
+{
+  "character_system": {
+    "enabled": true,
+    "features": {
+      "character_creation": true,
+      "stat_system": true,
+      "progression_system": true,
+      "inventory_system": true,
+      "character_validation": true,
+      "character_templates": true,
+      "derived_stats": true,
+      "rarity_system": true,
+      "grade_system": true
+    },
+    "validation": {
+      "strict_mode": true,
+      "validate_templates": true,
+      "validate_stats": true,
+      "validate_progression": true
+    }
+  },
+  "event_system": {
+    "enabled": true,
+    "features": {
+      "event_bus": true,
+      "event_history": true,
+      "event_middleware": true,
+      "achievement_system": true,
+      "notification_system": true,
+      "observer_patterns": true,
+      "hook_system": true
+    },
+    "settings": {
+      "max_event_history": 1000,
+      "enable_event_logging": true,
+      "async_event_handling": true,
+      "event_timeout_seconds": 30
+    }
+  },
+  "character_mechanics": {
+    "stat_multipliers": {
+      "strength": 2.0,
+      "dexterity": 1.5,
+      "vitality": 2.0,
+      "intelligence": 2.0,
+      "wisdom": 1.5,
+      "constitution": 2.0,
+      "luck": 1.0,
+      "agility": 1.5,
+      "charisma": 1.2
+    },
+    "derived_stat_formulas": {
+      "comment": "Multipliers that convert base stats to derived stats (e.g., constitution × 10.0 = health points)",
+      "health": 10.0,
+      "mana": 10.0,
+      "stamina": 10.0,
+      "attack": 1.5,
+      "defense": 1.0,
+      "speed": 1.2,
+      "magic_power": 1.5,
+      "critical_chance": 0.005,
+      "dodge_chance": 0.006,
+      "block_chance": 0.006,
+      "magic_resistance": 0.15,
+      "physical_damage": 1.5,
+      "damage_reduction": 0.15,
+      "mana_regeneration": 0.08,
+      "health_regeneration": 0.05,
+      "stamina_regeneration": 0.1,
+      "luck_factor": 0.02,
+      "accuracy": 0.007,
+      "evasion": 0.006,
+      "parry_chance": 0.006
+    },
+    "progression": {
+      "base_experience_required": 100,
+      "experience_scaling": 1.2,
+      "max_level": 100,
+      "stat_points_per_level": 3,
+      "skill_points_per_level": 2
+    }
+  },
+  "achievement_system": {
+    "enabled": true,
+    "categories": {
+      "character_creation": {
+        "first_character": {
+          "name": "First Steps",
+          "description": "Create your first character",
+          "points": 10
+        },
+        "character_variety": {
+          "name": "Character Collector",
+          "description": "Create 5 different characters",
+          "points": 25
+        }
+      },
+      "progression": {
+        "level_milestones": {
+          "level_10": {
+            "name": "Getting Started",
+            "description": "Reach level 10",
+            "points": 20
+          },
+          "level_25": {
+            "name": "Making Progress",
+            "description": "Reach level 25",
+            "points": 50
+          },
+          "level_50": {
+            "name": "Halfway There",
+            "description": "Reach level 50",
+            "points": 100
+          },
+          "max_level": {
+            "name": "Ultimate Power",
+            "description": "Reach maximum level",
+            "points": 500
+          }
+        }
+      },
+      "stats": {
+        "stat_thresholds": {
+          "strength_100": {
+            "name": "Mighty Warrior",
+            "description": "Reach 100 Strength",
+            "points": 30
+          },
+          "intelligence_100": {
+            "name": "Arcane Scholar",
+            "description": "Reach 100 Intelligence",
+            "points": 30
+          },
+          "balanced_stats": {
+            "name": "Well Rounded",
+            "description": "Have all stats above 50",
+            "points": 75
+          }
+        }
+      }
+    }
+  },
+  "character_templates": {
+    "defaults": {
+      "grades": ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN"],
+      "rarities": ["COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "MYTHIC", "DIVINE"],
+      "damage_types": ["NONE", "PHYSICAL", "FIRE", "ICE", "LIGHTNING", "POISON", "ARCANE", "HOLY", "DARK", "MAGIC"]
+    },
+    "grade_multipliers": {
+      "ONE": 0.0,
+      "TWO": 0.1,
+      "THREE": 0.15,
+      "FOUR": 0.2,
+      "FIVE": 0.25,
+      "SIX": 0.3,
+      "SEVEN": 0.35
+    },
+    "rarity_multipliers": {
+      "COMMON": 0.0,
+      "UNCOMMON": 0.04,
+      "RARE": 0.06,
+      "EPIC": 0.08,
+      "LEGENDARY": 0.1,
+      "MYTHIC": 0.12,
+      "DIVINE": 0.15
+    }
+  },
+  "future_systems": {
+    "comment": "These systems are planned but not yet implemented - focused on character system first",
+    "combat_system": {
+      "enabled": false,
+      "planned": true,
+      "priority": "high"
+    },
+    "quest_system": {
+      "enabled": false,
+      "planned": true,
+      "priority": "medium"
+    },
+    "dialogue_system": {
+      "enabled": false,
+      "planned": true,
+      "priority": "medium"
+    },
+    "world_system": {
+      "enabled": false,
+      "planned": true,
+      "priority": "low"
+    },
+    "multiplayer": {
+      "enabled": false,
+      "planned": true,
+      "priority": "low"
+    }
+  },
+  "legacy_toggles": {
+    "comment": "Preserved for backwards compatibility - will be removed after character system completion",
+    "effects": true,
+    "hooks": true,
+    "resource_manager": true,
+    "inventory": true,
+    "items": true,
+    "enchantments": true,
+    "skills": true,
+    "progression": true,
+    "save_load": true,
+    "rendering": true,
+    "ui": true,
+    "debug": true
+  }
+}

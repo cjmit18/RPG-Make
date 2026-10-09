@@ -53,6 +53,18 @@ class ServiceContainer:
         logger.debug(f"Registering instance: {interface.__name__}")
         self.services[interface] = instance
     
+    def get(self, interface: Type[T]) -> T:
+        """Synchronous service resolution (for compatibility)"""
+        # Check if already instantiated
+        if interface in self.instances:
+            return self.instances[interface]
+        
+        # Check direct service registration
+        if interface in self.services:
+            return self.services[interface]
+        
+        raise ServiceNotFoundError(f"Service {interface.__name__} not registered or not initialized")
+    
     async def get_service(self, interface: Type[T]) -> T:
         """Resolve service with async initialization"""
         # Check if already instantiated

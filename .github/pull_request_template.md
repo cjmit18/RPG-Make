@@ -1,71 +1,109 @@
-# Pull Request
+# RPG Engine Pull Request
 
-## 📝 **Description**
-Brief description of what this PR does.
+## 📋 Change Summary
+Brief description of what this PR accomplishes.
 
-## 🎯 **Type of Change**
-<!-- Please delete options that are not relevant -->
-- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
-- [ ] ✨ New feature (non-breaking change which adds functionality)
-- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] 📚 Documentation update
-- [ ] 🔧 Refactoring (no functional changes)
-- [ ] ⚡ Performance improvement
-- [ ] 🧪 Test addition or improvement
-
-## 🏗️ **Engine Component**
-<!-- Which part of the async engine does this affect? -->
-- [ ] AsyncGameEngine (Core engine)
-- [ ] ServiceContainer (Dependency injection)
-- [ ] EventBus (Event system)  
-- [ ] UI System (Interactive interface)
-- [ ] Threading/Async (Cross-thread communication)
-- [ ] Demo Applications
+## 🎯 System Components Modified
+- [ ] Template System (Character/Achievement templates)
+- [ ] Observer Patterns (Achievement/Notification systems)  
+- [ ] Event Bus & Event System
+- [ ] Configuration System
+- [ ] Stat Calculation System
 - [ ] Documentation
-- [ ] Other: ___________
+- [ ] Tests/Demos
+- [ ] Other: ________________
 
-## 🧪 **How Has This Been Tested?**
-<!-- Please describe the tests that you ran to verify your changes -->
-- [ ] Unit tests pass (`python test_engine.py`)
-- [ ] Simple UI test works (`python simple_ui_test.py`)
-- [ ] Comprehensive demo works (`python engine_demo.py`)
-- [ ] Manual testing performed
-- [ ] Added new tests for this change
+## 📊 Template System Changes
+### Character Templates
+- [ ] New character template added
+- [ ] Existing template modified  
+- [ ] Stat balance adjustments
+- [ ] Template validation improvements
 
-**Test Configuration:**
-- Python version: 
-- Operating System: 
-- Additional testing notes:
+### Achievement System  
+- [ ] New achievements added
+- [ ] Achievement categories updated
+- [ ] Observer pattern enhancements
+- [ ] Notification system improvements
 
-## ✅ **Checklist**
-<!-- Please check all that apply -->
-- [ ] My code follows the async-first architecture patterns
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
+## 🧪 Testing Completed
+- [ ] Template loading tests pass: `python test_template_loading.py`
+- [ ] Character system demo passes: `python examples/demo_character_system.py`  
+- [ ] All core imports work correctly
+- [ ] Observer patterns function properly
+- [ ] Configuration system loads correctly
+- [ ] New features have test coverage
 
-## 🔗 **Related Issues**
-<!-- Link any related issues -->
-Fixes #(issue number)
-Closes #(issue number)
-Related to #(issue number)
+## 📈 System Statistics
+**Before Changes:**
+- Character Templates: ___
+- Achievement Templates: ___  
+- Total Templates: ___
 
-## 📸 **Screenshots** (if applicable)
-<!-- Add screenshots to help explain your changes -->
+**After Changes:**
+- Character Templates: ___
+- Achievement Templates: ___
+- Total Templates: ___
 
-## 🔄 **Migration Guide** (if applicable)
-<!-- If this is a breaking change, provide migration instructions -->
+## 🔄 Observer Pattern Integration
+- [ ] Events properly published to EventBus
+- [ ] Achievement system responds to events
+- [ ] Notification system creates appropriate notifications
+- [ ] No event handling conflicts
+- [ ] Async event processing works correctly
 
-## 📋 **Additional Notes**
-<!-- Add any additional notes, considerations, or context -->
+## 📝 Configuration Changes
+- [ ] New derived stat formulas added
+- [ ] Game balance adjustments made
+- [ ] Configuration validation passes
+- [ ] Backwards compatibility maintained
 
----
+## 🎮 Gameplay Impact
+Describe how these changes affect the player experience:
+- 
+- 
+- 
 
-**By submitting this PR, I confirm that:**
-- [ ] I have read and understand the contribution guidelines
-- [ ] This contribution is my own work or properly attributed
-- [ ] I am willing to maintain this change if needed
+## 🔧 Technical Details
+### Breaking Changes
+- [ ] None
+- [ ] Template structure changes
+- [ ] Configuration format changes  
+- [ ] API changes
+- [ ] Other: ________________
+
+### Performance Considerations
+- [ ] No impact on performance
+- [ ] Template loading performance improved
+- [ ] Event processing optimized
+- [ ] Memory usage optimized
+- [ ] Other: ________________
+
+## 📚 Documentation Updates
+- [ ] README updated
+- [ ] Template documentation updated
+- [ ] Code comments added/updated
+- [ ] API documentation updated
+- [ ] No documentation changes needed
+
+## 🚀 Deployment Notes
+Special considerations for deploying these changes:
+- 
+- 
+- 
+
+## ✅ Pre-Merge Checklist
+- [ ] All CI/CD tests pass
+- [ ] Code follows project style guidelines
+- [ ] No merge conflicts
+- [ ] Template validation passes
+- [ ] Observer patterns tested
+- [ ] Documentation is complete
+- [ ] Ready for review
+
+## 🔗 Related Issues
+Closes #
+References #
+
+## 📸 Screenshots/Examples
+If applicable, add screenshots or example output demonstrating the changes.

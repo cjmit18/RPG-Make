@@ -1,0 +1,30 @@
+---
+labels: ["help-wanted"]
+---
+
+# ❓ Help & Support
+
+## What do you need help with?
+<!-- Describe your question or issue clearly -->
+
+## What have you tried?
+<!-- List the approaches you've already attempted -->
+
+## Environment Details
+- **Python version**: 
+- **OS**: 
+- **RPG Engine version**: 
+
+## Code Sample (if applicable)
+```python
+# Your code here
+```
+
+## Expected vs Actual Behavior
+<!-- What did you expect to happen vs what actually happened? -->
+
+## Additional Context
+<!-- Any other information that might be helpful -->
+
+---
+*💡 Tip: Check our [documentation](https://github.com/cjmit18/RPG-Make/blob/main/docs/README.md) and [examples](https://github.com/cjmit18/RPG-Make/tree/main/examples) first!*

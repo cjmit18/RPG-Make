@@ -1,0 +1,115 @@
+name: RPG Engine Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  test-before-release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Run comprehensive tests
+      run: |
+        # Test template system
+        python test_template_loading.py
+        
+        # Test character system
+        python examples/demo_character_system.py
+        
+        # Test main application
+        python main.py
+        
+        # Test core imports
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        from rpg_engine.core.config import GameConfig
+        from rpg_engine.core.event_bus import EventBus
+        from rpg_engine.systems.achievements import AchievementSystem
+        from rpg_engine.systems.notifications import NotificationSystem
+        print('✅ All core systems importable')
+        "
+
+  build-package:
+    needs: test-before-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel setuptools
+        
+    - name: Build package
+      run: |
+        python -m build
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-packages
+        path: dist/
+
+  create-release-notes:
+    needs: test-before-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Generate release notes
+      run: |
+        echo "# RPG Engine Release Notes" > release_notes.md
+        echo "" >> release_notes.md
+        echo "## Features" >> release_notes.md
+        echo "- ✅ Data-driven character template system" >> release_notes.md
+        echo "- ✅ JSON-based achievement system" >> release_notes.md
+        echo "- ✅ Event-driven observer patterns" >> release_notes.md
+        echo "- ✅ Configurable stat calculation system" >> release_notes.md
+        echo "- ✅ Template validation and hot-reloading" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "## Template Statistics" >> release_notes.md
+        
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        tm = get_template_manager()
+        stats = tm.get_template_stats()
+        print(f'- Character Templates: {stats[\"character_templates\"]}')
+        print(f'- Achievement Templates: {stats[\"achievement_templates\"]}')
+        print(f'- Total Templates: {stats[\"total_templates\"]}')
+        " >> release_notes.md
+        
+        echo "" >> release_notes.md
+        echo "## System Architecture" >> release_notes.md
+        echo "- Observer pattern implementation for achievements and notifications" >> release_notes.md
+        echo "- Three-layer stat system: base stats → growth rates → derived stat formulas" >> release_notes.md
+        echo "- Comprehensive JSON validation and error handling" >> release_notes.md
+        echo "- Modular template loading system supporting hot-reload" >> release_notes.md
+        
+        cat release_notes.md
+        
+    - name: Upload release notes
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-notes
+        path: release_notes.md

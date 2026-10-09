@@ -1,0 +1,30 @@
+---
+labels: ["ideas"]
+---
+
+# 💡 Feature Ideas & Suggestions
+
+## Feature Description
+<!-- What feature would you like to see added? -->
+
+## Use Case
+<!-- How would this feature be used? What problem does it solve? -->
+
+## Proposed Implementation
+<!-- Do you have ideas about how this could be implemented? -->
+
+## Examples
+<!-- Any examples of similar features in other tools/frameworks? -->
+
+## Priority
+<!-- How important is this feature to you? -->
+- [ ] Critical - blocks my project
+- [ ] High - would significantly improve my workflow  
+- [ ] Medium - nice to have
+- [ ] Low - minor improvement
+
+## Additional Context
+<!-- Any other thoughts, mockups, or related discussions? -->
+
+---
+*🚀 Want to implement this yourself? Check our [contributing guide](https://github.com/cjmit18/RPG-Make/blob/main/CONTRIBUTING.md)!*

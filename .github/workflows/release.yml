@@ -1,49 +1,108 @@
-name: Release
+name: 🚀 Release Pipeline
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.2.3)'
+        required: true
+        type: string
+
+env:
+  PYTHON_VERSION: "3.11"
 
 jobs:
-  release:
+  # 📋 Prepare Release
+  prepare:
+    name: 📋 Prepare Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
       
     steps:
-    - uses: actions/checkout@v4
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 🏷️ Determine Version
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/}"
+        fi
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Release version: ${VERSION}"
+
+  # 🧪 Pre-Release Tests
+  test:
+    name: 🧪 Pre-Release Tests
+    runs-on: ubuntu-latest
+    needs: prepare
     
-    - name: Set up Python 3.11
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.PYTHON_VERSION }}
         
-    - name: Install dependencies
+    - name: 📦 Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build twine
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
         
-    - name: Run tests before release
+    - name: 🧪 Run Full Test Suite
       run: |
-        # Test async engine core
-        python -c "from rpg_engine import AsyncGameEngine, ServiceContainer, EventBus"
+        pytest tests/ -v --cov=rpg_engine
         
-        # Run unit tests
-        python test_engine.py
-        
-    - name: Extract version from tag
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    - name: 🎮 Integration Test
+      run: |
+        python -c "
+        from rpg_engine.core.service_container import ServiceContainer
+        from rpg_engine.ui.modular_ui_system import ModularUIManager
+        print('✅ Core systems integration verified')
+        "
+
+  # 🏗️ Build Release
+  build:
+    name: 🏗️ Build Release Assets
+    runs-on: ubuntu-latest
+    needs: [prepare, test]
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
       
-    - name: Create release archive
-      run: |
-        # Create source distribution
-        mkdir -p dist/
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
         
-        # Create release archive with all necessary files
-        tar -czf dist/rpg-engine-v${{ steps.get_version.outputs.VERSION }}.tar.gz \
+    - name: 📦 Install Build Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel twine
+        pip install -r requirements.txt
+        
+    - name: 🔨 Build Distribution
+      run: |
+        python -m build
+        
+    - name: 📦 Create Release Archive
+      run: |
+        # Create source archive
+        tar -czf rpg-engine-${{ needs.prepare.outputs.version }}-source.tar.gz \
           --exclude='.git*' \
           --exclude='__pycache__' \
           --exclude='*.pyc' \
@@ -52,66 +111,169 @@ jobs:
           --exclude='build' \
           .
           
-        # Create demo package
-        mkdir -p demo-package/
-        cp engine_demo.py demo-package/
-        cp simple_ui_test.py demo-package/
-        cp test_engine.py demo-package/
-        cp requirements.txt demo-package/
-        cp config.json demo-package/
-        cp -r rpg_engine/ demo-package/
+        # Create executable bundle info
+        cat > INSTALL.txt << EOF
+        🎮 RPG Engine ${{ needs.prepare.outputs.version }}
         
-        tar -czf dist/rpg-engine-demo-v${{ steps.get_version.outputs.VERSION }}.tar.gz \
-          -C demo-package .
-          
-    - name: Generate changelog
-      id: changelog
+        📋 Installation Instructions:
+        1. Extract this archive
+        2. Install Python 3.11+ 
+        3. Run: pip install -r requirements.txt
+        4. Launch: python main_enhanced.py
+        
+        📖 Documentation: docs/README.md
+        🐛 Issues: https://github.com/cjmit18/RPG-Make/issues
+        EOF
+        
+    - name: 📤 Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-assets
+        path: |
+          dist/
+          rpg-engine-${{ needs.prepare.outputs.version }}-source.tar.gz
+          INSTALL.txt
+
+  # 📖 Generate Release Notes
+  changelog:
+    name: 📖 Generate Release Notes
+    runs-on: ubuntu-latest
+    needs: prepare
+    outputs:
+      notes: ${{ steps.notes.outputs.notes }}
+      
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 📝 Generate Changelog
+      id: notes
       run: |
+        # Get the previous tag
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
+        echo "Previous tag: $PREV_TAG"
+        
+        # Generate changelog
+        cat > release-notes.md << EOF
+        ## 🎮 RPG Engine ${{ needs.prepare.outputs.version }}
+        
+        ### ✨ What's New
+        
+        $(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD | grep -E "(feat|add|new)" | head -10)
+        
+        ### 🐛 Bug Fixes
+        
+        $(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD | grep -E "(fix|bug)" | head -10)
+        
+        ### 🔧 Improvements
+        
+        $(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD | grep -E "(improve|enhance|update)" | head -10)
+        
+        ### 📋 Full Changelog
+        
+        **Commits in this release:** $(git rev-list --count ${PREV_TAG}..HEAD)
+        
+        [View full changelog](https://github.com/cjmit18/RPG-Make/compare/${PREV_TAG}...${{ needs.prepare.outputs.version }})
+        
+        ### 🚀 Installation
+        
+        \`\`\`bash
+        # Clone the repository
+        git clone https://github.com/cjmit18/RPG-Make.git
+        cd RPG-Make
+        
+        # Install dependencies
+        pip install -r requirements.txt
+        
+        # Launch the application
+        python main_enhanced.py
+        \`\`\`
+        
+        ### 🎯 Key Features
+        
+        - ✅ **Modern UI System** - Streamlined 3-tab character creation
+        - ✅ **Template System** - 8 character templates with growth stats
+        - ✅ **Smart Stat Distribution** - AI-powered character optimization
+        - ✅ **Live Preview** - Real-time character updates
+        - ✅ **Export/Import** - Save and share character builds
+        
+        EOF
+        
+        # Set output
         {
-          echo "CHANGELOG<<EOF"
-          echo "## 🎮 RPG Engine v${{ steps.get_version.outputs.VERSION }}"
-          echo ""
-          echo "### ✨ Features"
-          echo "- Async-first RPG engine architecture"
-          echo "- Interactive UI with real-time monitoring"
-          echo "- Event-driven design with strong typing"
-          echo "- Service container with dependency injection"
-          echo "- Cross-thread communication for UI integration"
-          echo "- Comprehensive demo applications"
-          echo ""
-          echo "### 🚀 Demo Applications"
-          echo "- \`engine_demo.py\` - Comprehensive interactive demo"
-          echo "- \`simple_ui_test.py\` - Simple UI testing"
-          echo "- \`test_engine.py\` - Unit tests and verification"
-          echo ""
-          echo "### 📋 Requirements"
-          echo "- Python 3.11 or higher"
-          echo "- tkinter (usually included with Python)"
-          echo ""
-          echo "### 🏃 Quick Start"
-          echo "\`\`\`bash"
-          echo "# Download and extract the demo package"
-          echo "tar -xzf rpg-engine-demo-v${{ steps.get_version.outputs.VERSION }}.tar.gz"
-          echo ""
-          echo "# Install dependencies"
-          echo "pip install -r requirements.txt"
-          echo ""
-          echo "# Run the comprehensive demo"
-          echo "python engine_demo.py"
-          echo "\`\`\`"
-          echo "EOF"
+          echo 'notes<<EOF'
+          cat release-notes.md
+          echo EOF
         } >> $GITHUB_OUTPUT
         
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
+    - name: 📤 Upload Release Notes
+      uses: actions/upload-artifact@v3
       with:
-        tag_name: ${{ github.ref_name }}
-        name: RPG Engine v${{ steps.get_version.outputs.VERSION }}
-        body: ${{ steps.changelog.outputs.CHANGELOG }}
-        files: |
-          dist/rpg-engine-v${{ steps.get_version.outputs.VERSION }}.tar.gz
-          dist/rpg-engine-demo-v${{ steps.get_version.outputs.VERSION }}.tar.gz
-        draft: false
-        prerelease: false
+        name: release-notes
+        path: release-notes.md
+
+  # 🚀 Create GitHub Release
+  release:
+    name: 🚀 Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [prepare, test, build, changelog]
+    
+    steps:
+    - name: 📥 Download Release Assets
+      uses: actions/download-artifact@v3
+      with:
+        name: release-assets
+        path: ./assets
+        
+    - name: 📥 Download Release Notes
+      uses: actions/download-artifact@v3
+      with:
+        name: release-notes
+        path: ./notes
+        
+    - name: 🚀 Create Release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ needs.prepare.outputs.tag }}
+        release_name: 🎮 RPG Engine ${{ needs.prepare.outputs.version }}
+        body_path: ./notes/release-notes.md
+        draft: false
+        prerelease: false
+        
+    - name: 📦 Upload Source Archive
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./assets/rpg-engine-${{ needs.prepare.outputs.version }}-source.tar.gz
+        asset_name: rpg-engine-${{ needs.prepare.outputs.version }}-source.tar.gz
+        asset_content_type: application/gzip
+        
+    - name: 📋 Upload Installation Guide
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./assets/INSTALL.txt
+        asset_name: INSTALL.txt
+        asset_content_type: text/plain
+
+  # 📊 Post-Release
+  notify:
+    name: 📊 Post-Release Notifications
+    runs-on: ubuntu-latest
+    needs: [prepare, release]
+    if: success()
+    
+    steps:
+    - name: 🎉 Success Notification
+      run: |
+        echo "🎉 Successfully released RPG Engine ${{ needs.prepare.outputs.version }}"
+        echo "📦 Release URL: https://github.com/cjmit18/RPG-Make/releases/tag/${{ needs.prepare.outputs.tag }}"
+        echo "🔗 Download: https://github.com/cjmit18/RPG-Make/archive/${{ needs.prepare.outputs.tag }}.tar.gz"

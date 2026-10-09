@@ -1,0 +1,198 @@
+name: RPG Engine Tests
+
+on:
+  push:
+    branches: [ main, testing_center, develop, Test3 ]
+  pull_request:
+    branches: [ main, testing_center, develop, Test3 ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Test core engine imports
+      run: |
+        # Test core engine components
+        python -c "from rpg_engine.core.event_bus import EventBus; print('✅ Event bus imports successfully')"
+        python -c "from rpg_engine.core.config import GameConfig; print('✅ Game config imports successfully')"
+        python -c "from rpg_engine.core.template_loader import TemplateManager; print('✅ Template loader imports successfully')"
+        python -c "from rpg_engine.systems.achievements import AchievementSystem; print('✅ Achievement system imports successfully')"
+        python -c "from rpg_engine.systems.notifications import NotificationSystem; print('✅ Notification system imports successfully')"
+        
+    - name: Test template loading system
+      run: |
+        # Test data-driven template system
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        tm = get_template_manager()
+        stats = tm.get_template_stats()
+        print(f'✅ Template system loaded {stats[\"total_templates\"]} templates')
+        assert stats['character_templates'] > 0, 'No character templates loaded'
+        assert stats['achievement_templates'] > 0, 'No achievement templates loaded'
+        "
+        
+    - name: Test configuration system
+      run: |
+        # Test configuration loading
+        python -c "
+        from rpg_engine.core.config import GameConfig
+        config = GameConfig()
+        raw_config = config.get_raw_config()
+        print('✅ Configuration system loaded successfully')
+        assert 'character_mechanics' in raw_config, 'Character mechanics config missing'
+        assert 'derived_stat_formulas' in raw_config['character_mechanics'], 'Derived stat formulas missing'
+        "
+        
+    - name: Test observer pattern systems
+      run: |
+        # Test achievement and notification systems
+        python -c "
+        import asyncio
+        from rpg_engine.systems.achievements.achievement_system import AchievementSystem
+        from rpg_engine.systems.notifications.notification_system import NotificationSystem
+        from rpg_engine.core.event_bus import EventBus
+        from rpg_engine.core.config import GameConfig
+        
+        async def test_observers():
+            event_bus = EventBus()
+            config = GameConfig()
+            
+            # Test achievement system (initializes in constructor)
+            achievement_system = AchievementSystem(event_bus, config)
+            print('✅ Achievement system initialized')
+            
+            # Test notification system (initializes in constructor)
+            notification_system = NotificationSystem(event_bus)
+            print('✅ Notification system initialized')
+        
+        asyncio.run(test_observers())
+        "
+        
+    - name: Test character template calculations
+      run: |
+        # Test character stat calculations
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        tm = get_template_manager()
+        warrior = tm.get_character_template('warrior_basic')
+        assert warrior is not None, 'Warrior template not found'
+        
+        # Test stat calculation at level 10
+        strength_10 = warrior.calculate_stat_at_level('strength', 10)
+        expected = 16 + (1.3 * 9)  # base + (growth * (level - 1))
+        assert abs(strength_10 - expected) < 0.001, f'Stat calculation error: {strength_10} != {expected}'
+        print('✅ Character stat calculations working correctly')
+        "
+        
+    - name: Run template loading tests
+      run: |
+        # Run comprehensive template tests
+        python test_template_loading.py
+        
+    - name: Run character system demo
+      run: |
+        # Run character system demonstration  
+        python examples/demo_character_system.py
+        
+    - name: Run main application demo
+      run: |
+        # Run main application
+        python main.py
+        
+    - name: Test data integrity
+      run: |
+        # Test JSON data files exist and are valid
+        python -c "
+        import json
+        from pathlib import Path
+        
+        # Test character templates
+        with open('data/character_templates.json', 'r') as f:
+            templates = json.load(f)
+            assert 'character_templates' in templates
+            print(f'✅ Character templates JSON valid ({len(templates[\"character_templates\"])} templates)')
+        
+        # Test achievements
+        with open('data/achievements.json', 'r') as f:
+            achievements = json.load(f)
+            assert 'achievements' in achievements
+            print(f'✅ Achievements JSON valid')
+            
+        # Test configuration
+        with open('config/default_settings.json', 'r') as f:
+            config = json.load(f)
+            assert 'character_mechanics' in config
+            print('✅ Configuration JSON valid')
+        "
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install black flake8 mypy
+        
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff rpg_engine/
+        
+    - name: Lint with flake8
+      run: |
+        flake8 rpg_engine/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 rpg_engine/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check documentation files
+      run: |
+        # Check that key documentation exists
+        test -f README.md || echo "❌ README.md missing"
+        test -f docs/DATA_DRIVEN_TEMPLATES.md || echo "❌ Template documentation missing"
+        test -f CONTRIBUTING.MD || echo "❌ Contributing guide missing"
+        
+        # Check for comprehensive documentation
+        if [ -f docs/DATA_DRIVEN_TEMPLATES.md ]; then
+          echo "✅ Template system documentation exists"
+        fi
+        
+        if [ -f .github/README.md ]; then
+          echo "✅ GitHub documentation exists"
+        fi
+        
+        echo "📚 Documentation check completed"

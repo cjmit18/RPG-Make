@@ -90,8 +90,26 @@ class AsyncGameEngine(AsyncInitializable, AsyncShutdownable):
         self.service_container.register_instance(EventBus, self.event_bus)
         self.service_container.register_instance(ServiceContainer, self.service_container)
         
-        # UI services will be registered when UI system is created
-        logger.debug("Core services registered")
+        # Register configuration service
+        from .config import GameConfig
+        config_service = GameConfig()
+        self.service_container.register_instance(GameConfig, config_service)
+        
+        # Register observer systems (Achievement and Notification systems)
+        from rpg_engine.systems.achievements import AchievementSystem
+        from rpg_engine.systems.notifications import NotificationSystem
+        
+        # Achievement system - demonstrates observer pattern
+        achievement_system = AchievementSystem(self.event_bus, config_service)
+        self.service_container.register_instance(AchievementSystem, achievement_system)
+        
+        # Notification system - demonstrates another observer pattern
+        notification_system = NotificationSystem(self.event_bus)
+        self.service_container.register_instance(NotificationSystem, notification_system)
+        
+        logger.info("Core services registered with observer systems initialized")
+        logger.info("🏆 Achievement system ready to track character progress")
+        logger.info("📢 Notification system ready to provide user feedback")
     
     async def start_async(self) -> None:
         """Start the main game loop"""

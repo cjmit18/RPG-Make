@@ -1,0 +1,393 @@
+{
+  "character_templates": {
+    "Hero": {
+      "id": "hero",
+      "name": "Hero",
+      "description": "The main character controlled by the player",
+      "character_class": "Base",
+      "rarity": "COMMON",
+      "grade": "ONE",
+      "base_stats": {
+        "strength": 10,
+        "dexterity": 10,
+        "vitality": 10,
+        "intelligence": 10,
+        "wisdom": 10,
+        "constitution": 10,
+        "luck": 10,
+        "agility": 10,
+        "charisma": 10
+      },
+      "growth_rates": {
+        "strength": 1.0,
+        "dexterity": 1.0,
+        "vitality": 1.0,
+        "intelligence": 1.0,
+        "wisdom": 1.0,
+        "constitution": 1.0,
+        "luck": 1.0,
+        "agility": 1.0,
+        "charisma": 1.0
+      },
+      "starting_equipment": [
+        "basic_sword",
+        "basic_armor",
+        "basic_shield"
+      ],
+      "starting_skills": [
+        "basic_attack",
+        "defend"
+      ],
+      "background": null, 
+      "appearance": {
+        "hair_color": null, 
+        "eye_color": null, 
+        "skin_tone": null, 
+        "height": null, 
+        "build": null
+      }
+    },
+    "warrior_basic": {
+      "id": "warrior_basic",
+      "name": "Basic Warrior",
+      "description": "A strong melee combatant with high defense and physical prowess",
+      "character_class": "Warrior", 
+      "rarity": "COMMON",
+      "grade": "ONE",
+      "base_stats": {
+        "strength": 16,
+        "dexterity": 12,
+        "vitality": 15,
+        "intelligence": 8,
+        "wisdom": 9,
+        "constitution": 14,
+        "luck": 10,
+        "agility": 11,
+        "charisma": 10
+      },
+      "growth_rates": {
+        "comment": "How much each stat increases per level for this character class",
+        "strength": 1.3,
+        "dexterity": 1.0,
+        "vitality": 1.2,
+        "intelligence": 0.7,
+        "wisdom": 0.8,
+        "constitution": 1.2,
+        "luck": 1.0,
+        "agility": 0.9,
+        "charisma": 0.9
+      },
+      "starting_equipment": [
+        "iron_sword",
+        "leather_armor",
+        "wooden_shield"
+      ],
+      "starting_skills": [
+        "sword_mastery_1",
+        "shield_bash"
+      ],
+      "background": "soldier",
+      "appearance": {
+        "hair_color": "brown",
+        "eye_color": "blue",
+        "skin_tone": "fair",
+        "height": "tall",
+        "build": "muscular"
+      }
+    },
+    "mage_basic": {
+      "id": "mage_basic", 
+      "name": "Basic Mage",
+      "description": "A scholarly spellcaster with high intelligence and magical abilities",
+      "character_class": "Mage",
+      "rarity": "COMMON",
+      "grade": "ONE",
+      "base_stats": {
+        "strength": 8,
+        "dexterity": 11,
+        "vitality": 10,
+        "intelligence": 18,
+        "wisdom": 16,
+        "constitution": 9,
+        "luck": 12,
+        "agility": 10,
+        "charisma": 13
+      },
+      "growth_rates": {
+        "strength": 0.7,
+        "dexterity": 0.9,
+        "vitality": 0.8,
+        "intelligence": 1.4,
+        "wisdom": 1.3,
+        "constitution": 0.8,
+        "luck": 1.1,
+        "agility": 0.9,
+        "charisma": 1.1
+      },
+      "starting_equipment": [
+        "wooden_staff",
+        "apprentice_robes",
+        "spell_book"
+      ],
+      "starting_skills": [
+        "arcane_missile",
+        "mana_shield"
+      ],
+      "background": "scholar",
+      "appearance": {
+        "hair_color": "gray",
+        "eye_color": "violet",
+        "skin_tone": "pale",
+        "height": "average",
+        "build": "thin"
+      }
+    },
+    "rogue_basic": {
+      "id": "rogue_basic",
+      "name": "Basic Rogue",
+      "description": "A nimble assassin with high dexterity and stealth capabilities",
+      "character_class": "Rogue",
+      "rarity": "COMMON", 
+      "grade": "ONE",
+      "base_stats": {
+        "strength": 12,
+        "dexterity": 18,
+        "vitality": 11,
+        "intelligence": 13,
+        "wisdom": 12,
+        "constitution": 10,
+        "luck": 15,
+        "agility": 17,
+        "charisma": 11
+      },
+      "growth_rates": {
+        "strength": 1.0,
+        "dexterity": 1.4,
+        "vitality": 0.9,
+        "intelligence": 1.1,
+        "wisdom": 1.0,
+        "constitution": 0.9,
+        "luck": 1.3,
+        "agility": 1.4,
+        "charisma": 1.0
+      },
+      "starting_equipment": [
+        "steel_dagger",
+        "leather_vest",
+        "thieves_tools"
+      ],
+      "starting_skills": [
+        "sneak_attack",
+        "stealth"
+      ],
+      "background": "thief",
+      "appearance": {
+        "hair_color": "black",
+        "eye_color": "green",
+        "skin_tone": "olive",
+        "height": "short",
+        "build": "lean"
+      }
+    },
+    "cleric_basic": {
+      "id": "cleric_basic",
+      "name": "Basic Cleric",
+      "description": "A divine healer with high wisdom and support abilities",
+      "character_class": "Cleric",
+      "rarity": "COMMON",
+      "grade": "ONE", 
+      "base_stats": {
+        "strength": 11,
+        "dexterity": 10,
+        "vitality": 13,
+        "intelligence": 14,
+        "wisdom": 18,
+        "constitution": 12,
+        "luck": 13,
+        "agility": 9,
+        "charisma": 16
+      },
+      "growth_rates": {
+        "strength": 0.9,
+        "dexterity": 0.8,
+        "vitality": 1.1,
+        "intelligence": 1.2,
+        "wisdom": 1.4,
+        "constitution": 1.1,
+        "luck": 1.2,
+        "agility": 0.8,
+        "charisma": 1.3
+      },
+      "starting_equipment": [
+        "holy_symbol",
+        "priest_robes",
+        "healing_potion"
+      ],
+      "starting_skills": [
+        "heal",
+        "bless"
+      ],
+      "background": "acolyte",
+      "appearance": {
+        "hair_color": "blonde",
+        "eye_color": "brown",
+        "skin_tone": "fair",
+        "height": "average",
+        "build": "average"
+      }
+    },
+    "paladin_rare": {
+      "id": "paladin_rare",
+      "name": "Holy Paladin",
+      "description": "A rare holy warrior combining martial prowess with divine magic",
+      "character_class": "Paladin",
+      "rarity": "RARE",
+      "grade": "THREE",
+      "base_stats": {
+        "strength": 17,
+        "dexterity": 12,
+        "vitality": 16,
+        "intelligence": 12,
+        "wisdom": 16,
+        "constitution": 15,
+        "luck": 14,
+        "agility": 11,
+        "charisma": 18
+      },
+      "growth_rates": {
+        "strength": 1.3,
+        "dexterity": 1.0,
+        "vitality": 1.2,
+        "intelligence": 1.0,
+        "wisdom": 1.3,
+        "constitution": 1.2,
+        "luck": 1.1,
+        "agility": 0.9,
+        "charisma": 1.4
+      },
+      "starting_equipment": [
+        "blessed_sword",
+        "plate_armor",
+        "divine_shield"
+      ],
+      "starting_skills": [
+        "smite_evil",
+        "lay_on_hands",
+        "divine_protection"
+      ],
+      "background": "noble",
+      "appearance": {
+        "hair_color": "golden",
+        "eye_color": "blue",
+        "skin_tone": "radiant",
+        "height": "tall",
+        "build": "heroic"
+      }
+    },
+    "archmage_legendary": {
+      "id": "archmage_legendary",
+      "name": "Legendary Archmage",
+      "description": "A legendary master of the arcane arts with immense magical power",
+      "character_class": "Archmage",
+      "rarity": "LEGENDARY",
+      "grade": "SIX",
+      "base_stats": {
+        "strength": 10,
+        "dexterity": 14,
+        "vitality": 12,
+        "intelligence": 25,
+        "wisdom": 22,
+        "constitution": 11,
+        "luck": 18,
+        "agility": 13,
+        "charisma": 20
+      },
+      "growth_rates": {
+        "strength": 0.6,
+        "dexterity": 1.0,
+        "vitality": 0.8,
+        "intelligence": 1.6,
+        "wisdom": 1.5,
+        "constitution": 0.7,
+        "luck": 1.4,
+        "agility": 1.0,
+        "charisma": 1.3
+      },
+      "starting_equipment": [
+        "staff_of_power",
+        "archmage_robes",
+        "tome_of_secrets",
+        "ring_of_mana"
+      ],
+      "starting_skills": [
+        "meteor",
+        "time_stop",
+        "teleport",
+        "mana_mastery",
+        "spell_immunity"
+      ],
+      "background": "ancient_scholar",
+      "appearance": {
+        "hair_color": "silver",
+        "eye_color": "glowing_blue",
+        "skin_tone": "ethereal",
+        "height": "tall",
+        "build": "mystical"
+      },
+      "special_abilities": [
+        "spell_penetration",
+        "arcane_mastery",
+        "elemental_immunity"
+      ]
+    },
+    "druid_epic": {
+      "id": "druid_epic",
+      "name": "Epic Druid",
+      "description": "An epic nature guardian with powerful shapeshifting and elemental magic",
+      "character_class": "Druid",
+      "rarity": "EPIC",
+      "grade": "FIVE",
+      "base_stats": {
+        "strength": 14,
+        "dexterity": 15,
+        "vitality": 18,
+        "intelligence": 16,
+        "wisdom": 20,
+        "constitution": 17,
+        "luck": 15,
+        "agility": 14,
+        "charisma": 19
+      },
+      "growth_rates": {
+        "strength": 1.1,
+        "dexterity": 1.2,
+        "vitality": 1.3,
+        "intelligence": 1.4,
+        "wisdom": 1.5,
+        "constitution": 1.3,
+        "luck": 1.2,
+        "agility": 1.0,
+        "charisma": 1.4
+      },
+      "starting_equipment": [
+        "nature_staff",
+        "druidic_armor",
+        "amulet_of_nature"
+      ],
+      "starting_skills": [
+        "shapeshift",
+        "earthquake",
+        "healing_spring",
+        "animal_companion"
+      ],
+      "background": null, 
+      "appearance": {
+        "hair_color": null, 
+        "eye_color": null, 
+        "skin_tone": null, 
+        "height": null, 
+        "build": null
+      }
+    }
+  }
+}

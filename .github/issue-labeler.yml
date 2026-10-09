@@ -1,0 +1,94 @@
+# Issue labeling configuration
+# Labels are applied based on issue title and body content
+
+# Priority Labels
+'priority/high':
+  - 'critical'
+  - 'urgent'
+  - 'crash'
+  - 'broken'
+  - 'not working'
+
+'priority/medium':
+  - 'important'
+  - 'should have'
+  - 'improvement'
+
+'priority/low':
+  - 'nice to have'
+  - 'enhancement'
+  - 'minor'
+
+# Type Labels
+'type/bug':
+  - 'bug'
+  - 'error'
+  - 'issue'
+  - 'problem'
+  - 'broken'
+  - 'not working'
+  - 'AttributeError'
+  - 'exception'
+
+'type/feature':
+  - 'feature'
+  - 'enhancement'
+  - 'add'
+  - 'new'
+  - 'implement'
+
+'type/documentation':
+  - 'docs'
+  - 'documentation'
+  - 'readme'
+  - 'guide'
+  - 'tutorial'
+
+'type/question':
+  - 'question'
+  - 'help'
+  - 'how to'
+  - 'how do'
+  - 'support'
+
+# Component Labels
+'component/character-system':
+  - 'character'
+  - 'stats'
+  - 'creation'
+  - 'template'
+
+'component/ui':
+  - 'ui'
+  - 'interface'
+  - 'window'
+  - 'button'
+  - 'tkinter'
+
+'component/engine':
+  - 'engine'
+  - 'core'
+  - 'async'
+  - 'service'
+
+'component/config':
+  - 'config'
+  - 'settings'
+  - 'json'
+
+'component/achievements':
+  - 'achievement'
+  - 'unlock'
+  - 'progress'
+
+# Difficulty Labels
+'good first issue':
+  - 'beginner'
+  - 'easy'
+  - 'starter'
+  - 'simple'
+
+'help wanted':
+  - 'help wanted'
+  - 'looking for help'
+  - 'assistance needed'

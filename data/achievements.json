@@ -1,0 +1,340 @@
+{
+  "achievements": {
+    "character_creation": {
+      "first_character": {
+        "id": "first_character",
+        "name": "First Steps",
+        "description": "Create your first character and begin your adventure",
+        "category": "character_creation",
+        "points": 10,
+        "icon": "character_icon",
+        "rarity": "common",
+        "hidden": false,
+        "requirements": {
+          "type": "character_created",
+          "count": 1
+        },
+        "rewards": {
+          "experience": 50,
+          "gold": 100,
+          "title": "Newcomer"
+        }
+      },
+      "character_variety": {
+        "id": "character_variety",
+        "name": "Character Collector",
+        "description": "Create 5 different characters to explore various playstyles",
+        "category": "character_creation",
+        "points": 25,
+        "icon": "collection_icon",
+        "rarity": "uncommon",
+        "hidden": false,
+        "requirements": {
+          "type": "characters_created",
+          "count": 5
+        },
+        "rewards": {
+          "experience": 200,
+          "gold": 500,
+          "title": "Collector",
+          "unlock_template": "veteran_warrior"
+        }
+      },
+      "master_creator": {
+        "id": "master_creator",
+        "name": "Master Creator",
+        "description": "Create 20 characters and unlock the secrets of character mastery",
+        "category": "character_creation",
+        "points": 100,
+        "icon": "master_icon",
+        "rarity": "rare",
+        "hidden": false,
+        "requirements": {
+          "type": "characters_created",
+          "count": 20
+        },
+        "rewards": {
+          "experience": 1000,
+          "gold": 2500,
+          "title": "Master Creator",
+          "unlock_template": "legendary_hero",
+          "special_ability": "enhanced_stats"
+        }
+      }
+    },
+    "progression": {
+      "getting_started": {
+        "id": "getting_started",
+        "name": "Getting Started",
+        "description": "Reach level 10 and prove your dedication",
+        "category": "progression",
+        "points": 20,
+        "icon": "level_icon",
+        "rarity": "common",
+        "hidden": false,
+        "requirements": {
+          "type": "level_reached",
+          "level": 10
+        },
+        "rewards": {
+          "experience": 500,
+          "skill_points": 2,
+          "title": "Dedicated"
+        }
+      },
+      "making_progress": {
+        "id": "making_progress", 
+        "name": "Making Progress",
+        "description": "Reach level 25 and show your growing power",
+        "category": "progression",
+        "points": 50,
+        "icon": "progress_icon",
+        "rarity": "uncommon",
+        "hidden": false,
+        "requirements": {
+          "type": "level_reached",
+          "level": 25
+        },
+        "rewards": {
+          "experience": 1250,
+          "skill_points": 5,
+          "gold": 1000,
+          "title": "Rising Star"
+        }
+      },
+      "halfway_there": {
+        "id": "halfway_there",
+        "name": "Halfway There",
+        "description": "Reach level 50 and achieve significant power",
+        "category": "progression",
+        "points": 100,
+        "icon": "milestone_icon",
+        "rarity": "rare",
+        "hidden": false,
+        "requirements": {
+          "type": "level_reached",
+          "level": 50
+        },
+        "rewards": {
+          "experience": 2500,
+          "skill_points": 10,
+          "gold": 5000,
+          "title": "Veteran",
+          "unlock_skill": "mastery_training"
+        }
+      },
+      "ultimate_power": {
+        "id": "ultimate_power",
+        "name": "Ultimate Power",
+        "description": "Reach the maximum level and achieve legendary status",
+        "category": "progression",
+        "points": 500,
+        "icon": "legendary_icon",
+        "rarity": "legendary",
+        "hidden": false,
+        "requirements": {
+          "type": "level_reached",
+          "level": 100
+        },
+        "rewards": {
+          "experience": 10000,
+          "skill_points": 25,
+          "gold": 25000,
+          "title": "Legendary Hero",
+          "unlock_skill": "transcendence",
+          "special_ability": "level_cap_breakthrough"
+        }
+      }
+    },
+    "stats": {
+      "mighty_warrior": {
+        "id": "mighty_warrior",
+        "name": "Mighty Warrior",
+        "description": "Reach 100 Strength and become a force of nature",
+        "category": "stats",
+        "points": 30,
+        "icon": "strength_icon",
+        "rarity": "uncommon",
+        "hidden": false,
+        "requirements": {
+          "type": "stat_threshold",
+          "stat": "strength",
+          "value": 100
+        },
+        "rewards": {
+          "strength": 5,
+          "title": "Mighty",
+          "unlock_skill": "berserker_rage"
+        }
+      },
+      "arcane_scholar": {
+        "id": "arcane_scholar",
+        "name": "Arcane Scholar",
+        "description": "Reach 100 Intelligence and unlock the mysteries of magic",
+        "category": "stats",
+        "points": 30,
+        "icon": "intelligence_icon",
+        "rarity": "uncommon",
+        "hidden": false,
+        "requirements": {
+          "type": "stat_threshold",
+          "stat": "intelligence",
+          "value": 100
+        },
+        "rewards": {
+          "intelligence": 5,
+          "mana": 50,
+          "title": "Scholar",
+          "unlock_skill": "arcane_mastery"
+        }
+      },
+      "well_rounded": {
+        "id": "well_rounded",
+        "name": "Well Rounded",
+        "description": "Have all stats above 50 and achieve perfect balance",
+        "category": "stats",
+        "points": 75,
+        "icon": "balance_icon",
+        "rarity": "rare",
+        "hidden": false,
+        "requirements": {
+          "type": "all_stats_above",
+          "value": 50,
+          "stats": ["strength", "dexterity", "vitality", "intelligence", "wisdom", "constitution"]
+        },
+        "rewards": {
+          "all_stats": 3,
+          "skill_points": 5,
+          "title": "Balanced",
+          "special_ability": "stat_synergy"
+        }
+      },
+      "perfect_stats": {
+        "id": "perfect_stats",
+        "name": "Perfection",
+        "description": "Achieve 200 in all primary stats and reach perfection",
+        "category": "stats",
+        "points": 1000,
+        "icon": "perfection_icon",
+        "rarity": "mythic",
+        "hidden": true,
+        "requirements": {
+          "type": "all_stats_above",
+          "value": 200,
+          "stats": ["strength", "dexterity", "vitality", "intelligence", "wisdom", "constitution"]
+        },
+        "rewards": {
+          "all_stats": 25,
+          "skill_points": 50,
+          "title": "Perfect Being",
+          "special_ability": "transcendent_form",
+          "unlock_template": "divine_avatar"
+        }
+      }
+    },
+    "exploration": {
+      "first_steps": {
+        "id": "first_steps_exploration",
+        "name": "First Steps Into the Unknown",
+        "description": "Complete your first exploration and discover new territories",
+        "category": "exploration",
+        "points": 15,
+        "icon": "explore_icon",
+        "rarity": "common",
+        "hidden": false,
+        "requirements": {
+          "type": "areas_explored",
+          "count": 1
+        },
+        "rewards": {
+          "experience": 100,
+          "gold": 50,
+          "title": "Explorer"
+        }
+      }
+    },
+    "combat": {
+      "first_victory": {
+        "id": "first_victory",
+        "name": "First Victory",
+        "description": "Win your first combat encounter",
+        "category": "combat",
+        "points": 10,
+        "icon": "victory_icon",
+        "rarity": "common",
+        "hidden": false,
+        "requirements": {
+          "type": "combats_won",
+          "count": 1
+        },
+        "rewards": {
+          "experience": 75,
+          "title": "Victor"
+        }
+      },
+      "combat_veteran": {
+        "id": "combat_veteran",
+        "name": "Combat Veteran",
+        "description": "Win 100 combat encounters and prove your skill",
+        "category": "combat",
+        "points": 150,
+        "icon": "veteran_icon",
+        "rarity": "rare",
+        "hidden": false,
+        "requirements": {
+          "type": "combats_won",
+          "count": 100
+        },
+        "rewards": {
+          "experience": 2000,
+          "skill_points": 10,
+          "title": "Veteran",
+          "unlock_skill": "combat_mastery"
+        }
+      }
+    },
+    "special": {
+      "speed_runner": {
+        "id": "speed_runner",
+        "name": "Speed Runner",
+        "description": "Reach level 50 in under 10 hours of gameplay",
+        "category": "special",
+        "points": 200,
+        "icon": "speed_icon",
+        "rarity": "epic",
+        "hidden": true,
+        "requirements": {
+          "type": "level_reached_time",
+          "level": 50,
+          "max_time_hours": 10
+        },
+        "rewards": {
+          "experience": 5000,
+          "title": "Speed Demon",
+          "special_ability": "time_dilation"
+        }
+      },
+      "completionist": {
+        "id": "completionist",
+        "name": "Completionist",
+        "description": "Unlock 90% of all achievements and become a true master",
+        "category": "special",
+        "points": 1000,
+        "icon": "complete_icon",
+        "rarity": "legendary",
+        "hidden": true,
+        "requirements": {
+          "type": "achievements_unlocked_percent",
+          "percentage": 90
+        },
+        "rewards": {
+          "experience": 25000,
+          "all_stats": 10,
+          "skill_points": 100,
+          "title": "Master of All",
+          "special_ability": "achievement_mastery"
+        }
+      }
+    }
+  }
+}

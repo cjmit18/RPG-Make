@@ -21,17 +21,27 @@ Version: 0.1.0
 __version__ = "0.1.0"
 __author__ = "CJ"
 
-# Core system imports for easy access
-from game_sys.config.config_manager import ConfigManager
-from game_sys.logging import get_logger
-
-# Main demo application
-from demo_v3 import RPGEngineDemoV3
+# Core RPG Engine imports for easy access
+try:
+    from rpg_engine.core.config import GameConfig
+    from rpg_engine.core.engine import AsyncGameEngine
+    from rpg_engine.core.event_bus import EventBus
+    from rpg_engine.core.service_container import ServiceContainer
+    from rpg_engine.ui import ModularUIManager, StartMenuManager
+except ImportError:
+    # Core systems should be available
+    pass
 
 __all__ = [
-    "ConfigManager",
-    "get_logger", 
-    "RPGEngineDemoV3",
+    # Current RPG Engine (v2.0)
+    "GameConfig",
+    "AsyncGameEngine", 
+    "EventBus",
+    "ServiceContainer",
+    "ModularUIManager",
+    "StartMenuManager",
+    
+    # Project metadata
     "__version__",
     "__author__"
 ]

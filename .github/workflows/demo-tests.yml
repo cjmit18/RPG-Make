@@ -1,4 +1,4 @@
-name: Demo Tests
+name: Template System Demo Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, testing_center, develop, Test3 ]
 
 jobs:
-  demo-validation:
+  template-demo:
     runs-on: ubuntu-latest
     
     steps:
@@ -23,31 +23,149 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest pytest-asyncio
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Install GUI dependencies for headless testing
-        sudo apt-get update
-        sudo apt-get install -y xvfb
         
-    - name: Validate async engine demo imports
+    - name: Test template system initialization
       run: |
         python -c "
-        # Test new async engine demo imports
-        import os
-        os.environ['DISPLAY'] = ':99'
+        from rpg_engine.core.template_loader import get_template_manager
+        from rpg_engine.core.config import GameConfig
         
-        try:
-            # Test core async engine imports
-            from rpg_engine import AsyncGameEngine, ServiceContainer, EventBus
-            from rpg_engine.ui.ui_system import AsyncUIManager
-            print('✅ Async engine demo dependencies import successfully')
+        # Initialize systems
+        tm = get_template_manager()
+        config = GameConfig()
+        
+        print('✅ Template system initialized successfully')
+        print(f'✅ Loaded {tm.get_template_stats()[\"total_templates\"]} templates')
+        "
+        
+    - name: Run comprehensive template loading test
+      run: |
+        # Run the full template loading test suite
+        python test_template_loading.py
+        
+    - name: Run character system demonstration
+      run: |
+        # Run the character creation and stat system demo
+        python examples/demo_character_system.py
+        
+    - name: Test character template validation
+      run: |
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        
+        tm = get_template_manager()
+        errors = tm.validate_all_templates()
+        
+        total_errors = sum(len(error_list) for error_list in errors.values())
+        if total_errors > 0:
+            print(f'⚠️ Found {total_errors} validation issues')
+            for template_type, error_list in errors.items():
+                for error in error_list:
+                    print(f'  - {template_type}: {error}')
+        else:
+            print('✅ All templates pass validation')
+        "
+        
+    - name: Test stat calculation examples
+      run: |
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        from rpg_engine.core.config import GameConfig
+        
+        tm = get_template_manager()
+        config = GameConfig()
+        
+        # Test warrior progression
+        warrior = tm.get_character_template('warrior_basic')
+        if warrior:
+            print(f'🛡️ {warrior.name} Level 1 Strength: {warrior.calculate_stat_at_level(\"strength\", 1)}')
+            print(f'🛡️ {warrior.name} Level 10 Strength: {warrior.calculate_stat_at_level(\"strength\", 10)}')
             
-            # Test demo applications exist
-            import os
-            assert os.path.exists('engine_demo.py'), 'engine_demo.py not found'
-            assert os.path.exists('simple_ui_test.py'), 'simple_ui_test.py not found'
-            assert os.path.exists('test_engine.py'), 'test_engine.py not found'
-            print('✅ All demo files exist')
+            # Test derived stat calculation
+            raw_config = config.get_raw_config()
+            formulas = raw_config.get('character_mechanics', {}).get('derived_stat_formulas', {})
+            if formulas:
+                constitution_10 = warrior.calculate_stat_at_level('constitution', 10)
+                health = constitution_10 * formulas.get('health', 10.0)
+                print(f'🛡️ {warrior.name} Level 10 Health: {health} (Constitution: {constitution_10} × {formulas.get(\"health\", 10.0)})')
+                
+        print('✅ Stat calculation demonstrations completed')
+        "
+
+  observer-pattern-demo:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Test observer pattern systems
+      run: |
+        python -c "
+        import asyncio
+        from rpg_engine.core.event_bus import EventBus
+        from rpg_engine.core.config import GameConfig
+        from rpg_engine.systems.achievements.achievement_system import AchievementSystem
+        from rpg_engine.systems.notifications.notification_system import NotificationSystem
+        
+        async def test_observer_patterns():
+            # Initialize systems
+            event_bus = EventBus()
+            config = GameConfig()
             
-        except Exception as e:
+            # Initialize achievement system (constructor initializes automatically)
+            achievement_system = AchievementSystem(event_bus, config)
+            print(f'✅ Achievement system loaded')
+            
+            # Initialize notification system (constructor initializes automatically)  
+            notification_system = NotificationSystem(event_bus)
+            print(f'✅ Notification system loaded')
+            
+            # Test event publishing
+            await event_bus.publish('character_created', {
+                'character_id': 'test_hero',
+                'character_class': 'warrior',
+                'level': 1
+            })
+            print('✅ Event published successfully')
+            
+            # Small delay to allow async processing
+            await asyncio.sleep(0.1)
+            print('✅ Observer pattern demonstration completed')
+        
+        asyncio.run(test_observer_patterns())
+        "
+        
+    - name: Test data-driven content loading
+      run: |
+        python -c "
+        from rpg_engine.core.template_loader import get_template_manager
+        
+        tm = get_template_manager()
+        
+        # Show character templates
+        character_templates = tm.list_character_templates()
+        print(f'📋 Character Templates: {len(character_templates)}')
+        for template in character_templates[:3]:  # Show first 3
+            print(f'  - {template.name} ({template.character_class}) - Rarity: {template.rarity}')
+        
+        # Show achievement templates  
+        achievement_templates = tm.list_achievement_templates()
+        print(f'🏆 Achievement Templates: {len(achievement_templates)}')
+        for template in achievement_templates[:3]:  # Show first 3
+            print(f'  - {template.name} ({template.points} points)')
+            
+        print('✅ Data-driven content loading demonstration completed')
+        "
             print(f'❌ Async engine demo import failed: {e}')
             import sys
             sys.exit(1)

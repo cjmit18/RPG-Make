@@ -21,7 +21,7 @@ A comprehensive Python RPG engine showcasing **complete modern architecture** wi
 
 ```bash
 # Launch comprehensive demo application
-python demo.py
+python main.py
 
 # Experience full game features:
 # - Character creation and progression  
@@ -262,7 +262,7 @@ This repository contains the complete `game_sys/` package (core engine) and a fu
 The main demo showcases all features with a modern tabbed interface:
 
 ```bash
-python demo.py
+python main.py
 ```
 
 **Demo Features:**
@@ -282,7 +282,7 @@ python test_observer_integration.py
 ```
 
 1. Run the validation script to confirm observer pattern is working
-2. Launch `python demo.py`
+2. Launch `python main.py`
 3. Navigate to the **Leveling** tab
 4. Try the following to see event-driven updates:
    - Click **"Learn Skill"** → Watch automatic UI updates

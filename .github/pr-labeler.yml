@@ -1,0 +1,55 @@
+# PR labeling configuration
+# Labels are applied based on file paths changed
+
+# Component Labels
+'component/character-system':
+  - rpg_engine/systems/character/**/*
+  - rpg_engine/ui/tabs/character_creation_provider.py
+  - data/character_templates.json
+
+'component/ui':
+  - rpg_engine/ui/**/*
+  - examples/*ui*.py
+  - examples/modular_ui_*
+
+'component/engine':
+  - rpg_engine/core/**/*
+  - main.py
+
+'component/config':
+  - config/**/*
+  - rpg_engine/core/config.py
+
+'component/achievements':
+  - rpg_engine/systems/achievements/**/*
+  - data/achievements.json
+
+'component/tests':
+  - tests/**/*
+  - test_*.py
+
+'component/documentation':
+  - docs/**/*
+  - README.md
+  - '*.md'
+
+'component/examples':
+  - examples/**/*
+
+'component/workflows':
+  - .github/**/*
+
+# Type Labels
+'type/feature':
+  - any: ['rpg_engine/**/*']
+
+'type/fix':
+  - any: ['rpg_engine/**/*', 'tests/**/*']
+
+'type/docs':
+  - any: ['docs/**/*', '*.md', 'README.md']
+
+'type/ci':
+  - any: ['.github/**/*', 'pyproject.toml', 'requirements.txt']
+
+# Size automatically handled by pr-size-labeler action

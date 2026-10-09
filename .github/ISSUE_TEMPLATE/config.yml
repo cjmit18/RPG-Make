@@ -7,5 +7,11 @@ contact_links:
     url: https://github.com/cjmit18/RPG-Make/blob/main/README.md
     about: Read the complete documentation and guides
   - name: 🎮 Demo & Examples
-    url: https://github.com/cjmit18/RPG-Make/blob/main/engine_demo.py
-    about: Check out the comprehensive demo application
+    url: https://github.com/cjmit18/RPG-Make/blob/main/examples
+    about: Check out demo applications and usage examples
+  - name: 🔧 Installation Help
+    url: https://github.com/cjmit18/RPG-Make/blob/main/docs/README.md
+    about: Get help with installation and setup
+  - name: 🚀 Quick Start Guide
+    url: https://github.com/cjmit18/RPG-Make/blob/main/examples/quick_start_examples.py
+    about: Jump right in with quick start examples

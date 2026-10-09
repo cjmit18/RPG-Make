@@ -1,130 +1,143 @@
+#!/usr/bin/env python3
 """
-Main Application - Entry point for the new RPG Engine
-Demonstrates the async-first architecture with interactive UI
+Simple Enhanced Modular UI - A cleaner, more reliable version
+Focuses on working functionality with better styling
 """
-import asyncio
-import logging
+
 import sys
+import os
 from pathlib import Path
 
-# Add the project root to the path
-sys.path.append(str(Path(__file__).parent))
+# Ensure project root is in sys.path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+os.chdir(str(project_root))
 
-from rpg_engine.core.engine import AsyncGameEngine
+from rpg_engine.ui.modular_ui_system import ModularUIManager
+from rpg_engine.ui.ui_builder import UIBuilder
+from rpg_engine.ui.modular_ui_system import LayoutType
 from rpg_engine.core.service_container import ServiceContainer
 from rpg_engine.core.event_bus import EventBus
-from rpg_engine.ui.ui_system import AsyncUIManager
+import json
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('rpg_engine.log')
-    ]
-)
+# Import tab modules
+from tabs import build_browse_templates_tab
 
-logger = logging.getLogger(__name__)
 
-class RPGApplication:
-    """
-    Main application class that orchestrates the new RPG Engine
-    """
+def build_ui_def(ui_manager):
+    """Build the complete tabbed UI definition"""
     
-    def __init__(self):
-        self.engine: Optional[AsyncGameEngine] = None
-        self.ui_manager: Optional[AsyncUIManager] = None
-        self.running = False
+    # Load tab configuration
+    browse_templates_tab = build_browse_templates_tab()
     
-    async def initialize(self) -> None:
-        """Initialize the application"""
-        logger.info("Initializing RPG Application...")
+    # Build the UI using the fluent UIBuilder pattern
+    builder = (
+        UIBuilder("🎮 RPG Engine - Enhanced Character Manager")
+        .with_size(800, 600)
+        .with_theme("clam")
+        .with_layout(LayoutType.PACK)
         
-        # Create engine with configuration
-        config = {
-            'target_fps': 60,
-            'debug_mode': True,
-            'ui_enabled': True
-        }
+        # Header
+        .begin_frame()
+        .add_label("🎮 RPG Character Engine", 
+                  font=("Segoe UI", 24, "bold"), 
+                  foreground="#2c3e50")
+        .with_pack_layout(pady=20)
+        .add_label("Advanced Character Management System", 
+                  font=("Segoe UI", 12), 
+                  foreground="#7f8c8d")
+        .with_pack_layout(pady=(0, 20))
+        .end_container()
+        .with_pack_layout(fill="x")
         
-        self.engine = AsyncGameEngine(config)
+        # Main content area with tab-like styling
+        .begin_frame()
+        .with_pack_layout(fill="both", expand=True, padx=20, pady=10)
         
-        # Initialize engine
-        await self.engine.initialize_async()
+        # Tab header simulation
+        .begin_frame()
+        .with_pack_layout(fill="x", pady=(0, 10))
+        .add_label(browse_templates_tab['title'], 
+                  font=("Segoe UI", 14, "bold"), 
+                  foreground="#2c3e50",
+                  background="#ecf0f1",
+                  relief="raised",
+                  borderwidth=2)
+        .with_pack_layout(fill="x", pady=5, padx=5)
+        .end_container()
         
-        # Register UI system
-        ui_manager = AsyncUIManager(self.engine.service_container)
-        self.engine.service_container.register_instance(AsyncUIManager, ui_manager)
-        
-        # Initialize UI
-        await ui_manager.initialize_async()
-        self.ui_manager = ui_manager
-        
-        logger.info("RPG Application initialized successfully")
+        # Content area
+        .begin_frame()
+        .with_pack_layout(fill="both", expand=True)
+    )
     
-    async def run(self) -> None:
-        """Run the application"""
-        if not self.engine:
-            await self.initialize()
-        
-        logger.info("Starting RPG Application...")
-        self.running = True
-        
-        try:
-            # Start the engine
-            await self.engine.start_async()
-            
-            # Keep the application running
-            while self.running and self.engine.state != "stopped":
-                await asyncio.sleep(0.1)
-                
-                # Check if UI is still running
-                if self.ui_manager and not self.ui_manager.ui_running:
-                    logger.info("UI closed, shutting down...")
-                    break
-        
-        except KeyboardInterrupt:
-            logger.info("Received keyboard interrupt")
-        except Exception as e:
-            logger.error(f"Error in main loop: {e}")
-        finally:
-            await self.shutdown()
+    # Add browse templates content
+    builder = browse_templates_tab['content_builder'](builder)
     
-    async def shutdown(self) -> None:
-        """Shutdown the application"""
-        logger.info("Shutting down RPG Application...")
-        self.running = False
+    # Complete the UI
+    builder = (
+        builder
+        .end_container()  # End content frame
+        .end_container()  # End main frame
         
-        if self.engine:
-            await self.engine.shutdown_async()
+        # Footer
+        .begin_frame()
+        .add_button("❌ Exit", 
+                   command="close_window")
+        .with_pack_layout(side="right", padx=20)
+        .end_container()
+        .with_pack_layout(fill="x", pady=10)
+    )
+    
+    # Register all commands
+    all_commands = {}
+    
+    # Handle commands that need ui_manager
+    browse_commands = browse_templates_tab['commands']
+    for cmd_name, cmd_func in browse_commands.items():
+        if cmd_name == 'view_characters':
+            all_commands[cmd_name] = lambda ui_mgr=ui_manager: cmd_func(ui_mgr)
+        else:
+            all_commands[cmd_name] = cmd_func
+    
+    # Add main window commands
+    all_commands['close_window'] = lambda: ui_manager.current_app.root.destroy()
         
-        logger.info("RPG Application shut down complete")
+    # Apply all commands
+    for command_name, command_func in all_commands.items():
+        builder = builder.with_command(command_name, command_func)
+    
+    return builder.build()
 
-async def main():
+def main():
     """Main entry point"""
-    logger.info("Starting New RPG Engine with Interactive UI")
-    
-    app = RPGApplication()
-    
+    # Set up service container
+    container = ServiceContainer()
+    container.register_singleton(EventBus, lambda c: EventBus())
+    container.register_singleton(ModularUIManager, ModularUIManager)
+
+    import asyncio
+    asyncio.run(container.initialize_all_async())
+    ui_manager = container.get(ModularUIManager)
+
+    # Load template count for display
     try:
-        await app.run()
+        data_path = Path(__file__).parent / "data" / "character_templates.json"
+        with open(data_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        template_count = len(data.get("character_templates", {}))
+        print(f"✅ Loaded {template_count} character templates")
     except Exception as e:
-        logger.error(f"Fatal error: {e}")
-        return 1
+        print(f"⚠️ Could not load templates: {e}")
+        template_count = 0
+
+    # Build and run the UI
+    ui_def = build_ui_def(ui_manager)
+    app = ui_manager.create_application(ui_def)
+    ui_manager.current_app = app
     
-    return 0
+    print("🎮 Starting RPG Character Manager...")
+    app.run()
 
 if __name__ == "__main__":
-    # Handle imports properly
-    try:
-        from typing import Optional
-        exit_code = asyncio.run(main())
-        sys.exit(exit_code)
-    except ImportError as e:
-        print(f"Import error: {e}")
-        print("Make sure all dependencies are installed: pip install -r requirements.txt")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Fatal error: {e}")
-        sys.exit(1)
+    main()
